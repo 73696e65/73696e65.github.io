@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://73696e65.github.io/blog/2015/05/10/pwnos-1-dot-0/</loc>
+    <lastmod>2015-05-10T12:13:34+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/blog/2015/05/10/de-ice-s2-dot-100/</loc>
     <lastmod>2015-05-10T11:40:38+02:00</lastmod>
   </url>
@@ -23,5 +27,8 @@
   </url>
   <url>
     <loc>http://73696e65.github.io/blog/categories/deice/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/blog/categories/pwnos/</loc>
   </url>
 </urlset>
