@@ -326,7 +326,7 @@ s.puts(exploit)
 s.close
 {% endcodeblock %}
 
-Exploits runs arbitrary command that we put on vulnerable server to /tmp/commands. 
+Exploit runs arbitrary command that we put on vulnerable server to /tmp/commands. 
 
 We connect to the host:
 {% codeblock %}
