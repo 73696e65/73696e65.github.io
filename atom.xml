@@ -4,7 +4,7 @@
   <title><![CDATA[0x41414141]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-10T17:11:48+02:00</updated>
+  <updated>2015-05-10T17:12:10+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -610,7 +610,7 @@ but on this server the exploit works and we don&rsquo;t get segfault:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Exploits runs arbitrary command that we put on vulnerable server to /tmp/commands.</p>
+<p>Exploit runs arbitrary command that we put on vulnerable server to /tmp/commands.</p>
 
 <p>We connect to the host:</p>
 
