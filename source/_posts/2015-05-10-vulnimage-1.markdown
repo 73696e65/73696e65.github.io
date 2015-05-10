@@ -340,7 +340,8 @@ sh: no job control in this shell
 sh-2.05b$ cd /tmp
 {% endcodeblock %}
 
-To obtain root privileges, we can run ssh server and put to 'commands' the command to change root password:
+To obtain root privileges, we can run ssh server and put to '/tmp/commands'
+file the instructions to change root password:
 {% codeblock %}
 debian:/tmp# chmod +x commands
 debian:/tmp# cat commands
