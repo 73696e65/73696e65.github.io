@@ -4,7 +4,7 @@
   <title><![CDATA[0x41414141]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-10T12:06:24+02:00</updated>
+  <updated>2015-05-10T12:09:22+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -348,7 +348,8 @@ proper SMTP functionality.</p>
 </span><span class='line'>aadams:bS.PQ9hVYEqrQ</span></code></pre></td></tr></table></div></figure>
 
 
-<p>There is another way to get root account, first we find out the password for pirrip user:</p>
+<p>There is another way to get root account. At first we find out the password for
+pirrip user:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
