@@ -272,7 +272,7 @@ EIP begins on offset 124 and the register EAX points to the beginning of our
 buffer, right now filled with pattern. Luckily, we find call eax opcodes in
 binary too.
 
-The strange thing is that the stack in binary is marked as not executable, 
+The strange thing is that the stack in binary is marked as non-executable, 
 but on this server the exploit works and we don't get segfault:
 {% codeblock %}
 www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
