@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Pwnos | 0x41414141]]></title>
   <link href="http://73696e65.github.io/blog/categories/pwnos/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-10T13:01:02+02:00</updated>
+  <updated>2015-05-10T13:49:09+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -373,7 +373,7 @@ to enable them.</p>
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>UseBlacklistedKeys yes</span></code></pre></td></tr></table></div></figure></p>
 
-<p>In exploit-db, we use python script to try every possible private key:
+<p>In exploitdb, we use python script to try every possible private key:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
