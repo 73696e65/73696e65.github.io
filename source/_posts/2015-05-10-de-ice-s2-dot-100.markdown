@@ -3,7 +3,7 @@ layout: post
 title: "DE-ICE-S2.100"
 date: 2015-05-10 11:40:38 +0200
 comments: true
-categories: 
+categories: [vulnhub, deice]
 ---
 Image: [De-ICE: S2.100](https://www.vulnhub.com/entry/de-ice-s2100,13/)
 
