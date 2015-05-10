@@ -4,7 +4,7 @@
   <title><![CDATA[0x41414141]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-10T17:20:26+02:00</updated>
+  <updated>2015-05-10T17:23:32+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -510,7 +510,7 @@ looking also for some registers, pointing to our pattern in memory.</p>
 buffer, right now filled with pattern. Luckily, we find call eax opcodes in
 binary too.</p>
 
-<p>The strange thing is that the stack in binary is marked as not executable,
+<p>The strange thing is that the stack in binary is marked as non-executable,
 but on this server the exploit works and we don&rsquo;t get segfault:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
