@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x41414141]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-10T17:12:10+02:00</updated>
+  <updated>2015-05-10T17:20:26+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -644,7 +644,8 @@ but on this server the exploit works and we don&rsquo;t get segfault:
 </span><span class='line'>sh: no job control in this shell
 </span><span class='line'>sh-2.05b$ cd /tmp</span></code></pre></td></tr></table></div></figure></p>
 
-<p>To obtain root privileges, we can run ssh server and put to &lsquo;commands&rsquo; the command to change root password:
+<p>To obtain root privileges, we can run ssh server and put to &lsquo;/tmp/commands&rsquo;
+file the instructions to change root password:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1786,7 +1787,7 @@ We download the data to our server:
 <span class='line-number'>7</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.knockknock# knockknock -p 22 192.168.80.142
 </span><span class='line'>*** Success: knock sent.
-</span><span class='line'>root@kali32:~/.knockknock# ssh &lt;a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#97;&#108;&#x61;&#x6d;&#x6f;&#x40;&#49;&#x39;&#50;&#x2e;&#49;&#54;&#56;&#46;&#56;&#48;&#46;&#x31;&#52;&#x32;">&#97;&#108;&#97;&#109;&#111;&#x40;&#x31;&#x39;&#x32;&#x2e;&#x31;&#54;&#x38;&#46;&#x38;&#x30;&#x2e;&#x31;&#52;&#x32;&lt;/a>&lt;/p>
+</span><span class='line'>root@kali32:~/.knockknock# ssh &lt;a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#x61;&#108;&#x61;&#x6d;&#111;&#x40;&#49;&#x39;&#x32;&#46;&#x31;&#54;&#56;&#46;&#56;&#x30;&#46;&#49;&#52;&#x32;">&#97;&#x6c;&#x61;&#109;&#x6f;&#x40;&#x31;&#57;&#x32;&#46;&#x31;&#54;&#x38;&#46;&#x38;&#x30;&#x2e;&#49;&#x34;&#50;&lt;/a>&lt;/p>
 </span><span class='line'>
 </span><span class='line'>&lt;p>The authenticity of host &lsquo;192.168.80.142 (192.168.80.142)&rsquo; can&rsquo;t be established.
 </span><span class='line'>RSA key fingerprint is 03:73:de:c7:17:96:0b:bb:8c:8e:c7:87:9b:5b:d5:c9.
