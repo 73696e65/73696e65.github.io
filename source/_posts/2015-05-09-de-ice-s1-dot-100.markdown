@@ -36,7 +36,7 @@ Bob Banter
 Chad Coffee
 {% endcodeblock %}
 
-Using this script [namelist.py](https://gist.githubusercontent.com/superkojiman/11076951/raw/865a89c2db01c2a5589c534b7f56d1669dddf0ab/namemash.py)
+Using this script [namemash.py](https://gist.githubusercontent.com/superkojiman/11076951/raw/865a89c2db01c2a5589c534b7f56d1669dddf0ab/namemash.py)
 we generate the potential login names:
 
 {% codeblock %}
