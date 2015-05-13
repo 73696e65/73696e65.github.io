@@ -311,7 +311,7 @@ fi
 " > /home/ccoffee/scripts/getlogs.sh
 {% endcodeblock %}
 
-Finally with this information, we was able to successfully cracked the whole /etc/shadow:
+Finally with this information, we was able to successfully crack the whole /etc/shadow:
 {% codeblock %}
 root@kali32:~# john hashes.john --show
 root:I@47hdlT!@!:16567:0:::::
