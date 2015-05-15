@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://73696e65.github.io/blog/2015/05/14/de-ice-s1-dot-130/</loc>
+    <lastmod>2015-05-14T15:34:52+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/blog/2015/05/13/de-ice-s1-dot-120/</loc>
     <lastmod>2015-05-13T15:54:08+02:00</lastmod>
   </url>
@@ -63,5 +67,8 @@
   </url>
   <url>
     <loc>http://73696e65.github.io/blog/categories/vulnimage/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/posts/2/</loc>
   </url>
 </urlset>
