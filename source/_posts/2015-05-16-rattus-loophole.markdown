@@ -98,7 +98,7 @@ Dirb output:
 + http://10.8.7.2/~root (CODE:403|SIZE:271)
 {% endcodeblock %}
 
-Most interesting file was http://10.8.7.2/garbage with these hashes:
+The most interesting file was http://10.8.7.2/garbage with these hashes:
 {% codeblock %}
 root:$1$x2YBL0KB$E7QI7AF9ZeiqcfMRQ4KZ11:15018:0:::::
 smmsp:!!:9797:0:::::
