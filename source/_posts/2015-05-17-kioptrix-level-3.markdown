@@ -3,7 +3,7 @@ layout: post
 title: "Kioptrix: Level 3"
 date: 2015-05-17 08:14:45 +0200
 comments: true
-categories: 
+categories: [vulnhub, kioptrix]
 ---
 Image: [Kioptrix: Level 1.2 (#3)](https://www.vulnhub.com/entry/kioptrix-level-12-3,24/)
 
