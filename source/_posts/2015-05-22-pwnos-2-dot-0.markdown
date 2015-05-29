@@ -183,7 +183,7 @@ $dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could n
 ?>
 {% endcodeblock %}
 
-The [blog application](http://10.10.10.100/blog/index.php) use the text files instead of MySQL. We were only
+The [blog application](http://10.10.10.100/blog/index.php) uses the text files instead of MySQL. We were only
 able to locate the password file, without cracking it:
 {% codeblock %}
 www-data@web:/var/www $ cat blog/config/password.txt
