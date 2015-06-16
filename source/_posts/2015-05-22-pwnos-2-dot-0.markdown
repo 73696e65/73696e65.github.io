@@ -138,7 +138,7 @@ root@kali32:~# sqlmap -u "http://10.10.10.100/login.php" --data "email=test@test
 {% endcodeblock %}
 
 We found the database credentials, however they didn't work:
-{% codeblock %}
+{% codeblock lang:php %}
 www-data@web:/var/www $ cat mysqli_connect.php
 <?php # Script 8.2 - mysqli_connect.php
 
@@ -161,7 +161,7 @@ $dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could n
 {% endcodeblock %}
 
 That was strange, because the web application is connected. After a little more digging, we found this suspicious file:
-{% codeblock %}
+{% codeblock lang:php %}
 www-data@web:/var/www $ cat ../mysqli_connect.php
 <?php # Script 8.2 - mysqli_connect.php
 

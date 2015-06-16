@@ -1,7 +1,7 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
 body {
-  max-width: 1100px;
+//  max-width: 1500px;
   font-size: 14px;
 }
 
@@ -17,4 +17,10 @@ section {
   > h1 {
     font-size: 1.5em;
   }
+}
+
+
+body > header h1, h2 {  
+  font-size: 16px;
+  display: inline;
 }
