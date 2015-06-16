@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[0x41414141]]></title>
+  <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-16T21:32:28+02:00</updated>
+  <updated>2015-06-16T22:17:16+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -2060,25 +2060,26 @@ reason, why we were able to write something with database user to /var/www
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat mysqli_connect.php
-</span><span class='line'>&lt;?php # Script 8.2 - mysqli_connect.php
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">web</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nb">mysqli_connect</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span> <span class="c1"># Script 8.2 - mysqli_connect.php</span>
 </span><span class='line'>
-</span><span class='line'>// This file contains the database access information.
-</span><span class='line'>// This file also establishes a connection to MySQL
-</span><span class='line'>// and selects the database.
+</span><span class='line'><span class="c1">// This file contains the database access information.</span>
+</span><span class='line'><span class="c1">// This file also establishes a connection to MySQL</span>
+</span><span class='line'><span class="c1">// and selects the database.</span>
 </span><span class='line'>
-</span><span class='line'>// Set the database access information as constants:
+</span><span class='line'><span class="c1">// Set the database access information as constants:</span>
 </span><span class='line'>
-</span><span class='line'>DEFINE ('DB_USER', 'root');
-</span><span class='line'>DEFINE ('DB_PASSWORD', 'goodday');
-</span><span class='line'>DEFINE ('DB_HOST', 'localhost');
-</span><span class='line'>DEFINE ('DB_NAME', 'ch16');
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;goodday&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;ch16&#39;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>// Make the connection:
+</span><span class='line'><span class="c1">// Make the connection:</span>
 </span><span class='line'>
-</span><span class='line'>$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could not connect to MySQL: ' . mysqli_connect_error() );
+</span><span class='line'><span class="nv">$dbc</span> <span class="o">=</span> <span class="o">@</span><span class="nb">mysqli_connect</span> <span class="p">(</span><span class="nx">DB_HOST</span><span class="p">,</span> <span class="nx">DB_USER</span><span class="p">,</span> <span class="nx">DB_PASSWORD</span><span class="p">,</span> <span class="nx">DB_NAME</span><span class="p">)</span> <span class="k">OR</span> <span class="k">die</span> <span class="p">(</span><span class="s1">&#39;Could not connect to MySQL: &#39;</span> <span class="o">.</span> <span class="nx">mysqli_connect_error</span><span class="p">()</span> <span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>That was strange, because the web application is connected. After a little more digging, we found this suspicious file:</p>
@@ -2102,25 +2103,26 @@ reason, why we were able to write something with database user to /var/www
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat ../mysqli_connect.php
-</span><span class='line'>&lt;?php # Script 8.2 - mysqli_connect.php
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">web</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="o">../</span><span class="nb">mysqli_connect</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span> <span class="c1"># Script 8.2 - mysqli_connect.php</span>
 </span><span class='line'>
-</span><span class='line'>// This file contains the database access information.
-</span><span class='line'>// This file also establishes a connection to MySQL
-</span><span class='line'>// and selects the database.
+</span><span class='line'><span class="c1">// This file contains the database access information.</span>
+</span><span class='line'><span class="c1">// This file also establishes a connection to MySQL</span>
+</span><span class='line'><span class="c1">// and selects the database.</span>
 </span><span class='line'>
-</span><span class='line'>// Set the database access information as constants:
+</span><span class='line'><span class="c1">// Set the database access information as constants:</span>
 </span><span class='line'>
-</span><span class='line'>DEFINE ('DB_USER', 'root');
-</span><span class='line'>DEFINE ('DB_PASSWORD', 'root@ISIntS');
-</span><span class='line'>DEFINE ('DB_HOST', 'localhost');
-</span><span class='line'>DEFINE ('DB_NAME', 'ch16');
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;root@ISIntS&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;ch16&#39;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>// Make the connection:
+</span><span class='line'><span class="c1">// Make the connection:</span>
 </span><span class='line'>
-</span><span class='line'>$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die ('Could not connect to MySQL: ' . mysqli_connect_error() );
+</span><span class='line'><span class="nv">$dbc</span> <span class="o">=</span> <span class="o">@</span><span class="nb">mysqli_connect</span> <span class="p">(</span><span class="nx">DB_HOST</span><span class="p">,</span> <span class="nx">DB_USER</span><span class="p">,</span> <span class="nx">DB_PASSWORD</span><span class="p">,</span> <span class="nx">DB_NAME</span><span class="p">)</span> <span class="k">OR</span> <span class="k">die</span> <span class="p">(</span><span class="s1">&#39;Could not connect to MySQL: &#39;</span> <span class="o">.</span> <span class="nx">mysqli_connect_error</span><span class="p">()</span> <span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>The <a href="http://10.10.10.100/blog/index.php">blog application</a> uses the text files instead of MySQL. We were only
@@ -3336,7 +3338,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#x6d;&#97;&#105;&#x6c;&#116;&#111;&#58;&#x63;&#117;&#x73;&#116;&#111;&#x6d;&#x65;&#x72;&#115;&#x65;&#114;&#118;&#x69;&#x63;&#x65;&#97;&#x64;&#109;&#x69;&#110;&#x40;&#x6e;&#x6f;&#115;&#101;&#x63;&#98;&#x61;&#x6e;&#107;&#46;&#99;&#111;&#x6d;">&#x63;&#x75;&#115;&#116;&#111;&#109;&#101;&#114;&#x73;&#x65;&#x72;&#118;&#x69;&#99;&#101;&#97;&#100;&#x6d;&#x69;&#110;&#x40;&#x6e;&#x6f;&#x73;&#x65;&#x63;&#x62;&#x61;&#x6e;&#107;&#46;&#99;&#x6f;&#109;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#x63;&#x75;&#115;&#116;&#x6f;&#x6d;&#101;&#114;&#115;&#101;&#114;&#118;&#x69;&#x63;&#x65;&#x61;&#x64;&#109;&#105;&#110;&#64;&#110;&#x6f;&#115;&#x65;&#x63;&#x62;&#97;&#x6e;&#107;&#46;&#99;&#x6f;&#109;">&#99;&#x75;&#115;&#116;&#x6f;&#109;&#101;&#114;&#x73;&#101;&#x72;&#118;&#x69;&#99;&#x65;&#x61;&#x64;&#x6d;&#x69;&#110;&#x40;&#x6e;&#x6f;&#115;&#x65;&#99;&#98;&#x61;&#110;&#107;&#46;&#99;&#x6f;&#109;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

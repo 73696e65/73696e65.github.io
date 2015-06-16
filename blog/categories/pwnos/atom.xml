@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Pwnos | 0x41414141]]></title>
+  <title><![CDATA[Category: Pwnos | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/pwnos/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-16T21:32:28+02:00</updated>
+  <updated>2015-06-16T22:17:16+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -298,25 +298,26 @@ reason, why we were able to write something with database user to /var/www
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat mysqli_connect.php
-</span><span class='line'>&lt;?php # Script 8.2 - mysqli_connect.php&lt;/p>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">web</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nb">mysqli_connect</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span> <span class="c1"># Script 8.2 - mysqli_connect.php&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>// This file contains the database access information.
-</span><span class='line'>// This file also establishes a connection to MySQL
-</span><span class='line'>// and selects the database.&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="k">This</span> <span class="nb">file</span> <span class="nx">contains</span> <span class="nx">the</span> <span class="nx">database</span> <span class="nx">access</span> <span class="nx">information</span><span class="o">.</span>
+</span><span class='line'><span class="c1">// This file also establishes a connection to MySQL</span>
+</span><span class='line'><span class="c1">// and selects the database.&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>// Set the database access information as constants:&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="nx">Set</span> <span class="nx">the</span> <span class="nx">database</span> <span class="nx">access</span> <span class="nx">information</span> <span class="k">as</span> <span class="nx">constants</span><span class="o">:&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>DEFINE (&lsquo;DB_USER&rsquo;, &lsquo;root&rsquo;);
-</span><span class='line'>DEFINE (&lsquo;DB_PASSWORD&rsquo;, &lsquo;goodday&rsquo;);
-</span><span class='line'>DEFINE (&lsquo;DB_HOST&rsquo;, &lsquo;localhost&rsquo;);
-</span><span class='line'>DEFINE (&lsquo;DB_NAME&rsquo;, &lsquo;ch16&rsquo;);&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_USER</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">root</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_PASSWORD</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">goodday</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_HOST</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">localhost</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_NAME</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">ch16</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>// Make the connection:&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="nx">Make</span> <span class="nx">the</span> <span class="nx">connection</span><span class="o">:&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die (&lsquo;Could not connect to MySQL: &rsquo; . mysqli_connect_error() );&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$dbc</span> <span class="o">=</span> <span class="o">@</span><span class="nb">mysqli_connect</span> <span class="p">(</span><span class="nx">DB_HOST</span><span class="p">,</span> <span class="nx">DB_USER</span><span class="p">,</span> <span class="nx">DB_PASSWORD</span><span class="p">,</span> <span class="nx">DB_NAME</span><span class="p">)</span> <span class="k">OR</span> <span class="k">die</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">Could</span> <span class="k">not</span> <span class="nx">connect</span> <span class="nx">to</span> <span class="nx">MySQL</span><span class="o">:</span> <span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">.</span> <span class="nx">mysqli_connect_error</span><span class="p">()</span> <span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>?></span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
 
 <p>That was strange, because the web application is connected. After a little more digging, we found this suspicious file:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -338,25 +339,26 @@ reason, why we were able to write something with database user to /var/www
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat ../mysqli_connect.php
-</span><span class='line'>&lt;?php # Script 8.2 - mysqli_connect.php&lt;/p>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">web</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="o">../</span><span class="nb">mysqli_connect</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span> <span class="c1"># Script 8.2 - mysqli_connect.php&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>// This file contains the database access information.
-</span><span class='line'>// This file also establishes a connection to MySQL
-</span><span class='line'>// and selects the database.&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="k">This</span> <span class="nb">file</span> <span class="nx">contains</span> <span class="nx">the</span> <span class="nx">database</span> <span class="nx">access</span> <span class="nx">information</span><span class="o">.</span>
+</span><span class='line'><span class="c1">// This file also establishes a connection to MySQL</span>
+</span><span class='line'><span class="c1">// and selects the database.&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>// Set the database access information as constants:&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="nx">Set</span> <span class="nx">the</span> <span class="nx">database</span> <span class="nx">access</span> <span class="nx">information</span> <span class="k">as</span> <span class="nx">constants</span><span class="o">:&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>DEFINE (&lsquo;DB_USER&rsquo;, &lsquo;root&rsquo;);
-</span><span class='line'>DEFINE (&lsquo;DB_PASSWORD&rsquo;, &lsquo;root@ISIntS&rsquo;);
-</span><span class='line'>DEFINE (&lsquo;DB_HOST&rsquo;, &lsquo;localhost&rsquo;);
-</span><span class='line'>DEFINE (&lsquo;DB_NAME&rsquo;, &lsquo;ch16&rsquo;);&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_USER</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">root</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_PASSWORD</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">root</span><span class="o">@</span><span class="nx">ISIntS</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_HOST</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">localhost</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_NAME</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">ch16</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>// Make the connection:&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="nx">Make</span> <span class="nx">the</span> <span class="nx">connection</span><span class="o">:&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>$dbc = @mysqli_connect (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die (&lsquo;Could not connect to MySQL: &rsquo; . mysqli_connect_error() );&lt;/p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$dbc</span> <span class="o">=</span> <span class="o">@</span><span class="nb">mysqli_connect</span> <span class="p">(</span><span class="nx">DB_HOST</span><span class="p">,</span> <span class="nx">DB_USER</span><span class="p">,</span> <span class="nx">DB_PASSWORD</span><span class="p">,</span> <span class="nx">DB_NAME</span><span class="p">)</span> <span class="k">OR</span> <span class="k">die</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">Could</span> <span class="k">not</span> <span class="nx">connect</span> <span class="nx">to</span> <span class="nx">MySQL</span><span class="o">:</span> <span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">.</span> <span class="nx">mysqli_connect_error</span><span class="p">()</span> <span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'>&lt;p>?></span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
 
 <p>The <a href="http://10.10.10.100/blog/index.php">blog application</a> uses the text files instead of MySQL. We were only
 able to locate the password file, without cracking it:
