@@ -1,2 +1,20 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
+body {
+  max-width: 1100px;
+  font-size: 14px;
+}
+
+time {
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 2.2em;
+}
+
+section {
+  > h1 {
+    font-size: 1.5em;
+  }
+}
