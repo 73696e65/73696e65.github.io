@@ -41,7 +41,7 @@ obtained IP address: 1
 
 </head>
 
-<body   >
+<body    class="collapse-sidebar sidebar-footer" >
   <header role="banner"><hgroup>
   <h1><a href="/">0x73696e65</a></h1>
   
@@ -350,7 +350,7 @@ numbers, because not every user has allowed to upload file, see accounts.csv.</p
 
 <p>As we can see from the source code, the filename is used in shell command and
 we can inject malicious input. However the &lsquo;/&rsquo; or &lsquo;\&rsquo; characters are
-prohibited, because to $target is stored only the value after (back)slash.</p>
+prohibited, because in $target is stored only the value after (back)slash.</p>
 
 <p>Locator (it never terminates, but confirms our finding):</p>
 
@@ -366,7 +366,7 @@ prohibited, because to $target is stored only the value after (back)slash.</p>
 
 <p>There could be a problem with a bigger input (&ldquo;filename too long&rdquo;).</p>
 
-<p>Similarly we upload the following base64 payload:</p>
+<p>Similarly we upload the following base64 payload redirected to &lsquo;b.php&rsquo;:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -496,33 +496,7 @@ alamo&rsquo;s). Then we move the shadow file back.</p>
 
 <aside class="sidebar">
   
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
     
-      <li class="post">
-        <a href="/blog/2015/06/16/exploit-exercises-nebula-00-05/">Exploit-Exercises: Nebula (00-05)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/06/03/hackademic-rtb2/">Hackademic: RTB2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/29/hackademic-rtb1/">Hackademic: RTB1</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/22/pwnos-2-dot-0/">pWnOS: 2.0</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/05/17/kioptrix-level-3/">Kioptrix: Level 3</a>
-      </li>
-    
-  </ul>
-</section>
-
 
 
 
