@@ -655,7 +655,7 @@ not safe to use data from untrusted source, so <code>pickle.loads</code> on line
 
 
 <p>First thing that we tried was to use parameter <code>-d /home/flag18/password</code> to
-rewrite password file with the known output, however the <code>strcmp()</code> don&rsquo;t match
+rewrite password file with the known output, however the <code>strcmp()</code> doesn&rsquo;t match
 for the reason that we cannot insert the newline character to the end of our string.</p>
 
 <p>The <code>fclose()</code> on line 34 is not aligned, that&rsquo;s strange. We found out that this call is not used in the binary file:</p>

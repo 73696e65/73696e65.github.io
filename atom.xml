@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-22T23:21:00+02:00</updated>
+  <updated>2015-06-22T23:21:08+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -557,7 +557,7 @@ not safe to use data from untrusted source, so <code>pickle.loads</code> on line
 
 
 <p>First thing that we tried was to use parameter <code>-d /home/flag18/password</code> to
-rewrite password file with the known output, however the <code>strcmp()</code> don&rsquo;t match
+rewrite password file with the known output, however the <code>strcmp()</code> doesn&rsquo;t match
 for the reason that we cannot insert the newline character to the end of our string.</p>
 
 <p>The <code>fclose()</code> on line 34 is not aligned, that&rsquo;s strange. We found out that this call is not used in the binary file:</p>
@@ -6259,7 +6259,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#x3a;&#x63;&#x75;&#115;&#x74;&#111;&#x6d;&#x65;&#x72;&#x73;&#101;&#114;&#118;&#105;&#x63;&#101;&#x61;&#100;&#x6d;&#105;&#110;&#64;&#x6e;&#x6f;&#115;&#101;&#99;&#98;&#x61;&#x6e;&#107;&#46;&#99;&#x6f;&#109;">&#99;&#117;&#115;&#x74;&#x6f;&#x6d;&#101;&#x72;&#x73;&#101;&#114;&#118;&#x69;&#99;&#x65;&#x61;&#100;&#x6d;&#105;&#x6e;&#x40;&#x6e;&#x6f;&#x73;&#101;&#x63;&#x62;&#97;&#x6e;&#x6b;&#x2e;&#x63;&#x6f;&#x6d;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#x3a;&#x63;&#x75;&#115;&#116;&#111;&#x6d;&#101;&#114;&#x73;&#101;&#x72;&#x76;&#x69;&#x63;&#101;&#97;&#100;&#x6d;&#x69;&#110;&#x40;&#x6e;&#x6f;&#115;&#101;&#99;&#98;&#x61;&#x6e;&#107;&#x2e;&#99;&#x6f;&#x6d;">&#x63;&#117;&#115;&#x74;&#111;&#x6d;&#x65;&#x72;&#115;&#x65;&#114;&#118;&#x69;&#99;&#101;&#x61;&#x64;&#x6d;&#105;&#110;&#64;&#x6e;&#111;&#115;&#101;&#x63;&#98;&#x61;&#110;&#107;&#46;&#x63;&#111;&#109;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
