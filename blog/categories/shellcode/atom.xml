@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Shellcode | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/shellcode/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-23T17:14:43+02:00</updated>
+  <updated>2015-06-23T17:17:42+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -543,7 +543,7 @@ prematurely, so we simply do not use this character.</p>
 </span><span class='line'>allocated executable memory at: 0xb7734000
 </span><span class='line'>hello</span></code></pre></td></tr></table></div></figure></p>
 
-<p>Now when everything works, our next step is to execute shell.</p>
+<p>Our next step will be to execute shell.</p>
 ]]></content>
   </entry>
   
