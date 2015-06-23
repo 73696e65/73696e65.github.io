@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://73696e65.github.io/blog/2015/06/23/ia-32-linux-shellcode-basics-1/</loc>
+    <lastmod>2015-06-23T15:01:28+02:00</lastmod>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/blog/2015/06/23/exploit-exercises-protostar-stack-levels/</loc>
+    <lastmod>2015-06-23T09:46:35+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/blog/2015/06/20/exploit-exercises-nebula-16-19/</loc>
     <lastmod>2015-06-20T11:51:41+02:00</lastmod>
   </url>
@@ -114,6 +122,12 @@
     <loc>http://73696e65.github.io/blog/categories/exploit-exercises/</loc>
   </url>
   <url>
+    <loc>http://73696e65.github.io/blog/categories/exploit/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/blog/categories/shellcode/</loc>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/posts/2/</loc>
   </url>
   <url>
@@ -130,5 +144,8 @@
   </url>
   <url>
     <loc>http://73696e65.github.io/posts/7/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/posts/8/</loc>
   </url>
 </urlset>

