@@ -313,4 +313,4 @@ allocated executable memory at: 0xb7734000
 hello
 {% endcodeblock %}
 
-Now when everything works, our next step is to execute shell.
+Our next step will be to execute shell.
