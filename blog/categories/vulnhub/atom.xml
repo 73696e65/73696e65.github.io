@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-22T23:21:08+02:00</updated>
+  <updated>2015-06-23T08:12:41+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -910,8 +910,31 @@ our argv, see <code>execve("/bin/sh", argv, envp);</code>.</p>
 </span></code></pre></td></tr></table></div></figure></p>
 
 <p>To pass the last challenge, our process parent id should match uid 0. This
-could be easily achieved when the parent dies and the process is adopted by
-init.</p>
+could be easily achieved when the parent dies and the orphan process is adopted
+by init.</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 wait&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  A child that terminates, but has not been waited for becomes a &ldquo;zombie&rdquo;.  The
+</span><span class='line'>  kernel maintains a minimal set of information about the zombie process (PID,
+</span><span class='line'>  termination status, resource usage information) in order to allow the parent to
+</span><span class='line'>  later perform a wait to obtain information about the child.  As long as a
+</span><span class='line'>  zombie  is  not  removed from  the  system  via a wait, it will consume a slot
+</span><span class='line'>  in the kernel process table, and if this table fills, it will not be possible
+</span><span class='line'>  to create further processes.  If a parent process terminates, then its &ldquo;zombie&rdquo;
+</span><span class='line'>  children (if any) are adopted by init(8), which automatically performs a wait
+</span><span class='line'>  to remove the zombies.&lt;br/></span></code></pre></td></tr></table></div></figure></p>
 
 <p>Exploit:
 <figure class='code'><figcaption><span>exploit19.c </span></figcaption>
@@ -2596,7 +2619,7 @@ we can create reverse shell on port 1337 via bash, using ruby to encode our payl
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">sh-4.2$</span> cat /tmp/09
-</span><span class='line'><span class="go">[email &lt;a href=&quot;&amp;#x6d;&amp;#97;&amp;#105;&amp;#x6c;&amp;#x74;&amp;#111;&amp;#x3a;&amp;#x62;&amp;#108;&amp;#97;&amp;#x40;&amp;#x62;&amp;#x6c;&amp;#x61;&amp;#98;&amp;#108;&amp;#97;&amp;#x2e;&amp;#x63;&amp;#111;&amp;#109;&quot;&gt;&amp;#x62;&amp;#x6c;&amp;#97;&amp;#x40;&amp;#98;&amp;#x6c;&amp;#97;&amp;#98;&amp;#108;&amp;#x61;&amp;#x2e;&amp;#99;&amp;#111;&amp;#109;&lt;/a&gt;]&lt;/p&gt;</span>
+</span><span class='line'><span class="go">[email &lt;a href=&quot;&amp;#x6d;&amp;#x61;&amp;#x69;&amp;#x6c;&amp;#x74;&amp;#x6f;&amp;#58;&amp;#x62;&amp;#108;&amp;#97;&amp;#64;&amp;#98;&amp;#x6c;&amp;#97;&amp;#98;&amp;#x6c;&amp;#97;&amp;#46;&amp;#99;&amp;#x6f;&amp;#x6d;&quot;&gt;&amp;#x62;&amp;#x6c;&amp;#x61;&amp;#x40;&amp;#x62;&amp;#x6c;&amp;#x61;&amp;#98;&amp;#108;&amp;#97;&amp;#46;&amp;#99;&amp;#x6f;&amp;#x6d;&lt;/a&gt;]&lt;/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="go">&lt;p&gt;sh-4.2$ ./flag09 /tmp/09 testing</span>
 </span><span class='line'><span class="go">bla AT blabla dot com</span>
@@ -2875,17 +2898,20 @@ for strings representation.</p>
 we call access() to some file, it could be different file with the same name,
 which we are trying to open.</p>
 
-<p>From the man 2 access:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Warning:  Using access() to check if a user is authorized to, for example, open
-</span><span class='line'>a file before actually doing so using open(2) creates a security hole, because
-</span><span class='line'>the user might exploit the short time interval between checking and opening the
-</span><span class='line'>file to manipulate it.  For this reason, the use of this system call should be
-</span><span class='line'>avoided.</span></code></pre></td></tr></table></div></figure></p>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 access&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  Warning:  Using access() to check if a user is authorized to, for example, open
+</span><span class='line'>  a file before actually doing so using open(2) creates a security hole, because
+</span><span class='line'>  the user might exploit the short time interval between checking and opening the
+</span><span class='line'>  file to manipulate it.  For this reason, the use of this system call should be
+</span><span class='line'>  avoided.</span></code></pre></td></tr></table></div></figure></p>
 
 <p>So /home/flag10/flag10 binary sends arbitrary file with access() permission to
 some host, port 18211.</p>
@@ -3891,7 +3917,7 @@ any here.</p>
 </span><span class='line'><span class="k">var</span> <span class="nv">$offset_user</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
 </span><span class='line'><span class="o">/&lt;</span><span class="nx">em</span><span class="o">&gt;</span> <span class="nx">Mail</span> <span class="nx">Settings</span> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$mailer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nb">mail</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$mailfrom</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;&amp;#x6d;&amp;#97;&amp;#x69;&amp;#108;&amp;#116;&amp;#x6f;&amp;#x3a;&amp;#x61;&amp;#100;&amp;#109;&amp;#x69;&amp;#110;&amp;#64;&amp;#104;&amp;#x61;&amp;#99;&amp;#107;&amp;#97;&amp;#x64;&amp;#101;&amp;#109;&amp;#105;&amp;#x72;&amp;#116;&amp;#98;&amp;#x32;&amp;#46;&amp;#x63;&amp;#x6f;&amp;#109;&quot;</span><span class="o">&gt;&amp;</span><span class="c1">#x61;&amp;#100;&amp;#109;&amp;#105;&amp;#110;&amp;#64;&amp;#x68;&amp;#x61;&amp;#x63;&amp;#x6b;&amp;#x61;&amp;#100;&amp;#101;&amp;#109;&amp;#105;&amp;#x72;&amp;#116;&amp;#98;&amp;#50;&amp;#46;&amp;#x63;&amp;#111;&amp;#109;&lt;/a&gt;&amp;rsquo;;</span>
+</span><span class='line'><span class="k">var</span> <span class="nv">$mailfrom</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;&amp;#x6d;&amp;#97;&amp;#105;&amp;#108;&amp;#116;&amp;#111;&amp;#58;&amp;#97;&amp;#x64;&amp;#109;&amp;#105;&amp;#110;&amp;#64;&amp;#104;&amp;#97;&amp;#x63;&amp;#107;&amp;#97;&amp;#x64;&amp;#x65;&amp;#x6d;&amp;#105;&amp;#114;&amp;#x74;&amp;#x62;&amp;#x32;&amp;#x2e;&amp;#x63;&amp;#x6f;&amp;#x6d;&quot;</span><span class="o">&gt;&amp;</span><span class="c1">#97;&amp;#100;&amp;#x6d;&amp;#105;&amp;#110;&amp;#64;&amp;#104;&amp;#97;&amp;#99;&amp;#x6b;&amp;#97;&amp;#x64;&amp;#x65;&amp;#109;&amp;#x69;&amp;#114;&amp;#116;&amp;#x62;&amp;#50;&amp;#x2e;&amp;#x63;&amp;#x6f;&amp;#x6d;&lt;/a&gt;&amp;rsquo;;</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$fromname</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">Hackademic</span><span class="o">.</span><span class="nx">RTB2</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$sendmail</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">sbin</span><span class="o">/</span><span class="nx">sendmail</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
 </span><span class='line'><span class="k">var</span> <span class="nv">$smtpauth</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>

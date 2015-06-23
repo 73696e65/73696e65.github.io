@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-22T23:21:08+02:00</updated>
+  <updated>2015-06-23T08:12:41+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -854,8 +854,32 @@ our argv, see <code>execve("/bin/sh", argv, envp);</code>.</p>
 
 
 <p>To pass the last challenge, our process parent id should match uid 0. This
-could be easily achieved when the parent dies and the process is adopted by
-init.</p>
+could be easily achieved when the parent dies and the orphan process is adopted
+by init.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 wait
+</span><span class='line'>
+</span><span class='line'>  A child that terminates, but has not been waited for becomes a "zombie".  The
+</span><span class='line'>  kernel maintains a minimal set of information about the zombie process (PID,
+</span><span class='line'>  termination status, resource usage information) in order to allow the parent to
+</span><span class='line'>  later perform a wait to obtain information about the child.  As long as a
+</span><span class='line'>  zombie  is  not  removed from  the  system  via a wait, it will consume a slot
+</span><span class='line'>  in the kernel process table, and if this table fills, it will not be possible
+</span><span class='line'>  to create further processes.  If a parent process terminates, then its "zombie"
+</span><span class='line'>  children (if any) are adopted by init(8), which automatically performs a wait
+</span><span class='line'>  to remove the zombies.</span></code></pre></td></tr></table></div></figure>
+
 
 <p>Exploit:</p>
 
@@ -2790,18 +2814,20 @@ for strings representation.</p>
 we call access() to some file, it could be different file with the same name,
 which we are trying to open.</p>
 
-<p>From the man 2 access:</p>
-
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Warning:  Using access() to check if a user is authorized to, for example, open
-</span><span class='line'>a file before actually doing so using open(2) creates a security hole, because
-</span><span class='line'>the user might exploit the short time interval between checking and opening the
-</span><span class='line'>file to manipulate it.  For this reason, the use of this system call should be
-</span><span class='line'>avoided.</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 access
+</span><span class='line'>
+</span><span class='line'>  Warning:  Using access() to check if a user is authorized to, for example, open
+</span><span class='line'>  a file before actually doing so using open(2) creates a security hole, because
+</span><span class='line'>  the user might exploit the short time interval between checking and opening the
+</span><span class='line'>  file to manipulate it.  For this reason, the use of this system call should be
+</span><span class='line'>  avoided.</span></code></pre></td></tr></table></div></figure>
 
 
 <p>So /home/flag10/flag10 binary sends arbitrary file with access() permission to
@@ -6259,7 +6285,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#x3a;&#x63;&#x75;&#115;&#116;&#111;&#x6d;&#101;&#114;&#x73;&#101;&#x72;&#x76;&#x69;&#x63;&#101;&#97;&#100;&#x6d;&#x69;&#110;&#x40;&#x6e;&#x6f;&#115;&#101;&#99;&#98;&#x61;&#x6e;&#107;&#x2e;&#99;&#x6f;&#x6d;">&#x63;&#117;&#115;&#x74;&#111;&#x6d;&#x65;&#x72;&#115;&#x65;&#114;&#118;&#x69;&#99;&#101;&#x61;&#x64;&#x6d;&#105;&#110;&#64;&#x6e;&#111;&#115;&#101;&#x63;&#98;&#x61;&#110;&#107;&#46;&#x63;&#111;&#109;</a> email address. After a
+<p>Web page mentions <a href="&#109;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#99;&#x75;&#x73;&#x74;&#x6f;&#109;&#x65;&#x72;&#x73;&#101;&#114;&#x76;&#x69;&#x63;&#x65;&#97;&#x64;&#x6d;&#x69;&#x6e;&#x40;&#x6e;&#111;&#115;&#x65;&#x63;&#98;&#97;&#x6e;&#x6b;&#x2e;&#x63;&#111;&#x6d;">&#99;&#117;&#x73;&#x74;&#x6f;&#x6d;&#101;&#x72;&#115;&#x65;&#114;&#x76;&#x69;&#99;&#x65;&#97;&#x64;&#109;&#x69;&#x6e;&#64;&#110;&#111;&#115;&#101;&#x63;&#x62;&#97;&#110;&#x6b;&#x2e;&#x63;&#x6f;&#109;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

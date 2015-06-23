@@ -952,8 +952,32 @@ our argv, see <code>execve("/bin/sh", argv, envp);</code>.</p>
 
 
 <p>To pass the last challenge, our process parent id should match uid 0. This
-could be easily achieved when the parent dies and the process is adopted by
-init.</p>
+could be easily achieved when the parent dies and the orphan process is adopted
+by init.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 wait
+</span><span class='line'>
+</span><span class='line'>  A child that terminates, but has not been waited for becomes a "zombie".  The
+</span><span class='line'>  kernel maintains a minimal set of information about the zombie process (PID,
+</span><span class='line'>  termination status, resource usage information) in order to allow the parent to
+</span><span class='line'>  later perform a wait to obtain information about the child.  As long as a
+</span><span class='line'>  zombie  is  not  removed from  the  system  via a wait, it will consume a slot
+</span><span class='line'>  in the kernel process table, and if this table fills, it will not be possible
+</span><span class='line'>  to create further processes.  If a parent process terminates, then its "zombie"
+</span><span class='line'>  children (if any) are adopted by init(8), which automatically performs a wait
+</span><span class='line'>  to remove the zombies.</span></code></pre></td></tr></table></div></figure>
+
 
 <p>Exploit:</p>
 
@@ -2928,18 +2952,20 @@ for strings representation.</p>
 we call access() to some file, it could be different file with the same name,
 which we are trying to open.</p>
 
-<p>From the man 2 access:</p>
-
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Warning:  Using access() to check if a user is authorized to, for example, open
-</span><span class='line'>a file before actually doing so using open(2) creates a security hole, because
-</span><span class='line'>the user might exploit the short time interval between checking and opening the
-</span><span class='line'>file to manipulate it.  For this reason, the use of this system call should be
-</span><span class='line'>avoided.</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 access
+</span><span class='line'>
+</span><span class='line'>  Warning:  Using access() to check if a user is authorized to, for example, open
+</span><span class='line'>  a file before actually doing so using open(2) creates a security hole, because
+</span><span class='line'>  the user might exploit the short time interval between checking and opening the
+</span><span class='line'>  file to manipulate it.  For this reason, the use of this system call should be
+</span><span class='line'>  avoided.</span></code></pre></td></tr></table></div></figure>
 
 
 <p>So /home/flag10/flag10 binary sends arbitrary file with access() permission to
