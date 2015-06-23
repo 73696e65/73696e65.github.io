@@ -216,7 +216,7 @@ We log in as alamo / Ih@cK3dM1cR05oF7.
 
 Because nobody has higher privileges for sudo except www-data, we use the web
 account to obtain root privileges.
-One way of doing this is to change using chown /etc/shadow file permissions
+One way of doing this is to change using chown /etc/shadow file permission
 to www-data, move to /tmp and change the root hash to a know one (e.g.
 alamo's). Then we move the shadow file back. 
 
