@@ -5,7 +5,7 @@ date: 2015-06-26 11:08:30 +0200
 comments: true
 categories: [exploit, shellcode]
 ---
-The ASM code that is position dependent:
+Starting with the ASM code that is position dependent:
 {% codeblock lang:asm shell1.asm %}
 section .data
 cmd db '/bin/sh',0x0
