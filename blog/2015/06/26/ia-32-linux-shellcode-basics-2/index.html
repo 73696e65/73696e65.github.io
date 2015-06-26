@@ -565,8 +565,8 @@ NULL bytes.</p>
 
 
 <p>The segfault is normal and it&rsquo;s because we are trying to overwrite the code
-segment at the line <code>mov BYTE PTR [ebx+0x7],cl</code>. Because our shellcode will be
-loaded on stack, that doesn&rsquo;t mean any complication.</p>
+segment at the line <code>mov BYTE PTR [ebx+0x7],cl</code>. However, our shellcode will be
+loaded on stack and that doesn&rsquo;t mean any complication.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -735,8 +735,6 @@ loaded on stack, that doesn&rsquo;t mean any complication.</p>
       
         <a class="basic-alignment left" href="/blog/2015/06/23/ia-32-linux-shellcode-basics-1/" title="Previous Post: IA-32 Linux Shellcode Basics 1">&laquo; IA-32 Linux Shellcode Basics 1</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2015/06/27/exploit-exercises-protostar-stack-levels/" title="Next Post: Exploit-Exercises: Protostar (Stack Levels)">Exploit-Exercises: Protostar (Stack Levels) &raquo;</a>
       
     </p>
   </footer>

