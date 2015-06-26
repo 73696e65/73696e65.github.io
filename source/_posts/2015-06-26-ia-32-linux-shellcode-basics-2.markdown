@@ -254,8 +254,8 @@ Segmentation fault
 {% endcodeblock %}
 
 The segfault is normal and it's because we are trying to overwrite the code
-segment at the line `mov BYTE PTR [ebx+0x7],cl`. Because our shellcode will be
-loaded on stack, that doesn't mean any complication.
+segment at the line `mov BYTE PTR [ebx+0x7],cl`. However, our shellcode will be
+loaded on stack and that doesn't mean any complication.
 
 {% codeblock %}
 root@kali32:/tmp# objdump -M intel -d shell4
