@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnimage | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnimage/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-06-26T19:02:28+02:00</updated>
+  <updated>2015-06-27T09:25:21+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -519,8 +519,9 @@ buffer, right now filled with pattern. Luckily, we find call eax opcodes in
 binary too.</p>
 
 <p>The strange thing is that the stack in binary is marked as non-executable,
-but on this server the exploit works and we don&rsquo;t get segfault:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+but on this server the exploit works and we don&rsquo;t get segfault:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>

