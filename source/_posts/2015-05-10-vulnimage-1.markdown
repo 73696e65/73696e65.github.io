@@ -274,6 +274,7 @@ binary too.
 
 The strange thing is that the stack in binary is marked as non-executable, 
 but on this server the exploit works and we don't get segfault:
+
 {% codeblock %}
 www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
 Elf file type is EXEC (Executable file)
