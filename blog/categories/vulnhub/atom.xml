@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-04T15:03:35+02:00</updated>
+  <updated>2015-07-04T15:05:23+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -1191,7 +1191,7 @@ interested, how is the <code>free()</code> implemented:</p>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p>To call vulnerable <code>unlink()</code>, we have two options, branches consolidate backward or consolidate forward.</p>
+<p>To call vulnerable <code>unlink()</code>, we have two branches, consolidate backward or consolidate forward.</p>
 
 <p>We want to overwrite the jump to <code>printf/puts</code> function in <code>GOT</code> table with
 the address of <code>winner()</code>.</p>
