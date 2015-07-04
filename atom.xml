@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-04T15:05:23+02:00</updated>
+  <updated>2015-07-04T15:27:49+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -1363,11 +1363,27 @@ triggered the following part of pseudocode with the first <code>free()</code>:</
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>if (!(inuse_bit_at_offset(-4, -8)))   /* consolidate forward */
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
 </span><span class='line'>    unlink(next, bck, fwd);
 </span><span class='line'>
-</span><span class='line'>0x8049918 &lt;free+244>:  mov    eax,DWORD PTR [ebp-0x24] ; size = 0xfffffff8 = -8
-</span><span class='line'>0x804991b &lt;free+247>:  mov    edx,DWORD PTR [ebp-0x28] ; DEFG ...</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>0x08049918 &lt;free+244>: mov    eax,DWORD PTR [ebp-0x24] ; eax:FFFFFFF8 = -8
+</span><span class='line'>0x0804991b &lt;free+247>: mov    edx,DWORD PTR [ebp-0x28] ; 0x804c04c: "DEFG\370\377\377\377\374\377\377\377X"
+</span><span class='line'>0x0804991e &lt;free+250>: lea    eax,[edx+eax*1]          ; 0x804c044: "XXXX\001ABCDEFG\370\377\377\377\374\377\377\377X"
+</span><span class='line'>0x08049921 &lt;free+253>: mov    eax,DWORD PTR [eax+0x4]  ; eax:43424101
+</span><span class='line'>0x08049924 &lt;free+256>: and    eax,0x1                  ; eax:00000001 = PREV_INUSE flag
+</span><span class='line'>0x08049927 &lt;free+259>: mov    DWORD PTR [ebp-0x20],eax ; 
+</span><span class='line'>0x0804992a &lt;free+262>: mov    eax,DWORD PTR [ebp-0x28] ; 0x804c04c: "DEFG\370\377\377\377\374\377\377\377X"
+</span><span class='line'>0x0804992d &lt;free+265>: mov    edx,DWORD PTR [ebp-0x24] ; edx:FFFFFFF8
+</span><span class='line'>0x08049930 &lt;free+268>: mov    DWORD PTR [eax+0x4],edx  
+</span><span class='line'>0x08049933 &lt;free+271>: cmp    DWORD PTR [ebp-0x20],0x0 ; PREV_INUSE set?</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Here at the position <code>-0x8-0x4=0xc</code> from <code>p</code> the <code>PREV_INUSE</code> flag is set, so we skipped
@@ -10833,7 +10849,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#99;&#117;&#115;&#x74;&#111;&#x6d;&#x65;&#x72;&#115;&#x65;&#x72;&#118;&#105;&#99;&#x65;&#97;&#100;&#x6d;&#105;&#x6e;&#64;&#110;&#x6f;&#x73;&#x65;&#99;&#x62;&#97;&#x6e;&#107;&#46;&#x63;&#111;&#109;">&#99;&#117;&#x73;&#x74;&#111;&#x6d;&#101;&#x72;&#115;&#101;&#x72;&#x76;&#x69;&#x63;&#101;&#x61;&#x64;&#x6d;&#105;&#110;&#64;&#x6e;&#x6f;&#x73;&#101;&#99;&#x62;&#97;&#x6e;&#x6b;&#46;&#x63;&#111;&#109;</a> email address. After a
+<p>Web page mentions <a href="&#109;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x63;&#117;&#x73;&#x74;&#x6f;&#x6d;&#101;&#x72;&#115;&#x65;&#x72;&#x76;&#x69;&#99;&#101;&#x61;&#x64;&#109;&#105;&#110;&#64;&#x6e;&#x6f;&#115;&#101;&#99;&#x62;&#97;&#x6e;&#x6b;&#46;&#99;&#x6f;&#109;">&#x63;&#x75;&#x73;&#x74;&#111;&#x6d;&#101;&#114;&#115;&#101;&#114;&#x76;&#x69;&#x63;&#x65;&#x61;&#x64;&#x6d;&#x69;&#x6e;&#x40;&#x6e;&#x6f;&#x73;&#x65;&#99;&#98;&#97;&#110;&#x6b;&#46;&#x63;&#111;&#x6d;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
