@@ -1301,8 +1301,10 @@ but jumping to our shellcode stored in allocated memory would be efficient.</p>
 <span class='line-number'>31</span>
 <span class='line-number'>32</span>
 <span class='line-number'>33</span>
+<span class='line-number'>34</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>gdb> print /x 0x08048864+0x8
 </span><span class='line'>$1 = 0x804886c
+</span><span class='line'>
 </span><span class='line'>gdb> maintenance info sections 
 </span><span class='line'>Exec file:
 </span><span class='line'>    `/opt/protostar/bin/heap3', file type elf32-i386.
@@ -1319,7 +1321,7 @@ but jumping to our shellcode stored in allocated memory would be efficient.</p>
 </span><span class='line'>    0x8048608->0x8048680 at 0x00000608: .rel.plt ALLOC LOAD READONLY DATA HAS_CONTENTS
 </span><span class='line'>    0x8048680->0x80486b0 at 0x00000680: .init ALLOC LOAD READONLY CODE HAS_CONTENTS
 </span><span class='line'>    0x80486b0->0x80487b0 at 0x000006b0: .plt ALLOC LOAD READONLY CODE HAS_CONTENTS
-</span><span class='line'>    0x80487b0->0x804abdc at 0x000007b0: .text ALLOC LOAD READONLY CODE HAS_CONTENTS
+</span><span class='line'>    0x80487b0->0x804abdc at 0x000007b0: .text ALLOC LOAD READONLY CODE HAS_CONTENTS    &lt;=========
 </span><span class='line'>    0x804abdc->0x804abf8 at 0x00002bdc: .fini ALLOC LOAD READONLY CODE HAS_CONTENTS
 </span><span class='line'>    0x804abf8->0x804aca0 at 0x00002bf8: .rodata ALLOC LOAD READONLY DATA HAS_CONTENTS
 </span><span class='line'>    0x804aca0->0x804aca4 at 0x00002ca0: .eh_frame ALLOC LOAD READONLY DATA HAS_CONTENTS
