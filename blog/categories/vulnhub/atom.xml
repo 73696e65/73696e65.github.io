@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-04T15:27:49+02:00</updated>
+  <updated>2015-07-04T15:35:10+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -1462,7 +1462,7 @@ triggered the following part of pseudocode with the first <code>free()</code>:</
 </span><span class='line'>
 </span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
 
-<p>Here at the position <code>-0x8-0x4=0xc</code> from <code>p</code> the <code>PREV_INUSE</code> flag is set, so we skipped
+<p>Here at the position <code>-0x4</code> is <code>DEFG</code> chunk (prev_size), with the size <code>-0x8</code>, where the <code>PREV_INUSE</code> flag is set, so we skipped
 the forward consolidation:</p>
 
 <p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
