@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-04T15:35:10+02:00</updated>
+  <updated>2015-07-04T15:36:07+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -994,7 +994,7 @@ to <code>auth-auth</code>, after <code>0x0804c028-0x0804c018 = 16</code> bytes.<
 <a href="http://phrack.org/issues/57/9.html">Phrack 57/9</a>, <a href="https://www.win.tue.nl/~aeb/linux/hh/hh-11.html">Hackers Hut</a> to
 explain the exploitation process in detail.</p>
 
-<p>The malloc chunk is implemented as the following structure:</p>
+<p>The malloc chunk could be considered as the following structure:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -10849,7 +10849,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#99;&#117;&#115;&#x74;&#x6f;&#109;&#x65;&#x72;&#115;&#x65;&#x72;&#x76;&#105;&#99;&#101;&#97;&#x64;&#x6d;&#x69;&#x6e;&#x40;&#x6e;&#111;&#115;&#x65;&#x63;&#98;&#97;&#110;&#107;&#x2e;&#99;&#111;&#x6d;">&#99;&#117;&#x73;&#x74;&#x6f;&#x6d;&#101;&#114;&#115;&#x65;&#114;&#118;&#x69;&#x63;&#x65;&#97;&#100;&#109;&#x69;&#110;&#x40;&#x6e;&#x6f;&#x73;&#x65;&#99;&#x62;&#97;&#110;&#107;&#x2e;&#99;&#111;&#109;</a> email address. After a
+<p>Web page mentions <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#x3a;&#x63;&#117;&#115;&#116;&#x6f;&#x6d;&#x65;&#x72;&#115;&#101;&#114;&#118;&#105;&#x63;&#101;&#x61;&#x64;&#x6d;&#105;&#x6e;&#64;&#x6e;&#x6f;&#x73;&#101;&#99;&#x62;&#x61;&#110;&#x6b;&#x2e;&#99;&#x6f;&#x6d;">&#99;&#x75;&#115;&#x74;&#111;&#109;&#x65;&#x72;&#x73;&#101;&#114;&#x76;&#x69;&#99;&#101;&#x61;&#x64;&#109;&#105;&#110;&#64;&#x6e;&#111;&#x73;&#101;&#99;&#x62;&#x61;&#110;&#107;&#46;&#99;&#x6f;&#109;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
