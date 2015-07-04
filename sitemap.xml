@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://73696e65.github.io/blog/2015/06/28/exploit-exercises-protostar-format-levels/</loc>
-    <lastmod>2015-06-28T08:10:51+02:00</lastmod>
+    <loc>http://73696e65.github.io/blog/2015/07/04/exploit-exercises-protostar-format-levels/</loc>
+    <lastmod>2015-07-04T14:51:10+02:00</lastmod>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/blog/2015/06/28/exploit-exercises-protostar-heap-levels/</loc>
+    <lastmod>2015-06-28T09:11:40+02:00</lastmod>
   </url>
   <url>
     <loc>http://73696e65.github.io/blog/2015/06/27/exploit-exercises-protostar-stack-levels/</loc>
@@ -155,5 +159,8 @@
   </url>
   <url>
     <loc>http://73696e65.github.io/posts/8/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/posts/9/</loc>
   </url>
 </urlset>
