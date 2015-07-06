@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://73696e65.github.io/blog/2015/07/05/exploit-exercises-protostar-final-levels/</loc>
+    <lastmod>2015-07-05T08:14:11+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/blog/2015/07/05/exploit-exercises-protostar-net-levels/</loc>
     <lastmod>2015-07-05T06:21:02+02:00</lastmod>
   </url>
