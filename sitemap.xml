@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://73696e65.github.io/blog/2015/08/17/acid-server-1/</loc>
+    <lastmod>2015-08-17T21:00:53+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/blog/2015/07/06/exploit-exercises-protostar-final-levels/</loc>
     <lastmod>2015-07-06T08:14:11+02:00</lastmod>
   </url>
@@ -148,6 +152,9 @@
     <loc>http://73696e65.github.io/blog/categories/shellcode/</loc>
   </url>
   <url>
+    <loc>http://73696e65.github.io/blog/categories/acid/</loc>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/posts/2/</loc>
   </url>
   <url>
@@ -170,5 +177,8 @@
   </url>
   <url>
     <loc>http://73696e65.github.io/posts/9/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/posts/10/</loc>
   </url>
 </urlset>
