@@ -72,9 +72,7 @@ PORT    STATE SERVICE
 123/udp open  ntp
 {% endcodeblock %}
 
-Reading the page title (or dirb tool) reveals an interesting URL:
-
-http://192.168.80.158:33447/Challenge/
+Reading the page title (or dirb tool) reveals an interesting URL: http://192.168.80.158:33447/Challenge/
 
 {% codeblock %}
 root@kali32:~# curl -s http://192.168.80.158:33447/Challenge/index.php | head -1
