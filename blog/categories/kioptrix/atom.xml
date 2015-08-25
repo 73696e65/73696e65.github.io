@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Kioptrix | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/kioptrix/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-08-25T21:45:04+02:00</updated>
+  <updated>2015-08-25T21:46:37+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -443,7 +443,7 @@ bash could be directly executed too. Finally, we set the suid privileges for
 </span><span class='line'>exit&lt;/p>
 </span><span class='line'>
 </span><span class='line'>&lt;p>root@kali32:~# ssh -l john 192.168.80.154
-</span><span class='line'>&lt;a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#106;&#x6f;&#x68;&#110;&#x40;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#46;&#x38;&#x30;&#x2e;&#49;&#x35;&#x34;">&#106;&#111;&#x68;&#x6e;&#x40;&#x31;&#57;&#50;&#46;&#x31;&#54;&#x38;&#x2e;&#56;&#48;&#x2e;&#x31;&#53;&#x34;&lt;/a>&rsquo;s password:
+</span><span class='line'>&lt;a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#x6a;&#x6f;&#104;&#110;&#64;&#49;&#x39;&#50;&#x2e;&#x31;&#54;&#56;&#46;&#x38;&#x30;&#x2e;&#x31;&#53;&#52;">&#106;&#111;&#x68;&#x6e;&#x40;&#x31;&#x39;&#50;&#46;&#49;&#x36;&#56;&#46;&#56;&#48;&#46;&#49;&#x35;&#x34;&lt;/a>&rsquo;s password:
 </span><span class='line'>Welcome to LigGoat Security Systems - We are Watching
 </span><span class='line'>== Welcome LigGoat Employee ==
 </span><span class='line'>LigGoat Shell is in place so you  don&rsquo;t screw up
