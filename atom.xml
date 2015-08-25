@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-08-24T16:06:27+02:00</updated>
+  <updated>2015-08-25T13:02:16+02:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -1524,8 +1524,7 @@ several checks:</p>
 </span><span class='line'>/protected_page.php</span></code></pre></td></tr></table></div></figure>
 
 
-<p>We had no further access for <code>/protected_page.php</code>, but the first idea that I had was
-referrer check. After verifying by spoofing this value:</p>
+<p>We had no further access for <code>/protected_page.php</code>, but the first idea that we had was a referrer check. After verifying by spoofing this value:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1594,10 +1593,10 @@ referrer check. After verifying by spoofing this value:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Proceeding further, there are a few hints for sql injection, but nothing that I tried worked:
+<p>Proceeding further, there are a few hints for sql injection, but nothing that we have tried worked:
 <a href="http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID</a></p>
 
-<p>I was trying sqlmap or manual identification without success, however Burp
+<p>Trying sqlmap or manual identification was without success, however Burp
 Suite Scanner revealed, that the parameter ID is vulnerable, when it&rsquo;s sent in POST
 method:</p>
 
@@ -1640,7 +1639,7 @@ method:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now I can use sqlmap and retrieve some useful information:</p>
+<p>Now we can use sqlmap and retrieve some useful information:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1830,7 +1829,7 @@ method:</p>
 </span><span class='line'>http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&add=Extract+File</span></code></pre></td></tr></table></div></figure>
 
 
-<p>I gave up hacking via /proc, but dirb reveals another files:</p>
+<p>We gave up hacking via /proc, but dirb reveals another files:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1882,7 +1881,7 @@ method:</p>
 </span><span class='line'>+ http://192.168.80.158:33447/Challenge/Magic_Box/tails.php (CODE:200|SIZE:74)</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now I understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
+<p>Now we understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
 
 <p>Seems that we almost won, because RCE (OS Commanding) on <a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.</a></p>
 
@@ -1941,7 +1940,7 @@ method:</p>
 
 
 <p>We realized after a few seconds, that there is no nc with executable property,
-no curl, no wget and no writable place in DocumentRoot on obvious place, I tried
+no curl, no wget and no writable place in DocumentRoot on obvious place, we tried
 to store something to <code>/var/www/html/</code>. We could send anything over netcat, but
 using python reverse shell could be more efficient:</p>
 
@@ -15681,7 +15680,7 @@ predictable for dirb.</p>
 
 <p>There is nothing interesting for us except the sysadmin account.</p>
 
-<p>Web page mentions <a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#x63;&#117;&#x73;&#x74;&#111;&#x6d;&#101;&#x72;&#x73;&#101;&#114;&#118;&#x69;&#99;&#101;&#97;&#100;&#x6d;&#105;&#110;&#64;&#x6e;&#x6f;&#x73;&#x65;&#99;&#98;&#97;&#110;&#x6b;&#x2e;&#99;&#x6f;&#109;">&#x63;&#117;&#x73;&#x74;&#x6f;&#x6d;&#101;&#x72;&#x73;&#x65;&#x72;&#x76;&#105;&#x63;&#101;&#97;&#x64;&#109;&#x69;&#110;&#x40;&#110;&#111;&#115;&#x65;&#x63;&#x62;&#97;&#x6e;&#x6b;&#46;&#99;&#x6f;&#x6d;</a> email address. After a
+<p>Web page mentions <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#99;&#117;&#x73;&#116;&#111;&#109;&#101;&#x72;&#115;&#x65;&#x72;&#118;&#105;&#99;&#101;&#x61;&#x64;&#109;&#105;&#110;&#x40;&#x6e;&#111;&#115;&#x65;&#x63;&#98;&#x61;&#110;&#x6b;&#46;&#99;&#x6f;&#x6d;">&#99;&#x75;&#x73;&#x74;&#111;&#109;&#101;&#x72;&#115;&#x65;&#x72;&#118;&#105;&#99;&#x65;&#x61;&#x64;&#109;&#105;&#x6e;&#64;&#110;&#111;&#x73;&#x65;&#99;&#98;&#x61;&#110;&#x6b;&#46;&#99;&#x6f;&#x6d;</a> email address. After a
 little trying, we found out the user account that exists:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

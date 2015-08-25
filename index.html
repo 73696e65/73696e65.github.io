@@ -1634,8 +1634,7 @@ several checks:</p>
 </span><span class='line'>/protected_page.php</span></code></pre></td></tr></table></div></figure>
 
 
-<p>We had no further access for <code>/protected_page.php</code>, but the first idea that I had was
-referrer check. After verifying by spoofing this value:</p>
+<p>We had no further access for <code>/protected_page.php</code>, but the first idea that we had was a referrer check. After verifying by spoofing this value:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1704,10 +1703,10 @@ referrer check. After verifying by spoofing this value:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Proceeding further, there are a few hints for sql injection, but nothing that I tried worked:
+<p>Proceeding further, there are a few hints for sql injection, but nothing that we have tried worked:
 <a href="http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID</a></p>
 
-<p>I was trying sqlmap or manual identification without success, however Burp
+<p>Trying sqlmap or manual identification was without success, however Burp
 Suite Scanner revealed, that the parameter ID is vulnerable, when it&rsquo;s sent in POST
 method:</p>
 
@@ -1750,7 +1749,7 @@ method:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now I can use sqlmap and retrieve some useful information:</p>
+<p>Now we can use sqlmap and retrieve some useful information:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1940,7 +1939,7 @@ method:</p>
 </span><span class='line'>http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&add=Extract+File</span></code></pre></td></tr></table></div></figure>
 
 
-<p>I gave up hacking via /proc, but dirb reveals another files:</p>
+<p>We gave up hacking via /proc, but dirb reveals another files:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1992,7 +1991,7 @@ method:</p>
 </span><span class='line'>+ http://192.168.80.158:33447/Challenge/Magic_Box/tails.php (CODE:200|SIZE:74)</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now I understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
+<p>Now we understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
 
 <p>Seems that we almost won, because RCE (OS Commanding) on <a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.</a></p>
 
@@ -2051,7 +2050,7 @@ method:</p>
 
 
 <p>We realized after a few seconds, that there is no nc with executable property,
-no curl, no wget and no writable place in DocumentRoot on obvious place, I tried
+no curl, no wget and no writable place in DocumentRoot on obvious place, we tried
 to store something to <code>/var/www/html/</code>. We could send anything over netcat, but
 using python reverse shell could be more efficient:</p>
 
