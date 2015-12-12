@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://73696e65.github.io/blog/2015/12/12/sickos-1-dot-1/</loc>
+    <lastmod>2015-12-12T11:21:39+01:00</lastmod>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/blog/2015/08/25/kioptrix-level-4/</loc>
     <lastmod>2015-08-25T18:18:32+02:00</lastmod>
   </url>
@@ -172,6 +176,9 @@
     <loc>http://73696e65.github.io/blog/categories/icectf/</loc>
   </url>
   <url>
+    <loc>http://73696e65.github.io/blog/categories/sickos/</loc>
+  </url>
+  <url>
     <loc>http://73696e65.github.io/posts/2/</loc>
   </url>
   <url>
@@ -197,5 +204,8 @@
   </url>
   <url>
     <loc>http://73696e65.github.io/posts/10/</loc>
+  </url>
+  <url>
+    <loc>http://73696e65.github.io/posts/11/</loc>
   </url>
 </urlset>

