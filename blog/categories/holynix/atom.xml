@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Holynix | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/holynix/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-12T12:58:22+01:00</updated>
+  <updated>2015-12-12T12:59:22+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -1041,7 +1041,7 @@ We download the data to our server:
 <span class='line-number'>7</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~/.knockknock# knockknock -p 22 192.168.80.142
 </span><span class='line'>*** Success: knock sent.
-</span><span class='line'>root@kali32:~/.knockknock# ssh &lt;a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#x3a;&#97;&#x6c;&#97;&#109;&#x6f;&#x40;&#49;&#57;&#x32;&#x2e;&#49;&#x36;&#x38;&#46;&#x38;&#x30;&#46;&#49;&#52;&#x32;">&#x61;&#x6c;&#97;&#109;&#111;&#64;&#x31;&#x39;&#50;&#46;&#49;&#54;&#56;&#46;&#56;&#x30;&#x2e;&#49;&#x34;&#x32;&lt;/a>&lt;/p>
+</span><span class='line'>root@kali32:~/.knockknock# ssh &lt;a href="&#109;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#x61;&#x6c;&#97;&#x6d;&#111;&#64;&#x31;&#x39;&#50;&#x2e;&#49;&#54;&#56;&#46;&#56;&#x30;&#46;&#x31;&#x34;&#50;">&#x61;&#108;&#97;&#x6d;&#x6f;&#x40;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#46;&#56;&#x30;&#x2e;&#x31;&#52;&#x32;&lt;/a>&lt;/p>
 </span><span class='line'>
 </span><span class='line'>&lt;p>The authenticity of host &lsquo;192.168.80.142 (192.168.80.142)&rsquo; can&rsquo;t be established.
 </span><span class='line'>RSA key fingerprint is 03:73:de:c7:17:96:0b:bb:8c:8e:c7:87:9b:5b:d5:c9.
