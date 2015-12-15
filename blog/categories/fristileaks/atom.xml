@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Fristileaks | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/fristileaks/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-15T10:52:41+01:00</updated>
+  <updated>2015-12-15T10:58:28+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -124,7 +124,7 @@ file with the password. So we use them (<code>eezeepz / keKkeKKeKKeKkEkkEk</code
 need to evade the image upload filtering.</p>
 
 <p>After trying different methods, finally we change for POST method the request for
-double extensions, more <a href="https://www.acunetix.com/websitesecurity/upload-forms-threat/">here - case 5</a>:
+double extensions, more here: <a href="https://www.acunetix.com/websitesecurity/upload-forms-threat/">Case 5</a>.
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -156,7 +156,7 @@ double extensions, more <a href="https://www.acunetix.com/websitesecurity/upload
 </span><span class='line'>
 </span><span class='line'>&lt;p>root@kali32:~$ weevely &lt;a href="http://192.168.80.128/fristi/uploads/test.php.gif">http://192.168.80.128/fristi/uploads/test.php.gif&lt;/a> 1234</span></code></pre></td></tr></table></div></figure></p>
 
-<p>We do a little investigation:
+<p>Doing a little investigation:
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
