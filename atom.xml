@@ -4,7 +4,7 @@
   <title><![CDATA[0x73696e65]]></title>
   <link href="http://73696e65.github.io/atom.xml" rel="self"/>
   <link href="http://73696e65.github.io/"/>
-  <updated>2015-12-15T09:29:03+01:00</updated>
+  <updated>2015-12-15T10:52:41+01:00</updated>
   <id>http://73696e65.github.io/</id>
   <author>
     <name><![CDATA[Norbert Szetei]]></name>
@@ -120,7 +120,7 @@ file with the password. So we use them (<code>eezeepz / keKkeKKeKKeKkEkkEk</code
 need to evade the image upload filtering.</p>
 
 <p>After trying different methods, finally we change for POST method the request for
-double extensions:</p>
+double extensions, more <a href="https://www.acunetix.com/websitesecurity/upload-forms-threat/">here - case 5</a>:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
