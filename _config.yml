@@ -1,0 +1,14 @@
+title: "0x73696e65"
+description: information security notes
+author: Norbert Szetei
+google_analytics:
+
+permalink: "/:year/:month/:title"
+
+paginate: 50
+paginate_path: "/:num"
+
+gems: [jekyll-paginate]
+
+sass:
+  style: compressed
