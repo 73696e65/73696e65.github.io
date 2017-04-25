@@ -1,8 +1,6 @@
 ---
 layout: post
 title: "ICEC.TF writeup"
-date: 2015-08-24 13:31:45 +0200
-comments: true
 categories: [writeup, ctf, icectf]
 ---
 ## ROT13
