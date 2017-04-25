@@ -10,7 +10,6 @@ paginate_path: "/:num"
 
 gems: 
   - jekyll-paginate
-  - jekyll-toc
 
 sass:
   style: compressed

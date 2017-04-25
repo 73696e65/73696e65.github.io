@@ -2,7 +2,6 @@
 layout: post
 title: "CSAW CTF 2016"
 categories: exploits ctf
-toc: true
 ---
 # Notesy 2.0 (crypto / 1)
 

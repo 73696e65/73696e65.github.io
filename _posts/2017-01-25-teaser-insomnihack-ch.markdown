@@ -2,7 +2,6 @@
 layout: post
 title: "Insomni'hack Teaser 2017"
 categories: exploits ctf
-toc: true
 ---
 # The Great Escape - part 1 - Forensics - 50 pts - realized by clZ
 
