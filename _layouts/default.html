@@ -23,8 +23,8 @@
         {% for page in site.pages %}
           {% if page.title %}<a href="{{ page.url | prepend: site.baseurl }}" class="btn">{{ page.title }}</a>{% endif %}
         {% endfor %}
-        <a href="https://twitter.com/{{ site.twitter }}" class="btn">twitter</a>
         <a href="https://github.com/{{ site.github }}" class="btn">github</a>
+        <a href="https://twitter.com/{{ site.twitter }}" class="btn">twitter</a>
       </div>
     </header>
 
