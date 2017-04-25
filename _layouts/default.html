@@ -20,11 +20,12 @@
 
     <header>
       <div class="container">
-        <h1><a href="https://twitter.com/{{ site.twitter }}">{{ site.title | default: site.github.repository_name }}</a></h1>
         <h2>{{ site.description | default: site.github.project_tagline }}</h2>
         {% for page in site.pages %}
           {% if page.title %}|<a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>|{% endif %}
         {% endfor %}
+        |<a href="https://twitter.com/{{ site.twitter }}">twitter</a>|
+        |<a href="https://github.com/{{ site.github }}">github</a>|
       </div>
     </header>
 

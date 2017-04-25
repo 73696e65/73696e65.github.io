@@ -3,6 +3,9 @@ layout: post
 title: "CSAW CTF 2016"
 categories: exploits ctf
 ---
+* TOC
+{:toc}
+
 # Notesy 2.0 (crypto / 1)
 
 The first idea was to submit the same flag as 

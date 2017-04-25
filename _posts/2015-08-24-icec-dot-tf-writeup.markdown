@@ -3,6 +3,9 @@ layout: post
 title: "ICEC.TF writeup"
 categories: writeup ctf 
 ---
+* TOC
+{:toc}
+
 # ROT13
 
 ```
