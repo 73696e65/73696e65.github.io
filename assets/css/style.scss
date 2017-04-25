@@ -54,9 +54,17 @@ a {
 }
 
 body {
-    font-family: "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-family: "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
 ul li:before {
   font-family: "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+}
+
+.btn {
+  font-family: "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-weight: normal;
+  font-size: 13px;
+  text-decoration: none;
+  border-radius: 1px;
 }
