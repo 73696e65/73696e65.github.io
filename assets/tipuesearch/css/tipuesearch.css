@@ -73,7 +73,7 @@ http://www.tipue.com/search
 }
 .tipue_search_content_title a
 {
-     color: #666;
+     color: #fc2e05;
      text-decoration: none;
 }
 .tipue_search_content_title a:hover
@@ -103,7 +103,8 @@ http://www.tipue.com/search
 }
 .tipue_search_content_bold
 {
-     color: #333;
+     color: #fc2e05;
+     text-decoration: none;
 }
 .tipue_search_content_debug
 {
