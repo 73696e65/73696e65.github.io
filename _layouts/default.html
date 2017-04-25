@@ -5,6 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <title>{{ site.title | default: site.github.repository_name }}</title>
+
+    {% if page.tipue_search_active or layout.tipue_search_active %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="{{ "/assets/tipuesearch/tipuesearch_content.js" | relative_url }}"></script>
+    <link rel="stylesheet" href="{{ "/assets/tipuesearch/css/tipuesearch.css" | relative_url }}">
+    <script src="{{ "/assets/tipuesearch/tipuesearch_set.js" | relative_url }}"></script>
+    <script src="{{ "/assets/tipuesearch/tipuesearch.min.js" | relative_url }}"></script>
+    {% endif %}
+
   </head>
 
   <body>
@@ -13,6 +22,9 @@
       <div class="container">
         <h1><a href="https://twitter.com/{{ site.twitter }}">{{ site.title | default: site.github.repository_name }}</a></h1>
         <h2>{{ site.description | default: site.github.project_tagline }}</h2>
+        {% for page in site.pages %}
+          {% if page.title %}|<a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>|{% endif %}
+        {% endfor %}
       </div>
     </header>
 
