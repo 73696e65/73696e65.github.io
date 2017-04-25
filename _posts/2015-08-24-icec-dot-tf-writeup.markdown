@@ -1,7 +1,8 @@
 ---
 layout: post
 title: "ICEC.TF writeup"
-categories: [writeup, ctf, icectf]
+categories: writeup ctf 
+toc: true
 ---
 # ROT13
 

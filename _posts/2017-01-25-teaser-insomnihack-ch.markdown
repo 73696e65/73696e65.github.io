@@ -2,8 +2,8 @@
 layout: post
 title: "Insomni'hack Teaser 2017"
 categories: exploits ctf
+toc: true
 ---
-
 # The Great Escape - part 1 - Forensics - 50 pts - realized by clZ
 
 To examine the traffic in Wireshark: 
@@ -432,7 +432,8 @@ Your passwords are safe with me meatbag!
 -------------------------------
 ```
 
-## References:
+References:
+
 [MinGW static build](https://github.com/nihilus/snowman/releases/tag/v1.0)
 
 # Shobot - Web - 200 pts - realized by Blaklis

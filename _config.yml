@@ -8,7 +8,9 @@ permalink: "/:year/:month/:title"
 paginate: 50
 paginate_path: "/:num"
 
-gems: [jekyll-paginate]
+gems: 
+  - jekyll-paginate
+  - jekyll-toc
 
 sass:
   style: compressed

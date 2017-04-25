@@ -3,7 +3,6 @@ layout: default
 ---
 <a href='{{site.url}}/'>../</a>
 <h2>{{ page.title }}</h2>
-
-{{ content }}
+{{ content | toc }}
 
 {% include disqus.html %}

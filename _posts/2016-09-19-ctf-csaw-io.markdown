@@ -2,6 +2,7 @@
 layout: post
 title: "CSAW CTF 2016"
 categories: exploits ctf
+toc: true
 ---
 # Notesy 2.0 (crypto / 1)
 
@@ -166,7 +167,7 @@ Decrypted somecookie: Wre7CkPi+rFZpTzV+TAtIHzHNtILVrx2XRdynvWoQVrK88FWdeMvn8QmM2
 bytearray(b'flag{what_if_i_told_you_you_solved_the_challenge}\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f\x0f')
 ```
 
-## References:
+References:
 
 [https://github.com/mwielgoszewski/python-paddingoracle](https://github.com/mwielgoszewski/python-paddingoracle)
 
@@ -1521,7 +1522,7 @@ FLAG{p3rl_6_iz_EVEN_BETTER!!1}
 <br /></body></html>
 ```
 
-## References:
+References:
 
 [The Perl Jam 2: The Camel Strikes Back 32c3](https://www.youtube.com/watch?v=eH_u3C2WwQ0)
 
