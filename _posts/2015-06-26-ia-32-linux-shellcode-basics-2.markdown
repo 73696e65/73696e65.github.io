@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "IA-32 Linux Shellcode Basics 2"
-categories: [exploit, shellcode]
+categories: exploit shellcode
 ---
 Starting with the ASM code that is position dependent:
 

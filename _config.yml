@@ -1,4 +1,4 @@
-title: "0x73696e65"
+title: "sine"
 description: information security notes
 author: Norbert Szetei
 google_analytics:
@@ -12,3 +12,6 @@ gems: [jekyll-paginate]
 
 sass:
   style: compressed
+
+google_analytics: UA-64260520-1
+twitter: 73696e65

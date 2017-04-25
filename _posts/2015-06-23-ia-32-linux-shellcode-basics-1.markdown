@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "IA-32 Linux Shellcode Basics 1"
-categories: [exploit, shellcode]
+categories: exploit shellcode
 ---
 We start with the simple shellcode, that prints `hello` string. For this
 purpose, we use Kali Linux 32 bit distribution, that could be downloaded
